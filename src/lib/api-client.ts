@@ -5,10 +5,11 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   token?: string;
 }
 
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public code?: string,
   ) {
     super(message);
     this.name = "ApiError";
@@ -31,7 +32,23 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   });
 
   if (!response.ok) {
-    throw new ApiError(response.status, `API error: ${response.statusText}`);
+    // Try to extract structured error from backend response envelope
+    let message = `API error: ${response.statusText}`;
+    let code: string | undefined;
+
+    try {
+      const errorBody = await response.json();
+      if (errorBody?.error) {
+        message = errorBody.error.message ?? message;
+        code = errorBody.error.code;
+      } else if (errorBody?.detail) {
+        message = errorBody.detail;
+      }
+    } catch {
+      // Response body wasn't JSON — use default message
+    }
+
+    throw new ApiError(response.status, message, code);
   }
 
   return response.json() as Promise<T>;
@@ -54,4 +71,25 @@ export const apiClient = {
     request<T>(endpoint, { ...options, method: "DELETE" }),
 };
 
-export { ApiError };
+/**
+ * Create an API client pre-bound with a bearer token.
+ * Used via the useApiClient hook to automatically attach the session token.
+ */
+export function createAuthenticatedClient(token: string) {
+  return {
+    get: <T>(endpoint: string, options?: Omit<RequestOptions, "token">) =>
+      apiClient.get<T>(endpoint, { ...options, token }),
+
+    post: <T>(endpoint: string, body: unknown, options?: Omit<RequestOptions, "token">) =>
+      apiClient.post<T>(endpoint, body, { ...options, token }),
+
+    put: <T>(endpoint: string, body: unknown, options?: Omit<RequestOptions, "token">) =>
+      apiClient.put<T>(endpoint, body, { ...options, token }),
+
+    patch: <T>(endpoint: string, body: unknown, options?: Omit<RequestOptions, "token">) =>
+      apiClient.patch<T>(endpoint, body, { ...options, token }),
+
+    delete: <T>(endpoint: string, options?: Omit<RequestOptions, "token">) =>
+      apiClient.delete<T>(endpoint, { ...options, token }),
+  };
+}
