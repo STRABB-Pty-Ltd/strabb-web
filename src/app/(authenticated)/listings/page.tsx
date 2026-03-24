@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, TrashIcon, RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { ListingDeleteDialog } from "@/components/listings/listing-delete-dialog
 import { ListingFormDialog } from "@/components/listings/listing-form-dialog";
 import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
+import { useTriggerSync } from "@/hooks/use-sync";
 import { PLATFORM_OPTIONS, type ListingResponse } from "@/lib/schemas/listing";
 
 const platformLabel = Object.fromEntries(PLATFORM_OPTIONS.map((p) => [p.value, p.label]));
@@ -23,6 +24,7 @@ export default function ListingsPage() {
     propertyId: propertyFilter || undefined,
   });
   const [deleteTarget, setDeleteTarget] = useState<ListingResponse | null>(null);
+  const triggerSync = useTriggerSync();
 
   const propertyFilterOptions = [
     { value: "", label: "All properties" },
@@ -48,13 +50,23 @@ export default function ListingsPage() {
     {
       key: "syncStatus" as const,
       header: "Sync",
-      render: (value: ListingResponse["syncStatus"]) => {
+      render: (value: ListingResponse["syncStatus"], row: ListingResponse) => {
         const colors: Record<string, string> = {
           pending: "text-yellow-600 dark:text-yellow-400",
+          syncing: "text-blue-600 dark:text-blue-400",
           synced: "text-green-700 dark:text-green-400",
           error: "text-destructive",
         };
-        return <span className={colors[value] ?? "text-muted-foreground"}>{value}</span>;
+        return (
+          <div>
+            <span className={colors[value] ?? "text-muted-foreground"}>{value}</span>
+            {row.lastSyncedAt && (
+              <div className="text-muted-foreground text-xs">
+                {new Date(row.lastSyncedAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -94,14 +106,27 @@ export default function ListingsPage() {
         title="Listings"
         description="Manage your listings and iCal feeds."
         actions={
-          <ListingFormDialog
-            trigger={
-              <Button>
-                <PlusIcon data-icon="inline-start" />
-                Add listing
-              </Button>
-            }
-          />
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => triggerSync.mutate()}
+              disabled={triggerSync.isPending}
+            >
+              <RefreshCwIcon
+                data-icon="inline-start"
+                className={triggerSync.isPending ? "animate-spin" : ""}
+              />
+              {triggerSync.isPending ? "Syncing..." : "Sync now"}
+            </Button>
+            <ListingFormDialog
+              trigger={
+                <Button>
+                  <PlusIcon data-icon="inline-start" />
+                  Add listing
+                </Button>
+              }
+            />
+          </div>
         }
       />
 
@@ -112,6 +137,17 @@ export default function ListingsPage() {
           onChange={(e) => setPropertyFilter(e.target.value)}
           className="w-60"
         />
+        {triggerSync.isSuccess && (
+          <p className="text-sm text-green-700 dark:text-green-400">
+            Synced {triggerSync.data.listingsSynced} listing(s) — {triggerSync.data.bookingsCreated}{" "}
+            new, {triggerSync.data.bookingsUpdated} updated
+            {triggerSync.data.conflictsDetected > 0 &&
+              `, ${triggerSync.data.conflictsDetected} conflict(s)`}
+          </p>
+        )}
+        {triggerSync.isError && (
+          <p className="text-destructive text-sm">Sync failed: {triggerSync.error.message}</p>
+        )}
       </div>
 
       {isLoading && (
