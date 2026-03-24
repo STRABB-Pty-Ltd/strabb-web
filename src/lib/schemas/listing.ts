@@ -1,0 +1,49 @@
+import { z } from "zod";
+
+export const PLATFORM_OPTIONS = [
+  { value: "airbnb", label: "Airbnb" },
+  { value: "booking_com", label: "Booking.com" },
+  { value: "stayz", label: "Stayz" },
+  { value: "vrbo", label: "VRBO" },
+  { value: "direct", label: "Direct" },
+  { value: "other", label: "Other" },
+] as const;
+
+export const listingCreateSchema = z.object({
+  propertyId: z.string().min(1, "Property is required"),
+  name: z.string().min(1, "Name is required").max(255),
+  platform: z.string().min(1, "Platform is required"),
+  externalListingId: z.string().max(255).optional().or(z.literal("")),
+  icalFeedUrl: z.string().max(1000).url("Must be a valid URL").optional().or(z.literal("")),
+});
+
+export type ListingCreateFormData = z.infer<typeof listingCreateSchema>;
+
+export const listingUpdateSchema = listingCreateSchema.omit({ propertyId: true }).partial();
+
+export type ListingUpdateFormData = z.infer<typeof listingUpdateSchema>;
+
+export interface ListingResponse {
+  id: string;
+  propertyId: string;
+  name: string;
+  platform: string;
+  externalListingId: string | null;
+  icalFeedUrl: string | null;
+  syncStatus: string;
+  lastSyncedAt: string | null;
+  lastSyncError: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListingListResponse {
+  data: ListingResponse[];
+  meta: {
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
