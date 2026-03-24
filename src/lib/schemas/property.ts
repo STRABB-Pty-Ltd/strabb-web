@@ -12,6 +12,9 @@ export const propertyCreateSchema = z.object({
     .default(120),
   accessInstructions: z.string().optional().or(z.literal("")),
   notes: z.string().optional().or(z.literal("")),
+  cleanerName: z.string().max(255).optional().or(z.literal("")),
+  cleanerEmail: z.string().max(255).optional().or(z.literal("")),
+  cleanerPhone: z.string().max(50).optional().or(z.literal("")),
 });
 
 export type PropertyCreateFormData = z.infer<typeof propertyCreateSchema>;
@@ -28,6 +31,9 @@ export interface PropertyResponse {
   cleaningDurationMinutes: number;
   accessInstructions: string | null;
   notes: string | null;
+  cleanerName: string | null;
+  cleanerEmail: string | null;
+  cleanerPhone: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

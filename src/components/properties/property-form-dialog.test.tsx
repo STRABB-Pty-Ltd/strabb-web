@@ -56,7 +56,7 @@ describe("PropertyFormDialog", () => {
     await user.click(screen.getByRole("button", { name: /add property/i }));
 
     expect(screen.getByText("Add Property")).toBeInTheDocument();
-    expect(screen.getByLabelText(/^name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Name *")).toBeInTheDocument();
     expect(screen.getByLabelText(/address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/timezone/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/cleaning time/i)).toBeInTheDocument();
@@ -66,7 +66,7 @@ describe("PropertyFormDialog", () => {
     const { user } = renderDialog();
     await user.click(screen.getByRole("button", { name: /add property/i }));
 
-    const nameInput = screen.getByLabelText(/^name/i);
+    const nameInput = screen.getByLabelText("Name *");
     await user.clear(nameInput);
 
     const submitBtn = screen.getByTestId("dialog-root").querySelector("button[type='submit']")!;
@@ -80,7 +80,7 @@ describe("PropertyFormDialog", () => {
     const { user } = renderDialog();
     await user.click(screen.getByRole("button", { name: /add property/i }));
 
-    const nameInput = screen.getByLabelText(/^name/i);
+    const nameInput = screen.getByLabelText("Name *");
     await user.clear(nameInput);
     await user.type(nameInput, "Beach House");
 

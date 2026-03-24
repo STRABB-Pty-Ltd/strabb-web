@@ -59,6 +59,9 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
     cleaningDurationMinutes: property?.cleaningDurationMinutes ?? 120,
     accessInstructions: property?.accessInstructions ?? "",
     notes: property?.notes ?? "",
+    cleanerName: property?.cleanerName ?? "",
+    cleanerEmail: property?.cleanerEmail ?? "",
+    cleanerPhone: property?.cleanerPhone ?? "",
   });
 
   async function onSubmit(data: PropertyCreateFormData) {
@@ -136,6 +139,34 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
               placeholder="Lockbox code, key location, etc."
               {...register("accessInstructions")}
             />
+          </div>
+
+          <div className="border-t pt-4">
+            <p className="mb-3 text-sm font-medium">Default Cleaner</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="cleanerName">Name</Label>
+                <Input id="cleanerName" placeholder="Cleaner name" {...register("cleanerName")} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="cleanerEmail">Email</Label>
+                <Input
+                  id="cleanerEmail"
+                  type="email"
+                  placeholder="cleaner@example.com"
+                  {...register("cleanerEmail")}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="cleanerPhone">Phone</Label>
+                <Input
+                  id="cleanerPhone"
+                  type="tel"
+                  placeholder="0400 000 000"
+                  {...register("cleanerPhone")}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
