@@ -19,7 +19,7 @@ export function useTriggerSync() {
 
   return useMutation({
     mutationFn: async () => {
-      const response = await apiClient.post<{ data: SyncTriggerResponse }>("/sync/trigger");
+      const response = await apiClient.post<{ data: SyncTriggerResponse }>("/sync/trigger", {});
       return response.data;
     },
     onSuccess: () => {

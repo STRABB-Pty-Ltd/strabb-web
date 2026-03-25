@@ -74,6 +74,7 @@ export function useCompleteCleaningTask() {
     mutationFn: async (id: string) => {
       const response = await apiClient.post<{ data: Record<string, unknown> }>(
         `/cleaning-tasks/${id}/complete`,
+        {},
       );
       return keysToCamel<CleaningTaskResponse>(response.data);
     },
@@ -91,6 +92,7 @@ export function useResendNotification() {
     mutationFn: async (id: string) => {
       const response = await apiClient.post<{ data: { sent: boolean } }>(
         `/cleaning-tasks/${id}/resend-notification`,
+        {},
       );
       return response.data;
     },

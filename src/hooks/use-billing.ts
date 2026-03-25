@@ -23,7 +23,7 @@ export function useStartTrial() {
 
   return useMutation({
     mutationFn: async () => {
-      await apiClient.post("/billing/start-trial");
+      await apiClient.post("/billing/start-trial", {});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BILLING_KEY });
@@ -38,7 +38,7 @@ export function useCreateCheckout() {
     mutationFn: async () => {
       const response = await apiClient.post<{
         data: { checkout_url: string };
-      }>("/billing/checkout");
+      }>("/billing/checkout", {});
       return response.data.checkout_url;
     },
   });
@@ -51,7 +51,7 @@ export function useCreatePortal() {
     mutationFn: async () => {
       const response = await apiClient.post<{
         data: { portal_url: string };
-      }>("/billing/portal");
+      }>("/billing/portal", {});
       return response.data.portal_url;
     },
   });

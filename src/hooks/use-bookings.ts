@@ -70,6 +70,7 @@ export function useDismissConflict() {
     mutationFn: async (id: string) => {
       const response = await apiClient.post<{ data: Record<string, unknown> }>(
         `/bookings/${id}/dismiss-conflict`,
+        {},
       );
       return keysToCamel<BookingResponse>(response.data);
     },

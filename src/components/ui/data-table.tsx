@@ -1,16 +1,18 @@
-interface Column<T> {
+export interface Column<T> {
   key: keyof T;
   header: string;
-  render?: (value: T[keyof T], row: T) => React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  render?: (value: any, row: T) => React.ReactNode;
 }
 
 interface DataTableProps<T> {
-  columns: Column<T>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns: Column<any>[];
   data: T[];
   emptyMessage?: string;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T>({
   columns,
   data,
   emptyMessage = "No data available",
@@ -40,7 +42,9 @@ export function DataTable<T extends Record<string, unknown>>({
             <tr key={i} className="border-b last:border-0">
               {columns.map((col) => (
                 <td key={String(col.key)} className="px-4 py-3">
-                  {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? "")}
+                  {col.render
+                    ? col.render((row as Record<string, unknown>)[col.key as string], row)
+                    : String((row as Record<string, unknown>)[col.key as string] ?? "")}
                 </td>
               ))}
             </tr>

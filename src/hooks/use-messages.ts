@@ -60,6 +60,7 @@ export function useSeedDefaults() {
     mutationFn: async () => {
       const response = await apiClient.post<MessageTemplateResponse[]>(
         "/messages/templates/seed-defaults",
+        {},
       );
       return keysToCamel<MessageTemplateResponse[]>(response);
     },
@@ -88,7 +89,7 @@ export function useProcessMessages() {
     mutationFn: async () => {
       const response = await apiClient.post<{
         data: { processed: number; sent: number; failed: number };
-      }>("/messages/process");
+      }>("/messages/process", {});
       return response.data;
     },
     onSuccess: () => {
@@ -105,6 +106,7 @@ export function useResendMessage() {
     mutationFn: async (id: string) => {
       const response = await apiClient.post<{ data: { sent: boolean } }>(
         `/messages/scheduled/${id}/resend`,
+        {},
       );
       return response.data;
     },
