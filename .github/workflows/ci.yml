@@ -35,9 +35,26 @@ jobs:
       - name: Run tests
         run: npm run test
 
+  typecheck:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - name: Type check
+        run: npx tsc --noEmit
+
   build:
     name: Build Check
     runs-on: ubuntu-latest
+    env:
+      NEXTAUTH_URL: http://localhost:3100
+      NEXTAUTH_SECRET: ci-test-secret
+      NEXT_PUBLIC_API_URL: http://localhost:8000
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
