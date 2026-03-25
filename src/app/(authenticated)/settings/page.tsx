@@ -1,6 +1,7 @@
 "use client";
 
-import { CreditCardIcon, ExternalLinkIcon, RocketIcon } from "lucide-react";
+import { ActivityIcon, CreditCardIcon, ExternalLinkIcon, RocketIcon } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -124,6 +125,19 @@ export default function SettingsPage() {
               </div>
             )}
           </div>
+
+          <Link
+            href="/settings/admin"
+            className="hover:bg-muted/50 flex items-center gap-3 rounded-xl border p-4 transition-colors"
+          >
+            <ActivityIcon className="text-muted-foreground size-5" />
+            <div>
+              <p className="font-medium">System Health</p>
+              <p className="text-muted-foreground text-sm">
+                Monitor sync failures, email failures, and task issues.
+              </p>
+            </div>
+          </Link>
         </div>
       )}
     </div>
