@@ -1,12 +1,16 @@
 import "next-auth";
 import "next-auth/jwt";
 
+import type { CurrentUser, UserRole } from "@/types/auth";
+
 declare module "next-auth" {
   interface Session {
     accessToken: string;
     refreshToken: string;
     tenantId: string;
     userId: string;
+    role: UserRole;
+    currentUser: CurrentUser;
     error?: "RefreshTokenError";
   }
 
@@ -15,6 +19,8 @@ declare module "next-auth" {
     refreshToken: string;
     tenantId: string;
     userId: string;
+    role: UserRole;
+    currentUser: CurrentUser;
     accessTokenExpires: number;
   }
 }
@@ -25,6 +31,8 @@ declare module "next-auth/jwt" {
     refreshToken: string;
     tenantId: string;
     userId: string;
+    role: UserRole;
+    currentUser: CurrentUser;
     accessTokenExpires: number;
     error?: "RefreshTokenError";
   }

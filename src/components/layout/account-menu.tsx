@@ -16,8 +16,10 @@ import {
 
 export function AccountMenu() {
   const { data: session } = useSession();
+  const user = session?.currentUser;
 
-  const initials = session?.user?.email ? session.user.email.slice(0, 2).toUpperCase() : "??";
+  const initialsSource = user?.fullName ?? user?.email ?? session?.user?.email ?? "";
+  const initials = initialsSource.slice(0, 2).toUpperCase() || "??";
 
   return (
     <DropdownMenu>
@@ -33,9 +35,9 @@ export function AccountMenu() {
         <DropdownMenuGroup>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-1">
-              <p className="text-sm font-medium">Account</p>
+              <p className="text-sm font-medium">{user?.fullName ?? "Account"}</p>
               <p className="text-muted-foreground text-xs" data-testid="user-email">
-                {session?.user?.email ?? "Unknown"}
+                {user?.email ?? session?.user?.email ?? "Unknown"}
               </p>
             </div>
           </DropdownMenuLabel>
