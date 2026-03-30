@@ -37,12 +37,12 @@ describe("formatDateInTimezone", () => {
 describe("getTimezoneAbbr", () => {
   it("returns timezone abbreviation", () => {
     const result = getTimezoneAbbr("2024-03-15T14:00:00Z", "Australia/Sydney");
-    // March = AEDT (daylight saving)
-    expect(result).toMatch(/AE[SD]T/);
+    // March = AEDT (daylight saving); some environments return GMT+11
+    expect(result).toMatch(/AEDT|GMT\+11/);
   });
 
   it("returns Perth timezone", () => {
     const result = getTimezoneAbbr("2024-03-15T14:00:00Z", "Australia/Perth");
-    expect(result).toMatch(/AWST/);
+    expect(result).toMatch(/AWST|GMT\+8/);
   });
 });

@@ -9,6 +9,15 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN chmod -R +x node_modules/.bin
+
+ARG NEXTAUTH_URL=http://localhost:3100
+ARG NEXTAUTH_SECRET=change-me
+ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 RUN npm run build
 
 FROM base AS runner
