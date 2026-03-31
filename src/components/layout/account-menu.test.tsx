@@ -7,7 +7,18 @@ const mockSignOut = vi.fn();
 vi.mock("next-auth/react", () => ({
   signOut: (...args: unknown[]) => mockSignOut(...args),
   useSession: vi.fn(() => ({
-    data: { user: { email: "test@strabb.io" } },
+    data: {
+      user: { email: "test@strabb.io", name: "Test User" },
+      currentUser: {
+        id: "user-1",
+        tenantId: "tenant-1",
+        email: "test@strabb.io",
+        fullName: "Test User",
+        role: "owner",
+        isActive: true,
+      },
+      role: "owner",
+    },
     status: "authenticated",
   })),
 }));
