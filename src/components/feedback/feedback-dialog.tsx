@@ -54,7 +54,8 @@ export function FeedbackDialog() {
         <DialogHeader>
           <DialogTitle>Send Feedback</DialogTitle>
           <DialogDescription>
-            Help us improve STRABB. Bug reports, feature requests, or general feedback — all welcome.
+            Help us improve STRABB. Bug reports, feature requests, or general feedback — all
+            welcome.
           </DialogDescription>
         </DialogHeader>
 
@@ -74,10 +75,7 @@ export function FeedbackDialog() {
         )}
 
         <DialogFooter>
-          <Button
-            onClick={handleSubmit}
-            disabled={!message.trim() || submitFeedback.isPending}
-          >
+          <Button onClick={handleSubmit} disabled={!message.trim() || submitFeedback.isPending}>
             {submitFeedback.isPending ? "Sending..." : "Send feedback"}
           </Button>
         </DialogFooter>
