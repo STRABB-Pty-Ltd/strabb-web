@@ -1,12 +1,14 @@
 # AGENTS.md
 
 ## Purpose
+
 Canonical instructions for AI coding agents working in the STRABB Web repository.
 Read this before planning or editing anything.
 
 ---
 
 ## Read First
+
 1. Product docs (specs, phase plans, ui-spec) are in the `strabb-internal` repo, not in this repo. If you need spec context, ask Will for the relevant file.
 2. `developer-checklist.md` — mandatory development and QA workflow
 3. `README.md` — setup, commands, structure, page map
@@ -16,6 +18,7 @@ If context is missing, ask before proceeding.
 ---
 
 ## Mandatory Workflow
+
 Follow the developer checklist for all work.
 
 - Define the objective in 1–2 sentences before touching code
@@ -28,9 +31,11 @@ Follow the developer checklist for all work.
 ---
 
 ## V1 Scope Guardrails
+
 STRABB v1 prioritises simplicity, automation, reliability, and speed of iteration.
 
 Do not introduce:
+
 - enterprise abstractions or over-engineered config systems
 - speculative infrastructure or premature generalization
 - features that don't clearly reduce manual work, mental load, or booking friction
@@ -54,7 +59,9 @@ Manual fallback is acceptable in v1.
 ---
 
 ## Architecture
+
 See `README.md` for full structure. Key folders:
+
 - `src/app/` — App Router pages and layouts
 - `src/components/` — UI and feature components
 - `src/hooks/` — React Query and client hooks
@@ -67,6 +74,7 @@ Use existing folder conventions. Do not create parallel patterns without justifi
 ---
 
 ## Implementation Standards
+
 - Follow existing naming conventions and component patterns
 - Avoid unrelated cleanup or broad renames in feature PRs
 - Keep type safety intact
@@ -75,7 +83,9 @@ Use existing folder conventions. Do not create parallel patterns without justifi
 ---
 
 ## Locked Product Decisions
+
 These are not up for revision:
+
 - Desktop-first shell
 - Top-nav-first structure
 - Contextual sidebar behaviour where applicable
@@ -87,6 +97,7 @@ Do not drift from these without explicit approval.
 ---
 
 ## Git and PR Rules
+
 - `main` is protected — branch from latest `main`, never develop on it
 - Keep branches focused and short-lived
 - All CI and QA gates must pass before merge
@@ -96,6 +107,7 @@ Do not drift from these without explicit approval.
 ---
 
 ## What Not To Do
+
 - Change architecture without explanation
 - Add dependencies without justification
 - Bypass existing utilities or conventions
