@@ -77,6 +77,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build and push to ACR
-        run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:staging --build-arg NEXTAUTH_URL=https://strabb-web-staging.icywave-6a962c16.australiaeast.azurecontainerapps.io --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} --build-arg NEXT_PUBLIC_API_URL=https://strabb-api-staging.icywave-6a962c16.australiaeast.azurecontainerapps.io .
+        run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:staging --build-arg NEXTAUTH_URL=https://staging.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.staging.strabb.io .
       - name: Deploy to Container App
         run: az containerapp update --name strabb-web-staging --resource-group strabb-staging --image strabbregistry.azurecr.io/strabb-web:staging
