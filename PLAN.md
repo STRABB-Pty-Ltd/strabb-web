@@ -178,14 +178,14 @@ export interface Listing {
   bedrooms: number;
   bathrooms: number;
   maxGuests: number;
-  nightlyRate: number;           // cents
+  nightlyRate: number;           // AUD
   location: string;
   propertyId: string;
   isActive: boolean;
 }
 
 // src/types/booking.ts
-export type BookingChannel = "airbnb" | "booking_com" | "vrbo" | "direct";
+export type BookingChannel = "airbnb" | "booking_com" | "vrbo" | "direct" | "internal_notes";
 export type BookingStatus = "checked_out" | "checked_in" | "confirmed" | "pending" | "cancelled";
 export interface Booking {
   id: string;
@@ -197,15 +197,15 @@ export interface Booking {
   checkIn: string;               // ISO date
   checkOut: string;              // ISO date
   guestCount: number;
-  nightlyRate: number;           // cents
-  totalAmount: number;           // cents
+  nightlyRate: number;           // AUD
+  totalAmount: number;           // AUD
   status: BookingStatus;
   notes: string | null;
   createdAt: string;
 }
 
 // src/types/message.ts
-export type MessagePriority = "normal" | "flagged" | "urgent";
+export type MessagePriority = "high" | "medium" | "low";  // frontend can display "low" as "Normal" in UI
 export type MessageStatus = "unread" | "flagged" | "read" | "archived";
 export interface Message {
   id: string;
@@ -237,7 +237,7 @@ export interface ThreadMessage {
 // src/types/cleaning-task.ts
 export type CleaningStatus = "pending" | "confirmed" | "in_progress" | "completed" | "issues" | "cancelled";
 export type CleaningPriority = "low" | "medium" | "high" | "urgent";
-export type CleaningType = "checkout" | "checkin" | "deep_clean" | "maintenance" | "inspection" | "turnover";
+export type CleaningType = "checkout" | "checkin" | "deep_clean" | "mid_stay" | "inspection" | "turnover";
 export interface CleaningTask {
   id: string;
   listingId: string;
@@ -263,18 +263,18 @@ export interface Financial {
   month: string;                 // "2026-01", "2026-02", etc.
   listingId: string;
   listingName: string;
-  revenue: number;               // cents
-  cleaningCost: number;          // cents
-  maintenanceCost: number;       // cents
-  suppliesCost: number;          // cents
-  platformFees: number;          // cents
+  revenue: number;               // AUD
+  cleaningCost: number;          // AUD
+  maintenanceCost: number;       // AUD
+  suppliesCost: number;          // AUD
+  platformFees: number;          // AUD
   occupancyRate: number;         // 0-100
-  avgNightlyRate: number;        // cents
+  avgNightlyRate: number;        // AUD
   bookingCount: number;
 }
 
 // src/types/shopping-item.ts
-export type ShoppingItemStatus = "needed" | "bought" | "delivered";
+export type ShoppingItemStatus = "requested" | "approved" | "purchased";
 export type ShoppingItemPriority = "low" | "medium" | "high";
 export interface ShoppingItem {
   id: string;
@@ -289,15 +289,13 @@ export interface ShoppingItem {
 }
 
 // src/types/vacancy.ts
-export type VacancyType = "gap" | "blocked" | "maintenance" | "seasonal";
 export interface Vacancy {
   id: string;
   listingId: string;
   listingName: string;
   startDate: string;             // ISO date
   endDate: string;               // ISO date
-  vacancyType: VacancyType;
-  notes: string | null;
+  gapDays: number;
 }
 
 // src/types/maintenance.ts
@@ -1183,7 +1181,7 @@ View switch happens in sidebar View Switcher (Phase 16.3). Submenu chips filter 
 **Action:** Create hooks:
 - `useMessages(channels, submenuFilters, selectedListings)` -- returns messages filtered by channel, status (from submenu chips: unread/flagged/urgent), and selected listings
 - `useMessageThread(messageId)` -- returns thread messages for the thread overlay
-- `useMessageActions()` -- returns mutation functions: `markAsRead(id)`, `toggleFlag(id)`, `archive(id)`, `sendReply(messageId, content)`, `convertToMaintenance(messageId)`
+- `useMessageActions()` -- returns mutation functions: `markAsRead(id)`, `toggleFlag(id)`, `archive(id)`, `sendReply(conversationId, content)` (calls `POST /conversations/{conversationId}/messages`), `convertToMaintenance(conversationId)`
 
 Mock fallback from `mockMessageList` and generated thread messages.
 
@@ -1496,6 +1494,8 @@ All sections use mock data when `USE_MOCK` is true. Forms show pre-filled mock v
 - `src/lib/api-hooks/cleaning-api.ts`
 - `src/lib/api-hooks/reporting-api.ts`
 - `src/lib/api-hooks/settings-api.ts`
+- `src/lib/api-hooks/listings-api.ts`
+- `src/lib/api-hooks/maintenance-api.ts`
 
 **Action:** Create the real API integration layer that sits alongside the mock hooks. Each file exports the same hook interface as the mock hooks but calls real API endpoints.
 
@@ -1514,13 +1514,64 @@ export function useDashboardKPIs(timeframe: string, selectedListings: string[]) 
 
 **Auth contract:** The client session exposes `accessToken`, `tenantId`, `userId`, `role` — but NOT `refreshToken`. The refresh token is server-side only (stored in the Auth.js JWT, never sent to the browser session). All API hooks should obtain the access token via `session.accessToken` for `Authorization: Bearer` headers. Token refresh is handled automatically by the Auth.js JWT callback in `src/lib/auth.ts` — API hooks do not need to manage refresh logic.
 
-API endpoints to wire (using existing `apiClient` from `src/lib/api-client.ts`):
-- Dashboard: `GET /bookings/summary`, `GET /cleaning-tasks/summary` (existing), `GET /reporting/dashboard-metrics` (needs backend)
-- Calendar: `GET /bookings` with date range filter (existing)
-- Messaging: `GET /messages` (needs backend), `POST /messages/{id}/reply` (needs backend)
-- Cleaning: `GET /cleaning-tasks` (existing), `PATCH /cleaning-tasks/{id}` (existing)
-- Reporting: `GET /reporting/*` endpoints (needs backend)
-- Settings: `GET /settings` (needs backend), `PATCH /settings` (needs backend)
+API endpoints to wire per hook file (using existing `apiClient` from `src/lib/api-client.ts`):
+
+**dashboard-api.ts:**
+- `GET /dashboard/kpis?listing_ids[]=&start_date=&end_date=`
+- `GET /dashboard/alerts`
+- `GET /dashboard/compare?listing_ids[]=&start_date=&end_date=`
+- `GET /dashboard/preview?listing_ids[]=`
+
+**calendar-api.ts:**
+- `GET /calendar/events?listing_ids[]=&start_date=&end_date=&types[]=`
+
+**messaging-api.ts:**
+- `GET /conversations?status=&channel=&listing_id=&priority=`
+- `GET /conversations/{id}`
+- `POST /conversations`
+- `PATCH /conversations/{id}/status`
+- `PATCH /conversations/{id}/priority`
+- `GET /conversations/{id}/messages?page=&page_size=`
+- `POST /conversations/{id}/messages`
+- `POST /conversations/{id}/convert-to-maintenance`
+
+**cleaning-api.ts:**
+- `GET /cleaning-tasks?property_id=&listing_id=&task_type=&priority=&status=&date_from=&date_to=`
+- `POST /cleaning-tasks`
+- `PATCH /cleaning-tasks/{id}`
+- `GET /cleaning-tasks/shopping-list?property_id=&listing_id=&status=`
+- `POST /cleaning-tasks/shopping-list`
+- `PUT /cleaning-tasks/shopping-list/{id}`
+- `DELETE /cleaning-tasks/shopping-list/{id}`
+
+**reporting-api.ts:**
+- `GET /reporting/financials?listing_ids[]=&start_date=&end_date=`
+- `GET /reporting/occupancy?listing_ids[]=&start_date=&end_date=`
+- `GET /reporting/revenue-breakdown?listing_ids[]=&start_date=&end_date=`
+- `GET /reporting/expense-breakdown?listing_ids[]=&start_date=&end_date=`
+- `GET /saved-reports`
+- `POST /saved-reports`
+- `PUT /saved-reports/{id}`
+- `DELETE /saved-reports/{id}`
+
+**settings-api.ts:**
+- `GET /settings/{section}`
+- `PUT /settings/{section}`
+
+**listings-api.ts:**
+- `GET /listings?property_id=&listing_type=&page=&page_size=`
+- `GET /listings/hierarchy`
+- `POST /listing-groups`
+- `GET /listing-groups`
+- `PUT /listing-groups/{id}`
+- `DELETE /listing-groups/{id}`
+
+**maintenance-api.ts:**
+- `GET /maintenance?property_id=&listing_id=&status=&priority=&date_from=&date_to=`
+- `POST /maintenance`
+- `PUT /maintenance/{id}`
+- `DELETE /maintenance/{id}`
+- `GET /vacancy?listing_ids[]=&start_date=&end_date=&min_gap_days=`
 
 For endpoints that don't exist yet in the backend, the API hook should gracefully fall back to mock data with a console.warn. This ensures the frontend works standalone.
 
