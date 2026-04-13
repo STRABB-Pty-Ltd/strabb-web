@@ -136,7 +136,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
-      session.refreshToken = token.refreshToken;
+      // refreshToken intentionally NOT exposed to client session — stays server-side in JWT only
       session.tenantId = token.tenantId;
       session.userId = token.userId;
       session.role = token.role;

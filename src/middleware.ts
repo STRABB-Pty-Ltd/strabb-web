@@ -6,10 +6,11 @@ export default auth((req) => {
 
   const isLoginPage = nextUrl.pathname === "/login";
   const isAuthRoute = nextUrl.pathname.startsWith("/api/auth");
+  const isPublicPage = nextUrl.pathname === "/privacy" || nextUrl.pathname === "/terms";
   const isRoot = nextUrl.pathname === "/";
 
-  // Allow auth API routes through
-  if (isAuthRoute) return;
+  // Allow auth API routes and public pages through
+  if (isAuthRoute || isPublicPage) return;
 
   // Redirect authenticated users away from login
   if (isLoginPage && isAuthenticated) {
