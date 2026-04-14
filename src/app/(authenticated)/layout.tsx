@@ -1,5 +1,5 @@
-import { AppShell } from "@/components/layout/app-shell";
+import { NewAppShell } from "@/components/shell/app-shell";
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
-  return <AppShell>{children}</AppShell>;
+  return <NewAppShell>{children}</NewAppShell>;
 }
