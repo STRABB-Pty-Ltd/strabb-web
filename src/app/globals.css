@@ -5,13 +5,72 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* === STRABB Design Tokens === */
+
+  /* Primary palette */
+  --strabb-primary: #1E40AF;
+  --strabb-secondary: #3B82F6;
+  --strabb-accent: #D97706;
+
+  /* Channel colors */
+  --channel-airbnb: #FF5A5F;
+  --channel-booking: #003580;
+  --channel-vrbo: #3B5998;
+  --channel-direct: #D97706;
+
+  /* Semantic colors */
+  --semantic-success: #16A34A;
+  --semantic-warning: #92400E;
+  --semantic-destructive: #DC2626;
+  --semantic-in-progress: #8B5CF6;
+
+  /* Cleaning status colors */
+  --status-pending: #D97706;
+  --status-confirmed: #3B82F6;
+  --status-in-progress: #8B5CF6;
+  --status-completed: #16A34A;
+  --status-issues: #DC2626;
+  --status-cancelled: #6B7280;
+
+  /* Booking status colors */
+  --booking-checked-out: #6B7280;
+  --booking-checked-in: #16A34A;
+  --booking-confirmed: #3B82F6;
+  --booking-pending: #D97706;
+  --booking-cancelled: #DC2626;
+
+  /* Layout dimensions */
+  --topnav-height: 56px;
+  --submenu-height: 44px;
+  --sidebar-width: 260px;
+  --drilldown-width: 420px;
+  --thread-width: 520px;
+
+  /* Spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Chip (submenu) styling */
+  --chip-radius: 20px;
+  --chip-height: 32px;
+
+  /* === shadcn overrides === */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.387 0.169 264.1);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -31,7 +90,7 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.387 0.169 264.1);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
@@ -75,6 +134,7 @@
 
 @theme inline {
   --font-sans: var(--font-sans);
+  --font-data: var(--font-data);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -125,4 +185,8 @@
   html {
     @apply font-sans;
   }
+}
+
+.font-data {
+  font-family: var(--font-data), monospace;
 }
