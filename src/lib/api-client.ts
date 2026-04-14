@@ -1,3 +1,5 @@
+import { keysToCamel, keysToSnake } from "./case-utils";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 interface RequestOptions extends Omit<RequestInit, "body"> {
@@ -28,7 +30,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...init,
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? JSON.stringify(keysToSnake(body)) : undefined,
   });
 
   if (!response.ok) {
@@ -51,7 +53,8 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     throw new ApiError(response.status, message, code);
   }
 
-  return response.json() as Promise<T>;
+  const json = await response.json();
+  return keysToCamel<T>(json);
 }
 
 export const apiClient = {

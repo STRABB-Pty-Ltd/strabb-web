@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 
-import { mockListingList } from "@/lib/mock-data";
+import { useListings } from "@/hooks/use-listings";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
@@ -20,9 +20,12 @@ export function ListingFilterTree() {
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
 
-  const parents = mockListingList.filter((l) => l.relationship === "parent");
-  const standalones = mockListingList.filter((l) => l.relationship === "standalone");
-  const allIds = mockListingList.map((l) => l.id);
+  const { data: listingsData } = useListings();
+  const allListings = (listingsData?.data ?? []) as unknown as Listing[];
+
+  const parents = allListings.filter((l) => l.relationship === "parent");
+  const standalones = allListings.filter((l) => l.relationship === "standalone");
+  const allIds = allListings.map((l) => l.id);
   const allSelected = allIds.length > 0 && allIds.every((id) => selectedListings.includes(id));
 
   const handleSelectAll = () => setSelectedListings(allIds);
@@ -90,7 +93,7 @@ export function ListingFilterTree() {
       <div className="flex flex-col gap-0.5">
         {/* Parent listings with children */}
         {parents.map((parent) => {
-          const children = mockListingList.filter((l) => l.parentId === parent.id);
+          const children = allListings.filter((l) => l.parentId === parent.id);
           const isExpanded = expandedGroups[parent.id] ?? true;
           return (
             <div key={parent.id}>
@@ -129,7 +132,7 @@ export function ListingFilterTree() {
         {/* Custom groups */}
         {customGroups.map((group) => {
           const isExpanded = expandedGroups[group.id] ?? false;
-          const groupListings = mockListingList.filter((l) => group.listingIds.includes(l.id));
+          const groupListings = allListings.filter((l) => group.listingIds.includes(l.id));
           return (
             <div key={group.id}>
               <div className="flex items-center gap-1">

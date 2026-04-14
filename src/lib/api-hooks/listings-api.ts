@@ -24,7 +24,10 @@ export function useListingsHierarchyAPI() {
 
   return useQuery<ListingHierarchy>({
     queryKey: ["listings-hierarchy"],
-    queryFn: () => apiClient.get("/listings/hierarchy"),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: ListingHierarchy }>("/listings/hierarchy");
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -34,7 +37,10 @@ export function useListingGroupsAPI() {
 
   return useQuery<ListingGroup[]>({
     queryKey: ["listing-groups"],
-    queryFn: () => apiClient.get("/listing-groups"),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: ListingGroup[] }>("/listing-groups");
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }

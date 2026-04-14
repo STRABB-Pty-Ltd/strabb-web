@@ -9,7 +9,7 @@ import type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks
 export function useReportingKPIsAPI(selectedListings: string[], timeframe?: string) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids[]", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
   if (timeframe) {
     params.set("start_date", timeframe);
     params.set("end_date", timeframe);
@@ -17,7 +17,10 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
 
   return useQuery<ReportingKPI[]>({
     queryKey: ["reporting-kpis", ...selectedListings],
-    queryFn: () => apiClient.get(`/reporting/financials?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: ReportingKPI[] }>(`/reporting/financials?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -25,7 +28,7 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
 export function useReportingChartDataAPI(selectedListings: string[], timeframe?: string) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids[]", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
   if (timeframe) {
     params.set("start_date", timeframe);
     params.set("end_date", timeframe);
@@ -34,12 +37,12 @@ export function useReportingChartDataAPI(selectedListings: string[], timeframe?:
   return useQuery<ChartDataSet>({
     queryKey: ["reporting-charts", ...selectedListings],
     queryFn: async () => {
-      const [occupancy, revenue, expenses] = await Promise.all([
-        apiClient.get<Partial<ChartDataSet>>(`/reporting/occupancy?${params.toString()}`),
-        apiClient.get<Partial<ChartDataSet>>(`/reporting/revenue-breakdown?${params.toString()}`),
-        apiClient.get<Partial<ChartDataSet>>(`/reporting/expense-breakdown?${params.toString()}`),
+      const [occupancyRes, revenueRes, expensesRes] = await Promise.all([
+        apiClient.get<{ data: Partial<ChartDataSet> }>(`/reporting/occupancy?${params.toString()}`),
+        apiClient.get<{ data: Partial<ChartDataSet> }>(`/reporting/revenue-breakdown?${params.toString()}`),
+        apiClient.get<{ data: Partial<ChartDataSet> }>(`/reporting/expense-breakdown?${params.toString()}`),
       ]);
-      return { ...occupancy, ...revenue, ...expenses } as ChartDataSet;
+      return { ...occupancyRes.data, ...revenueRes.data, ...expensesRes.data } as ChartDataSet;
     },
     enabled: !USE_MOCK,
   });
@@ -56,7 +59,10 @@ export function useSavedReportsAPI() {
 
   return useQuery<SavedReportPayload[]>({
     queryKey: ["saved-reports"],
-    queryFn: () => apiClient.get("/saved-reports"),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: SavedReportPayload[] }>("/saved-reports");
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }

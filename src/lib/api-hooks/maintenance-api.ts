@@ -26,7 +26,10 @@ export function useMaintenanceAPI(filters?: {
 
   return useQuery<Maintenance[]>({
     queryKey: ["maintenance", JSON.stringify(filters)],
-    queryFn: () => apiClient.get(`/maintenance?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: Maintenance[] }>(`/maintenance?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -76,14 +79,17 @@ export function useVacancyAPI(
 ) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids[]", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
   if (startDate) params.set("start_date", startDate);
   if (endDate) params.set("end_date", endDate);
   if (minGapDays) params.set("min_gap_days", String(minGapDays));
 
   return useQuery<Vacancy[]>({
     queryKey: ["vacancy", ...selectedListings, startDate, endDate, minGapDays],
-    queryFn: () => apiClient.get(`/vacancy?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: Vacancy[] }>(`/vacancy?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }

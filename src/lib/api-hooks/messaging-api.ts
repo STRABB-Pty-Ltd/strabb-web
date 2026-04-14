@@ -22,7 +22,10 @@ export function useMessagesAPI(
 
   return useQuery<Message[]>({
     queryKey: ["conversations", ...channels, ...submenuFilters, ...selectedListings],
-    queryFn: () => apiClient.get(`/conversations?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: Message[] }>(`/conversations?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -32,7 +35,10 @@ export function useMessageThreadAPI(messageId: string | null) {
 
   return useQuery<ThreadMessage[]>({
     queryKey: ["conversation-messages", messageId ?? ""],
-    queryFn: () => apiClient.get(`/conversations/${messageId}/messages`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: ThreadMessage[] }>(`/conversations/${messageId}/messages`);
+      return response.data;
+    },
     enabled: !USE_MOCK && !!messageId,
   });
 }

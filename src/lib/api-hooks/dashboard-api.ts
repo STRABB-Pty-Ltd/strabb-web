@@ -9,13 +9,16 @@ import type { KPIData, AlertItem, PreviewData } from "@/lib/mock-data/dashboard-
 export function useDashboardKPIsAPI(timeframe: string, selectedListings: string[]) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids[]", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", timeframe);
   params.set("end_date", timeframe);
 
   return useQuery<KPIData[]>({
     queryKey: ["dashboard-kpis", timeframe, ...selectedListings],
-    queryFn: () => apiClient.get(`/dashboard/kpis?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: KPIData[] }>(`/dashboard/kpis?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -25,7 +28,10 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
 
   return useQuery<AlertItem[]>({
     queryKey: ["dashboard-alerts", ...selectedListings],
-    queryFn: () => apiClient.get("/dashboard/alerts"),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: AlertItem[] }>("/dashboard/alerts");
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -33,11 +39,14 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
 export function useDashboardPreviewAPI(selectedListings: string[], timeframe: string) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids[]", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
 
   return useQuery<PreviewData>({
     queryKey: ["dashboard-preview", timeframe, ...selectedListings],
-    queryFn: () => apiClient.get(`/dashboard/preview?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: PreviewData }>(`/dashboard/preview?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -45,13 +54,16 @@ export function useDashboardPreviewAPI(selectedListings: string[], timeframe: st
 export function useDashboardCompareAPI(selectedListings: string[], timeframe: string) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids[]", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", timeframe);
   params.set("end_date", timeframe);
 
   return useQuery({
     queryKey: ["dashboard-compare", timeframe, ...selectedListings],
-    queryFn: () => apiClient.get(`/dashboard/compare?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: unknown }>(`/dashboard/compare?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK && selectedListings.length > 0,
   });
 }

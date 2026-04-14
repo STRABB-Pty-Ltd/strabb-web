@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { X } from "lucide-react";
 
-import { mockShoppingItemList } from "@/lib/mock-data";
+import { useShoppingList } from "@/hooks/use-cleaning";
 import { useAppStore } from "@/stores/app-store";
 
 const priorityBadge: Record<string, { bg: string; text: string }> = {
@@ -17,6 +17,8 @@ export function ShoppingListPopup() {
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
   const boughtItems = useAppStore((s) => s.cleaning.boughtItems);
   const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
+  const selectedListings = useAppStore((s) => s.selectedListings);
+  const { data: shoppingItemList = [] } = useShoppingList(selectedListings);
 
   const [showAll, setShowAll] = useState(true);
 
@@ -37,8 +39,8 @@ export function ShoppingListPopup() {
   if (!shoppingListPopup.open) return null;
 
   const items = showAll
-    ? mockShoppingItemList
-    : mockShoppingItemList.filter((i) => !boughtItems.includes(i.id));
+    ? shoppingItemList
+    : shoppingItemList.filter((i) => !boughtItems.includes(i.id));
 
   // Group by listing
   const grouped = items.reduce(

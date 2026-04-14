@@ -28,7 +28,10 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
 
   return useQuery<CleaningTask[]>({
     queryKey: ["cleaning-tasks", ...submenuFilters, ...selectedListings],
-    queryFn: () => apiClient.get(`/cleaning-tasks?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: CleaningTask[] }>(`/cleaning-tasks?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }
@@ -40,7 +43,10 @@ export function useShoppingListAPI(selectedListings: string[]) {
 
   return useQuery<ShoppingItem[]>({
     queryKey: ["shopping-list", ...selectedListings],
-    queryFn: () => apiClient.get(`/cleaning-tasks/shopping-list?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: ShoppingItem[] }>(`/cleaning-tasks/shopping-list?${params.toString()}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }

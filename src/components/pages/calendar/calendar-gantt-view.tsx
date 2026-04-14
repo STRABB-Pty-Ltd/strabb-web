@@ -4,8 +4,9 @@ import { addDays, startOfMonth, endOfMonth } from "date-fns";
 
 import { GanttView } from "@/components/views/gantt-view";
 import type { CalendarEvent } from "@/hooks/use-calendar";
-import { mockListingList } from "@/lib/mock-data";
+import { useListings } from "@/hooks/use-listings";
 import { useAppStore } from "@/stores/app-store";
+import type { Listing } from "@/types/listing";
 
 interface CalendarGanttViewProps {
   events: CalendarEvent[];
@@ -14,14 +15,16 @@ interface CalendarGanttViewProps {
 export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const selectedListings = useAppStore((s) => s.selectedListings);
+  const { data: listingsData } = useListings();
+  const allListings = (listingsData?.data ?? []) as unknown as Listing[];
 
   const listings =
     selectedListings.length > 0
-      ? mockListingList.filter(
+      ? allListings.filter(
           (l) =>
             selectedListings.includes(l.id) && l.relationship !== "parent",
         )
-      : mockListingList.filter((l) => l.relationship !== "parent");
+      : allListings.filter((l) => l.relationship !== "parent");
 
   const rows = listings.map((l) => ({
     id: l.id,

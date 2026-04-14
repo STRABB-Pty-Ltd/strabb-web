@@ -10,7 +10,10 @@ export function useSettingsSectionAPI<T = Record<string, unknown>>(section: stri
 
   return useQuery<T>({
     queryKey: ["settings", section],
-    queryFn: () => apiClient.get(`/settings/${section}`),
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: T }>(`/settings/${section}`);
+      return response.data;
+    },
     enabled: !USE_MOCK,
   });
 }

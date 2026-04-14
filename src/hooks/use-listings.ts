@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient } from "./use-api-client";
 import { useAuthenticatedQuery } from "./use-authenticated-query";
-import { keysToCamel, keysToSnake } from "@/lib/case-utils";
 import type {
   ListingCreateFormData,
   ListingListResponse,
@@ -32,9 +31,6 @@ export function useListings({ propertyId, page = 1, pageSize = 100 }: UseListing
   return useAuthenticatedQuery<ListingListResponse>(
     [...LISTINGS_KEY, propertyId ?? "all", String(page), String(pageSize)],
     `/listings?${params.toString()}`,
-    {
-      select: (raw) => keysToCamel<ListingListResponse>(raw),
-    },
   );
 }
 
@@ -44,11 +40,11 @@ export function useCreateListing() {
 
   return useMutation({
     mutationFn: async (data: ListingCreateFormData) => {
-      const response = await apiClient.post<{ data: Record<string, unknown> }>(
+      const response = await apiClient.post<{ data: ListingResponse }>(
         "/listings",
-        keysToSnake(data),
+        data,
       );
-      return keysToCamel<ListingResponse>(response.data);
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LISTINGS_KEY });
@@ -62,11 +58,11 @@ export function useUpdateListing() {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ListingUpdateFormData }) => {
-      const response = await apiClient.put<{ data: Record<string, unknown> }>(
+      const response = await apiClient.put<{ data: ListingResponse }>(
         `/listings/${id}`,
-        keysToSnake(data),
+        data,
       );
-      return keysToCamel<ListingResponse>(response.data);
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: LISTINGS_KEY });

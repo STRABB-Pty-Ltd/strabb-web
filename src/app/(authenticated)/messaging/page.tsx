@@ -4,7 +4,6 @@ import { ThreadOverlay } from "@/components/overlays/thread-overlay";
 import { MessagingKanbanView } from "@/components/pages/messaging/messaging-kanban-view";
 import { MessagingListView } from "@/components/pages/messaging/messaging-list-view";
 import { useMessages, useMessageThread } from "@/hooks/use-messaging";
-import { mockMessageList } from "@/lib/mock-data";
 import { useAppStore } from "@/stores/app-store";
 
 export default function MessagingPage() {
@@ -22,7 +21,7 @@ export default function MessagingPage() {
   );
 
   const threadMsg = threadOverlay
-    ? mockMessageList.find((m) => m.id === threadOverlay.messageId)
+    ? messages.find((m) => m.id === threadOverlay.messageId)
     : null;
   const { data: threadMessages } = useMessageThread(
     threadOverlay?.messageId ?? null,
