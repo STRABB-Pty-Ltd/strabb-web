@@ -31,6 +31,19 @@ export function useListings({ propertyId, page = 1, pageSize = 100 }: UseListing
   return useAuthenticatedQuery<ListingListResponse>(
     [...LISTINGS_KEY, propertyId ?? "all", String(page), String(pageSize)],
     `/listings?${params.toString()}`,
+    {
+      select: (response) => ({
+        ...response,
+        data: response.data.map((item) => {
+          const raw = item as unknown as Record<string, unknown>;
+          return {
+            ...item,
+            // Backend returns listingType, frontend Listing type expects relationship
+            relationship: (raw.listingType as string) ?? (raw.relationship as string),
+          } as ListingResponse;
+        }),
+      }),
+    },
   );
 }
 

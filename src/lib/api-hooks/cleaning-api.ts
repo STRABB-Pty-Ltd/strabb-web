@@ -7,6 +7,47 @@ import { USE_MOCK } from "@/lib/mock-data";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { ShoppingItem } from "@/types/shopping-item";
 
+// Backend cleaning task shape after global keysToCamel
+interface RawCleaningTask {
+  id: string;
+  bookingId: string | null;
+  propertyId: string;
+  listingId: string;
+  cleanerName: string | null;
+  cleanerEmail: string | null;
+  scheduledDate: string | null;
+  scheduledTime: string | null;
+  status: string;
+  notes: string | null;
+  taskType: string;
+  priority: string;
+  estimatedHours: string | number;
+  checklistTotal: number;
+  checklistDone: number;
+  cost: string | null;
+}
+
+function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
+  return {
+    id: raw.id,
+    listingId: raw.listingId,
+    listingName: "",
+    listingColor: "",
+    bookingId: raw.bookingId,
+    assigneeName: raw.cleanerName,
+    assigneeEmail: raw.cleanerEmail,
+    scheduledTime: raw.scheduledTime ?? raw.scheduledDate ?? "",
+    completedTime: null,
+    checklistTotal: raw.checklistTotal,
+    checklistDone: raw.checklistDone,
+    priority: raw.priority as CleaningTask["priority"],
+    status: raw.status as CleaningTask["status"],
+    type: raw.taskType as CleaningTask["type"],
+    estimatedHours: typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
+    notes: raw.notes,
+  };
+}
+
 export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: string[]) {
   const apiClient = useApiClient();
   const params = new URLSearchParams();
@@ -29,8 +70,8 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   return useQuery<CleaningTask[]>({
     queryKey: ["cleaning-tasks", ...submenuFilters, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: CleaningTask[] }>(`/cleaning-tasks?${params.toString()}`);
-      return response.data;
+      const response = await apiClient.get<{ data: RawCleaningTask[] }>(`/cleaning-tasks?${params.toString()}`);
+      return response.data.map(mapCleaningTask);
     },
     enabled: !USE_MOCK,
   });
