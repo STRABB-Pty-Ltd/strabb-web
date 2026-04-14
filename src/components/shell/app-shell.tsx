@@ -1,17 +1,23 @@
 "use client";
 
+import { Suspense } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
 import { Canvas } from "./canvas";
 import { ContextualSidebar } from "./contextual-sidebar";
+import { ErrorBoundary } from "./error-boundary";
+import { KeyboardHelpModal } from "./keyboard-help-modal";
+import { PageLoading } from "./page-loading";
 import { SubmenuBar } from "./submenu-bar";
 import { TopNav } from "./top-nav";
 
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
+  const { helpOpen, setHelpOpen } = useKeyboardShortcuts();
 
   return (
     <div className="flex h-screen flex-col">
@@ -30,15 +36,20 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={toggleSidebar}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
             </button>
           </div>
-          <Canvas>{children}</Canvas>
+          <ErrorBoundary>
+            <Suspense fallback={<PageLoading />}>
+              <Canvas>{children}</Canvas>
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </div>
+      {helpOpen && <KeyboardHelpModal onClose={() => setHelpOpen(false)} />}
     </div>
   );
 }

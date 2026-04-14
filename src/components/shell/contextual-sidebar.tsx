@@ -43,6 +43,8 @@ export function ContextualSidebar() {
 
       {/* Sidebar */}
       <aside
+        role="complementary"
+        aria-label="Sidebar"
         className={[
           "flex flex-col bg-white border-r overflow-y-auto",
           "transition-transform duration-300 ease-in-out",

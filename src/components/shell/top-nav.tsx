@@ -14,6 +14,8 @@ export function TopNav() {
 
   return (
     <nav
+      role="navigation"
+      aria-label="Main navigation"
       className="flex shrink-0 items-center"
       style={{
         height: "var(--topnav-height)",
