@@ -92,10 +92,9 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="flex shrink-0 items-center overflow-x-auto border-b"
+      className="flex shrink-0 items-center justify-center overflow-x-auto border-b"
       style={{
         height: "var(--submenu-height)",
-        paddingLeft: "var(--space-md)",
         gap: "var(--space-sm)",
         borderColor: "var(--border)",
       }}
@@ -112,7 +111,7 @@ export function SubmenuBar() {
               className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap transition-colors"
               style={{
                 height: "var(--chip-height)",
-                borderRadius: "var(--chip-radius)",
+                borderRadius: 8,
                 padding: "0 var(--space-md)",
                 fontSize: 14,
                 ...(active

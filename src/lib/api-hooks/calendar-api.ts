@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
 import type { CalendarEvent } from "@/lib/mock-data/calendar-hooks";
 
@@ -51,9 +51,26 @@ export function useCalendarEventsAPI(
   endDate?: string,
 ) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
-  submenuFilters.forEach((t) => params.append("types", t));
+  const isOverview = submenuFilters.length === 0 || submenuFilters.includes("overview");
+  if (isOverview) {
+    // Show everything except vacancy unless explicitly selected
+    ["booking", "cleaning", "maintenance"].forEach((t) => params.append("types", t));
+  } else {
+    // Map submenu chip IDs (plural) to API entity types (singular)
+    const chipToType: Record<string, string> = {
+      bookings: "booking",
+      cleaning: "cleaning",
+      vacancy: "vacancy",
+      maintenance: "maintenance",
+    };
+    submenuFilters.forEach((t) => {
+      const mapped = chipToType[t] ?? t;
+      params.append("types", mapped);
+    });
+  }
   if (startDate) params.set("start_date", startDate);
   if (endDate) params.set("end_date", endDate);
 
@@ -63,6 +80,6 @@ export function useCalendarEventsAPI(
       const response = await apiClient.get<{ data: RawCalendarEvent[] }>(`/calendar/events?${params.toString()}`);
       return response.data.map(mapCalendarEvent);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }

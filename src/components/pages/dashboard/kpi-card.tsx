@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -42,6 +43,9 @@ interface KPICardProps {
 }
 
 export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const Icon = iconMap[kpi.icon] ?? DollarSign;
   const trendPositive = kpi.trend > 0;
   const trendNeutral = kpi.trend === 0;
@@ -60,7 +64,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         >
           <Icon size={16} style={{ color: "var(--strabb-secondary)" }} />
         </div>
-        {!trendNeutral && (
+        {mounted && !trendNeutral && (
           <div
             className="ml-auto flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
             style={{
@@ -80,7 +84,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         )}
       </div>
 
-      <p className="font-data text-2xl font-bold text-gray-900">
+      <p className="font-data text-2xl font-bold text-gray-900" suppressHydrationWarning>
         {formatValue(kpi.value, kpi.type)}
       </p>
 

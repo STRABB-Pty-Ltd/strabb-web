@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { KanbanBoard, type KanbanBoardProps } from "../kanban-board";
 
@@ -33,7 +33,6 @@ const columns = [
 const defaultProps: KanbanBoardProps<TestItem> = {
   columns,
   renderCard: (item) => <div>{item.title}</div>,
-  onDragEnd: vi.fn(),
   getItemId: (item) => item.id,
   getBorderColor: (item) => item.color,
 };

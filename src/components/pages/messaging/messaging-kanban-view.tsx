@@ -50,11 +50,6 @@ export function MessagingKanbanView({ messages }: MessagingKanbanViewProps) {
           }}
         />
       )}
-      onDragEnd={({ itemId, targetColumn }) => {
-        // Status change via drag would use the action here
-        void itemId;
-        void targetColumn;
-      }}
       getItemId={(msg) => msg.id}
       getBorderColor={(msg) => channelColors[msg.channel] ?? "#6B7280"}
     />

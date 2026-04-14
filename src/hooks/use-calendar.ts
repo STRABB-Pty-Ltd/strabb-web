@@ -5,14 +5,16 @@ import { useMemo } from "react";
 import { USE_MOCK } from "@/lib/mock-data";
 import { useCalendarEventsMock } from "@/lib/mock-data/calendar-hooks";
 import { useCalendarEventsAPI } from "@/lib/api-hooks/calendar-api";
+import { timeframeToDateRange } from "@/lib/timeframe-utils";
 
 import type { CalendarEvent } from "@/lib/mock-data/calendar-hooks";
 
 export type { CalendarEvent, CalendarEventType } from "@/lib/mock-data/calendar-hooks";
 
-export function useCalendarEvents(selectedListings: string[], submenuFilters: string[]) {
+export function useCalendarEvents(selectedListings: string[], submenuFilters: string[], timeframe: string = "this_month") {
+  const { startDate, endDate } = timeframeToDateRange(timeframe);
   const mockResult = useCalendarEventsMock(selectedListings, submenuFilters);
-  const apiResult = useCalendarEventsAPI(selectedListings, submenuFilters);
+  const apiResult = useCalendarEventsAPI(selectedListings, submenuFilters, startDate, endDate);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };

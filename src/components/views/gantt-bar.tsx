@@ -5,10 +5,11 @@ interface GanttBarProps {
   color: string;
   startCol: number;
   spanCols: number;
+  cellWidth: number;
   onClick: () => void;
 }
 
-export function GanttBar({ label, color, startCol, spanCols, onClick }: GanttBarProps) {
+export function GanttBar({ label, color, startCol, spanCols, cellWidth, onClick }: GanttBarProps) {
   return (
     <button
       type="button"
@@ -16,8 +17,8 @@ export function GanttBar({ label, color, startCol, spanCols, onClick }: GanttBar
       className="absolute truncate rounded text-xs text-white"
       title={label}
       style={{
-        left: startCol * 40,
-        width: spanCols * 40 - 4,
+        left: startCol * cellWidth,
+        width: spanCols * cellWidth - 4,
         height: 28,
         top: 2,
         backgroundColor: color,

@@ -49,7 +49,6 @@ export function CleaningGanttView({ tasks }: CleaningGanttViewProps) {
   const rows = listings.map((l) => ({
     id: l.id,
     label: l.name,
-    color: l.color,
   }));
 
   const now = new Date();

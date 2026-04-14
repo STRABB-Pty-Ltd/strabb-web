@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
 import type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
@@ -66,6 +66,7 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
 
 export function useReportingKPIsAPI(selectedListings: string[], timeframe?: string) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -78,12 +79,13 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
       const response = await apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`);
       return rawFinancialsToKPIs(response.data);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useReportingChartDataAPI(selectedListings: string[], timeframe?: string) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -142,7 +144,7 @@ export function useReportingChartDataAPI(selectedListings: string[], timeframe?:
         revenueByListing,
       } as ChartDataSet;
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
@@ -154,6 +156,7 @@ export interface SavedReportPayload {
 
 export function useSavedReportsAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
 
   return useQuery<SavedReportPayload[]>({
     queryKey: ["saved-reports"],
@@ -161,12 +164,13 @@ export function useSavedReportsAPI() {
       const response = await apiClient.get<{ data: SavedReportPayload[] }>("/saved-reports");
       return response.data;
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useCreateSavedReportAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -179,6 +183,7 @@ export function useCreateSavedReportAPI() {
 
 export function useUpdateSavedReportAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -192,6 +197,7 @@ export function useUpdateSavedReportAPI() {
 
 export function useDeleteSavedReportAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

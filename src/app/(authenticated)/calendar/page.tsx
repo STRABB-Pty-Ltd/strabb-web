@@ -13,12 +13,14 @@ import { CalendarMonthView } from "@/components/pages/calendar/calendar-month-vi
 export default function CalendarPage() {
   const view = useAppStore((s) => s.calendar.view);
   const submenu = useAppStore((s) => s.calendar.submenu);
+  const timeframe = useAppStore((s) => s.calendar.timeframe);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { effectiveView, showMobileBanner } = useMobileViewOverride(view);
 
   const { data: events, isLoading } = useCalendarEvents(
     selectedListings,
     submenu,
+    timeframe,
   );
 
   if (isLoading) {

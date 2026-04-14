@@ -17,3 +17,12 @@ export function useApiClient() {
     [session?.accessToken],
   );
 }
+
+/**
+ * Returns true when the session is authenticated and has a valid access token.
+ * Use in `enabled` conditions to prevent queries firing before auth is ready.
+ */
+export function useAuthReady() {
+  const { data: session, status } = useSession();
+  return status === "authenticated" && !!session?.accessToken;
+}

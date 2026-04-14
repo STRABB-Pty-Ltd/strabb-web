@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
 import type { Maintenance } from "@/types/maintenance";
 import type { Vacancy } from "@/types/vacancy";
@@ -16,6 +16,7 @@ export function useMaintenanceAPI(filters?: {
   dateTo?: string;
 }) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   if (filters?.propertyId) params.set("property_id", filters.propertyId);
   if (filters?.listingId) params.set("listing_id", filters.listingId);
@@ -30,12 +31,13 @@ export function useMaintenanceAPI(filters?: {
       const response = await apiClient.get<{ data: Maintenance[] }>(`/maintenance?${params.toString()}`);
       return response.data;
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useCreateMaintenanceAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -48,6 +50,7 @@ export function useCreateMaintenanceAPI() {
 
 export function useUpdateMaintenanceAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -61,6 +64,7 @@ export function useUpdateMaintenanceAPI() {
 
 export function useDeleteMaintenanceAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -78,6 +82,7 @@ export function useVacancyAPI(
   minGapDays?: number,
 ) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   if (startDate) params.set("start_date", startDate);
@@ -90,6 +95,6 @@ export function useVacancyAPI(
       const response = await apiClient.get<{ data: Vacancy[] }>(`/vacancy?${params.toString()}`);
       return response.data;
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }

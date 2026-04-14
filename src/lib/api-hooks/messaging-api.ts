@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
 import type { Message, ThreadMessage } from "@/types/message";
 
@@ -71,6 +71,7 @@ export function useMessagesAPI(
   selectedListings: string[],
 ) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   channels.forEach((ch) => params.append("channel", ch));
   const statusFilter = submenuFilters.find((f) =>
@@ -85,12 +86,13 @@ export function useMessagesAPI(
       const response = await apiClient.get<{ data: RawConversation[] }>(`/conversations?${params.toString()}`);
       return response.data.map(mapConversation);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useMessageThreadAPI(messageId: string | null) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
 
   return useQuery<ThreadMessage[]>({
     queryKey: ["conversation-messages", messageId ?? ""],
@@ -98,12 +100,13 @@ export function useMessageThreadAPI(messageId: string | null) {
       const response = await apiClient.get<{ data: RawThreadMessage[] }>(`/conversations/${messageId}/messages`);
       return response.data.map(mapThreadMessage);
     },
-    enabled: !USE_MOCK && !!messageId,
+    enabled: !USE_MOCK && isReady && !!messageId,
   });
 }
 
 export function useSendMessageAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -119,6 +122,7 @@ export function useSendMessageAPI() {
 
 export function useUpdateConversationStatusAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -132,6 +136,7 @@ export function useUpdateConversationStatusAPI() {
 
 export function useUpdateConversationPriorityAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -145,6 +150,7 @@ export function useUpdateConversationPriorityAPI() {
 
 export function useConvertToMaintenanceAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
 
   return useMutation({
     mutationFn: (conversationId: string) =>

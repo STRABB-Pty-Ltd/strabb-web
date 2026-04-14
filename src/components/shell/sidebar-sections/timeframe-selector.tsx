@@ -59,7 +59,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
       <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
         Timeframe
       </h3>
-      <div className="flex flex-wrap gap-1">
+      <div className="grid grid-cols-2 gap-1">
         {options.map((opt) => {
           const isActive = currentTf === opt.id;
           return (
@@ -72,7 +72,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
                   opt.id,
                 )
               }
-              className="rounded-full px-3 py-1 text-xs transition-colors"
+              className="rounded-lg px-3 py-1 text-xs transition-colors"
               style={
                 isActive
                   ? {
@@ -92,7 +92,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         <button
           type="button"
           onClick={openTimeframePopup}
-          className="rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-400 transition-colors hover:border-gray-400 hover:text-gray-500"
+          className="col-span-2 rounded-lg border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-400 transition-colors hover:border-gray-400 hover:text-gray-500"
         >
           Custom
         </button>

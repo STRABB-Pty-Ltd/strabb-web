@@ -52,15 +52,14 @@ export function TopNav() {
               href={item.href}
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="flex flex-col items-center rounded-lg px-3 py-1.5 text-white transition-colors hover:bg-white/10"
+              className="flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
               style={
                 isActive
                   ? { backgroundColor: "var(--strabb-secondary)", borderRadius: 8 }
                   : undefined
               }
             >
-              <Icon size={24} strokeWidth={1.5} />
-              <span className="mt-0.5 text-xs">{item.label}</span>
+              {item.label}
             </Link>
           );
         })}
@@ -71,15 +70,14 @@ export function TopNav() {
         href={settingsNavItem.href}
         onClick={() => setCurrentPage(settingsNavItem.id)}
         aria-current={currentPage === "settings" ? "page" : undefined}
-        className="mr-4 flex flex-col items-center rounded-lg px-3 py-1.5 text-white transition-colors hover:bg-white/10"
+        className="mr-4 flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
         style={
           currentPage === "settings"
             ? { backgroundColor: "var(--strabb-secondary)", borderRadius: 8 }
             : undefined
         }
       >
-        <settingsNavItem.icon size={24} strokeWidth={1.5} />
-        <span className="mt-0.5 text-xs">{settingsNavItem.label}</span>
+        {settingsNavItem.label}
       </Link>
     </nav>
   );

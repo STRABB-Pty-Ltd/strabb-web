@@ -13,6 +13,9 @@ import type { CleaningTask } from "@/types/cleaning-task";
 import type { Financial } from "@/types/financial";
 import type { Message } from "@/types/message";
 
+// Fixed reference date to avoid SSR/client hydration mismatch from new Date()
+const REFERENCE_NOW = new Date("2026-04-14T00:00:00Z");
+
 export interface KPIData {
   label: string;
   value: string | number;
@@ -103,7 +106,7 @@ function computeKPIs(
         )
       : 0;
 
-  const now = new Date();
+  const now = REFERENCE_NOW;
   const nextWeek = new Date(now);
   nextWeek.setDate(nextWeek.getDate() + 7);
 
@@ -192,7 +195,7 @@ function computeAlerts(
   const overdue = filteredTasks.filter(
     (t) =>
       (t.status === "pending" || t.status === "confirmed") &&
-      new Date(t.scheduledTime) < new Date(),
+      new Date(t.scheduledTime) < REFERENCE_NOW,
   );
   if (overdue.length > 0) {
     alerts.push({
@@ -224,7 +227,7 @@ function computePreview(
   financials: Financial[],
   selectedListings: string[],
 ): PreviewData {
-  const now = new Date();
+  const now = REFERENCE_NOW;
   const filtered =
     selectedListings.length > 0
       ? bookings.filter((b) => selectedListings.includes(b.listingId))

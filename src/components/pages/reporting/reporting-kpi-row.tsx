@@ -92,7 +92,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
                 </div>
               )}
             </div>
-            <p className="font-data text-2xl font-bold text-gray-900">
+            <p className="font-data text-2xl font-bold text-gray-900" suppressHydrationWarning>
               {formatValue(kpi.value, kpi.type)}
             </p>
             <p className="mt-1 text-xs text-gray-500">{kpi.label}</p>

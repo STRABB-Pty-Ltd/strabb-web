@@ -1,4 +1,6 @@
 import {
+  addDays,
+  addWeeks,
   startOfDay,
   endOfDay,
   startOfWeek,
@@ -30,12 +32,18 @@ export function timeframeToDateRange(timeframe: string): DateRange {
 
   switch (timeframe) {
     case "today":
+    case "day":
       start = startOfDay(now);
       end = endOfDay(now);
       break;
     case "this_week":
+    case "week":
       start = startOfWeek(now, { weekStartsOn: 1 });
       end = endOfWeek(now, { weekStartsOn: 1 });
+      break;
+    case "fortnight":
+      start = startOfWeek(now, { weekStartsOn: 1 });
+      end = addWeeks(start, 2);
       break;
     case "last_week": {
       const lastWeek = subWeeks(now, 1);
@@ -44,6 +52,7 @@ export function timeframeToDateRange(timeframe: string): DateRange {
       break;
     }
     case "this_month":
+    case "month":
       start = startOfMonth(now);
       end = endOfMonth(now);
       break;
@@ -54,12 +63,17 @@ export function timeframeToDateRange(timeframe: string): DateRange {
       break;
     }
     case "this_quarter":
+    case "quarter":
       start = startOfQuarter(now);
       end = endOfQuarter(now);
       break;
     case "this_year":
       start = startOfYear(now);
       end = endOfYear(now);
+      break;
+    case "ytd":
+      start = startOfYear(now);
+      end = endOfDay(now);
       break;
     default:
       // Fallback: treat as this_month

@@ -4,9 +4,10 @@ import { format, eachDayOfInterval, isToday } from "date-fns";
 
 interface GanttHeaderProps {
   dateRange: { start: Date; end: Date };
+  cellWidth: number;
 }
 
-export function GanttHeader({ dateRange }: GanttHeaderProps) {
+export function GanttHeader({ dateRange, cellWidth }: GanttHeaderProps) {
   const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
 
   return (
@@ -20,7 +21,7 @@ export function GanttHeader({ dateRange }: GanttHeaderProps) {
             key={day.toISOString()}
             className="shrink-0 border-b border-r px-1 py-1 text-center text-xs text-gray-500"
             style={{
-              width: 40,
+              width: cellWidth,
               backgroundColor: isToday(day) ? "rgba(59, 130, 246, 0.05)" : "white",
               borderColor: "var(--border)",
             }}

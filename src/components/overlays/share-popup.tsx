@@ -87,9 +87,13 @@ export function SharePopup() {
             <button
               type="button"
               disabled
-              className="rounded-lg px-4 py-2 text-sm text-gray-400"
+              className="relative rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-400"
+              title="PDF export coming soon"
             >
               Download PDF
+              <span className="absolute -top-2 -right-2 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
+                Soon
+              </span>
             </button>
             <button
               type="button"

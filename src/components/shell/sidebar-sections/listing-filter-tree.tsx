@@ -53,10 +53,6 @@ export function ListingFilterTree() {
           onChange={() => toggleListing(listing.id)}
           className="h-3.5 w-3.5 rounded border-gray-300"
         />
-        <span
-          className="h-2.5 w-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: listing.color }}
-        />
         <span className="truncate text-sm text-gray-700">{listing.name}</span>
       </label>
     );
@@ -64,7 +60,7 @@ export function ListingFilterTree() {
 
   return (
     <div
-      className="flex-1 overflow-y-auto border-b"
+      className="overflow-y-auto border-b"
       style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}
     >
       <div className="mb-2 flex items-center justify-between">
@@ -111,10 +107,6 @@ export function ListingFilterTree() {
                     checked={selectedListings.includes(parent.id)}
                     onChange={() => toggleListing(parent.id)}
                     className="h-3.5 w-3.5 rounded border-gray-300"
-                  />
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: parent.color }}
                   />
                   <span className="truncate text-sm font-medium text-gray-700">
                     {parent.name}

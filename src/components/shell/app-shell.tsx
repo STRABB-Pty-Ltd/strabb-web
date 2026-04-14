@@ -1,10 +1,12 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import type { PageId } from "@/stores/types";
 
 import { Canvas } from "./canvas";
 import { ContextualSidebar } from "./contextual-sidebar";
@@ -14,16 +16,29 @@ import { PageLoading } from "./page-loading";
 import { SubmenuBar } from "./submenu-bar";
 import { TopNav } from "./top-nav";
 
+const validPages: PageId[] = ["dashboard", "calendar", "messaging", "cleaning", "reporting", "settings"];
+
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
+  const currentPage = useAppStore((s) => s.currentPage);
+  const setCurrentPage = useAppStore((s) => s.setCurrentPage);
+  const pathname = usePathname();
   const { helpOpen, setHelpOpen } = useKeyboardShortcuts();
+
+  // Sync store's currentPage with URL on mount and navigation
+  useEffect(() => {
+    const segment = pathname.split("/")[1] as PageId;
+    if (segment && validPages.includes(segment) && segment !== currentPage) {
+      setCurrentPage(segment);
+    }
+  }, [pathname, currentPage, setCurrentPage]);
 
   return (
     <div className="flex h-screen flex-col">
       <TopNav />
       <SubmenuBar />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="relative flex flex-1 overflow-hidden">
         <ContextualSidebar />
         <div
           className="flex flex-1 flex-col overflow-hidden transition-all duration-300"

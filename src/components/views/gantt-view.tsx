@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { differenceInDays, eachDayOfInterval, isToday, startOfDay } from "date-fns";
 
 import { GanttBar } from "./gantt-bar";
@@ -17,6 +18,9 @@ export interface GanttViewProps<T> {
   todayLineColor?: string;
 }
 
+const LABEL_WIDTH = 160;
+const MIN_CELL_WIDTH = 32;
+
 export function GanttView<T>({
   rows,
   items,
@@ -28,15 +32,30 @@ export function GanttView<T>({
   onItemClick,
   todayLineColor = "#DC2626",
 }: GanttViewProps<T>) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [cellWidth, setCellWidth] = useState(40);
+
   const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
   const totalDays = days.length;
   const rangeStart = startOfDay(dateRange.start);
-
   const todayIndex = days.findIndex((d) => isToday(d));
 
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const available = entry.contentRect.width - LABEL_WIDTH;
+      const computed = Math.max(MIN_CELL_WIDTH, Math.floor(available / totalDays));
+      setCellWidth(computed);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [totalDays]);
+
   return (
-    <div className="overflow-x-auto rounded-lg border" style={{ borderColor: "var(--border)" }}>
-      <GanttHeader dateRange={dateRange} />
+    <div ref={containerRef} className="overflow-x-auto rounded-lg border" style={{ borderColor: "var(--border)" }}>
+      <GanttHeader dateRange={dateRange} cellWidth={cellWidth} />
 
       {rows.map((row) => {
         const rowItems = items.filter((item) => getRowId(item) === row.id);
@@ -47,7 +66,7 @@ export function GanttView<T>({
             <div
               className="flex shrink-0 items-center gap-2 border-b border-r bg-white px-2 text-sm"
               style={{
-                width: 160,
+                width: LABEL_WIDTH,
                 position: "sticky",
                 left: 0,
                 zIndex: 5,
@@ -71,7 +90,7 @@ export function GanttView<T>({
                   key={day.toISOString()}
                   className="shrink-0 border-r"
                   style={{
-                    width: 40,
+                    width: cellWidth,
                     height: 36,
                     borderColor: "var(--border)",
                     backgroundColor: isToday(day) ? "rgba(59, 130, 246, 0.03)" : undefined,
@@ -100,6 +119,7 @@ export function GanttView<T>({
                     color={getColor(item)}
                     startCol={startCol}
                     spanCols={spanCols}
+                    cellWidth={cellWidth}
                     onClick={() => onItemClick(item)}
                   />
                 );
@@ -110,7 +130,7 @@ export function GanttView<T>({
                 <div
                   className="pointer-events-none absolute top-0 bottom-0"
                   style={{
-                    left: todayIndex * 40 + 20,
+                    left: todayIndex * cellWidth + cellWidth / 2,
                     width: 0,
                     borderLeft: `2px dashed ${todayLineColor}`,
                     zIndex: 8,

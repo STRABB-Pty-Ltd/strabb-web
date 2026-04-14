@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
 import type { KPIData, AlertItem, PreviewData } from "@/lib/mock-data/dashboard-hooks";
@@ -50,6 +50,7 @@ function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
 
 export function useDashboardKPIsAPI(timeframe: string, selectedListings: string[]) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -62,12 +63,13 @@ export function useDashboardKPIsAPI(timeframe: string, selectedListings: string[
       const response = await apiClient.get<{ data: RawKPIResponse }>(`/dashboard/kpis?${params.toString()}`);
       return rawKPIsToKPIData(response.data);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useDashboardAlertsAPI(selectedListings: string[]) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
 
   return useQuery<AlertItem[]>({
     queryKey: ["dashboard-alerts", ...selectedListings],
@@ -75,7 +77,7 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
       const response = await apiClient.get<{ data: RawAlertResponse }>("/dashboard/alerts");
       return rawAlertsToAlertItems(response.data);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
@@ -118,6 +120,7 @@ function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
 
 export function useDashboardPreviewAPI(selectedListings: string[], timeframe: string) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -130,12 +133,13 @@ export function useDashboardPreviewAPI(selectedListings: string[], timeframe: st
       const response = await apiClient.get<{ data: RawPreviewResponse }>(`/dashboard/preview?${params.toString()}`);
       return rawPreviewToPreviewData(response.data);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useDashboardCompareAPI(selectedListings: string[], timeframe: string) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -148,6 +152,6 @@ export function useDashboardCompareAPI(selectedListings: string[], timeframe: st
       const response = await apiClient.get<{ data: unknown }>(`/dashboard/compare?${params.toString()}`);
       return response.data;
     },
-    enabled: !USE_MOCK && selectedListings.length > 0,
+    enabled: !USE_MOCK && isReady && selectedListings.length > 0,
   });
 }

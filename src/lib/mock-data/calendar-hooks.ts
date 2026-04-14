@@ -95,7 +95,7 @@ function computeEvents(
     events.push(...filtered.filter((b) => b.status !== "cancelled").map(bookingToEvent));
   }
 
-  if (showAll || submenuFilters.includes("vacancy")) {
+  if (submenuFilters.includes("vacancy")) {
     const filtered = filterByListing
       ? vacancies.filter((v) => selectedListings.includes(v.listingId))
       : vacancies;

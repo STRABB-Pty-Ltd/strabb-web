@@ -1,25 +1,16 @@
-"use client";
-
-import { useDroppable } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-
 interface KanbanColumnProps {
   id: string;
   label: string;
   count: number;
   children: React.ReactNode;
-  itemIds: string[];
 }
 
-export function KanbanColumn({ id, label, count, children, itemIds }: KanbanColumnProps) {
-  const { setNodeRef, isOver } = useDroppable({ id });
-
+export function KanbanColumn({ id, label, count, children }: KanbanColumnProps) {
   return (
     <div
-      className="flex shrink-0 flex-col rounded-lg"
+      className="flex min-w-0 flex-1 flex-col rounded-lg"
       style={{
-        minWidth: 280,
-        backgroundColor: isOver ? "rgba(59, 130, 246, 0.05)" : "#F9FAFB",
+        backgroundColor: "#F9FAFB",
       }}
     >
       <div
@@ -33,13 +24,10 @@ export function KanbanColumn({ id, label, count, children, itemIds }: KanbanColu
       </div>
 
       <div
-        ref={setNodeRef}
         className="flex flex-1 flex-col gap-2 overflow-y-auto p-2"
         style={{ maxHeight: "calc(100vh - 200px)" }}
       >
-        <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-          {children}
-        </SortableContext>
+        {children}
       </div>
     </div>
   );

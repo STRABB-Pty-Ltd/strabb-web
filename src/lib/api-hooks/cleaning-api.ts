@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { ShoppingItem } from "@/types/shopping-item";
@@ -50,6 +50,7 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
 
 export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: string[]) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_id", id));
 
@@ -73,12 +74,13 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
       const response = await apiClient.get<{ data: RawCleaningTask[] }>(`/cleaning-tasks?${params.toString()}`);
       return response.data.map(mapCleaningTask);
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useShoppingListAPI(selectedListings: string[]) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_id", id));
 
@@ -88,12 +90,13 @@ export function useShoppingListAPI(selectedListings: string[]) {
       const response = await apiClient.get<{ data: ShoppingItem[] }>(`/cleaning-tasks/shopping-list?${params.toString()}`);
       return response.data;
     },
-    enabled: !USE_MOCK,
+    enabled: !USE_MOCK && isReady,
   });
 }
 
 export function useCreateCleaningTaskAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -106,6 +109,7 @@ export function useCreateCleaningTaskAPI() {
 
 export function useUpdateCleaningTaskAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -119,6 +123,7 @@ export function useUpdateCleaningTaskAPI() {
 
 export function useCreateShoppingItemAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -132,6 +137,7 @@ export function useCreateShoppingItemAPI() {
 
 export function useUpdateShoppingItemAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -145,6 +151,7 @@ export function useUpdateShoppingItemAPI() {
 
 export function useDeleteShoppingItemAPI() {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { loginSchema, type LoginFormData } from "@/lib/schemas/auth";
 
 export function LoginForm() {
@@ -67,8 +68,15 @@ export function LoginForm() {
 
       {error && <p className="text-destructive text-sm">{error}</p>}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Sign in"}
+      <Button type="submit" className="min-w-[120px] w-full" disabled={isSubmitting}>
+        {isSubmitting ? (
+          <>
+            <LoadingSpinner className="h-4 w-4 border-primary-foreground border-t-transparent" />
+            Signing in...
+          </>
+        ) : (
+          "Sign in"
+        )}
       </Button>
     </form>
   );

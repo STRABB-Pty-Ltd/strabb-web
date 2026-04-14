@@ -7,11 +7,10 @@ import { useAppStore } from "@/stores/app-store";
 import { CleaningTaskCard } from "./cleaning-task-card";
 
 const statusColumns = [
-  { id: "pending", label: "Pending" },
+  { id: "issues", label: "Tickets" },
   { id: "confirmed", label: "Confirmed" },
-  { id: "in_progress", label: "In Progress" },
+  { id: "pending", label: "Pending" },
   { id: "completed", label: "Completed" },
-  { id: "issues", label: "Issues" },
 ];
 
 interface CleaningKanbanViewProps {
@@ -35,7 +34,6 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
           onClick={() => openDrillDownPanel("cleaning", task.id)}
         />
       )}
-      onDragEnd={() => {}}
       getItemId={(task) => task.id}
       getBorderColor={(task) => task.listingColor}
     />

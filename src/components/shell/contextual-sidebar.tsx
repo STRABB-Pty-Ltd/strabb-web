@@ -49,7 +49,7 @@ export function ContextualSidebar() {
           "flex flex-col bg-white border-r overflow-y-auto",
           "transition-transform duration-300 ease-in-out",
           // Mobile: floating overlay
-          "fixed top-0 left-0 z-50 h-full lg:relative lg:z-auto",
+          "fixed top-0 left-0 z-50 h-full lg:relative lg:z-10",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:-translate-x-full",
         ].join(" ")}
         style={{
@@ -69,7 +69,7 @@ export function ContextualSidebar() {
           </button>
         </div>
 
-        {showLogo(currentPage) && <LogoSection />}
+        {/* Logo removed — shown in top nav only */}
         {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
         {showListingFilter(currentPage) && <ListingFilterTree />}
         {showTimeframe(currentPage) && <TimeframeSelector page={currentPage} />}
@@ -124,9 +124,7 @@ export function ContextualSidebar() {
           </div>
         )}
 
-        <div className="mt-auto">
-          {showActions(currentPage) && <ActionsSection />}
-        </div>
+        {showActions(currentPage) && <ActionsSection />}
       </aside>
     </>
   );

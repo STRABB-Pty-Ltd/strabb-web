@@ -58,7 +58,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     width: "100px",
     render: (ev) => (
       <span className="font-data text-xs">
-        {format(new Date(ev.start + "T00:00:00"), "d MMM yyyy")}
+        {format(new Date(ev.start ), "d MMM yyyy")}
       </span>
     ),
   },
@@ -68,7 +68,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     width: "100px",
     render: (ev) => (
       <span className="font-data text-xs">
-        {format(new Date(ev.end + "T00:00:00"), "d MMM yyyy")}
+        {format(new Date(ev.end ), "d MMM yyyy")}
       </span>
     ),
   },

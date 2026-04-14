@@ -149,7 +149,7 @@ function UpcomingBookings({
                 {b.guest}
               </span>
               <span className="text-xs text-gray-400">
-                {format(new Date(b.checkIn + "T00:00:00"), "d MMM")}
+                {format(new Date(b.checkIn), "d MMM")}
               </span>
             </div>
           ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Send, X } from "lucide-react";
+import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
 import type { ThreadMessage } from "@/types/message";
 
@@ -128,15 +128,27 @@ export function ThreadOverlay({
           className="flex gap-2 border-t px-4 py-2"
           style={{ borderColor: "var(--border)" }}
         >
-          {["Resolved", "Follow Up", "Priority", "Maintenance"].map((action) => (
-            <button
-              key={action}
-              type="button"
-              className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-50"
-            >
-              {action}
-            </button>
-          ))}
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 transition-colors hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700"
+          >
+            <Flag size={12} />
+            Flag
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 transition-colors hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+          >
+            <TicketPlus size={12} />
+            Create Ticket
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+          >
+            <Archive size={12} />
+            Archive
+          </button>
         </div>
 
         {/* Compose area */}

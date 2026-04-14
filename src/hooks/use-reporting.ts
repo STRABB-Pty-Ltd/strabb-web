@@ -7,9 +7,9 @@ import { useAppStore } from "@/stores/app-store";
 
 export type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
 
-export function useReportingKPIs(selectedListings: string[]) {
+export function useReportingKPIs(selectedListings: string[], timeframe?: string) {
   const mockResult = useReportingKPIsMock(selectedListings);
-  const apiResult = useReportingKPIsAPI(selectedListings);
+  const apiResult = useReportingKPIsAPI(selectedListings, timeframe);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };
@@ -27,9 +27,9 @@ export function useReportingKPIs(selectedListings: string[]) {
   };
 }
 
-export function useReportingChartData(selectedListings: string[]) {
+export function useReportingChartData(selectedListings: string[], timeframe?: string) {
   const mockResult = useReportingChartDataMock(selectedListings);
-  const apiResult = useReportingChartDataAPI(selectedListings);
+  const apiResult = useReportingChartDataAPI(selectedListings, timeframe);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };

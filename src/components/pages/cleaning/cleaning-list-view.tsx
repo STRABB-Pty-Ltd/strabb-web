@@ -91,7 +91,7 @@ const columns: ColumnDef<CleaningTask>[] = [
           backgroundColor: statusColors[t.status] ?? "#6B7280",
         }}
       >
-        {t.status.replace("_", " ")}
+        {t.status === "issues" ? "ticket" : t.status.replace("_", " ")}
       </span>
     ),
   },
