@@ -1,0 +1,212 @@
+import type { Booking } from "@/types/booking";
+
+const now = new Date();
+const day = (offset: number) => {
+  const d = new Date(now);
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().split("T")[0];
+};
+
+const defaults: Booking = {
+  id: "bk-001",
+  listingId: "lst-002",
+  listingName: "Bondi Beach Apartment — Unit A",
+  guestName: "Sarah Mitchell",
+  guestEmail: "sarah.m@email.com",
+  channel: "airbnb",
+  checkIn: day(-3),
+  checkOut: day(2),
+  guestCount: 2,
+  nightlyRate: 180,
+  totalAmount: 900,
+  status: "checked_in",
+  notes: null,
+  createdAt: day(-14),
+};
+
+export function createBooking(overrides?: Partial<Booking>): Booking {
+  return { ...defaults, ...overrides };
+}
+
+export const mockBookingList: Booking[] = [
+  // checked_in — Airbnb
+  createBooking(),
+  // checked_in — Booking.com
+  createBooking({
+    id: "bk-002",
+    listingId: "lst-004",
+    listingName: "Manly Surf Lodge",
+    guestName: "James O'Brien",
+    guestEmail: "james.obrien@email.com",
+    channel: "booking_com",
+    checkIn: day(-2),
+    checkOut: day(4),
+    guestCount: 5,
+    nightlyRate: 450,
+    totalAmount: 2700,
+    status: "checked_in",
+    createdAt: day(-20),
+  }),
+  // confirmed — Airbnb
+  createBooking({
+    id: "bk-003",
+    listingId: "lst-003",
+    listingName: "Bondi Beach Apartment — Unit B",
+    guestName: "Emma Chen",
+    guestEmail: "emma.c@email.com",
+    channel: "airbnb",
+    checkIn: day(5),
+    checkOut: day(10),
+    guestCount: 3,
+    nightlyRate: 250,
+    totalAmount: 1250,
+    status: "confirmed",
+    createdAt: day(-7),
+  }),
+  // confirmed — VRBO
+  createBooking({
+    id: "bk-004",
+    listingId: "lst-006",
+    listingName: "Newtown Terrace",
+    guestName: "Liam Watson",
+    guestEmail: "liam.w@email.com",
+    channel: "vrbo",
+    checkIn: day(7),
+    checkOut: day(12),
+    guestCount: 2,
+    nightlyRate: 220,
+    totalAmount: 1100,
+    status: "confirmed",
+    createdAt: day(-5),
+  }),
+  // pending — Booking.com
+  createBooking({
+    id: "bk-005",
+    listingId: "lst-005",
+    listingName: "Coogee Bay Studio",
+    guestName: "Olivia Kim",
+    guestEmail: "olivia.k@email.com",
+    channel: "booking_com",
+    checkIn: day(10),
+    checkOut: day(14),
+    guestCount: 2,
+    nightlyRate: 160,
+    totalAmount: 640,
+    status: "pending",
+    createdAt: day(-2),
+  }),
+  // pending — Direct
+  createBooking({
+    id: "bk-006",
+    listingId: "lst-007",
+    listingName: "Surry Hills Loft",
+    guestName: "Noah Taylor",
+    guestEmail: "noah.t@email.com",
+    channel: "direct",
+    checkIn: day(14),
+    checkOut: day(18),
+    guestCount: 2,
+    nightlyRate: 195,
+    totalAmount: 780,
+    status: "pending",
+    createdAt: day(-1),
+  }),
+  // checked_out — Airbnb
+  createBooking({
+    id: "bk-007",
+    listingId: "lst-005",
+    listingName: "Coogee Bay Studio",
+    guestName: "Mia Rodriguez",
+    guestEmail: "mia.r@email.com",
+    channel: "airbnb",
+    checkIn: day(-10),
+    checkOut: day(-5),
+    guestCount: 1,
+    nightlyRate: 160,
+    totalAmount: 800,
+    status: "checked_out",
+    createdAt: day(-25),
+  }),
+  // checked_out — Booking.com
+  createBooking({
+    id: "bk-008",
+    listingId: "lst-006",
+    listingName: "Newtown Terrace",
+    guestName: "Daniel Park",
+    guestEmail: "daniel.p@email.com",
+    channel: "booking_com",
+    checkIn: day(-8),
+    checkOut: day(-3),
+    guestCount: 4,
+    nightlyRate: 220,
+    totalAmount: 1100,
+    status: "checked_out",
+    createdAt: day(-22),
+  }),
+  // cancelled — Airbnb
+  createBooking({
+    id: "bk-009",
+    listingId: "lst-002",
+    listingName: "Bondi Beach Apartment — Unit A",
+    guestName: "Charlotte Lee",
+    guestEmail: "charlotte.l@email.com",
+    channel: "airbnb",
+    checkIn: day(20),
+    checkOut: day(25),
+    guestCount: 2,
+    nightlyRate: 180,
+    totalAmount: 900,
+    status: "cancelled",
+    notes: "Guest cancelled — flight change",
+    createdAt: day(-10),
+  }),
+  // confirmed — VRBO
+  createBooking({
+    id: "bk-010",
+    listingId: "lst-007",
+    listingName: "Surry Hills Loft",
+    guestName: "William Hughes",
+    guestEmail: "will.h@email.com",
+    channel: "vrbo",
+    checkIn: day(3),
+    checkOut: day(6),
+    guestCount: 1,
+    nightlyRate: 195,
+    totalAmount: 585,
+    status: "confirmed",
+    createdAt: day(-8),
+  }),
+  // confirmed — Airbnb
+  createBooking({
+    id: "bk-011",
+    listingId: "lst-004",
+    listingName: "Manly Surf Lodge",
+    guestName: "Isabella Brown",
+    guestEmail: "isabella.b@email.com",
+    channel: "airbnb",
+    checkIn: day(12),
+    checkOut: day(17),
+    guestCount: 6,
+    nightlyRate: 450,
+    totalAmount: 2250,
+    status: "confirmed",
+    createdAt: day(-4),
+  }),
+  // cancelled — Direct
+  createBooking({
+    id: "bk-012",
+    listingId: "lst-003",
+    listingName: "Bondi Beach Apartment — Unit B",
+    guestName: "Ethan Wilson",
+    guestEmail: "ethan.w@email.com",
+    channel: "direct",
+    checkIn: day(8),
+    checkOut: day(11),
+    guestCount: 2,
+    nightlyRate: 250,
+    totalAmount: 750,
+    status: "cancelled",
+    notes: "Host cancelled — maintenance required",
+    createdAt: day(-6),
+  }),
+];
