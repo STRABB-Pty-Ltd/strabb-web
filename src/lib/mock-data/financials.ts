@@ -1,8 +1,12 @@
 import type { Financial } from "@/types/financial";
+import { REFERENCE_NOW } from "./reference-date";
 
-const now = new Date();
 const monthStr = (offset: number) => {
-  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const d = new Date(
+    REFERENCE_NOW.getUTCFullYear(),
+    REFERENCE_NOW.getUTCMonth() + offset,
+    1,
+  );
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 };
 
@@ -34,15 +38,25 @@ const listings = [
   { id: "lst-007", name: "Surry Hills Loft", rate: 195 },
 ];
 
+// Deterministic PRNG keyed on (monthIdx, listingIdx). Same inputs always
+// yield the same output, so SSR and client builds of mockFinancialList match.
+function seededRandom(monthIdx: number, listingIdx: number): number {
+  const seed = (monthIdx + 1) * 374761393 + (listingIdx + 1) * 668265263;
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
 let finId = 1;
 
 export const mockFinancialList: Financial[] = Array.from(
   { length: 6 },
   (_, monthIdx) => {
     const month = monthStr(-5 + monthIdx);
-    return listings.map((listing) => {
+    return listings.map((listing, listingIdx) => {
       const seasonMultiplier = monthIdx >= 3 ? 1.15 : 0.9;
-      const occupancy = Math.round(60 + Math.random() * 30 * seasonMultiplier);
+      const occupancy = Math.round(
+        60 + seededRandom(monthIdx, listingIdx) * 30 * seasonMultiplier,
+      );
       const bookings = Math.max(3, Math.round(occupancy / 15));
       const revenue = Math.round(
         listing.rate * (occupancy / 100) * 30 * seasonMultiplier,

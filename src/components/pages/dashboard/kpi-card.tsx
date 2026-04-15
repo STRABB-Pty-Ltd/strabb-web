@@ -47,8 +47,8 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
   useEffect(() => setMounted(true), []);
 
   const Icon = iconMap[kpi.icon] ?? DollarSign;
-  const trendPositive = kpi.trend > 0;
-  const trendNeutral = kpi.trend === 0;
+  const hasTrend = typeof kpi.trend === "number" && kpi.trend !== 0;
+  const trendPositive = (kpi.trend ?? 0) > 0;
 
   return (
     <button
@@ -64,7 +64,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         >
           <Icon size={16} style={{ color: "var(--strabb-secondary)" }} />
         </div>
-        {mounted && !trendNeutral && (
+        {mounted && hasTrend && (
           <div
             className="ml-auto flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
             style={{
@@ -79,12 +79,12 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
             ) : (
               <ArrowDownRight size={12} />
             )}
-            {Math.abs(kpi.trend)}%
+            {Math.abs(kpi.trend ?? 0)}%
           </div>
         )}
       </div>
 
-      <p className="font-data text-2xl font-bold text-gray-900" suppressHydrationWarning>
+      <p className="font-data text-2xl font-bold text-gray-900">
         {formatValue(kpi.value, kpi.type)}
       </p>
 

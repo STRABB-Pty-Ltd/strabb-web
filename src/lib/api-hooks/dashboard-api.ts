@@ -7,13 +7,27 @@ import { USE_MOCK } from "@/lib/mock-data";
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
 import type { KPIData, AlertItem, PreviewData } from "@/lib/mock-data/dashboard-hooks";
 
-interface RawKPIResponse {
+interface RawKPIMetrics {
   revenue: number;
   expenses: number;
   netIncome: number;
   occupancyRate: number;
   avgNightlyRate: number;
   totalBookings: number;
+}
+
+interface RawKPITrends {
+  revenue: number | null;
+  expenses: number | null;
+  netIncome: number | null;
+  occupancyRate: number | null;
+  avgNightlyRate: number | null;
+  totalBookings: number | null;
+}
+
+interface RawKPIResponse extends RawKPIMetrics {
+  previous?: RawKPIMetrics;
+  trends?: RawKPITrends;
 }
 
 interface RawAlertResponse {
@@ -24,13 +38,14 @@ interface RawAlertResponse {
 }
 
 function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
+  const t = raw.trends;
   return [
-    { label: "Total Revenue", value: raw.revenue, icon: "dollar-sign", trend: 0, type: "currency" },
-    { label: "Total Bookings", value: raw.totalBookings, icon: "calendar", trend: 0, type: "number" },
-    { label: "Avg Occupancy", value: Math.round(raw.occupancyRate * 100), icon: "percent", trend: 0, type: "percentage" },
-    { label: "Avg Nightly Rate", value: Math.round(raw.avgNightlyRate), icon: "bed", trend: 0, type: "currency" },
-    { label: "Net Income", value: raw.netIncome, icon: "trending-up", trend: 0, type: "currency" },
-    { label: "Expenses", value: raw.expenses, icon: "receipt", trend: 0, type: "currency" },
+    { label: "Total Revenue", value: raw.revenue, icon: "dollar-sign", trend: t?.revenue, type: "currency" },
+    { label: "Total Bookings", value: raw.totalBookings, icon: "calendar", trend: t?.totalBookings, type: "number" },
+    { label: "Avg Occupancy", value: Math.round(raw.occupancyRate * 100), icon: "percent", trend: t?.occupancyRate, type: "percentage" },
+    { label: "Avg Nightly Rate", value: Math.round(raw.avgNightlyRate), icon: "bed", trend: t?.avgNightlyRate, type: "currency" },
+    { label: "Net Income", value: raw.netIncome, icon: "trending-up", trend: t?.netIncome, type: "currency" },
+    { label: "Expenses", value: raw.expenses, icon: "receipt", trend: t?.expenses, type: "currency" },
   ];
 }
 

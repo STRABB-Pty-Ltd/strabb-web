@@ -1,14 +1,14 @@
 import type { Message } from "@/types/message";
+import { REFERENCE_NOW } from "./reference-date";
 
-const now = new Date();
 const hours = (offset: number) => {
-  const d = new Date(now);
-  d.setHours(d.getHours() + offset);
+  const d = new Date(REFERENCE_NOW);
+  d.setUTCHours(d.getUTCHours() + offset);
   return d.toISOString();
 };
 const day = (offset: number) => {
-  const d = new Date(now);
-  d.setDate(d.getDate() + offset);
+  const d = new Date(REFERENCE_NOW);
+  d.setUTCDate(d.getUTCDate() + offset);
   return d.toISOString().split("T")[0];
 };
 

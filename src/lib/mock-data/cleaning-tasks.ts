@@ -1,9 +1,9 @@
 import type { CleaningTask } from "@/types/cleaning-task";
+import { REFERENCE_NOW } from "./reference-date";
 
-const now = new Date();
 const hours = (offset: number) => {
-  const d = new Date(now);
-  d.setHours(d.getHours() + offset);
+  const d = new Date(REFERENCE_NOW);
+  d.setUTCHours(d.getUTCHours() + offset);
   return d.toISOString();
 };
 

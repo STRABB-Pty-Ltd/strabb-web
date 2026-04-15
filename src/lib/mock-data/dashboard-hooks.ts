@@ -8,19 +8,17 @@ import {
   mockFinancialList,
   mockMessageList,
 } from "./index";
+import { REFERENCE_NOW } from "./reference-date";
 import type { Booking } from "@/types/booking";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { Financial } from "@/types/financial";
 import type { Message } from "@/types/message";
 
-// Fixed reference date to avoid SSR/client hydration mismatch from new Date()
-const REFERENCE_NOW = new Date("2026-04-14T00:00:00Z");
-
 export interface KPIData {
   label: string;
   value: string | number;
   icon: string;
-  trend: number;
+  trend?: number | null;
   type: "currency" | "number" | "percentage";
 }
 

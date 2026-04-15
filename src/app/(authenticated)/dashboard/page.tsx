@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
   const isCompare = compare || submenu.includes("compare");
 
-  if (kpisLoading || previewLoading) {
+  if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
       <div className="flex items-center justify-center py-16">
         <p className="text-sm text-gray-400">Loading dashboard...</p>
@@ -42,11 +42,11 @@ export default function DashboardPage() {
     <div className="space-y-4 p-4">
       <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
 
-      {alerts.length > 0 && <AlertStrip alerts={alerts} />}
+      {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}
 
       {isCompare && <ComparePanel current={kpis} comparison={kpis} />}
 
-      {preview && <PreviewGrid data={preview} />}
+      <PreviewGrid data={preview} />
     </div>
   );
 }
