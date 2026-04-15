@@ -21,7 +21,6 @@ export function useSettingsSectionAPI<T = Record<string, unknown>>(section: stri
 
 export function useUpdateSettingsSectionAPI<T = Record<string, unknown>>(section: string) {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -51,7 +51,6 @@ export function useCalendarEventsAPI(
   endDate?: string,
 ) {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   const isOverview = submenuFilters.length === 0 || submenuFilters.includes("overview");

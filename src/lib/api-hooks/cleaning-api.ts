@@ -50,7 +50,6 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
 
 export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: string[]) {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_id", id));
 
@@ -96,7 +95,6 @@ export function useShoppingListAPI(selectedListings: string[]) {
 
 export function useCreateCleaningTaskAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -109,7 +107,6 @@ export function useCreateCleaningTaskAPI() {
 
 export function useUpdateCleaningTaskAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -123,7 +120,6 @@ export function useUpdateCleaningTaskAPI() {
 
 export function useCreateShoppingItemAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -137,7 +133,6 @@ export function useCreateShoppingItemAPI() {
 
 export function useUpdateShoppingItemAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -151,7 +146,6 @@ export function useUpdateShoppingItemAPI() {
 
 export function useDeleteShoppingItemAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

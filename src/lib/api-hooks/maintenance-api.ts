@@ -37,7 +37,6 @@ export function useMaintenanceAPI(filters?: {
 
 export function useCreateMaintenanceAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -50,7 +49,6 @@ export function useCreateMaintenanceAPI() {
 
 export function useUpdateMaintenanceAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -64,7 +62,6 @@ export function useUpdateMaintenanceAPI() {
 
 export function useDeleteMaintenanceAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

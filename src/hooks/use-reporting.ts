@@ -15,15 +15,10 @@ export function useReportingKPIs(selectedListings: string[], timeframe?: string)
     return { data: mockResult, isLoading: false, error: null };
   }
 
-  if (apiResult.error) {
-    console.warn("API unavailable for reporting KPIs, using mock data");
-    return { data: mockResult, isLoading: false, error: null };
-  }
-
   return {
-    data: apiResult.data ?? mockResult,
+    data: apiResult.data,
     isLoading: apiResult.isLoading,
-    error: null,
+    error: apiResult.error,
   };
 }
 
@@ -35,15 +30,10 @@ export function useReportingChartData(selectedListings: string[], timeframe?: st
     return { data: mockResult, isLoading: false, error: null };
   }
 
-  if (apiResult.error) {
-    console.warn("API unavailable for reporting charts, using mock data");
-    return { data: mockResult, isLoading: false, error: null };
-  }
-
   return {
-    data: apiResult.data ?? mockResult,
+    data: apiResult.data,
     isLoading: apiResult.isLoading,
-    error: null,
+    error: apiResult.error,
   };
 }
 

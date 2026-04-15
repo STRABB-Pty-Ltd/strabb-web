@@ -106,7 +106,6 @@ export function useMessageThreadAPI(messageId: string | null) {
 
 export function useSendMessageAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -122,7 +121,6 @@ export function useSendMessageAPI() {
 
 export function useUpdateConversationStatusAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -136,7 +134,6 @@ export function useUpdateConversationStatusAPI() {
 
 export function useUpdateConversationPriorityAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -150,7 +147,6 @@ export function useUpdateConversationPriorityAPI() {
 
 export function useConvertToMaintenanceAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
 
   return useMutation({
     mutationFn: (conversationId: string) =>

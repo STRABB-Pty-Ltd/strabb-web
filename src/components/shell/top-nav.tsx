@@ -45,7 +45,6 @@ export function TopNav() {
       <div className="flex flex-1 items-center justify-center gap-1">
         {topNavItems.map((item) => {
           const isActive = currentPage === item.id;
-          const Icon = item.icon;
           return (
             <Link
               key={item.id}

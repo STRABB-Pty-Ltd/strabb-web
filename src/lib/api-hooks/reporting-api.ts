@@ -85,7 +85,6 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
 
 export function useReportingChartDataAPI(selectedListings: string[], timeframe?: string) {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -170,7 +169,6 @@ export function useSavedReportsAPI() {
 
 export function useCreateSavedReportAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -183,7 +181,6 @@ export function useCreateSavedReportAPI() {
 
 export function useUpdateSavedReportAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -197,7 +194,6 @@ export function useUpdateSavedReportAPI() {
 
 export function useDeleteSavedReportAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

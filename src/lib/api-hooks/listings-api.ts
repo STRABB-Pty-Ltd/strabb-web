@@ -49,7 +49,6 @@ export function useListingGroupsAPI() {
 
 export function useCreateListingGroupAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -63,7 +62,6 @@ export function useCreateListingGroupAPI() {
 
 export function useUpdateListingGroupAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -77,7 +75,6 @@ export function useUpdateListingGroupAPI() {
 
 export function useDeleteListingGroupAPI() {
   const apiClient = useApiClient();
-  const isReady = useAuthReady();
   const queryClient = useQueryClient();
 
   return useMutation({

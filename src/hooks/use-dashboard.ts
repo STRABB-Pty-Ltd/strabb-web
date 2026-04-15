@@ -15,6 +15,8 @@ import {
 export type { KPIData, AlertItem, PreviewData } from "@/lib/mock-data/dashboard-hooks";
 
 export function useDashboardKPIs(timeframe: string, selectedListings: string[]) {
+  // Both hooks are always called (Rules of Hooks), but API hooks use enabled: !USE_MOCK
+  // so they become no-ops in mock mode, and mock hooks short-circuit when USE_MOCK is false
   const mockResult = useDashboardKPIsMock(timeframe, selectedListings);
   const apiResult = useDashboardKPIsAPI(timeframe, selectedListings);
 

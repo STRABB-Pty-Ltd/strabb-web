@@ -20,15 +20,10 @@ export function useCalendarEvents(selectedListings: string[], submenuFilters: st
     return { data: mockResult, isLoading: false, error: null };
   }
 
-  if (apiResult.error) {
-    console.warn("API unavailable for calendar events, using mock data");
-    return { data: mockResult, isLoading: false, error: null };
-  }
-
   return {
-    data: apiResult.data ?? mockResult,
+    data: apiResult.data,
     isLoading: apiResult.isLoading,
-    error: null,
+    error: apiResult.error,
   };
 }
 

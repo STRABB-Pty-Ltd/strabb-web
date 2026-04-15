@@ -20,15 +20,10 @@ export function useCleaningTasks(submenuFilters: string[], selectedListings: str
     return { data: mockResult, isLoading: false, error: null };
   }
 
-  if (apiResult.error) {
-    console.warn("API unavailable for cleaning tasks, using mock data");
-    return { data: mockResult, isLoading: false, error: null };
-  }
-
   return {
-    data: apiResult.data ?? mockResult,
+    data: apiResult.data,
     isLoading: apiResult.isLoading,
-    error: null,
+    error: apiResult.error,
   };
 }
 
@@ -40,15 +35,10 @@ export function useShoppingList(selectedListings: string[]) {
     return { data: mockResult, isLoading: false, error: null };
   }
 
-  if (apiResult.error) {
-    console.warn("API unavailable for shopping list, using mock data");
-    return { data: mockResult, isLoading: false, error: null };
-  }
-
   return {
-    data: apiResult.data ?? mockResult,
+    data: apiResult.data,
     isLoading: apiResult.isLoading,
-    error: null,
+    error: apiResult.error,
   };
 }
 
