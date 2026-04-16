@@ -114,7 +114,7 @@ export function GanttView<T>({
 
                 return (
                   <GanttBar
-                    key={idx}
+                    key={`${row.id}-${getLabel(item)}-${idx}`}
                     label={getLabel(item)}
                     color={getColor(item)}
                     startCol={startCol}

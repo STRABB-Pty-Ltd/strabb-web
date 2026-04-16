@@ -13,6 +13,7 @@ export interface CleaningPageState {
 
 export interface CleaningSlice {
   cleaning: CleaningPageState;
+  setCleaningListSort: (sort: string) => void;
   setGanttZoom: (zoom: "day" | "week" | "month") => void;
   toggleShoppingDrawer: () => void;
   toggleBoughtItem: (id: string) => void;
@@ -34,6 +35,8 @@ export const createCleaningSlice: StateCreator<
     shoppingDrawerOpen: false,
     boughtItems: [],
   },
+  setCleaningListSort: (sort) =>
+    set({ cleaning: { ...get().cleaning, listSort: sort } }),
   setGanttZoom: (zoom) =>
     set({ cleaning: { ...get().cleaning, ganttZoom: zoom } }),
   toggleShoppingDrawer: () =>

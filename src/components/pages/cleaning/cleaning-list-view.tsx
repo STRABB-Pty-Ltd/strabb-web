@@ -189,17 +189,11 @@ export function CleaningListView({ tasks }: CleaningListViewProps) {
     return arr;
   }, [tasks, sortKey, sortDir]);
 
+  const setCleaningListSort = useAppStore((s) => s.setCleaningListSort);
+
   const handleSort = (key: string) => {
-    const store = useAppStore.getState();
     const newDir = sortKey === key && sortDir === "asc" ? "desc" : "asc";
-    store.setView("cleaning", store.cleaning.view);
-    // Update listSort via direct state access since there's no dedicated action
-    useAppStore.setState({
-      cleaning: {
-        ...store.cleaning,
-        listSort: `${key}_${newDir}`,
-      },
-    });
+    setCleaningListSort(`${key}_${newDir}`);
   };
 
   return (

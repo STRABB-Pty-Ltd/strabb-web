@@ -108,6 +108,7 @@ export function SubmenuBar() {
             <button
               type="button"
               onClick={() => handleChipClick(chip)}
+              aria-pressed={chip.behavior === "toggle" || chip.behavior === "multi" || chip.behavior === "exclusive" ? active : undefined}
               className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap transition-colors"
               style={{
                 height: "var(--chip-height)",

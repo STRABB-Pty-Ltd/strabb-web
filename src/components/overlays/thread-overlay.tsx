@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
 import type { ThreadMessage } from "@/types/message";
@@ -35,19 +35,7 @@ export function ThreadOverlay({
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose],
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [open, handleKeyDown]);
+  // Escape key is handled by the global keyboard shortcuts in app-shell.tsx
 
   if (!open) return null;
 
