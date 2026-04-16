@@ -32,16 +32,10 @@ interface MessageCardProps {
 
 export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full text-left"
-    >
+    <button type="button" onClick={onClick} className="w-full text-left">
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-800 truncate">
-            {message.guestName}
-          </span>
+          <span className="truncate text-sm font-medium text-gray-800">{message.guestName}</span>
           {message.priority !== "low" && (
             <span
               className="h-2 w-2 shrink-0 rounded-full"
@@ -57,9 +51,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
               backgroundColor: channelColors[message.channel] ?? "#6B7280",
             }}
           />
-          <span className="truncate text-xs text-gray-500">
-            {message.listingName}
-          </span>
+          <span className="truncate text-xs text-gray-500">{message.listingName}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -71,17 +63,13 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
           >
             {channelLabels[message.channel] ?? message.channel}
           </span>
-          <span className="truncate text-xs text-gray-600">
-            {message.subject}
-          </span>
+          <span className="truncate text-xs text-gray-600">{message.subject}</span>
         </div>
 
         <p className="truncate text-xs text-gray-400">{message.previewText}</p>
 
         <div className="flex items-center gap-2 text-xs text-gray-400">
-          <span>
-            {format(new Date(message.lastMessageTime), "d MMM, HH:mm")}
-          </span>
+          <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
           <span className="flex items-center gap-0.5">
             <MessageSquare size={10} />
             {message.messageCount}

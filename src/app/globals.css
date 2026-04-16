@@ -8,36 +8,36 @@
   /* === STRABB Design Tokens === */
 
   /* Primary palette */
-  --strabb-primary: #1E40AF;
-  --strabb-secondary: #3B82F6;
-  --strabb-accent: #D97706;
+  --strabb-primary: #1e40af;
+  --strabb-secondary: #3b82f6;
+  --strabb-accent: #d97706;
 
   /* Channel colors */
-  --channel-airbnb: #FF5A5F;
+  --channel-airbnb: #ff5a5f;
   --channel-booking: #003580;
-  --channel-vrbo: #3B5998;
-  --channel-direct: #D97706;
+  --channel-vrbo: #3b5998;
+  --channel-direct: #d97706;
 
   /* Semantic colors */
-  --semantic-success: #16A34A;
-  --semantic-warning: #92400E;
-  --semantic-destructive: #DC2626;
-  --semantic-in-progress: #8B5CF6;
+  --semantic-success: #16a34a;
+  --semantic-warning: #92400e;
+  --semantic-destructive: #dc2626;
+  --semantic-in-progress: #8b5cf6;
 
   /* Cleaning status colors */
-  --status-pending: #D97706;
-  --status-confirmed: #3B82F6;
-  --status-in-progress: #8B5CF6;
-  --status-completed: #16A34A;
-  --status-issues: #DC2626;
-  --status-cancelled: #6B7280;
+  --status-pending: #d97706;
+  --status-confirmed: #3b82f6;
+  --status-in-progress: #8b5cf6;
+  --status-completed: #16a34a;
+  --status-issues: #dc2626;
+  --status-cancelled: #6b7280;
 
   /* Booking status colors */
-  --booking-checked-out: #6B7280;
-  --booking-checked-in: #16A34A;
-  --booking-confirmed: #3B82F6;
-  --booking-pending: #D97706;
-  --booking-cancelled: #DC2626;
+  --booking-checked-out: #6b7280;
+  --booking-checked-in: #16a34a;
+  --booking-confirmed: #3b82f6;
+  --booking-pending: #d97706;
+  --booking-cancelled: #dc2626;
 
   /* Layout dimensions */
   --topnav-height: 56px;

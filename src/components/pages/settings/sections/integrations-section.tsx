@@ -64,12 +64,8 @@ export function IntegrationsSection() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">
-          Integrations
-        </h2>
-        <p className="text-sm text-gray-500">
-          Connect platforms and manage sync settings.
-        </p>
+        <h2 className="text-lg font-semibold text-gray-900">Integrations</h2>
+        <p className="text-sm text-gray-500">Connect platforms and manage sync settings.</p>
       </div>
 
       <div className="space-y-3">
@@ -86,13 +82,10 @@ export function IntegrationsSection() {
               {platform.logo}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-800">
-                {platform.name}
-              </p>
+              <p className="text-sm font-medium text-gray-800">{platform.name}</p>
               {platform.connected ? (
                 <p className="text-xs text-gray-500">
-                  Last sync: {platform.lastSync} &middot;{" "}
-                  {platform.listingCount} listings
+                  Last sync: {platform.lastSync} &middot; {platform.listingCount} listings
                 </p>
               ) : (
                 <p className="text-xs text-gray-400">Not connected</p>
@@ -116,9 +109,7 @@ export function IntegrationsSection() {
                 className="rounded-lg border px-3 py-1.5 text-xs font-medium"
                 style={{
                   borderColor: "var(--border)",
-                  color: platform.connected
-                    ? "#DC2626"
-                    : "var(--strabb-secondary)",
+                  color: platform.connected ? "#DC2626" : "var(--strabb-secondary)",
                 }}
               >
                 {platform.connected ? "Disconnect" : "Connect"}
@@ -128,13 +119,8 @@ export function IntegrationsSection() {
         ))}
       </div>
 
-      <div
-        className="rounded-lg border p-4"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">
-          Manual iCal Feed
-        </h3>
+      <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)" }}>
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">Manual iCal Feed</h3>
         <div className="flex gap-2">
           <input
             type="url"

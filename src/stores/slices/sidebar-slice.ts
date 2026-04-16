@@ -6,12 +6,7 @@ export interface SidebarSlice {
   setSidebarOpen: (open: boolean) => void;
 }
 
-export const createSidebarSlice: StateCreator<
-  SidebarSlice,
-  [],
-  [],
-  SidebarSlice
-> = (set, get) => ({
+export const createSidebarSlice: StateCreator<SidebarSlice, [], [], SidebarSlice> = (set, get) => ({
   sidebarOpen: true,
   toggleSidebar: () => set({ sidebarOpen: !get().sidebarOpen }),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),

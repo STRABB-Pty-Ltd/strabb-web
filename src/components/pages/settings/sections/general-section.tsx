@@ -30,16 +30,12 @@ export function GeneralSection() {
     <div className="max-w-lg space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-gray-900">General</h2>
-        <p className="text-sm text-gray-500">
-          Basic account and display settings.
-        </p>
+        <p className="text-sm text-gray-500">Basic account and display settings.</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Company Name
-          </label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Company Name</label>
           <input
             type="text"
             value={companyName}
@@ -50,9 +46,7 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Default Timezone
-          </label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Default Timezone</label>
           <select
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
@@ -68,9 +62,7 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Default Currency
-          </label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">Default Currency</label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}

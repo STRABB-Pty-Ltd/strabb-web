@@ -15,12 +15,10 @@ export interface MessagingSlice {
   toggleChannel: (channel: string) => void;
 }
 
-export const createMessagingSlice: StateCreator<
-  MessagingSlice,
-  [],
-  [],
-  MessagingSlice
-> = (set, get) => ({
+export const createMessagingSlice: StateCreator<MessagingSlice, [], [], MessagingSlice> = (
+  set,
+  get,
+) => ({
   messaging: {
     view: "kanban",
     submenu: ["overview"],
@@ -28,10 +26,8 @@ export const createMessagingSlice: StateCreator<
     selectedMessage: null,
     threadMessage: null,
   },
-  setSelectedMessage: (id) =>
-    set({ messaging: { ...get().messaging, selectedMessage: id } }),
-  setThreadMessage: (id) =>
-    set({ messaging: { ...get().messaging, threadMessage: id } }),
+  setSelectedMessage: (id) => set({ messaging: { ...get().messaging, selectedMessage: id } }),
+  setThreadMessage: (id) => set({ messaging: { ...get().messaging, threadMessage: id } }),
   toggleChannel: (channel) => {
     const current = get().messaging.channels;
     set({

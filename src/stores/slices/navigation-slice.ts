@@ -8,14 +8,11 @@ export interface NavigationSlice {
   setCurrentPage: (page: PageId) => void;
 }
 
-export const createNavigationSlice: StateCreator<
-  NavigationSlice,
-  [],
-  [],
-  NavigationSlice
-> = (set, get) => ({
+export const createNavigationSlice: StateCreator<NavigationSlice, [], [], NavigationSlice> = (
+  set,
+  get,
+) => ({
   currentPage: "dashboard",
   previousPage: null,
-  setCurrentPage: (page) =>
-    set({ currentPage: page, previousPage: get().currentPage }),
+  setCurrentPage: (page) => set({ currentPage: page, previousPage: get().currentPage }),
 });

@@ -29,10 +29,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
 
   const listings =
     selectedListings.length > 0
-      ? allListings.filter(
-          (l) =>
-            selectedListings.includes(l.id) && l.relationship !== "parent",
-        )
+      ? allListings.filter((l) => selectedListings.includes(l.id) && l.relationship !== "parent")
       : allListings.filter((l) => l.relationship !== "parent");
 
   const rows = listings.map((l) => ({

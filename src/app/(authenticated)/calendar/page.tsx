@@ -17,11 +17,7 @@ export default function CalendarPage() {
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { effectiveView, showMobileBanner } = useMobileViewOverride(view);
 
-  const { data: events, isLoading } = useCalendarEvents(
-    selectedListings,
-    submenu,
-    timeframe,
-  );
+  const { data: events, isLoading } = useCalendarEvents(selectedListings, submenu, timeframe);
 
   if (isLoading) {
     return (
@@ -39,9 +35,9 @@ export default function CalendarPage() {
           Switch to desktop for Gantt/Calendar view
         </div>
       )}
-      {effectiveView === "gantt" && <CalendarGanttView events={events} />}
-      {effectiveView === "calendar" && <CalendarMonthView events={events} />}
-      {effectiveView === "list" && <CalendarListView events={events} />}
+      {effectiveView === "gantt" && <CalendarGanttView events={events ?? []} />}
+      {effectiveView === "calendar" && <CalendarMonthView events={events ?? []} />}
+      {effectiveView === "list" && <CalendarListView events={events ?? []} />}
     </div>
   );
 }

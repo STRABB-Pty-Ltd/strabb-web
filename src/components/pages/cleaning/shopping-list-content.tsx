@@ -14,7 +14,8 @@ export function ShoppingListContent() {
   const boughtItems = useAppStore((s) => s.cleaning.boughtItems);
   const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
 
-  const { data: items } = useShoppingList(selectedListings);
+  const { data: rawItems } = useShoppingList(selectedListings);
+  const items = rawItems ?? [];
 
   const grouped = items.reduce(
     (acc, item) => {
@@ -28,10 +29,7 @@ export function ShoppingListContent() {
 
   const handleCopy = () => {
     const text = items
-      .map(
-        (i) =>
-          `${boughtItems.includes(i.id) ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`,
-      )
+      .map((i) => `${boughtItems.includes(i.id) ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`)
       .join("\n");
     navigator.clipboard.writeText(text);
   };
@@ -41,9 +39,7 @@ export function ShoppingListContent() {
       <div className="max-h-96 overflow-y-auto">
         {Object.entries(grouped).map(([listing, listItems]) => (
           <div key={listing} className="mb-4">
-            <h3 className="mb-1 text-xs font-semibold uppercase text-gray-500">
-              {listing}
-            </h3>
+            <h3 className="mb-1 text-xs font-semibold text-gray-500 uppercase">{listing}</h3>
             <div className="space-y-1">
               {listItems.map((item) => {
                 const isBought = boughtItems.includes(item.id);
@@ -68,9 +64,7 @@ export function ShoppingListContent() {
                     >
                       {item.item}
                     </span>
-                    <span className="font-data text-xs text-gray-500">
-                      x{item.quantity}
-                    </span>
+                    <span className="font-data text-xs text-gray-500">x{item.quantity}</span>
                     <span
                       className="rounded-full px-2 py-0.5 text-xs"
                       style={{ backgroundColor: badge.bg, color: badge.text }}
@@ -86,11 +80,7 @@ export function ShoppingListContent() {
       </div>
 
       <div className="mt-3 flex justify-end gap-2">
-        <button
-          type="button"
-          disabled
-          className="rounded-lg px-4 py-2 text-sm text-gray-400"
-        >
+        <button type="button" disabled className="rounded-lg px-4 py-2 text-sm text-gray-400">
           Share Link
         </button>
         <button

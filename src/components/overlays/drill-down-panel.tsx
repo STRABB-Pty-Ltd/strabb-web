@@ -51,7 +51,10 @@ export function DrillDownPanel({
         <div className="shrink-0" style={{ height: 8, backgroundColor: accentColor }} />
 
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="flex items-center justify-between border-b px-4 py-3"
+          style={{ borderColor: "var(--border)" }}
+        >
           <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
           <button
             type="button"

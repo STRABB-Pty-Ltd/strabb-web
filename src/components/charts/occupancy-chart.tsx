@@ -25,9 +25,19 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
     <ChartContainer title="Occupancy by Listing" loading={loading} empty={data.length === 0}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="listing" tick={{ fontSize: 11 }} interval={0} angle={-20} textAnchor="end" height={60} />
+        <XAxis
+          dataKey="listing"
+          tick={{ fontSize: 11 }}
+          interval={0}
+          angle={-20}
+          textAnchor="end"
+          height={60}
+        />
         <YAxis tick={{ fontSize: 12 }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-        <Tooltip formatter={(value) => [`${value}%`, "Occupancy"]} contentStyle={{ fontSize: 12 }} />
+        <Tooltip
+          formatter={(value) => [`${value}%`, "Occupancy"]}
+          contentStyle={{ fontSize: 12 }}
+        />
         <Bar dataKey="occupancy" radius={[4, 4, 0, 0]}>
           {data.map((entry, i) => (
             <Cell key={i} fill={getOccupancyColor(entry.occupancy)} />

@@ -68,10 +68,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
                 className="flex h-8 w-8 items-center justify-center rounded-lg"
                 style={{ backgroundColor: "rgba(59, 130, 246, 0.1)" }}
               >
-                <Icon
-                  size={16}
-                  style={{ color: "var(--strabb-secondary)" }}
-                />
+                <Icon size={16} style={{ color: "var(--strabb-secondary)" }} />
               </div>
               {!trendNeutral && (
                 <div
@@ -83,11 +80,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
                     color: trendPositive ? "#16A34A" : "#DC2626",
                   }}
                 >
-                  {trendPositive ? (
-                    <ArrowUpRight size={12} />
-                  ) : (
-                    <ArrowDownRight size={12} />
-                  )}
+                  {trendPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                   {Math.abs(kpi.trend)}%
                 </div>
               )}

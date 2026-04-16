@@ -19,12 +19,10 @@ export interface CleaningSlice {
   toggleBoughtItem: (id: string) => void;
 }
 
-export const createCleaningSlice: StateCreator<
-  CleaningSlice,
-  [],
-  [],
-  CleaningSlice
-> = (set, get) => ({
+export const createCleaningSlice: StateCreator<CleaningSlice, [], [], CleaningSlice> = (
+  set,
+  get,
+) => ({
   cleaning: {
     view: "kanban",
     timeframe: "this_week",
@@ -35,10 +33,8 @@ export const createCleaningSlice: StateCreator<
     shoppingDrawerOpen: false,
     boughtItems: [],
   },
-  setCleaningListSort: (sort) =>
-    set({ cleaning: { ...get().cleaning, listSort: sort } }),
-  setGanttZoom: (zoom) =>
-    set({ cleaning: { ...get().cleaning, ganttZoom: zoom } }),
+  setCleaningListSort: (sort) => set({ cleaning: { ...get().cleaning, listSort: sort } }),
+  setGanttZoom: (zoom) => set({ cleaning: { ...get().cleaning, ganttZoom: zoom } }),
   toggleShoppingDrawer: () =>
     set({
       cleaning: {
@@ -51,9 +47,7 @@ export const createCleaningSlice: StateCreator<
     set({
       cleaning: {
         ...get().cleaning,
-        boughtItems: current.includes(id)
-          ? current.filter((i) => i !== id)
-          : [...current, id],
+        boughtItems: current.includes(id) ? current.filter((i) => i !== id) : [...current, id],
       },
     });
   },

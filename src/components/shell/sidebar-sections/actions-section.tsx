@@ -9,9 +9,7 @@ export function ActionsSection() {
 
   return (
     <div style={{ padding: "var(--space-md)" }}>
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-        Actions
-      </h3>
+      <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">Actions</h3>
       <div className="flex flex-col gap-1">
         <button
           type="button"

@@ -68,17 +68,11 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
           <div
             className="ml-auto flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
             style={{
-              backgroundColor: trendPositive
-                ? "rgba(22, 163, 74, 0.1)"
-                : "rgba(220, 38, 38, 0.1)",
+              backgroundColor: trendPositive ? "rgba(22, 163, 74, 0.1)" : "rgba(220, 38, 38, 0.1)",
               color: trendPositive ? "#16A34A" : "#DC2626",
             }}
           >
-            {trendPositive ? (
-              <ArrowUpRight size={12} />
-            ) : (
-              <ArrowDownRight size={12} />
-            )}
+            {trendPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
             {Math.abs(kpi.trend ?? 0)}%
           </div>
         )}

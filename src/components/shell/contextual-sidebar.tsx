@@ -46,7 +46,7 @@ export function ContextualSidebar() {
         role="complementary"
         aria-label="Sidebar"
         className={[
-          "flex flex-col bg-white border-r overflow-y-auto",
+          "flex flex-col overflow-y-auto border-r bg-white",
           "transition-transform duration-300 ease-in-out",
           // Mobile: floating overlay
           "fixed top-0 left-0 z-50 h-full lg:relative lg:z-10",

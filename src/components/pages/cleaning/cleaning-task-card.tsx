@@ -37,9 +37,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
             className="h-2.5 w-2.5 shrink-0 rounded-full"
             style={{ backgroundColor: task.listingColor }}
           />
-          <span className="truncate text-sm font-medium text-gray-800">
-            {task.listingName}
-          </span>
+          <span className="truncate text-sm font-medium text-gray-800">{task.listingName}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -56,9 +54,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
 
         <div className="flex items-center gap-1 text-xs text-gray-500">
           <Clock size={10} />
-          <span>
-            {format(new Date(task.scheduledTime), "d MMM, HH:mm")}
-          </span>
+          <span>{format(new Date(task.scheduledTime), "d MMM, HH:mm")}</span>
         </div>
 
         {task.assigneeName && (

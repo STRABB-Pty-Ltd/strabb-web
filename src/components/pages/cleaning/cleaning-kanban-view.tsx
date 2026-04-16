@@ -29,10 +29,7 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
     <KanbanBoard<CleaningTask>
       columns={columns}
       renderCard={(task) => (
-        <CleaningTaskCard
-          task={task}
-          onClick={() => openDrillDownPanel("cleaning", task.id)}
-        />
+        <CleaningTaskCard task={task} onClick={() => openDrillDownPanel("cleaning", task.id)} />
       )}
       getItemId={(task) => task.id}
       getBorderColor={(task) => task.listingColor}

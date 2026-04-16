@@ -2,11 +2,7 @@ import type { Financial } from "@/types/financial";
 import { REFERENCE_NOW } from "./reference-date";
 
 const monthStr = (offset: number) => {
-  const d = new Date(
-    REFERENCE_NOW.getUTCFullYear(),
-    REFERENCE_NOW.getUTCMonth() + offset,
-    1,
-  );
+  const d = new Date(REFERENCE_NOW.getUTCFullYear(), REFERENCE_NOW.getUTCMonth() + offset, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 };
 
@@ -48,33 +44,26 @@ function seededRandom(monthIdx: number, listingIdx: number): number {
 
 let finId = 1;
 
-export const mockFinancialList: Financial[] = Array.from(
-  { length: 6 },
-  (_, monthIdx) => {
-    const month = monthStr(-5 + monthIdx);
-    return listings.map((listing, listingIdx) => {
-      const seasonMultiplier = monthIdx >= 3 ? 1.15 : 0.9;
-      const occupancy = Math.round(
-        60 + seededRandom(monthIdx, listingIdx) * 30 * seasonMultiplier,
-      );
-      const bookings = Math.max(3, Math.round(occupancy / 15));
-      const revenue = Math.round(
-        listing.rate * (occupancy / 100) * 30 * seasonMultiplier,
-      );
-      return createFinancial({
-        id: `fin-${String(finId++).padStart(3, "0")}`,
-        month,
-        listingId: listing.id,
-        listingName: listing.name,
-        revenue,
-        cleaningCost: Math.round(revenue * 0.08),
-        maintenanceCost: Math.round(revenue * 0.03),
-        suppliesCost: Math.round(revenue * 0.015),
-        platformFees: Math.round(revenue * 0.15),
-        occupancyRate: occupancy,
-        avgNightlyRate: listing.rate,
-        bookingCount: bookings,
-      });
+export const mockFinancialList: Financial[] = Array.from({ length: 6 }, (_, monthIdx) => {
+  const month = monthStr(-5 + monthIdx);
+  return listings.map((listing, listingIdx) => {
+    const seasonMultiplier = monthIdx >= 3 ? 1.15 : 0.9;
+    const occupancy = Math.round(60 + seededRandom(monthIdx, listingIdx) * 30 * seasonMultiplier);
+    const bookings = Math.max(3, Math.round(occupancy / 15));
+    const revenue = Math.round(listing.rate * (occupancy / 100) * 30 * seasonMultiplier);
+    return createFinancial({
+      id: `fin-${String(finId++).padStart(3, "0")}`,
+      month,
+      listingId: listing.id,
+      listingName: listing.name,
+      revenue,
+      cleaningCost: Math.round(revenue * 0.08),
+      maintenanceCost: Math.round(revenue * 0.03),
+      suppliesCost: Math.round(revenue * 0.015),
+      platformFees: Math.round(revenue * 0.15),
+      occupancyRate: occupancy,
+      avgNightlyRate: listing.rate,
+      bookingCount: bookings,
     });
-  },
-).flat();
+  });
+}).flat();

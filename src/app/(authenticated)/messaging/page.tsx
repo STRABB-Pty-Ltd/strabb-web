@@ -14,18 +14,12 @@ export default function MessagingPage() {
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
 
-  const { data: messages, isLoading } = useMessages(
-    channels,
-    submenu,
-    selectedListings,
-  );
+  const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
 
   const threadMsg = threadOverlay
-    ? messages.find((m) => m.id === threadOverlay.messageId)
+    ? (messages ?? []).find((m) => m.id === threadOverlay.messageId)
     : null;
-  const { data: threadMessages } = useMessageThread(
-    threadOverlay?.messageId ?? null,
-  );
+  const { data: threadMessages } = useMessageThread(threadOverlay?.messageId ?? null);
 
   if (isLoading) {
     return (
@@ -37,8 +31,8 @@ export default function MessagingPage() {
 
   return (
     <div className="p-4">
-      {view === "kanban" && <MessagingKanbanView messages={messages} />}
-      {view === "list" && <MessagingListView messages={messages} />}
+      {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
+      {view === "list" && <MessagingListView messages={messages ?? []} />}
 
       {threadMsg && threadOverlay?.open && (
         <ThreadOverlay
@@ -49,7 +43,7 @@ export default function MessagingPage() {
           checkIn={threadMsg.checkIn}
           checkOut={threadMsg.checkOut}
           channel={threadMsg.channel}
-          messages={threadMessages}
+          messages={threadMessages ?? []}
         />
       )}
     </div>

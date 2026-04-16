@@ -1,7 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek, subMonths } from "date-fns";
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+} from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
@@ -59,17 +70,32 @@ export function TimeframePopup() {
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b px-3 py-2" style={{ borderColor: "var(--border)" }}>
+      <div
+        className="flex items-center justify-between border-b px-3 py-2"
+        style={{ borderColor: "var(--border)" }}
+      >
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => setViewDate(subMonths(viewDate, 1))} className="rounded p-0.5 hover:bg-gray-100">
+          <button
+            type="button"
+            onClick={() => setViewDate(subMonths(viewDate, 1))}
+            className="rounded p-0.5 hover:bg-gray-100"
+          >
             <ChevronLeft size={16} />
           </button>
           <span className="text-sm font-semibold">{format(viewDate, "MMMM yyyy")}</span>
-          <button type="button" onClick={() => setViewDate(addMonths(viewDate, 1))} className="rounded p-0.5 hover:bg-gray-100">
+          <button
+            type="button"
+            onClick={() => setViewDate(addMonths(viewDate, 1))}
+            className="rounded p-0.5 hover:bg-gray-100"
+          >
             <ChevronRight size={16} />
           </button>
         </div>
-        <button type="button" onClick={closeTimeframePopup} className="rounded p-0.5 text-gray-400 hover:bg-gray-100">
+        <button
+          type="button"
+          onClick={closeTimeframePopup}
+          className="rounded p-0.5 text-gray-400 hover:bg-gray-100"
+        >
           <X size={16} />
         </button>
       </div>
@@ -78,7 +104,9 @@ export function TimeframePopup() {
       <div className="p-3">
         <div className="mb-1 grid grid-cols-7 gap-0.5">
           {DAY_LABELS.map((d) => (
-            <div key={d} className="text-center text-xs text-gray-400">{d}</div>
+            <div key={d} className="text-center text-xs text-gray-400">
+              {d}
+            </div>
           ))}
         </div>
         <div className="grid grid-cols-7 gap-0.5">

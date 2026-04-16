@@ -51,6 +51,7 @@ export function useCalendarEventsAPI(
   endDate?: string,
 ) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   const isOverview = submenuFilters.length === 0 || submenuFilters.includes("overview");
@@ -76,7 +77,9 @@ export function useCalendarEventsAPI(
   return useQuery<CalendarEvent[]>({
     queryKey: ["calendar-events", ...selectedListings, ...submenuFilters],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawCalendarEvent[] }>(`/calendar/events?${params.toString()}`);
+      const response = await apiClient.get<{ data: RawCalendarEvent[] }>(
+        `/calendar/events?${params.toString()}`,
+      );
       return response.data.map(mapCalendarEvent);
     },
     enabled: !USE_MOCK && isReady,

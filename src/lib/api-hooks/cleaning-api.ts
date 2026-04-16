@@ -43,12 +43,14 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
     priority: raw.priority as CleaningTask["priority"],
     status: raw.status as CleaningTask["status"],
     type: raw.taskType as CleaningTask["type"],
-    estimatedHours: typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
+    estimatedHours:
+      typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
     notes: raw.notes,
   };
 }
 
 export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: string[]) {
+  const isReady = useAuthReady();
   const apiClient = useApiClient();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_id", id));
@@ -70,7 +72,9 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   return useQuery<CleaningTask[]>({
     queryKey: ["cleaning-tasks", ...submenuFilters, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawCleaningTask[] }>(`/cleaning-tasks?${params.toString()}`);
+      const response = await apiClient.get<{ data: RawCleaningTask[] }>(
+        `/cleaning-tasks?${params.toString()}`,
+      );
       return response.data.map(mapCleaningTask);
     },
     enabled: !USE_MOCK && isReady,
@@ -86,7 +90,9 @@ export function useShoppingListAPI(selectedListings: string[]) {
   return useQuery<ShoppingItem[]>({
     queryKey: ["shopping-list", ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: ShoppingItem[] }>(`/cleaning-tasks/shopping-list?${params.toString()}`);
+      const response = await apiClient.get<{ data: ShoppingItem[] }>(
+        `/cleaning-tasks/shopping-list?${params.toString()}`,
+      );
       return response.data;
     },
     enabled: !USE_MOCK && isReady,

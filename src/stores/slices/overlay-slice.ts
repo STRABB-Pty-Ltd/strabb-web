@@ -33,12 +33,7 @@ export interface OverlaySlice extends OverlayState {
 
 let toastCounter = 0;
 
-export const createOverlaySlice: StateCreator<
-  OverlaySlice,
-  [],
-  [],
-  OverlaySlice
-> = (set, get) => ({
+export const createOverlaySlice: StateCreator<OverlaySlice, [], [], OverlaySlice> = (set, get) => ({
   calendarDate: new Date(),
   tfPopup: { open: false, anchor: "sidebar" },
   customRange: null,
@@ -48,17 +43,13 @@ export const createOverlaySlice: StateCreator<
   sharePopup: { open: false },
   shoppingListPopup: { open: false },
   toasts: [],
-  openTimeframePopup: () =>
-    set({ tfPopup: { open: true, anchor: "sidebar" } }),
-  closeTimeframePopup: () =>
-    set({ tfPopup: { open: false, anchor: "sidebar" } }),
+  openTimeframePopup: () => set({ tfPopup: { open: true, anchor: "sidebar" } }),
+  closeTimeframePopup: () => set({ tfPopup: { open: false, anchor: "sidebar" } }),
   setCustomRange: (range) => set({ customRange: range }),
   setShareFields: (fields) => set({ shareFields: fields }),
-  openDrillDownPanel: (type, itemId) =>
-    set({ drillDownPanel: { open: true, type, itemId } }),
+  openDrillDownPanel: (type, itemId) => set({ drillDownPanel: { open: true, type, itemId } }),
   closeDrillDownPanel: () => set({ drillDownPanel: null }),
-  openThreadOverlay: (messageId) =>
-    set({ threadOverlay: { open: true, messageId } }),
+  openThreadOverlay: (messageId) => set({ threadOverlay: { open: true, messageId } }),
   closeThreadOverlay: () => set({ threadOverlay: null }),
   openSharePopup: () => set({ sharePopup: { open: true } }),
   closeSharePopup: () => set({ sharePopup: { open: false } }),
@@ -68,6 +59,5 @@ export const createOverlaySlice: StateCreator<
     const id = `toast-${++toastCounter}`;
     set({ toasts: [...get().toasts, { ...toast, id }] });
   },
-  removeToast: (id) =>
-    set({ toasts: get().toasts.filter((t) => t.id !== id) }),
+  removeToast: (id) => set({ toasts: get().toasts.filter((t) => t.id !== id) }),
 });

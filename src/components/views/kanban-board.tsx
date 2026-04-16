@@ -17,12 +17,7 @@ export function KanbanBoard<T>({
   return (
     <div className="flex gap-3 overflow-x-auto pb-4">
       {columns.map((col) => (
-        <KanbanColumn
-          key={col.id}
-          id={col.id}
-          label={col.label}
-          count={col.items.length}
-        >
+        <KanbanColumn key={col.id} id={col.id} label={col.label} count={col.items.length}>
           {col.items.map((item) => (
             <KanbanCard key={getItemId(item)} borderColor={getBorderColor(item)}>
               {renderCard(item)}

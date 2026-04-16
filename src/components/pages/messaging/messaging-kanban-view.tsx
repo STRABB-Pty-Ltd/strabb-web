@@ -30,8 +30,7 @@ export function MessagingKanbanView({ messages }: MessagingKanbanViewProps) {
   const setSelectedMessage = useAppStore((s) => s.setSelectedMessage);
   const openThreadOverlay = useAppStore((s) => s.openThreadOverlay);
 
-  const getEffectiveStatus = (msg: Message) =>
-    localUpdates[msg.id]?.status ?? msg.status;
+  const getEffectiveStatus = (msg: Message) => localUpdates[msg.id]?.status ?? msg.status;
 
   const columns = statusColumns.map((col) => ({
     ...col,

@@ -19,9 +19,7 @@ const defaults: ShoppingItem = {
   notes: null,
 };
 
-export function createShoppingItem(
-  overrides?: Partial<ShoppingItem>,
-): ShoppingItem {
+export function createShoppingItem(overrides?: Partial<ShoppingItem>): ShoppingItem {
   return { ...defaults, ...overrides };
 }
 

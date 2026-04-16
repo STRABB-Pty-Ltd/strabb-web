@@ -77,8 +77,7 @@ export function CalendarGrid<T>({
       case "week":
       case "fortnight": {
         const ws = startOfWeek(currentDate, { weekStartsOn: 1 });
-        const we =
-          mode === "week" ? endOfWeek(currentDate, { weekStartsOn: 1 }) : addDays(ws, 13);
+        const we = mode === "week" ? endOfWeek(currentDate, { weekStartsOn: 1 }) : addDays(ws, 13);
         return `${format(ws, "d MMM")} – ${format(we, "d MMM yyyy")}`;
       }
       case "day":
@@ -114,7 +113,9 @@ export function CalendarGrid<T>({
   const getEventsForDay = (day: Date) =>
     events.filter((ev) => {
       const range = getEventDate(ev);
-      return day >= new Date(range.start.toDateString()) && day <= new Date(range.end.toDateString());
+      return (
+        day >= new Date(range.start.toDateString()) && day <= new Date(range.end.toDateString())
+      );
     });
 
   if (mode === "day") {
@@ -169,7 +170,7 @@ export function CalendarGrid<T>({
 
       {/* Day-of-week labels */}
       <div
-        className="grid border-l border-t"
+        className="grid border-t border-l"
         style={{
           gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
           borderColor: "var(--border)",
@@ -178,7 +179,7 @@ export function CalendarGrid<T>({
         {DAY_LABELS.map((d) => (
           <div
             key={d}
-            className="border-b border-r bg-gray-50 py-1 text-center text-xs font-medium text-gray-500"
+            className="border-r border-b bg-gray-50 py-1 text-center text-xs font-medium text-gray-500"
             style={{ borderColor: "var(--border)" }}
           >
             {d}

@@ -2,12 +2,7 @@
 
 import { useMemo } from "react";
 
-import {
-  mockBookingList,
-  mockCleaningTaskList,
-  mockFinancialList,
-  mockMessageList,
-} from "./index";
+import { mockBookingList, mockCleaningTaskList, mockFinancialList, mockMessageList } from "./index";
 import { REFERENCE_NOW } from "./reference-date";
 import type { Booking } from "@/types/booking";
 import type { CleaningTask } from "@/types/cleaning-task";
@@ -72,9 +67,7 @@ function computeKPIs(
   const totalRevenue = currentFinancials.reduce((s, f) => s + f.revenue, 0);
   const prevRevenue = prevFinancials.reduce((s, f) => s + f.revenue, 0);
   const revenueTrend =
-    prevRevenue > 0
-      ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 1000) / 10
-      : 0;
+    prevRevenue > 0 ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 1000) / 10 : 0;
 
   const activeBookings = filtered.filter(
     (b) => b.status !== "cancelled" && b.status !== "checked_out",
@@ -88,9 +81,7 @@ function computeKPIs(
       : 0;
   const prevAvgOccupancy =
     prevFinancials.length > 0
-      ? Math.round(
-          prevFinancials.reduce((s, f) => s + f.occupancyRate, 0) / prevFinancials.length,
-        )
+      ? Math.round(prevFinancials.reduce((s, f) => s + f.occupancyRate, 0) / prevFinancials.length)
       : 0;
   const occupancyTrend =
     prevAvgOccupancy > 0

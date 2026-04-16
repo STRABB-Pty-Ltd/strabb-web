@@ -12,12 +12,8 @@ interface ReportingChartGridProps {
   data: ChartDataSet;
 }
 
-export function ReportingChartGrid({
-  activeSubmenu,
-  data,
-}: ReportingChartGridProps) {
-  const showOverview =
-    activeSubmenu.length === 0 || activeSubmenu.includes("overview");
+export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridProps) {
+  const showOverview = activeSubmenu.length === 0 || activeSubmenu.includes("overview");
   const showRevenue = activeSubmenu.includes("revenue");
   const showExpenses = activeSubmenu.includes("expenses");
   const showBookings = activeSubmenu.includes("bookings");

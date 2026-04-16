@@ -26,9 +26,7 @@ const defaults: CleaningTask = {
   notes: null,
 };
 
-export function createCleaningTask(
-  overrides?: Partial<CleaningTask>,
-): CleaningTask {
+export function createCleaningTask(overrides?: Partial<CleaningTask>): CleaningTask {
   return { ...defaults, ...overrides };
 }
 

@@ -56,12 +56,8 @@ export function NotificationsSection() {
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">
-          Notifications
-        </h2>
-        <p className="text-sm text-gray-500">
-          Choose which email notifications you receive.
-        </p>
+        <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+        <p className="text-sm text-gray-500">Choose which email notifications you receive.</p>
       </div>
 
       <div className="space-y-3">
@@ -72,9 +68,7 @@ export function NotificationsSection() {
             style={{ borderColor: "var(--border)" }}
           >
             <div>
-              <p className="text-sm font-medium text-gray-800">
-                {t.label}
-              </p>
+              <p className="text-sm font-medium text-gray-800">{t.label}</p>
               <p className="text-xs text-gray-500">{t.description}</p>
             </div>
             <button
@@ -82,9 +76,7 @@ export function NotificationsSection() {
               onClick={() => toggle(t.id)}
               className="relative h-6 w-10 rounded-full transition-colors"
               style={{
-                backgroundColor: settings[t.id]
-                  ? "var(--strabb-secondary)"
-                  : "#D1D5DB",
+                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "#D1D5DB",
               }}
             >
               <span

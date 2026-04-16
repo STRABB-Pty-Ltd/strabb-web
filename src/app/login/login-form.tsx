@@ -68,10 +68,10 @@ export function LoginForm() {
 
       {error && <p className="text-destructive text-sm">{error}</p>}
 
-      <Button type="submit" className="min-w-[120px] w-full" disabled={isSubmitting}>
+      <Button type="submit" className="w-full min-w-[120px]" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            <LoadingSpinner className="h-4 w-4 border-primary-foreground border-t-transparent" />
+            <LoadingSpinner className="border-primary-foreground h-4 w-4 border-t-transparent" />
             Signing in...
           </>
         ) : (

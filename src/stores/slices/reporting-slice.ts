@@ -19,12 +19,10 @@ export interface ReportingSlice {
   deleteSavedReport: (id: string) => void;
 }
 
-export const createReportingSlice: StateCreator<
-  ReportingSlice,
-  [],
-  [],
-  ReportingSlice
-> = (set, get) => ({
+export const createReportingSlice: StateCreator<ReportingSlice, [], [], ReportingSlice> = (
+  set,
+  get,
+) => ({
   reporting: {
     timeframe: "this_month",
     submenu: ["overview"],
@@ -40,8 +38,7 @@ export const createReportingSlice: StateCreator<
         savedReportsOpen: !get().reporting.savedReportsOpen,
       },
     }),
-  setActiveSavedReport: (id) =>
-    set({ reporting: { ...get().reporting, activeSavedReport: id } }),
+  setActiveSavedReport: (id) => set({ reporting: { ...get().reporting, activeSavedReport: id } }),
   addSavedReport: (report) =>
     set({
       reporting: {

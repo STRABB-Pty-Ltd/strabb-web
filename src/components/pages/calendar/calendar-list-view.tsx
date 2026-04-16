@@ -2,10 +2,7 @@
 
 import { format } from "date-fns";
 
-import {
-  SortableList,
-  type ColumnDef,
-} from "@/components/views/sortable-list";
+import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useCalendarListSort } from "@/hooks/use-calendar";
 import { useAppStore } from "@/stores/app-store";
@@ -57,9 +54,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     label: "Check-in",
     width: "100px",
     render: (ev) => (
-      <span className="font-data text-xs">
-        {format(new Date(ev.start ), "d MMM yyyy")}
-      </span>
+      <span className="font-data text-xs">{format(new Date(ev.start), "d MMM yyyy")}</span>
     ),
   },
   {
@@ -67,9 +62,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     label: "Check-out",
     width: "100px",
     render: (ev) => (
-      <span className="font-data text-xs">
-        {format(new Date(ev.end ), "d MMM yyyy")}
-      </span>
+      <span className="font-data text-xs">{format(new Date(ev.end), "d MMM yyyy")}</span>
     ),
   },
   {
@@ -77,7 +70,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     label: "Status",
     width: "100px",
     render: (ev) => (
-      <span className="text-xs capitalize text-gray-600">
+      <span className="text-xs text-gray-600 capitalize">
         {(ev.status ?? ev.type).replace("_", " ")}
       </span>
     ),
@@ -87,9 +80,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     label: "Amount",
     width: "100px",
     render: (ev) => (
-      <span className="font-data text-xs">
-        {ev.amount ? formatAUD(ev.amount) : "-"}
-      </span>
+      <span className="font-data text-xs">{ev.amount ? formatAUD(ev.amount) : "-"}</span>
     ),
   },
 ];

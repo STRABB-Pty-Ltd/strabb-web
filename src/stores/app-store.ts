@@ -2,46 +2,16 @@ import { create } from "zustand";
 
 import type { PageId } from "./types";
 
-import {
-  type CalendarSlice,
-  createCalendarSlice,
-} from "./slices/calendar-slice";
-import {
-  type CleaningSlice,
-  createCleaningSlice,
-} from "./slices/cleaning-slice";
-import {
-  type DashboardSlice,
-  createDashboardSlice,
-} from "./slices/dashboard-slice";
-import {
-  type ListingsSlice,
-  createListingsSlice,
-} from "./slices/listings-slice";
-import {
-  type MessagingSlice,
-  createMessagingSlice,
-} from "./slices/messaging-slice";
-import {
-  type NavigationSlice,
-  createNavigationSlice,
-} from "./slices/navigation-slice";
-import {
-  type OverlaySlice,
-  createOverlaySlice,
-} from "./slices/overlay-slice";
-import {
-  type ReportingSlice,
-  createReportingSlice,
-} from "./slices/reporting-slice";
-import {
-  type SettingsSlice,
-  createSettingsSlice,
-} from "./slices/settings-slice";
-import {
-  type SidebarSlice,
-  createSidebarSlice,
-} from "./slices/sidebar-slice";
+import { type CalendarSlice, createCalendarSlice } from "./slices/calendar-slice";
+import { type CleaningSlice, createCleaningSlice } from "./slices/cleaning-slice";
+import { type DashboardSlice, createDashboardSlice } from "./slices/dashboard-slice";
+import { type ListingsSlice, createListingsSlice } from "./slices/listings-slice";
+import { type MessagingSlice, createMessagingSlice } from "./slices/messaging-slice";
+import { type NavigationSlice, createNavigationSlice } from "./slices/navigation-slice";
+import { type OverlaySlice, createOverlaySlice } from "./slices/overlay-slice";
+import { type ReportingSlice, createReportingSlice } from "./slices/reporting-slice";
+import { type SettingsSlice, createSettingsSlice } from "./slices/settings-slice";
+import { type SidebarSlice, createSidebarSlice } from "./slices/sidebar-slice";
 
 // Pages that support a view switcher
 type ViewablePage = "calendar" | "messaging" | "cleaning";
@@ -50,12 +20,7 @@ type ViewablePage = "calendar" | "messaging" | "cleaning";
 type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
 
 // Pages that support submenu chips
-type SubmenuPage =
-  | "dashboard"
-  | "calendar"
-  | "messaging"
-  | "cleaning"
-  | "reporting";
+type SubmenuPage = "dashboard" | "calendar" | "messaging" | "cleaning" | "reporting";
 
 export interface CrossCuttingActions {
   setView: (page: ViewablePage, view: string) => void;

@@ -147,10 +147,7 @@ describe("Submenu chip integration", () => {
       useAppStore.getState().setCurrentPage("calendar");
 
       // Submenu should still be the same
-      expect(useAppStore.getState().calendar.submenu).toEqual([
-        "bookings",
-        "vacancy",
-      ]);
+      expect(useAppStore.getState().calendar.submenu).toEqual(["bookings", "vacancy"]);
     });
   });
 

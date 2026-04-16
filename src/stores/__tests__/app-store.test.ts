@@ -46,24 +46,15 @@ describe("AppStore", () => {
       expect(useAppStore.getState().selectedListings).toEqual(["lst-001"]);
 
       useAppStore.getState().toggleListing("lst-002");
-      expect(useAppStore.getState().selectedListings).toEqual([
-        "lst-001",
-        "lst-002",
-      ]);
+      expect(useAppStore.getState().selectedListings).toEqual(["lst-001", "lst-002"]);
 
       useAppStore.getState().toggleListing("lst-001");
       expect(useAppStore.getState().selectedListings).toEqual(["lst-002"]);
     });
 
     it("setSelectedListings replaces the list", () => {
-      useAppStore
-        .getState()
-        .setSelectedListings(["lst-001", "lst-002", "lst-003"]);
-      expect(useAppStore.getState().selectedListings).toEqual([
-        "lst-001",
-        "lst-002",
-        "lst-003",
-      ]);
+      useAppStore.getState().setSelectedListings(["lst-001", "lst-002", "lst-003"]);
+      expect(useAppStore.getState().selectedListings).toEqual(["lst-001", "lst-002", "lst-003"]);
     });
 
     it("clearListings empties selectedListings", () => {
@@ -81,9 +72,7 @@ describe("AppStore", () => {
 
   describe("custom groups", () => {
     it("createCustomGroup adds a group", () => {
-      useAppStore
-        .getState()
-        .createCustomGroup("Beach Properties", ["lst-001", "lst-002"]);
+      useAppStore.getState().createCustomGroup("Beach Properties", ["lst-001", "lst-002"]);
       const groups = useAppStore.getState().customGroups;
       expect(groups).toHaveLength(1);
       expect(groups[0].name).toBe("Beach Properties");
@@ -91,12 +80,8 @@ describe("AppStore", () => {
     });
 
     it("deleteCustomGroup removes a group", () => {
-      useAppStore
-        .getState()
-        .createCustomGroup("Group A", ["lst-001"]);
-      useAppStore
-        .getState()
-        .createCustomGroup("Group B", ["lst-002"]);
+      useAppStore.getState().createCustomGroup("Group A", ["lst-001"]);
+      useAppStore.getState().createCustomGroup("Group B", ["lst-002"]);
       const groupId = useAppStore.getState().customGroups[0].id;
       useAppStore.getState().deleteCustomGroup(groupId);
       expect(useAppStore.getState().customGroups).toHaveLength(1);
@@ -124,13 +109,8 @@ describe("AppStore", () => {
     });
 
     it("setSubmenu replaces the chip list", () => {
-      useAppStore
-        .getState()
-        .setSubmenu("calendar", ["bookings", "cleaning"]);
-      expect(useAppStore.getState().calendar.submenu).toEqual([
-        "bookings",
-        "cleaning",
-      ]);
+      useAppStore.getState().setSubmenu("calendar", ["bookings", "cleaning"]);
+      expect(useAppStore.getState().calendar.submenu).toEqual(["bookings", "cleaning"]);
     });
   });
 
@@ -167,9 +147,7 @@ describe("AppStore", () => {
     });
 
     it("setDrillDown and clearDrillDown manage drillDown state", () => {
-      useAppStore
-        .getState()
-        .setDrillDown({ type: "revenue", itemId: "lst-001", label: "Revenue" });
+      useAppStore.getState().setDrillDown({ type: "revenue", itemId: "lst-001", label: "Revenue" });
       expect(useAppStore.getState().dashboard.drillDown).toEqual({
         type: "revenue",
         itemId: "lst-001",
@@ -209,15 +187,10 @@ describe("AppStore", () => {
       expect(useAppStore.getState().messaging.channels).toEqual(["airbnb"]);
 
       useAppStore.getState().toggleChannel("booking_com");
-      expect(useAppStore.getState().messaging.channels).toEqual([
-        "airbnb",
-        "booking_com",
-      ]);
+      expect(useAppStore.getState().messaging.channels).toEqual(["airbnb", "booking_com"]);
 
       useAppStore.getState().toggleChannel("airbnb");
-      expect(useAppStore.getState().messaging.channels).toEqual([
-        "booking_com",
-      ]);
+      expect(useAppStore.getState().messaging.channels).toEqual(["booking_com"]);
     });
   });
 
@@ -288,9 +261,7 @@ describe("AppStore", () => {
     });
 
     it("setCustomRange updates custom range", () => {
-      useAppStore
-        .getState()
-        .setCustomRange({ start: "2026-04-01", end: "2026-04-30" });
+      useAppStore.getState().setCustomRange({ start: "2026-04-01", end: "2026-04-30" });
       expect(useAppStore.getState().customRange).toEqual({
         start: "2026-04-01",
         end: "2026-04-30",

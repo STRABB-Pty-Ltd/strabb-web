@@ -48,14 +48,27 @@ const channelColors: Record<string, string> = {
 
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
-  const totalExpenses = rows.reduce((s, r) => s + r.cleaningCost + r.maintenanceCost + r.suppliesCost + r.platformFees, 0);
+  const totalExpenses = rows.reduce(
+    (s, r) => s + r.cleaningCost + r.maintenanceCost + r.suppliesCost + r.platformFees,
+    0,
+  );
   const totalNet = rows.reduce((s, r) => s + r.netIncome, 0);
-  const avgOccupancy = rows.length > 0 ? Math.round((rows.reduce((s, r) => s + r.occupancyRate, 0) / rows.length) * 100) : 0;
-  const avgRate = rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.avgNightlyRate, 0) / rows.length) : 0;
+  const avgOccupancy =
+    rows.length > 0
+      ? Math.round((rows.reduce((s, r) => s + r.occupancyRate, 0) / rows.length) * 100)
+      : 0;
+  const avgRate =
+    rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.avgNightlyRate, 0) / rows.length) : 0;
   const totalBookings = rows.reduce((s, r) => s + r.bookingCount, 0);
 
   return [
-    { label: "Total Revenue", value: totalRevenue, icon: "dollar-sign", trend: 0, type: "currency" },
+    {
+      label: "Total Revenue",
+      value: totalRevenue,
+      icon: "dollar-sign",
+      trend: 0,
+      type: "currency",
+    },
     { label: "Net Income", value: totalNet, icon: "trending-up", trend: 0, type: "currency" },
     { label: "Total Expenses", value: totalExpenses, icon: "receipt", trend: 0, type: "currency" },
     { label: "Avg Occupancy", value: avgOccupancy, icon: "percent", trend: 0, type: "percentage" },
@@ -76,7 +89,9 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
   return useQuery<ReportingKPI[]>({
     queryKey: ["reporting-kpis", startDate, endDate, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`);
+      const response = await apiClient.get<{ data: RawFinancial[] }>(
+        `/reporting/financials?${params.toString()}`,
+      );
       return rawFinancialsToKPIs(response.data);
     },
     enabled: !USE_MOCK && isReady,
@@ -85,6 +100,7 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
 
 export function useReportingChartDataAPI(selectedListings: string[], timeframe?: string) {
   const apiClient = useApiClient();
+  const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
@@ -96,7 +112,9 @@ export function useReportingChartDataAPI(selectedListings: string[], timeframe?:
     queryFn: async () => {
       const [occupancyRes, revenueRes, expensesRes] = await Promise.all([
         apiClient.get<{ data: RawOccupancy[] }>(`/reporting/occupancy?${params.toString()}`),
-        apiClient.get<{ data: RawRevenueBreakdown[] }>(`/reporting/revenue-breakdown?${params.toString()}`),
+        apiClient.get<{ data: RawRevenueBreakdown[] }>(
+          `/reporting/revenue-breakdown?${params.toString()}`,
+        ),
         apiClient.get<{ data: RawExpense[] }>(`/reporting/expense-breakdown?${params.toString()}`),
       ]);
 

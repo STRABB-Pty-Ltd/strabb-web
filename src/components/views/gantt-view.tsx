@@ -54,7 +54,11 @@ export function GanttView<T>({
   }, [totalDays]);
 
   return (
-    <div ref={containerRef} className="overflow-x-auto rounded-lg border" style={{ borderColor: "var(--border)" }}>
+    <div
+      ref={containerRef}
+      className="overflow-x-auto rounded-lg border"
+      style={{ borderColor: "var(--border)" }}
+    >
       <GanttHeader dateRange={dateRange} cellWidth={cellWidth} />
 
       {rows.map((row) => {
@@ -64,7 +68,7 @@ export function GanttView<T>({
           <div key={row.id} className="flex" style={{ minHeight: 36 }}>
             {/* Row label */}
             <div
-              className="flex shrink-0 items-center gap-2 border-b border-r bg-white px-2 text-sm"
+              className="flex shrink-0 items-center gap-2 border-r border-b bg-white px-2 text-sm"
               style={{
                 width: LABEL_WIDTH,
                 position: "sticky",
@@ -101,10 +105,7 @@ export function GanttView<T>({
               {/* Bars */}
               {rowItems.map((item, idx) => {
                 const range = getDateRange(item);
-                const startCol = Math.max(
-                  0,
-                  differenceInDays(startOfDay(range.start), rangeStart),
-                );
+                const startCol = Math.max(0, differenceInDays(startOfDay(range.start), rangeStart));
                 const endCol = Math.min(
                   totalDays,
                   differenceInDays(startOfDay(range.end), rangeStart) + 1,

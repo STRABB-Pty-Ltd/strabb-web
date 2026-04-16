@@ -1,16 +1,6 @@
-export type BookingChannel =
-  | "airbnb"
-  | "booking_com"
-  | "vrbo"
-  | "direct"
-  | "internal_notes";
+export type BookingChannel = "airbnb" | "booking_com" | "vrbo" | "direct" | "internal_notes";
 
-export type BookingStatus =
-  | "checked_out"
-  | "checked_in"
-  | "confirmed"
-  | "pending"
-  | "cancelled";
+export type BookingStatus = "checked_out" | "checked_in" | "confirmed" | "pending" | "cancelled";
 
 export interface Booking {
   id: string;

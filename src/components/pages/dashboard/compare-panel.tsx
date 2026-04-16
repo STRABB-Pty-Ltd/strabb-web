@@ -22,25 +22,14 @@ const formatValue = (value: string | number, type: KPIData["type"]) => {
 
 export function ComparePanel({ current, comparison }: ComparePanelProps) {
   return (
-    <div
-      className="rounded-lg border bg-white p-4"
-      style={{ borderColor: "var(--border)" }}
-    >
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
-        Period Comparison
-      </h3>
+    <div className="rounded-lg border bg-white p-4" style={{ borderColor: "var(--border)" }}>
+      <h3 className="mb-3 text-sm font-semibold text-gray-700">Period Comparison</h3>
       <div className="space-y-2">
         {current.map((kpi, i) => {
           const comp = comparison[i];
           if (!comp) return null;
-          const currentNum =
-            typeof kpi.value === "string"
-              ? parseFloat(kpi.value)
-              : kpi.value;
-          const compNum =
-            typeof comp.value === "string"
-              ? parseFloat(comp.value)
-              : comp.value;
+          const currentNum = typeof kpi.value === "string" ? parseFloat(kpi.value) : kpi.value;
+          const compNum = typeof comp.value === "string" ? parseFloat(comp.value) : comp.value;
           const delta = compNum > 0 ? ((currentNum - compNum) / compNum) * 100 : 0;
           const positive = delta > 0;
 

@@ -83,7 +83,9 @@ export function useMessagesAPI(
   return useQuery<Message[]>({
     queryKey: ["conversations", ...channels, ...submenuFilters, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawConversation[] }>(`/conversations?${params.toString()}`);
+      const response = await apiClient.get<{ data: RawConversation[] }>(
+        `/conversations?${params.toString()}`,
+      );
       return response.data.map(mapConversation);
     },
     enabled: !USE_MOCK && isReady,
@@ -97,7 +99,9 @@ export function useMessageThreadAPI(messageId: string | null) {
   return useQuery<ThreadMessage[]>({
     queryKey: ["conversation-messages", messageId ?? ""],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawThreadMessage[] }>(`/conversations/${messageId}/messages`);
+      const response = await apiClient.get<{ data: RawThreadMessage[] }>(
+        `/conversations/${messageId}/messages`,
+      );
       return response.data.map(mapThreadMessage);
     },
     enabled: !USE_MOCK && isReady && !!messageId,

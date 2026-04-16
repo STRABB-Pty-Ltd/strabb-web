@@ -17,12 +17,10 @@ export interface ListingsSlice {
 
 let groupCounter = 0;
 
-export const createListingsSlice: StateCreator<
-  ListingsSlice,
-  [],
-  [],
-  ListingsSlice
-> = (set, get) => ({
+export const createListingsSlice: StateCreator<ListingsSlice, [], [], ListingsSlice> = (
+  set,
+  get,
+) => ({
   selectedListings: [],
   expandedGroups: {},
   customGroups: [],

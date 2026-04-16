@@ -15,12 +15,10 @@ export interface CalendarSlice {
   setDetailItem: (id: string | null) => void;
 }
 
-export const createCalendarSlice: StateCreator<
-  CalendarSlice,
-  [],
-  [],
-  CalendarSlice
-> = (set, get) => ({
+export const createCalendarSlice: StateCreator<CalendarSlice, [], [], CalendarSlice> = (
+  set,
+  get,
+) => ({
   calendar: {
     view: "gantt",
     timeframe: "this_month",
@@ -29,8 +27,6 @@ export const createCalendarSlice: StateCreator<
     listSort: "date_asc",
     detailItem: null,
   },
-  setCalendarListSort: (sort) =>
-    set({ calendar: { ...get().calendar, listSort: sort } }),
-  setDetailItem: (id) =>
-    set({ calendar: { ...get().calendar, detailItem: id } }),
+  setCalendarListSort: (sort) => set({ calendar: { ...get().calendar, listSort: sort } }),
+  setDetailItem: (id) => set({ calendar: { ...get().calendar, detailItem: id } }),
 });

@@ -24,8 +24,22 @@ const rows = [
 ];
 
 const items: TestItem[] = [
-  { id: "item-1", rowId: "row-1", label: "Guest Alpha", start: today, end: addDays(today, 3), color: "#FF5A5F" },
-  { id: "item-2", rowId: "row-2", label: "Guest Beta", start: addDays(today, 2), end: addDays(today, 5), color: "#003580" },
+  {
+    id: "item-1",
+    rowId: "row-1",
+    label: "Guest Alpha",
+    start: today,
+    end: addDays(today, 3),
+    color: "#FF5A5F",
+  },
+  {
+    id: "item-2",
+    rowId: "row-2",
+    label: "Guest Beta",
+    start: addDays(today, 2),
+    end: addDays(today, 5),
+    color: "#003580",
+  },
 ];
 
 const defaultProps: GanttViewProps<TestItem> = {

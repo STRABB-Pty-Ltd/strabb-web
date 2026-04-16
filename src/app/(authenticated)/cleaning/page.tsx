@@ -17,10 +17,7 @@ export default function CleaningPage() {
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { effectiveView, showMobileBanner } = useMobileViewOverride(view);
 
-  const { data: tasks, isLoading } = useCleaningTasks(
-    submenu,
-    selectedListings,
-  );
+  const { data: tasks, isLoading } = useCleaningTasks(submenu, selectedListings);
 
   if (isLoading) {
     return (
@@ -38,10 +35,10 @@ export default function CleaningPage() {
           Switch to desktop for Gantt/Calendar view
         </div>
       )}
-      {effectiveView === "kanban" && <CleaningKanbanView tasks={tasks} />}
-      {effectiveView === "calendar" && <CleaningCalendarView tasks={tasks} />}
-      {effectiveView === "list" && <CleaningListView tasks={tasks} />}
-      {effectiveView === "gantt" && <CleaningGanttView tasks={tasks} />}
+      {effectiveView === "kanban" && <CleaningKanbanView tasks={tasks ?? []} />}
+      {effectiveView === "calendar" && <CleaningCalendarView tasks={tasks ?? []} />}
+      {effectiveView === "list" && <CleaningListView tasks={tasks ?? []} />}
+      {effectiveView === "gantt" && <CleaningGanttView tasks={tasks ?? []} />}
 
       <ShoppingListPopup />
     </div>

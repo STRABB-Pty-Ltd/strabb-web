@@ -19,9 +19,7 @@ const defaults: Maintenance = {
   notes: "Discovered during turnover clean",
 };
 
-export function createMaintenance(
-  overrides?: Partial<Maintenance>,
-): Maintenance {
+export function createMaintenance(overrides?: Partial<Maintenance>): Maintenance {
   return { ...defaults, ...overrides };
 }
 

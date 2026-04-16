@@ -91,9 +91,7 @@ export function TeamSection() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Team</h2>
-          <p className="text-sm text-gray-500">
-            Manage team members and roles.
-          </p>
+          <p className="text-sm text-gray-500">Manage team members and roles.</p>
         </div>
         <button
           type="button"
@@ -112,9 +110,7 @@ export function TeamSection() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex-1">
-            <label className="mb-1 block text-xs font-medium text-gray-600">
-              Email
-            </label>
+            <label className="mb-1 block text-xs font-medium text-gray-600">Email</label>
             <input
               type="email"
               value={inviteEmail}
@@ -125,9 +121,7 @@ export function TeamSection() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-600">
-              Role
-            </label>
+            <label className="mb-1 block text-xs font-medium text-gray-600">Role</label>
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
@@ -158,11 +152,8 @@ export function TeamSection() {
         </div>
       )}
 
-      <div
-        className="overflow-hidden rounded-lg border"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <div className="flex border-b bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
+      <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
+        <div className="flex border-b bg-gray-50 text-xs font-semibold tracking-wide text-gray-500 uppercase">
           <div className="flex-1 px-4 py-3">Name</div>
           <div className="w-48 px-4 py-3">Email</div>
           <div className="w-24 px-4 py-3">Role</div>
@@ -177,12 +168,8 @@ export function TeamSection() {
               className="flex items-center border-b text-sm"
               style={{ borderColor: "var(--border)" }}
             >
-              <div className="flex-1 px-4 py-3 font-medium text-gray-800">
-                {member.name}
-              </div>
-              <div className="w-48 px-4 py-3 text-gray-500">
-                {member.email}
-              </div>
+              <div className="flex-1 px-4 py-3 font-medium text-gray-800">{member.name}</div>
+              <div className="w-48 px-4 py-3 text-gray-500">{member.email}</div>
               <div className="w-24 px-4 py-3">
                 <span
                   className="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
@@ -191,9 +178,7 @@ export function TeamSection() {
                   {member.role}
                 </span>
               </div>
-              <div className="w-28 px-4 py-3 text-xs text-gray-400">
-                {member.lastLogin}
-              </div>
+              <div className="w-28 px-4 py-3 text-xs text-gray-400">{member.lastLogin}</div>
               <div className="w-20 px-4 py-3">
                 <span
                   className="flex items-center gap-1 text-xs"

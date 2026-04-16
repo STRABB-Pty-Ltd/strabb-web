@@ -28,7 +28,9 @@ export function useMaintenanceAPI(filters?: {
   return useQuery<Maintenance[]>({
     queryKey: ["maintenance", JSON.stringify(filters)],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: Maintenance[] }>(`/maintenance?${params.toString()}`);
+      const response = await apiClient.get<{ data: Maintenance[] }>(
+        `/maintenance?${params.toString()}`,
+      );
       return response.data;
     },
     enabled: !USE_MOCK && isReady,

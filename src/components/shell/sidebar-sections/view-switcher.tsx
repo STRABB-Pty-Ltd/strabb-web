@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  CalendarDays,
-  Columns3,
-  GanttChart,
-  List,
-  type LucideIcon,
-} from "lucide-react";
+import { CalendarDays, Columns3, GanttChart, List, type LucideIcon } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -62,9 +56,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
             <button
               key={opt.id}
               type="button"
-              onClick={() =>
-                setView(page as "calendar" | "messaging" | "cleaning", opt.id)
-              }
+              onClick={() => setView(page as "calendar" | "messaging" | "cleaning", opt.id)}
               className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
               style={
                 isActive

@@ -17,7 +17,11 @@ interface ExpenseChartProps {
 const COLORS = ["#3B82F6", "#8B5CF6", "#F59E0B", "#6B7280"];
 
 const formatAUD = (value: number) =>
-  new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(value);
+  new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(value);
 
 export function ExpenseChart({ data, loading }: ExpenseChartProps) {
   return (
@@ -39,7 +43,11 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
           ))}
         </Pie>
         <Tooltip formatter={(value) => formatAUD(Number(value))} contentStyle={{ fontSize: 12 }} />
-        <Legend verticalAlign="bottom" iconType="circle" formatter={(v) => <span className="text-sm">{v}</span>} />
+        <Legend
+          verticalAlign="bottom"
+          iconType="circle"
+          formatter={(v) => <span className="text-sm">{v}</span>}
+        />
       </PieChart>
     </ChartContainer>
   );

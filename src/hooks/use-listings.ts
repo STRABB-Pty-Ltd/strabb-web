@@ -53,10 +53,7 @@ export function useCreateListing() {
 
   return useMutation({
     mutationFn: async (data: ListingCreateFormData) => {
-      const response = await apiClient.post<{ data: ListingResponse }>(
-        "/listings",
-        data,
-      );
+      const response = await apiClient.post<{ data: ListingResponse }>("/listings", data);
       return response.data;
     },
     onSuccess: () => {
@@ -71,10 +68,7 @@ export function useUpdateListing() {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ListingUpdateFormData }) => {
-      const response = await apiClient.put<{ data: ListingResponse }>(
-        `/listings/${id}`,
-        data,
-      );
+      const response = await apiClient.put<{ data: ListingResponse }>(`/listings/${id}`, data);
       return response.data;
     },
     onSuccess: () => {

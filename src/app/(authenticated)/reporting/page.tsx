@@ -12,10 +12,11 @@ export default function ReportingPage() {
   const selectedListings = useAppStore((s) => s.selectedListings);
   const savedReportsOpen = useAppStore((s) => s.reporting.savedReportsOpen);
 
-  const { data: kpis, isLoading: kpisLoading } =
-    useReportingKPIs(selectedListings, timeframe);
-  const { data: chartData, isLoading: chartsLoading } =
-    useReportingChartData(selectedListings, timeframe);
+  const { data: kpis, isLoading: kpisLoading } = useReportingKPIs(selectedListings, timeframe);
+  const { data: chartData, isLoading: chartsLoading } = useReportingChartData(
+    selectedListings,
+    timeframe,
+  );
 
   if (kpisLoading || chartsLoading) {
     return (
@@ -27,11 +28,9 @@ export default function ReportingPage() {
 
   return (
     <div className="space-y-4 p-4">
-      <ReportingKPIRow kpis={kpis} />
+      <ReportingKPIRow kpis={kpis ?? []} />
 
-      {chartData && (
-        <ReportingChartGrid activeSubmenu={submenu} data={chartData} />
-      )}
+      {chartData && <ReportingChartGrid activeSubmenu={submenu} data={chartData} />}
 
       {savedReportsOpen && <SavedReportsDrawer />}
     </div>

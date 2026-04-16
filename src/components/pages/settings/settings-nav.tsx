@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Bell,
-  Building2,
-  CreditCard,
-  Globe,
-  Radio,
-  Settings,
-  Sparkles,
-  Users,
-} from "lucide-react";
+import { Bell, Building2, CreditCard, Globe, Radio, Settings, Sparkles, Users } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -28,10 +19,7 @@ export function SettingsNav() {
   const setSection = useAppStore((s) => s.setSection);
 
   return (
-    <nav
-      className="shrink-0 border-r"
-      style={{ width: 200, borderColor: "var(--border)" }}
-    >
+    <nav className="shrink-0 border-r" style={{ width: 200, borderColor: "var(--border)" }}>
       <div className="space-y-0.5 p-2">
         {sections.map((s) => {
           const Icon = s.icon;
@@ -46,9 +34,7 @@ export function SettingsNav() {
                 backgroundColor: active ? "rgba(59, 130, 246, 0.08)" : undefined,
                 color: active ? "var(--strabb-secondary)" : "#6B7280",
                 fontWeight: active ? 600 : 400,
-                borderLeft: active
-                  ? "3px solid var(--strabb-secondary)"
-                  : "3px solid transparent",
+                borderLeft: active ? "3px solid var(--strabb-secondary)" : "3px solid transparent",
               }}
             >
               <Icon size={16} />

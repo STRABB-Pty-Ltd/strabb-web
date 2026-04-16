@@ -17,12 +17,10 @@ export interface DashboardSlice {
   clearDrillDown: () => void;
 }
 
-export const createDashboardSlice: StateCreator<
-  DashboardSlice,
-  [],
-  [],
-  DashboardSlice
-> = (set, get) => ({
+export const createDashboardSlice: StateCreator<DashboardSlice, [], [], DashboardSlice> = (
+  set,
+  get,
+) => ({
   dashboard: {
     timeframe: "this_month",
     submenu: ["overview"],
@@ -34,8 +32,6 @@ export const createDashboardSlice: StateCreator<
     set({
       dashboard: { ...get().dashboard, compare: !get().dashboard.compare },
     }),
-  setDrillDown: (item) =>
-    set({ dashboard: { ...get().dashboard, drillDown: item } }),
-  clearDrillDown: () =>
-    set({ dashboard: { ...get().dashboard, drillDown: null } }),
+  setDrillDown: (item) => set({ dashboard: { ...get().dashboard, drillDown: item } }),
+  clearDrillDown: () => set({ dashboard: { ...get().dashboard, drillDown: null } }),
 });

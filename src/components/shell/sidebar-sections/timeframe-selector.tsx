@@ -67,10 +67,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               key={opt.id}
               type="button"
               onClick={() =>
-                setTimeframe(
-                  page as "dashboard" | "calendar" | "cleaning" | "reporting",
-                  opt.id,
-                )
+                setTimeframe(page as "dashboard" | "calendar" | "cleaning" | "reporting", opt.id)
               }
               className="rounded-lg px-3 py-1 text-xs transition-colors"
               style={

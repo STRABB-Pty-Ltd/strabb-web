@@ -108,9 +108,7 @@ export function ListingFilterTree() {
                     onChange={() => toggleListing(parent.id)}
                     className="h-3.5 w-3.5 rounded border-gray-300"
                   />
-                  <span className="truncate text-sm font-medium text-gray-700">
-                    {parent.name}
-                  </span>
+                  <span className="truncate text-sm font-medium text-gray-700">{parent.name}</span>
                 </label>
               </div>
               {isExpanded && children.map((child) => renderListingRow(child, true))}

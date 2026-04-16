@@ -40,25 +40,79 @@ interface RawAlertResponse {
 function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
   const t = raw.trends;
   return [
-    { label: "Total Revenue", value: raw.revenue, icon: "dollar-sign", trend: t?.revenue, type: "currency" },
-    { label: "Total Bookings", value: raw.totalBookings, icon: "calendar", trend: t?.totalBookings, type: "number" },
-    { label: "Avg Occupancy", value: Math.round(raw.occupancyRate * 100), icon: "percent", trend: t?.occupancyRate, type: "percentage" },
-    { label: "Avg Nightly Rate", value: Math.round(raw.avgNightlyRate), icon: "bed", trend: t?.avgNightlyRate, type: "currency" },
-    { label: "Net Income", value: raw.netIncome, icon: "trending-up", trend: t?.netIncome, type: "currency" },
-    { label: "Expenses", value: raw.expenses, icon: "receipt", trend: t?.expenses, type: "currency" },
+    {
+      label: "Total Revenue",
+      value: raw.revenue,
+      icon: "dollar-sign",
+      trend: t?.revenue,
+      type: "currency",
+    },
+    {
+      label: "Total Bookings",
+      value: raw.totalBookings,
+      icon: "calendar",
+      trend: t?.totalBookings,
+      type: "number",
+    },
+    {
+      label: "Avg Occupancy",
+      value: Math.round(raw.occupancyRate * 100),
+      icon: "percent",
+      trend: t?.occupancyRate,
+      type: "percentage",
+    },
+    {
+      label: "Avg Nightly Rate",
+      value: Math.round(raw.avgNightlyRate),
+      icon: "bed",
+      trend: t?.avgNightlyRate,
+      type: "currency",
+    },
+    {
+      label: "Net Income",
+      value: raw.netIncome,
+      icon: "trending-up",
+      trend: t?.netIncome,
+      type: "currency",
+    },
+    {
+      label: "Expenses",
+      value: raw.expenses,
+      icon: "receipt",
+      trend: t?.expenses,
+      type: "currency",
+    },
   ];
 }
 
 function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
   const alerts: AlertItem[] = [];
   if (raw.unreadMessages > 0) {
-    alerts.push({ id: "alert-messages", type: "message", severity: "blue", description: `${raw.unreadMessages} unread message${raw.unreadMessages > 1 ? "s" : ""} requiring attention`, count: raw.unreadMessages });
+    alerts.push({
+      id: "alert-messages",
+      type: "message",
+      severity: "blue",
+      description: `${raw.unreadMessages} unread message${raw.unreadMessages > 1 ? "s" : ""} requiring attention`,
+      count: raw.unreadMessages,
+    });
   }
   if (raw.overdueTasks > 0) {
-    alerts.push({ id: "alert-overdue", type: "overdue", severity: "amber", description: `${raw.overdueTasks} cleaning task${raw.overdueTasks > 1 ? "s" : ""} overdue`, count: raw.overdueTasks });
+    alerts.push({
+      id: "alert-overdue",
+      type: "overdue",
+      severity: "amber",
+      description: `${raw.overdueTasks} cleaning task${raw.overdueTasks > 1 ? "s" : ""} overdue`,
+      count: raw.overdueTasks,
+    });
   }
   if (raw.highPriority > 0) {
-    alerts.push({ id: "alert-priority", type: "conflict", severity: "red", description: `${raw.highPriority} high priority item${raw.highPriority > 1 ? "s" : ""}`, count: raw.highPriority });
+    alerts.push({
+      id: "alert-priority",
+      type: "conflict",
+      severity: "red",
+      description: `${raw.highPriority} high priority item${raw.highPriority > 1 ? "s" : ""}`,
+      count: raw.highPriority,
+    });
   }
   return alerts;
 }
@@ -75,7 +129,9 @@ export function useDashboardKPIsAPI(timeframe: string, selectedListings: string[
   return useQuery<KPIData[]>({
     queryKey: ["dashboard-kpis", timeframe, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawKPIResponse }>(`/dashboard/kpis?${params.toString()}`);
+      const response = await apiClient.get<{ data: RawKPIResponse }>(
+        `/dashboard/kpis?${params.toString()}`,
+      );
       return rawKPIsToKPIData(response.data);
     },
     enabled: !USE_MOCK && isReady,
@@ -98,7 +154,13 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
 
 interface RawPreviewResponse {
   revenueTrend: { month: string; amount: number }[];
-  upcomingBookings: { id: string; listingName: string; guestName: string; checkIn: string; channel: string }[];
+  upcomingBookings: {
+    id: string;
+    listingName: string;
+    guestName: string;
+    checkIn: string;
+    channel: string;
+  }[];
   cleaningStatus: Record<string, number>;
   channelBreakdown: { channel: string; count: number; revenue: number }[];
 }
@@ -145,7 +207,9 @@ export function useDashboardPreviewAPI(selectedListings: string[], timeframe: st
   return useQuery<PreviewData>({
     queryKey: ["dashboard-preview", timeframe, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawPreviewResponse }>(`/dashboard/preview?${params.toString()}`);
+      const response = await apiClient.get<{ data: RawPreviewResponse }>(
+        `/dashboard/preview?${params.toString()}`,
+      );
       return rawPreviewToPreviewData(response.data);
     },
     enabled: !USE_MOCK && isReady,
@@ -164,7 +228,9 @@ export function useDashboardCompareAPI(selectedListings: string[], timeframe: st
   return useQuery({
     queryKey: ["dashboard-compare", timeframe, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: unknown }>(`/dashboard/compare?${params.toString()}`);
+      const response = await apiClient.get<{ data: unknown }>(
+        `/dashboard/compare?${params.toString()}`,
+      );
       return response.data;
     },
     enabled: !USE_MOCK && isReady && selectedListings.length > 0,

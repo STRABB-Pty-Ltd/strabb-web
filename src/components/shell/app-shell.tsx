@@ -19,7 +19,14 @@ import { PageLoading } from "./page-loading";
 import { SubmenuBar } from "./submenu-bar";
 import { TopNav } from "./top-nav";
 
-const validPages: PageId[] = ["dashboard", "calendar", "messaging", "cleaning", "reporting", "settings"];
+const validPages: PageId[] = [
+  "dashboard",
+  "calendar",
+  "messaging",
+  "cleaning",
+  "reporting",
+  "settings",
+];
 
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen);
@@ -54,7 +61,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={toggleSidebar}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
               {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}

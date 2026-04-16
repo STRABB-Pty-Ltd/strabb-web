@@ -6,8 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useSavedReports } from "@/hooks/use-reporting";
 
 export function SavedReportsDrawer() {
-  const { savedReports, loadReport, saveCurrentReport, deleteReport } =
-    useSavedReports();
+  const { savedReports, loadReport, saveCurrentReport, deleteReport } = useSavedReports();
   const [newName, setNewName] = useState("");
   const [showInput, setShowInput] = useState(false);
 
@@ -19,14 +18,9 @@ export function SavedReportsDrawer() {
   };
 
   return (
-    <div
-      className="rounded-lg border bg-white p-4"
-      style={{ borderColor: "var(--border)" }}
-    >
+    <div className="rounded-lg border bg-white p-4" style={{ borderColor: "var(--border)" }}>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">
-          Saved Reports
-        </h3>
+        <h3 className="text-sm font-semibold text-gray-700">Saved Reports</h3>
         <button
           type="button"
           onClick={() => setShowInput(true)}
@@ -71,9 +65,7 @@ export function SavedReportsDrawer() {
       )}
 
       {savedReports.length === 0 ? (
-        <p className="py-4 text-center text-xs text-gray-400">
-          No saved reports yet
-        </p>
+        <p className="py-4 text-center text-xs text-gray-400">No saved reports yet</p>
       ) : (
         <div className="space-y-2">
           {savedReports.map((report) => (
@@ -82,12 +74,8 @@ export function SavedReportsDrawer() {
               className="flex items-center justify-between rounded px-3 py-2 hover:bg-gray-50"
             >
               <div>
-                <p className="text-sm font-medium text-gray-700">
-                  {report.name}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {report.timeframe.replace("_", " ")}
-                </p>
+                <p className="text-sm font-medium text-gray-700">{report.name}</p>
+                <p className="text-xs text-gray-400">{report.timeframe.replace("_", " ")}</p>
               </div>
               <div className="flex gap-1">
                 <button

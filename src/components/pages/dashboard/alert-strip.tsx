@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  AlertTriangle,
-  Clock,
-  MessageSquare,
-  RefreshCw,
-  X,
-} from "lucide-react";
+import { AlertTriangle, Clock, MessageSquare, RefreshCw, X } from "lucide-react";
 
 import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
@@ -50,10 +44,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               borderLeftColor: severityBorder[alert.severity],
             }}
           >
-            <Icon
-              size={16}
-              style={{ color: severityBorder[alert.severity] }}
-            />
+            <Icon size={16} style={{ color: severityBorder[alert.severity] }} />
             <span className="text-sm text-gray-700">{alert.description}</span>
             <button
               type="button"

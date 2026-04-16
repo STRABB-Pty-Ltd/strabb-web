@@ -9,9 +9,7 @@ export function CleaningSection() {
   const [defaultDuration, setDefaultDuration] = useState("2");
   const [autoAssign, setAutoAssign] = useState(false);
   const [defaultCleaner, setDefaultCleaner] = useState("Maria Santos");
-  const [defaultCleanerEmail, setDefaultCleanerEmail] = useState(
-    "maria.s@cleanteam.com",
-  );
+  const [defaultCleanerEmail, setDefaultCleanerEmail] = useState("maria.s@cleanteam.com");
 
   const handleSave = () => {
     addToast({ type: "success", message: "Cleaning settings saved" });
@@ -21,9 +19,7 @@ export function CleaningSection() {
     <div className="max-w-lg space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-gray-900">Cleaning</h2>
-        <p className="text-sm text-gray-500">
-          Default cleaning task configuration.
-        </p>
+        <p className="text-sm text-gray-500">Default cleaning task configuration.</p>
       </div>
 
       <div className="space-y-4">
@@ -42,11 +38,12 @@ export function CleaningSection() {
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-lg border px-4 py-3" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="flex items-center justify-between rounded-lg border px-4 py-3"
+          style={{ borderColor: "var(--border)" }}
+        >
           <div>
-            <p className="text-sm font-medium text-gray-800">
-              Auto-assign Tasks
-            </p>
+            <p className="text-sm font-medium text-gray-800">Auto-assign Tasks</p>
             <p className="text-xs text-gray-500">
               Automatically assign cleaning tasks to the default cleaner
             </p>
@@ -56,9 +53,7 @@ export function CleaningSection() {
             onClick={() => setAutoAssign(!autoAssign)}
             className="relative h-6 w-10 rounded-full transition-colors"
             style={{
-              backgroundColor: autoAssign
-                ? "var(--strabb-secondary)"
-                : "#D1D5DB",
+              backgroundColor: autoAssign ? "var(--strabb-secondary)" : "#D1D5DB",
             }}
           >
             <span
@@ -95,13 +90,8 @@ export function CleaningSection() {
         </div>
       </div>
 
-      <div
-        className="rounded-lg border p-4"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">
-          Checklist Templates
-        </h3>
+      <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)" }}>
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">Checklist Templates</h3>
         <div className="space-y-2 text-sm text-gray-500">
           <div className="flex items-center justify-between rounded px-3 py-2 hover:bg-gray-50">
             <span>Standard Checkout Clean</span>

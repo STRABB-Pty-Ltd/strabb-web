@@ -3,10 +3,7 @@
 import { format } from "date-fns";
 import { useMemo } from "react";
 
-import {
-  SortableList,
-  type ColumnDef,
-} from "@/components/views/sortable-list";
+import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import type { CleaningTask } from "@/types/cleaning-task";
 import { useAppStore } from "@/stores/app-store";
 
@@ -74,11 +71,7 @@ const columns: ColumnDef<CleaningTask>[] = [
     key: "assignee",
     label: "Assignee",
     width: "120px",
-    render: (t) => (
-      <span className="text-xs text-gray-600">
-        {t.assigneeName ?? "Unassigned"}
-      </span>
-    ),
+    render: (t) => <span className="text-xs text-gray-600">{t.assigneeName ?? "Unassigned"}</span>,
   },
   {
     key: "status",
@@ -125,9 +118,7 @@ const columns: ColumnDef<CleaningTask>[] = [
     key: "hours",
     label: "Est. Hours",
     width: "80px",
-    render: (t) => (
-      <span className="font-data text-xs">{t.estimatedHours}h</span>
-    ),
+    render: (t) => <span className="font-data text-xs">{t.estimatedHours}h</span>,
   },
 ];
 
@@ -142,9 +133,7 @@ export function CleaningListView({ tasks }: CleaningListViewProps) {
   const [sortKey, sortDir] = listSort.includes("_")
     ? [
         listSort.substring(0, listSort.lastIndexOf("_")),
-        listSort.substring(listSort.lastIndexOf("_") + 1) as
-          | "asc"
-          | "desc",
+        listSort.substring(listSort.lastIndexOf("_") + 1) as "asc" | "desc",
       ]
     : [listSort, "asc" as const];
 
@@ -161,14 +150,10 @@ export function CleaningListView({ tasks }: CleaningListViewProps) {
           break;
         case "scheduled":
         case "date":
-          cmp =
-            new Date(a.scheduledTime).getTime() -
-            new Date(b.scheduledTime).getTime();
+          cmp = new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime();
           break;
         case "assignee":
-          cmp = (a.assigneeName ?? "").localeCompare(
-            b.assigneeName ?? "",
-          );
+          cmp = (a.assigneeName ?? "").localeCompare(b.assigneeName ?? "");
           break;
         case "status":
           cmp = a.status.localeCompare(b.status);
@@ -180,9 +165,7 @@ export function CleaningListView({ tasks }: CleaningListViewProps) {
           cmp = a.estimatedHours - b.estimatedHours;
           break;
         default:
-          cmp =
-            new Date(a.scheduledTime).getTime() -
-            new Date(b.scheduledTime).getTime();
+          cmp = new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime();
       }
       return sortDir === "desc" ? -cmp : cmp;
     });

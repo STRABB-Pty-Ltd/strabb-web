@@ -4,10 +4,7 @@ import { CalendarGrid } from "@/components/views/calendar-grid";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useAppStore } from "@/stores/app-store";
 
-const timeframeToMode: Record<
-  string,
-  "month" | "week" | "day" | "fortnight"
-> = {
+const timeframeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
   month: "month",
   this_month: "month",
   week: "week",
@@ -46,8 +43,8 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
       currentDate={calendarDate}
       events={events}
       getEventDate={(ev) => ({
-        start: new Date(ev.start ),
-        end: new Date(ev.end ),
+        start: new Date(ev.start),
+        end: new Date(ev.end),
       })}
       getEventColor={(ev) => typeColors[ev.type] ?? ev.color}
       getEventLabel={(ev) => ev.label}

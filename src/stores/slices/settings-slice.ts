@@ -9,12 +9,7 @@ export interface SettingsSlice {
   setSection: (section: string) => void;
 }
 
-export const createSettingsSlice: StateCreator<
-  SettingsSlice,
-  [],
-  [],
-  SettingsSlice
-> = (set) => ({
+export const createSettingsSlice: StateCreator<SettingsSlice, [], [], SettingsSlice> = (set) => ({
   settings: {
     section: "general",
   },

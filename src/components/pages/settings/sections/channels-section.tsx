@@ -62,14 +62,8 @@ export function ChannelsSection() {
   const addToast = useAppStore((s) => s.addToast);
   const [channels, setChannels] = useState(mockChannels);
 
-  const updateChannel = (
-    id: string,
-    field: "syncFrequency" | "pricingRule",
-    value: string,
-  ) => {
-    setChannels((ch) =>
-      ch.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
-    );
+  const updateChannel = (id: string, field: "syncFrequency" | "pricingRule", value: string) => {
+    setChannels((ch) => ch.map((c) => (c.id === id ? { ...c, [field]: value } : c)));
   };
 
   const handleSave = () => {
@@ -80,9 +74,7 @@ export function ChannelsSection() {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-gray-900">Channels</h2>
-        <p className="text-sm text-gray-500">
-          Per-platform sync and pricing settings.
-        </p>
+        <p className="text-sm text-gray-500">Per-platform sync and pricing settings.</p>
       </div>
 
       <div className="space-y-3">
@@ -97,9 +89,7 @@ export function ChannelsSection() {
             }}
           >
             <div className="mb-3 flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-gray-800">
-                {ch.name}
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-800">{ch.name}</h3>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -108,9 +98,7 @@ export function ChannelsSection() {
                 </label>
                 <select
                   value={ch.syncFrequency}
-                  onChange={(e) =>
-                    updateChannel(ch.id, "syncFrequency", e.target.value)
-                  }
+                  onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
                   className="w-full rounded border px-3 py-2 text-sm"
                   style={{ borderColor: "var(--border)" }}
                 >
@@ -127,9 +115,7 @@ export function ChannelsSection() {
                 </label>
                 <select
                   value={ch.pricingRule}
-                  onChange={(e) =>
-                    updateChannel(ch.id, "pricingRule", e.target.value)
-                  }
+                  onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
                   className="w-full rounded border px-3 py-2 text-sm"
                   style={{ borderColor: "var(--border)" }}
                 >

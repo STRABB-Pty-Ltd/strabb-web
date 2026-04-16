@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  useDashboardAlerts,
-  useDashboardKPIs,
-  useDashboardPreview,
-} from "@/hooks/use-dashboard";
+import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
 import { AlertStrip } from "@/components/pages/dashboard/alert-strip";
@@ -18,10 +14,7 @@ export default function DashboardPage() {
   const compare = useAppStore((s) => s.dashboard.compare);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
-  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
-    timeframe,
-    selectedListings,
-  );
+  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(timeframe, selectedListings);
   const { data: alerts } = useDashboardAlerts(selectedListings);
   const { data: preview, isLoading: previewLoading } = useDashboardPreview(
     selectedListings,

@@ -54,7 +54,9 @@ export function ShoppingListPopup() {
   );
 
   const handleCopyList = () => {
-    const text = items.map((i) => `${boughtItems.includes(i.id) ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`).join("\n");
+    const text = items
+      .map((i) => `${boughtItems.includes(i.id) ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`)
+      .join("\n");
     navigator.clipboard.writeText(text);
   };
 
@@ -140,11 +142,7 @@ export function ShoppingListPopup() {
             >
               Close
             </button>
-            <button
-              type="button"
-              disabled
-              className="rounded-lg px-4 py-2 text-sm text-gray-400"
-            >
+            <button type="button" disabled className="rounded-lg px-4 py-2 text-sm text-gray-400">
               Share Link
             </button>
             <button

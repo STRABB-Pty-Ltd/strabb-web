@@ -22,10 +22,7 @@ const typeLabels: Record<string, string> = {
   turnover: "Turnover",
 };
 
-const timeframeToMode: Record<
-  string,
-  "month" | "week" | "day" | "fortnight"
-> = {
+const timeframeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
   this_month: "month",
   this_week: "week",
   today: "day",
@@ -55,9 +52,7 @@ export function CleaningCalendarView({ tasks }: CleaningCalendarViewProps) {
         return { start: d, end: d };
       }}
       getEventColor={(task) => statusColors[task.status] ?? "#6B7280"}
-      getEventLabel={(task) =>
-        `${task.listingName} — ${typeLabels[task.type] ?? task.type}`
-      }
+      getEventLabel={(task) => `${task.listingName} — ${typeLabels[task.type] ?? task.type}`}
       onEventClick={(task) => openDrillDownPanel("cleaning", task.id)}
       onDateChange={() => {}}
     />

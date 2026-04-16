@@ -26,9 +26,7 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
           className="flex items-center truncate px-3 text-sm text-gray-700"
           style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
         >
-          {col.render
-            ? col.render(item)
-            : String((item as Record<string, unknown>)[col.key] ?? "")}
+          {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}
         </div>
       ))}
     </button>

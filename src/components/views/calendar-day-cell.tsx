@@ -31,7 +31,7 @@ export function CalendarDayCell({
 
   return (
     <div
-      className="flex flex-col border-b border-r"
+      className="flex flex-col border-r border-b"
       style={{
         minHeight: compact ? 60 : 100,
         borderColor: "var(--border)",
@@ -53,9 +53,7 @@ export function CalendarDayCell({
         {visibleEvents.map((ev, i) => (
           <CalendarEventChip key={i} label={ev.label} color={ev.color} onClick={ev.onClick} />
         ))}
-        {overflow > 0 && (
-          <span className="mt-0.5 text-xs text-gray-400">+{overflow} more</span>
-        )}
+        {overflow > 0 && <span className="mt-0.5 text-xs text-gray-400">+{overflow} more</span>}
       </div>
     </div>
   );

@@ -56,9 +56,7 @@ function computeKPIs(financials: Financial[], selectedListings: string[]): Repor
   const totalRevenue = current.reduce((s, f) => s + f.revenue, 0);
   const prevRevenue = prev.reduce((s, f) => s + f.revenue, 0);
   const revTrend =
-    prevRevenue > 0
-      ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 1000) / 10
-      : 0;
+    prevRevenue > 0 ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 1000) / 10 : 0;
 
   const avgOccupancy =
     current.length > 0
@@ -87,7 +85,13 @@ function computeKPIs(financials: Financial[], selectedListings: string[]): Repor
       trend: revTrend,
       icon: "dollar-sign",
     },
-    { label: "Avg Occupancy", value: avgOccupancy, type: "percentage", trend: 2.3, icon: "percent" },
+    {
+      label: "Avg Occupancy",
+      value: avgOccupancy,
+      type: "percentage",
+      trend: 2.3,
+      icon: "percent",
+    },
     { label: "Total Bookings", value: totalBookings, type: "number", trend: 5.1, icon: "calendar" },
     { label: "Avg Nightly Rate", value: avgRate, type: "currency", trend: 3.5, icon: "bed" },
     {
