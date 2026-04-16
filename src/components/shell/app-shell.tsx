@@ -1,5 +1,8 @@
 "use client";
 
+// NOTE: All shell components (Phases 13-24) are light-mode only.
+// Dark mode support is a known gap — see docs/TODO-dark-mode.md.
+
 import { Suspense, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";

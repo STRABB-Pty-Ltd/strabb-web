@@ -74,7 +74,7 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
   params.set("end_date", endDate);
 
   return useQuery<ReportingKPI[]>({
-    queryKey: ["reporting-kpis", ...selectedListings],
+    queryKey: ["reporting-kpis", startDate, endDate, ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`);
       return rawFinancialsToKPIs(response.data);
@@ -92,7 +92,7 @@ export function useReportingChartDataAPI(selectedListings: string[], timeframe?:
   params.set("end_date", endDate);
 
   return useQuery<ChartDataSet>({
-    queryKey: ["reporting-charts", ...selectedListings],
+    queryKey: ["reporting-charts", startDate, endDate, ...selectedListings],
     queryFn: async () => {
       const [occupancyRes, revenueRes, expensesRes] = await Promise.all([
         apiClient.get<{ data: RawOccupancy[] }>(`/reporting/occupancy?${params.toString()}`),
