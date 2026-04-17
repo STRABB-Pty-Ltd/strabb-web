@@ -63,30 +63,30 @@ export function TimeframePopup() {
     <div
       className="fixed z-[160] rounded-xl border bg-white shadow-xl"
       style={{
-        top: 160,
+        top: 144,
         left: `calc(var(--sidebar-width) + 8px)`,
-        width: 300,
+        width: 377,
         borderColor: "var(--border)",
       }}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between border-b px-3 py-2"
+        className="flex items-center justify-between border-b px-sm py-base"
         style={{ borderColor: "var(--border)" }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-base">
           <button
             type="button"
             onClick={() => setViewDate(subMonths(viewDate, 1))}
-            className="rounded p-0.5 hover:bg-gray-100"
+            className="rounded p-xs hover:bg-gray-100"
           >
             <ChevronLeft size={16} />
           </button>
-          <span className="text-sm font-semibold">{format(viewDate, "MMMM yyyy")}</span>
+          <span className="text-body font-semibold">{format(viewDate, "MMMM yyyy")}</span>
           <button
             type="button"
             onClick={() => setViewDate(addMonths(viewDate, 1))}
-            className="rounded p-0.5 hover:bg-gray-100"
+            className="rounded p-xs hover:bg-gray-100"
           >
             <ChevronRight size={16} />
           </button>
@@ -94,22 +94,22 @@ export function TimeframePopup() {
         <button
           type="button"
           onClick={closeTimeframePopup}
-          className="rounded p-0.5 text-gray-400 hover:bg-gray-100"
+          className="rounded p-xs text-gray-400 hover:bg-gray-100"
         >
           <X size={16} />
         </button>
       </div>
 
       {/* Mini calendar */}
-      <div className="p-3">
-        <div className="mb-1 grid grid-cols-7 gap-0.5">
+      <div className="p-sm">
+        <div className="mb-xs grid grid-cols-7 gap-xs">
           {DAY_LABELS.map((d) => (
-            <div key={d} className="text-center text-xs text-gray-400">
+            <div key={d} className="text-center text-body text-gray-400">
               {d}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-0.5">
+        <div className="grid grid-cols-7 gap-xs">
           {gridDays.map((day) => {
             const inMonth = isSameMonth(day, viewDate);
             const isSelected = isSameDay(day, calendarDate);
@@ -120,7 +120,7 @@ export function TimeframePopup() {
                 onClick={() => {
                   closeTimeframePopup();
                 }}
-                className="flex h-8 items-center justify-center rounded text-xs transition-colors hover:bg-blue-50"
+                className="flex h-lg items-center justify-center rounded text-body transition-colors hover:bg-blue-50"
                 style={{
                   color: inMonth ? "#374151" : "#D1D5DB",
                   backgroundColor: isSelected ? "var(--strabb-secondary)" : undefined,
@@ -135,27 +135,27 @@ export function TimeframePopup() {
       </div>
 
       {/* Custom range */}
-      <div className="border-t px-3 py-2" style={{ borderColor: "var(--border)" }}>
-        <p className="mb-1 text-xs font-medium text-gray-500">Custom Range</p>
-        <div className="flex items-center gap-2">
+      <div className="border-t px-sm py-base" style={{ borderColor: "var(--border)" }}>
+        <p className="mb-xs text-body font-medium text-gray-500">Custom Range</p>
+        <div className="flex items-center gap-base">
           <input
             type="date"
             value={localStart}
             onChange={(e) => setLocalStart(e.target.value)}
-            className="flex-1 rounded border px-2 py-1 text-xs"
+            className="flex-1 rounded border px-base py-xs text-body"
           />
-          <span className="text-xs text-gray-400">to</span>
+          <span className="text-body text-gray-400">to</span>
           <input
             type="date"
             value={localEnd}
             onChange={(e) => setLocalEnd(e.target.value)}
-            className="flex-1 rounded border px-2 py-1 text-xs"
+            className="flex-1 rounded border px-base py-xs text-body"
           />
         </div>
         <button
           type="button"
           onClick={handleApplyCustom}
-          className="mt-2 w-full rounded-lg py-1.5 text-xs text-white"
+          className="mt-base w-full rounded-lg py-xs text-body text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           Apply
