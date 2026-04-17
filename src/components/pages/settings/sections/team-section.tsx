@@ -87,16 +87,16 @@ export function TeamSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-md">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Team</h2>
-          <p className="text-sm text-gray-500">Manage team members and roles.</p>
+          <h2 className="text-subheading font-semibold text-gray-900">Team</h2>
+          <p className="text-body text-gray-500">Manage team members and roles.</p>
         </div>
         <button
           type="button"
           onClick={() => setShowInvite(true)}
-          className="flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium text-white"
+          className="flex items-center gap-xs rounded-lg px-sm py-base text-body font-medium text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           <Plus size={16} />
@@ -106,26 +106,26 @@ export function TeamSection() {
 
       {showInvite && (
         <div
-          className="flex items-end gap-3 rounded-lg border bg-gray-50 p-4"
+          className="flex items-end gap-sm rounded-lg border bg-gray-50 p-sm"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex-1">
-            <label className="mb-1 block text-xs font-medium text-gray-600">Email</label>
+            <label className="mb-xs block text-body font-medium text-gray-600">Email</label>
             <input
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
-              className="w-full rounded border bg-white px-3 py-2 text-sm"
+              className="w-full rounded-sm border bg-white px-sm py-base text-body"
               style={{ borderColor: "var(--border)" }}
               placeholder="email@example.com"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-600">Role</label>
+            <label className="mb-xs block text-body font-medium text-gray-600">Role</label>
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              className="rounded border bg-white px-3 py-2 text-sm"
+              className="rounded-sm border bg-white px-sm py-base text-body"
               style={{ borderColor: "var(--border)" }}
             >
               <option value="admin">Admin</option>
@@ -137,7 +137,7 @@ export function TeamSection() {
           <button
             type="button"
             onClick={handleInvite}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+            className="rounded-lg px-sm py-base text-body font-medium text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             Send Invite
@@ -145,7 +145,7 @@ export function TeamSection() {
           <button
             type="button"
             onClick={() => setShowInvite(false)}
-            className="rounded-lg p-2 text-gray-400 hover:text-gray-600"
+            className="rounded-lg p-base text-gray-400 hover:text-gray-600"
           >
             <X size={16} />
           </button>
@@ -153,39 +153,39 @@ export function TeamSection() {
       )}
 
       <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <div className="flex border-b bg-gray-50 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-          <div className="flex-1 px-4 py-3">Name</div>
-          <div className="w-48 px-4 py-3">Email</div>
-          <div className="w-24 px-4 py-3">Role</div>
-          <div className="w-28 px-4 py-3">Last Login</div>
-          <div className="w-20 px-4 py-3">Status</div>
+        <div className="flex border-b bg-gray-50 text-body font-semibold tracking-wide text-gray-500 uppercase">
+          <div className="flex-1 px-sm py-sm">Name</div>
+          <div className="w-[233px] px-sm py-sm">Email</div>
+          <div className="w-[89px] px-sm py-sm">Role</div>
+          <div className="w-[89px] px-sm py-sm">Last Login</div>
+          <div className="w-[89px] px-sm py-sm">Status</div>
         </div>
         {mockMembers.map((member) => {
           const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
           return (
             <div
               key={member.id}
-              className="flex items-center border-b text-sm"
+              className="flex items-center border-b text-body"
               style={{ borderColor: "var(--border)" }}
             >
-              <div className="flex-1 px-4 py-3 font-medium text-gray-800">{member.name}</div>
-              <div className="w-48 px-4 py-3 text-gray-500">{member.email}</div>
-              <div className="w-24 px-4 py-3">
+              <div className="flex-1 px-sm py-sm font-medium text-gray-800">{member.name}</div>
+              <div className="w-[233px] px-sm py-sm text-gray-500">{member.email}</div>
+              <div className="w-[89px] px-sm py-sm">
                 <span
-                  className="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
+                  className="rounded-full px-base py-xs text-body font-medium capitalize"
                   style={{ backgroundColor: badge.bg, color: badge.text }}
                 >
                   {member.role}
                 </span>
               </div>
-              <div className="w-28 px-4 py-3 text-xs text-gray-400">{member.lastLogin}</div>
-              <div className="w-20 px-4 py-3">
+              <div className="w-[89px] px-sm py-sm text-body text-gray-400">{member.lastLogin}</div>
+              <div className="w-[89px] px-sm py-sm">
                 <span
-                  className="flex items-center gap-1 text-xs"
+                  className="flex items-center gap-xs text-body"
                   style={{ color: statusColors[member.status] }}
                 >
                   <span
-                    className="h-1.5 w-1.5 rounded-full"
+                    className="h-xs w-xs rounded-full"
                     style={{
                       backgroundColor: statusColors[member.status],
                     }}

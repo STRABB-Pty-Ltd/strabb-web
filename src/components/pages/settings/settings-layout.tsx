@@ -30,11 +30,11 @@ export function SettingsLayout() {
       className="flex rounded-lg border bg-white"
       style={{
         borderColor: "var(--border)",
-        minHeight: "calc(100vh - 160px)",
+        minHeight: "calc(100vh - 144px)",
       }}
     >
       <SettingsNav />
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-md">
         <ActiveSection />
       </div>
     </div>

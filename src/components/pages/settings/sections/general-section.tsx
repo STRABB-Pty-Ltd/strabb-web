@@ -27,30 +27,30 @@ export function GeneralSection() {
   };
 
   return (
-    <div className="max-w-lg space-y-6">
+    <div className="max-w-lg space-y-md">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">General</h2>
-        <p className="text-sm text-gray-500">Basic account and display settings.</p>
+        <h2 className="text-subheading font-semibold text-gray-900">General</h2>
+        <p className="text-body text-gray-500">Basic account and display settings.</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-sm">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Company Name</label>
+          <label className="mb-xs block text-body font-medium text-gray-700">Company Name</label>
           <input
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="w-full rounded-lg border px-sm py-base text-body"
             style={{ borderColor: "var(--border)" }}
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Default Timezone</label>
+          <label className="mb-xs block text-body font-medium text-gray-700">Default Timezone</label>
           <select
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="w-full rounded-lg border px-sm py-base text-body"
             style={{ borderColor: "var(--border)" }}
           >
             {timezones.map((tz) => (
@@ -62,11 +62,11 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Default Currency</label>
+          <label className="mb-xs block text-body font-medium text-gray-700">Default Currency</label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="w-full rounded-lg border px-sm py-base text-body"
             style={{ borderColor: "var(--border)" }}
           >
             {currencies.map((c) => (
@@ -81,7 +81,7 @@ export function GeneralSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+        className="rounded-lg px-sm py-base text-body font-medium text-white"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Save Changes

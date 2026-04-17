@@ -19,8 +19,8 @@ export function SettingsNav() {
   const setSection = useAppStore((s) => s.setSection);
 
   return (
-    <nav className="shrink-0 border-r" style={{ width: 200, borderColor: "var(--border)" }}>
-      <div className="space-y-0.5 p-2">
+    <nav className="shrink-0 border-r" style={{ width: 233, borderColor: "var(--border)" }}>
+      <div className="space-y-xs p-base">
         {sections.map((s) => {
           const Icon = s.icon;
           const active = section === s.id;
@@ -29,7 +29,7 @@ export function SettingsNav() {
               key={s.id}
               type="button"
               onClick={() => setSection(s.id)}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+              className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body transition-colors"
               style={{
                 backgroundColor: active ? "rgba(59, 130, 246, 0.08)" : undefined,
                 color: active ? "var(--strabb-secondary)" : "#6B7280",
