@@ -22,11 +22,11 @@ const formatValue = (value: string | number, type: KPIData["type"]) => {
 
 export function ComparePanel({ current, comparison }: ComparePanelProps) {
   return (
-    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
-      <h3 className="mb-3 text-sm font-semibold" style={{ color: "var(--brand-10)" }}>
+    <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
+      <h3 className="mb-sm text-subheading font-semibold" style={{ color: "var(--brand-10)" }}>
         Period Comparison
       </h3>
-      <div className="space-y-2">
+      <div className="space-y-base">
         {current.map((kpi, i) => {
           const comp = comparison[i];
           if (!comp) return null;

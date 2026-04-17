@@ -54,10 +54,10 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg p-4 text-left transition-shadow hover:shadow-md"
+      className="rounded-lg p-md text-left transition-shadow hover:shadow-md"
       style={{ backgroundColor: "var(--surface-card)" }}
     >
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-base flex items-center gap-base">
         <div
           className="flex h-9 w-9 items-center justify-center rounded-lg"
           style={{ backgroundColor: "var(--icon-bg)" }}
@@ -78,7 +78,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         )}
       </div>
 
-      <p className="font-data text-2xl font-bold" style={{ color: "var(--brand-10)" }}>
+      <p className="font-data text-heading font-bold" style={{ color: "var(--brand-10)" }}>
         {formatValue(kpi.value, kpi.type)}
       </p>
 
@@ -91,7 +91,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         </p>
       )}
 
-      <p className="mt-1 text-xs" style={{ color: "var(--brand-10)", opacity: 0.7 }}>
+      <p className="mt-1 text-subheading font-medium" style={{ color: "var(--brand-10)", opacity: 0.7 }}>
         {kpi.label}
       </p>
     </button>

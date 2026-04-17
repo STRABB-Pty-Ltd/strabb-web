@@ -28,9 +28,9 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="p-4">
+    <div>
       {showMobileBanner && (
-        <div className="mb-3 flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700">
+        <div className="mb-sm flex items-center gap-base rounded-lg bg-blue-50 px-sm py-base text-sm text-blue-700">
           <Monitor size={16} />
           Switch to desktop for Gantt/Calendar view
         </div>

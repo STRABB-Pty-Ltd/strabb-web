@@ -27,7 +27,7 @@ export default function ReportingPage() {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-lg">
       <ReportingKPIRow kpis={kpis ?? []} />
 
       {chartData && <ReportingChartGrid activeSubmenu={submenu} data={chartData} />}

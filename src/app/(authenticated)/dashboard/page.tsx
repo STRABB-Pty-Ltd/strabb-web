@@ -32,7 +32,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-lg">
       <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
 
       {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}

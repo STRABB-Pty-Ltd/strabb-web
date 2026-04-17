@@ -30,7 +30,7 @@ export default function MessagingPage() {
   }
 
   return (
-    <div className="p-4">
+    <div>
       {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
       {view === "list" && <MessagingListView messages={messages ?? []} />}
 

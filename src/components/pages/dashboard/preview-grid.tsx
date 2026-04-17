@@ -19,8 +19,8 @@ interface PreviewGridProps {
 
 function PanelHeader({ title, href }: { title: string; href: string }) {
   return (
-    <div className="mb-3 flex items-center justify-between">
-      <h3 className="text-sm font-semibold" style={{ color: "var(--brand-10)" }}>
+    <div className="mb-sm flex items-center justify-between">
+      <h3 className="text-subheading font-semibold" style={{ color: "var(--brand-10)" }}>
         {title}
       </h3>
       <Link
@@ -36,7 +36,7 @@ function PanelHeader({ title, href }: { title: string; href: string }) {
 
 function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
   return (
-    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       <PanelHeader title="Next 7 Days" href="/calendar" />
       <div className="grid grid-cols-7 gap-1">
         {data.map((day) => {
@@ -73,7 +73,7 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
 function RevenueSparkline({ data }: { data: PreviewData["revenueSparkline"] }) {
   const max = Math.max(...data.map((d) => d.revenue), 1);
   return (
-    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       <PanelHeader title="Revenue Trend" href="/reporting" />
       <div className="flex items-end gap-2" style={{ height: 80 }}>
         {data.map((d) => (
@@ -97,7 +97,7 @@ function RevenueSparkline({ data }: { data: PreviewData["revenueSparkline"] }) {
 
 function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
   return (
-    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       <PanelHeader title="Upcoming Bookings" href="/calendar" />
       {data.length === 0 ? (
         <p
@@ -135,7 +135,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
 function TaskSummary({ data }: { data: PreviewData["taskSummary"] }) {
   const total = data.reduce((s, d) => s + d.count, 0);
   return (
-    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       <PanelHeader title="Task Summary" href="/cleaning" />
       {total === 0 ? (
         <p
@@ -167,7 +167,7 @@ function TaskSummary({ data }: { data: PreviewData["taskSummary"] }) {
 
 export function PreviewGrid({ data }: PreviewGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-sm lg:grid-cols-2">
       <MiniCalendar data={data.miniCalendar} />
       <RevenueSparkline data={data.revenueSparkline} />
       <UpcomingBookings data={data.upcomingBookings} />
