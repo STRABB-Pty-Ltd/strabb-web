@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
+import { Monitor, Moon, Sun } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -16,11 +18,20 @@ const timezones = [
 
 const currencies = ["AUD", "NZD", "USD", "EUR", "GBP"];
 
+const themeOptions = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Monitor },
+] as const;
+
 export function GeneralSection() {
   const addToast = useAppStore((s) => s.addToast);
   const [companyName, setCompanyName] = useState("STRABB Properties");
   const [timezone, setTimezone] = useState("Australia/Sydney");
   const [currency, setCurrency] = useState("AUD");
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const handleSave = () => {
     addToast({ type: "success", message: "General settings saved" });
@@ -75,6 +86,35 @@ export function GeneralSection() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="mb-xs block text-body font-medium text-gray-700">Appearance</label>
+          <div
+            className="inline-flex rounded-lg border p-xs"
+            style={{ borderColor: "var(--border)" }}
+          >
+            {themeOptions.map((opt) => {
+              const Icon = opt.icon;
+              const active = mounted && theme === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setTheme(opt.value)}
+                  className="flex items-center gap-xs rounded-sm px-sm py-xs text-body font-medium transition-colors"
+                  style={{
+                    backgroundColor: active ? "var(--strabb-secondary)" : "transparent",
+                    color: active ? "var(--surface-60)" : "var(--brand-10)",
+                  }}
+                  aria-pressed={active}
+                >
+                  <Icon size={14} />
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
