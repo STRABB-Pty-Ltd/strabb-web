@@ -25,7 +25,7 @@ function PanelHeader({ title, href }: { title: string; href: string }) {
       </h3>
       <Link
         href={href}
-        className="flex items-center gap-1 text-xs font-medium"
+        className="flex items-center gap-xs text-body font-medium"
         style={{ color: "var(--brand-10)" }}
       >
         View All <ArrowRight size={12} />
@@ -38,23 +38,23 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
   return (
     <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       <PanelHeader title="Next 7 Days" href="/calendar" />
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-xs">
         {data.map((day) => {
           const d = new Date(day.date + "T00:00:00");
           const hasBookings = day.bookings > 0;
           return (
             <div key={day.date} className="text-center">
-              <p className="text-xs" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
+              <p className="text-body" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
                 {format(d, "EEE")}
               </p>
               <p
-                className="text-sm font-medium"
+                className="text-body font-medium"
                 style={{ color: "var(--brand-10)" }}
               >
                 {format(d, "d")}
               </p>
               <div
-                className="mx-auto mt-1 h-5 w-5 rounded-full text-center text-xs leading-5"
+                className="mx-auto mt-xs h-md w-md rounded-full text-center text-body leading-5"
                 style={{
                   backgroundColor: hasBookings ? "var(--brand-10)" : "var(--surface-60)",
                   color: hasBookings ? "var(--surface-60)" : "var(--brand-10)",
@@ -75,17 +75,17 @@ function RevenueSparkline({ data }: { data: PreviewData["revenueSparkline"] }) {
   return (
     <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       <PanelHeader title="Revenue Trend" href="/reporting" />
-      <div className="flex items-end gap-2" style={{ height: 80 }}>
+      <div className="flex items-end gap-base" style={{ height: 89 }}>
         {data.map((d) => (
-          <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
+          <div key={d.label} className="flex flex-1 flex-col items-center gap-xs">
             <div
-              className="w-full rounded-t"
+              className="w-full rounded-t-sm"
               style={{
-                height: Math.max(4, (d.revenue / max) * 60),
+                height: Math.max(5, (d.revenue / max) * 55),
                 backgroundColor: "var(--chart-bar)",
               }}
             />
-            <span className="text-[10px]" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
+            <span className="text-body" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
               {d.label.slice(5)}
             </span>
           </div>
@@ -101,7 +101,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
       <PanelHeader title="Upcoming Bookings" href="/calendar" />
       {data.length === 0 ? (
         <p
-          className="py-4 text-center text-sm"
+          className="py-sm text-center text-body"
           style={{ color: "var(--brand-10)", opacity: 0.55 }}
         >
           No upcoming bookings
@@ -111,17 +111,17 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
           {data.map((b) => (
             <div
               key={b.id}
-              className="flex items-center gap-3 py-2 text-sm"
+              className="flex items-center gap-sm py-base text-body"
               style={{ color: "var(--brand-10)" }}
             >
               <span
-                className="h-2 w-2 shrink-0 rounded-full"
+                className="h-base w-base shrink-0 rounded-full"
                 style={{
                   backgroundColor: channelColors[b.channel] ?? "var(--brand-10)",
                 }}
               />
               <span className="flex-1 truncate">{b.guest}</span>
-              <span className="text-xs" style={{ opacity: 0.55 }}>
+              <span className="text-body" style={{ opacity: 0.55 }}>
                 {format(new Date(b.checkIn), "d MMM")}
               </span>
             </div>
@@ -139,7 +139,7 @@ function TaskSummary({ data }: { data: PreviewData["taskSummary"] }) {
       <PanelHeader title="Task Summary" href="/cleaning" />
       {total === 0 ? (
         <p
-          className="py-4 text-center text-sm"
+          className="py-sm text-center text-body"
           style={{ color: "var(--brand-10)", opacity: 0.55 }}
         >
           No tasks
@@ -151,10 +151,10 @@ function TaskSummary({ data }: { data: PreviewData["taskSummary"] }) {
             .map((d) => (
               <div
                 key={d.status}
-                className="flex items-center gap-3 py-2 text-sm"
+                className="flex items-center gap-sm py-base text-body"
                 style={{ color: "var(--brand-10)" }}
               >
-                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+                <span className="h-base w-base rounded-full" style={{ backgroundColor: d.color }} />
                 <span className="flex-1 capitalize">{d.status.replace("_", " ")}</span>
                 <span className="font-data font-semibold">{d.count}</span>
               </div>

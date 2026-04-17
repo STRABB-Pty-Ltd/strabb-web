@@ -7,9 +7,9 @@ import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
 const severityBg: Record<string, string> = {
-  red: "var(--alert-danger-bg)",
-  amber: "var(--alert-danger-bg)",
-  blue: "var(--alert-info-bg)",
+  red: "var(--neutral-30)",
+  amber: "var(--neutral-30)",
+  blue: "var(--neutral-30)",
 };
 
 const severityAccent: Record<string, string> = {
@@ -37,10 +37,10 @@ export function AlertStrip({ alerts }: AlertStripProps) {
   if (visible.length === 0) return null;
 
   return (
-    <div className="flex gap-sm overflow-x-auto pb-1">
+    <div className="flex gap-sm overflow-x-auto pb-xs">
       {visible.map((alert) => {
         const Icon = typeIcon[alert.type] ?? AlertTriangle;
-        const bg = severityBg[alert.severity] ?? "var(--alert-info-bg)";
+        const bg = severityBg[alert.severity] ?? "var(--neutral-30)";
         const accent = severityAccent[alert.severity] ?? "var(--brand-10)";
         return (
           <div
@@ -49,7 +49,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
             style={{ backgroundColor: bg }}
           >
             <Icon size={16} style={{ color: accent }} />
-            <span className="text-sm" style={{ color: "var(--brand-10)" }}>
+            <span className="text-body" style={{ color: "var(--brand-10)" }}>
               {alert.description}
             </span>
             <button
@@ -61,7 +61,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
                   label: alert.description,
                 })
               }
-              className="text-xs font-semibold whitespace-nowrap"
+              className="text-body font-semibold whitespace-nowrap"
               style={{ color: accent }}
             >
               View

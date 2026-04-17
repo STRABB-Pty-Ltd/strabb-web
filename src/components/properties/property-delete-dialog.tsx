@@ -45,7 +45,7 @@ export function PropertyDeleteDialog({ property, open, onOpenChange }: PropertyD
           </DialogDescription>
         </DialogHeader>
 
-        {error && <p className="text-destructive text-sm">{error}</p>}
+        {error && <p className="text-destructive text-body">{error}</p>}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

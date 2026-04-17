@@ -65,14 +65,14 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
           >
             <div className="mb-base flex items-center gap-base">
               <div
-                className="flex h-8 w-8 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "rgba(59, 130, 246, 0.1)" }}
+                className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg"
+                style={{ backgroundColor: "var(--icon-bg)" }}
               >
-                <Icon size={16} style={{ color: "var(--strabb-secondary)" }} />
+                <Icon size={21} style={{ color: "var(--icon-color)" }} />
               </div>
               {!trendNeutral && (
                 <div
-                  className="ml-auto flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
+                  className="ml-auto flex items-center gap-xs rounded-full px-base py-xs text-body font-medium"
                   style={{
                     backgroundColor: trendPositive
                       ? "rgba(22, 163, 74, 0.1)"
@@ -88,7 +88,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
             <p className="font-data text-subheading font-bold text-gray-900" suppressHydrationWarning>
               {formatValue(kpi.value, kpi.type)}
             </p>
-            <p className="mt-1 text-xs text-gray-500">{kpi.label}</p>
+            <p className="mt-xs text-body" style={{ color: "var(--brand-10)" }}>{kpi.label}</p>
           </button>
         );
       })}

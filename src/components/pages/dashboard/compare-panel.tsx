@@ -38,17 +38,17 @@ export function ComparePanel({ current, comparison }: ComparePanelProps) {
           return (
             <div
               key={kpi.label}
-              className="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-lg px-sm py-base text-body"
               style={{ backgroundColor: "var(--surface-60)", color: "var(--brand-10)" }}
             >
               <span>{kpi.label}</span>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-sm">
                 <span className="font-data font-semibold">{formatValue(kpi.value, kpi.type)}</span>
                 <span className="font-data" style={{ opacity: 0.55 }}>
                   {formatValue(comp.value, comp.type)}
                 </span>
                 <span
-                  className="font-data text-xs font-semibold"
+                  className="font-data text-body font-semibold"
                   style={{ color: positive ? "var(--status-completed)" : "var(--status-issues)" }}
                 >
                   {positive ? "+" : ""}

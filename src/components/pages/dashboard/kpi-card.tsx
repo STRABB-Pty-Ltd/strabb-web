@@ -57,40 +57,40 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
       className="rounded-lg p-md text-left transition-shadow hover:shadow-md"
       style={{ backgroundColor: "var(--surface-card)" }}
     >
-      <div className="mb-base flex items-center gap-base">
+      <div className="mb-sm flex items-center gap-base">
         <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+          className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg"
           style={{ backgroundColor: "var(--icon-bg)" }}
         >
-          <Icon size={18} style={{ color: "var(--icon-color)" }} />
+          <Icon size={21} style={{ color: "var(--icon-color)" }} />
         </div>
         <p
           className="min-w-0 flex-1 truncate text-subheading font-medium"
-          style={{ color: "var(--brand-10)", opacity: 0.7 }}
+          style={{ color: "var(--brand-10)" }}
         >
           {kpi.label}
         </p>
         {mounted && hasTrend && (
           <div
-            className="flex shrink-0 items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
+            className="flex shrink-0 items-center gap-xs rounded-full px-base py-xs text-body font-medium"
             style={{
-              backgroundColor: trendPositive ? "var(--status-success-bg)" : "var(--status-danger-bg)",
+              backgroundColor: "var(--neutral-30)",
               color: trendPositive ? "var(--status-completed)" : "var(--status-issues)",
             }}
           >
-            {trendPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+            {trendPositive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
             {Math.abs(kpi.trend ?? 0)}%
           </div>
         )}
       </div>
 
-      <p className="font-data text-heading font-bold" style={{ color: "var(--brand-10)" }}>
+      <p className="font-data text-heading" style={{ color: "var(--brand-10)" }}>
         {formatValue(kpi.value, kpi.type)}
       </p>
 
       {compareValue != null && (
         <p
-          className="font-data mt-0.5 text-sm"
+          className="font-data mt-xs text-body"
           style={{ color: "var(--brand-10)", opacity: 0.55 }}
         >
           vs {formatValue(compareValue, kpi.type)}

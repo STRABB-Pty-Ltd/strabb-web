@@ -36,23 +36,23 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "listing",
     label: "Listing",
-    width: "180px",
+    width: "144px",
     render: (t) => (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-base">
         <span
-          className="h-2.5 w-2.5 shrink-0 rounded-full"
+          className="h-base w-base shrink-0 rounded-full"
           style={{ backgroundColor: t.listingColor }}
         />
-        <span className="truncate text-sm">{t.listingName}</span>
+        <span className="truncate text-body">{t.listingName}</span>
       </div>
     ),
   },
   {
     key: "type",
     label: "Type",
-    width: "100px",
+    width: "89px",
     render: (t) => (
-      <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+      <span className="rounded-sm bg-gray-100 px-base py-xs text-body text-gray-600">
         {typeLabels[t.type] ?? t.type}
       </span>
     ),
@@ -60,9 +60,9 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "scheduled",
     label: "Scheduled",
-    width: "130px",
+    width: "144px",
     render: (t) => (
-      <span className="font-data text-xs">
+      <span className="font-data text-body">
         {format(new Date(t.scheduledTime), "d MMM yyyy, HH:mm")}
       </span>
     ),
@@ -70,16 +70,16 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "assignee",
     label: "Assignee",
-    width: "120px",
-    render: (t) => <span className="text-xs text-gray-600">{t.assigneeName ?? "Unassigned"}</span>,
+    width: "144px",
+    render: (t) => <span className="text-body text-gray-600">{t.assigneeName ?? "Unassigned"}</span>,
   },
   {
     key: "status",
     label: "Status",
-    width: "110px",
+    width: "89px",
     render: (t) => (
       <span
-        className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+        className="rounded-full px-base py-xs text-body font-medium text-white"
         style={{
           backgroundColor: statusColors[t.status] ?? "#6B7280",
         }}
@@ -91,12 +91,12 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "priority",
     label: "Priority",
-    width: "90px",
+    width: "89px",
     render: (t) => {
       const p = priorityColors[t.priority] ?? priorityColors.low;
       return (
         <span
-          className="rounded px-2 py-0.5 text-xs font-medium"
+          className="rounded-sm px-base py-xs text-body font-medium"
           style={{ backgroundColor: p.bg, color: p.text }}
         >
           {t.priority}
@@ -107,9 +107,9 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "checklist",
     label: "Checklist",
-    width: "80px",
+    width: "89px",
     render: (t) => (
-      <span className="font-data text-xs">
+      <span className="font-data text-body">
         {t.checklistDone}/{t.checklistTotal}
       </span>
     ),
@@ -117,8 +117,8 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "hours",
     label: "Est. Hours",
-    width: "80px",
-    render: (t) => <span className="font-data text-xs">{t.estimatedHours}h</span>,
+    width: "89px",
+    render: (t) => <span className="font-data text-body">{t.estimatedHours}h</span>,
   },
 ];
 

@@ -96,9 +96,9 @@ export function ListingFormDialog({ listing, defaultPropertyId, trigger }: Listi
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-sm">
           {!isEdit && (
-            <div className="space-y-2">
+            <div className="space-y-base">
               <Label htmlFor="propertyId">Property *</Label>
               <Select
                 id="propertyId"
@@ -107,18 +107,18 @@ export function ListingFormDialog({ listing, defaultPropertyId, trigger }: Listi
                 {...register("propertyId")}
               />
               {errors.propertyId && (
-                <p className="text-destructive text-sm">{errors.propertyId.message}</p>
+                <p className="text-destructive text-body">{errors.propertyId.message}</p>
               )}
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="listing-name">Name *</Label>
             <Input id="listing-name" placeholder="Airbnb — Beach House" {...register("name")} />
-            {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
+            {errors.name && <p className="text-destructive text-body">{errors.name.message}</p>}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="platform">Platform *</Label>
             <Select
               id="platform"
@@ -127,11 +127,11 @@ export function ListingFormDialog({ listing, defaultPropertyId, trigger }: Listi
               {...register("platform")}
             />
             {errors.platform && (
-              <p className="text-destructive text-sm">{errors.platform.message}</p>
+              <p className="text-destructive text-body">{errors.platform.message}</p>
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="externalListingId">External listing ID</Label>
             <Input
               id="externalListingId"
@@ -140,7 +140,7 @@ export function ListingFormDialog({ listing, defaultPropertyId, trigger }: Listi
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="icalFeedUrl">iCal feed URL</Label>
             <Input
               id="icalFeedUrl"
@@ -149,11 +149,11 @@ export function ListingFormDialog({ listing, defaultPropertyId, trigger }: Listi
               {...register("icalFeedUrl")}
             />
             {errors.icalFeedUrl && (
-              <p className="text-destructive text-sm">{errors.icalFeedUrl.message}</p>
+              <p className="text-destructive text-body">{errors.icalFeedUrl.message}</p>
             )}
           </div>
 
-          {error && <p className="text-destructive text-sm">{error.message}</p>}
+          {error && <p className="text-destructive text-body">{error.message}</p>}
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>

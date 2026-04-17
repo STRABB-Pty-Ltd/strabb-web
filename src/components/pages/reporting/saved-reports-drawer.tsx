@@ -18,13 +18,13 @@ export function SavedReportsDrawer() {
   };
 
   return (
-    <div className="rounded-lg border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">Saved Reports</h3>
+    <div className="rounded-lg border bg-white p-sm" style={{ borderColor: "var(--border)" }}>
+      <div className="mb-sm flex items-center justify-between">
+        <h3 className="text-body font-semibold text-gray-700">Saved Reports</h3>
         <button
           type="button"
           onClick={() => setShowInput(true)}
-          className="flex items-center gap-1 text-xs font-medium"
+          className="flex items-center gap-xs text-body font-medium"
           style={{ color: "var(--strabb-secondary)" }}
         >
           <Plus size={12} />
@@ -33,20 +33,20 @@ export function SavedReportsDrawer() {
       </div>
 
       {showInput && (
-        <div className="mb-3 flex gap-2">
+        <div className="mb-sm flex gap-base">
           <input
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Report name..."
-            className="flex-1 rounded border px-2 py-1 text-sm"
+            className="flex-1 rounded-sm border px-base py-xs text-body"
             style={{ borderColor: "var(--border)" }}
             onKeyDown={(e) => e.key === "Enter" && handleSave()}
           />
           <button
             type="button"
             onClick={handleSave}
-            className="rounded px-3 py-1 text-xs text-white"
+            className="rounded-sm px-sm py-xs text-body text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             Save
@@ -57,7 +57,7 @@ export function SavedReportsDrawer() {
               setShowInput(false);
               setNewName("");
             }}
-            className="rounded px-3 py-1 text-xs text-gray-500 hover:bg-gray-100"
+            className="rounded-sm px-sm py-xs text-body text-gray-500 hover:bg-gray-100"
           >
             Cancel
           </button>
@@ -65,23 +65,23 @@ export function SavedReportsDrawer() {
       )}
 
       {savedReports.length === 0 ? (
-        <p className="py-4 text-center text-xs text-gray-400">No saved reports yet</p>
+        <p className="py-sm text-center text-body text-gray-400">No saved reports yet</p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-base">
           {savedReports.map((report) => (
             <div
               key={report.id}
-              className="flex items-center justify-between rounded px-3 py-2 hover:bg-gray-50"
+              className="flex items-center justify-between rounded-sm px-sm py-base hover:bg-gray-50"
             >
               <div>
-                <p className="text-sm font-medium text-gray-700">{report.name}</p>
-                <p className="text-xs text-gray-400">{report.timeframe.replace("_", " ")}</p>
+                <p className="text-body font-medium text-gray-700">{report.name}</p>
+                <p className="text-body text-gray-400">{report.timeframe.replace("_", " ")}</p>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-xs">
                 <button
                   type="button"
                   onClick={() => loadReport(report.id)}
-                  className="rounded px-2 py-1 text-xs font-medium"
+                  className="rounded-sm px-base py-xs text-body font-medium"
                   style={{ color: "var(--strabb-secondary)" }}
                 >
                   Load
@@ -89,7 +89,7 @@ export function SavedReportsDrawer() {
                 <button
                   type="button"
                   onClick={() => deleteReport(report.id)}
-                  className="rounded p-1 text-gray-400 hover:text-red-500"
+                  className="rounded-sm p-xs text-gray-400 hover:text-red-500"
                 >
                   <Trash2 size={12} />
                 </button>

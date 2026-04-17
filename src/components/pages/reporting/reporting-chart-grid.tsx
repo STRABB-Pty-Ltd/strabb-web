@@ -20,7 +20,7 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
 
   if (showOverview) {
     return (
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-sm lg:grid-cols-2">
         <RevenueTrendChart data={data.revenueTrend} />
         <ChannelBreakdownChart data={data.channelBreakdown} />
         <OccupancyChart data={data.occupancy} />
@@ -31,7 +31,7 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
 
   if (showRevenue) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-sm">
         <RevenueTrendChart data={data.revenueTrend} />
         <RevenueByListingChart data={data.revenueByListing} />
       </div>
@@ -40,7 +40,7 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
 
   if (showExpenses) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-sm">
         <ExpenseChart data={data.expenses} />
         <RevenueByListingChart
           data={data.revenueByListing.map((d) => ({
@@ -61,7 +61,7 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-sm lg:grid-cols-2">
       <RevenueTrendChart data={data.revenueTrend} />
       <ChannelBreakdownChart data={data.channelBreakdown} />
     </div>

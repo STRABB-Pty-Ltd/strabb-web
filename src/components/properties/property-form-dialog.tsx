@@ -95,29 +95,29 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-sm">
+          <div className="space-y-base">
             <Label htmlFor="name">Name *</Label>
             <Input id="name" placeholder="Beach House Byron Bay" {...register("name")} />
-            {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
+            {errors.name && <p className="text-destructive text-body">{errors.name.message}</p>}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="address">Address</Label>
             <Input id="address" placeholder="123 Main St, Byron Bay NSW" {...register("address")} />
-            {errors.address && <p className="text-destructive text-sm">{errors.address.message}</p>}
+            {errors.address && <p className="text-destructive text-body">{errors.address.message}</p>}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-sm">
+            <div className="space-y-base">
               <Label htmlFor="timezone">Timezone</Label>
               <Select id="timezone" options={AUSTRALIAN_TIMEZONES} {...register("timezone")} />
               {errors.timezone && (
-                <p className="text-destructive text-sm">{errors.timezone.message}</p>
+                <p className="text-destructive text-body">{errors.timezone.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-base">
               <Label htmlFor="cleaningDurationMinutes">Cleaning time (min)</Label>
               <Input
                 id="cleaningDurationMinutes"
@@ -127,12 +127,12 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
                 {...register("cleaningDurationMinutes")}
               />
               {errors.cleaningDurationMinutes && (
-                <p className="text-destructive text-sm">{errors.cleaningDurationMinutes.message}</p>
+                <p className="text-destructive text-body">{errors.cleaningDurationMinutes.message}</p>
               )}
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="accessInstructions">Access instructions</Label>
             <Textarea
               id="accessInstructions"
@@ -141,14 +141,14 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
             />
           </div>
 
-          <div className="border-t pt-4">
-            <p className="mb-3 text-sm font-medium">Default Cleaner</p>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-1">
+          <div className="border-t pt-sm">
+            <p className="mb-sm text-body font-medium">Default Cleaner</p>
+            <div className="grid grid-cols-3 gap-sm">
+              <div className="space-y-xs">
                 <Label htmlFor="cleanerName">Name</Label>
                 <Input id="cleanerName" placeholder="Cleaner name" {...register("cleanerName")} />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-xs">
                 <Label htmlFor="cleanerEmail">Email</Label>
                 <Input
                   id="cleanerEmail"
@@ -157,7 +157,7 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
                   {...register("cleanerEmail")}
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-xs">
                 <Label htmlFor="cleanerPhone">Phone</Label>
                 <Input
                   id="cleanerPhone"
@@ -169,7 +169,7 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
@@ -178,7 +178,7 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
             />
           </div>
 
-          {error && <p className="text-destructive text-sm">{error.message}</p>}
+          {error && <p className="text-destructive text-body">{error.message}</p>}
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>

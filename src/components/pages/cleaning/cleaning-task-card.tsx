@@ -31,50 +31,50 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
 
   return (
     <button type="button" onClick={onClick} className="w-full text-left">
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
+      <div className="space-y-xs">
+        <div className="flex items-center gap-base">
           <span
-            className="h-2.5 w-2.5 shrink-0 rounded-full"
+            className="h-base w-base shrink-0 rounded-full"
             style={{ backgroundColor: task.listingColor }}
           />
-          <span className="truncate text-sm font-medium text-gray-800">{task.listingName}</span>
+          <span className="truncate text-body font-medium text-gray-800">{task.listingName}</span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-base">
           <span
-            className="rounded px-1.5 py-0.5 text-[10px] font-medium"
+            className="rounded-sm px-xs py-xs text-body font-medium"
             style={{ backgroundColor: priority.bg, color: priority.text }}
           >
             {task.priority}
           </span>
-          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+          <span className="rounded-sm bg-gray-100 px-xs py-xs text-body font-medium text-gray-600">
             {typeLabels[task.type] ?? task.type}
           </span>
         </div>
 
-        <div className="flex items-center gap-1 text-xs text-gray-500">
+        <div className="flex items-center gap-xs text-body text-gray-500">
           <Clock size={10} />
           <span>{format(new Date(task.scheduledTime), "d MMM, HH:mm")}</span>
         </div>
 
         {task.assigneeName && (
-          <div className="flex items-center gap-1 text-xs text-gray-500">
+          <div className="flex items-center gap-xs text-body text-gray-500">
             <User size={10} />
             <span>{task.assigneeName}</span>
           </div>
         )}
 
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 flex-1 rounded-full bg-gray-200">
+        <div className="flex items-center gap-base">
+          <div className="h-xs flex-1 rounded-full bg-gray-200">
             <div
-              className="h-1.5 rounded-full"
+              className="h-xs rounded-full"
               style={{
                 width: `${task.checklistTotal > 0 ? (task.checklistDone / task.checklistTotal) * 100 : 0}%`,
                 backgroundColor: "var(--semantic-success)",
               }}
             />
           </div>
-          <span className="font-data text-xs text-gray-500">
+          <span className="font-data text-body text-gray-500">
             {task.checklistDone}/{task.checklistTotal}
           </span>
         </div>

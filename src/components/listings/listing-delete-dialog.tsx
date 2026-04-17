@@ -45,7 +45,7 @@ export function ListingDeleteDialog({ listing, open, onOpenChange }: ListingDele
           </DialogDescription>
         </DialogHeader>
 
-        {error && <p className="text-destructive text-sm">{error}</p>}
+        {error && <p className="text-destructive text-body">{error}</p>}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

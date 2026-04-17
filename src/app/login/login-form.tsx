@@ -42,8 +42,8 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-sm">
+      <div className="space-y-base">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -52,10 +52,10 @@ export function LoginForm() {
           autoComplete="email"
           {...register("email")}
         />
-        {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
+        {errors.email && <p className="text-destructive text-body">{errors.email.message}</p>}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-base">
         <Label htmlFor="password">Password</Label>
         <Input
           id="password"
@@ -63,15 +63,15 @@ export function LoginForm() {
           autoComplete="current-password"
           {...register("password")}
         />
-        {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
+        {errors.password && <p className="text-destructive text-body">{errors.password.message}</p>}
       </div>
 
-      {error && <p className="text-destructive text-sm">{error}</p>}
+      {error && <p className="text-destructive text-body">{error}</p>}
 
-      <Button type="submit" className="w-full min-w-[120px]" disabled={isSubmitting}>
+      <Button type="submit" className="w-full min-w-[144px]" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            <LoadingSpinner className="border-primary-foreground h-4 w-4 border-t-transparent" />
+            <LoadingSpinner className="border-primary-foreground h-sm w-sm border-t-transparent" />
             Signing in...
           </>
         ) : (
