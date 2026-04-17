@@ -3,7 +3,7 @@
 export function LogoSection() {
   return (
     <div
-      className="flex shrink-0 items-center justify-center"
+      className="flex shrink-0 items-center"
       style={{
         height: "var(--topnav-height)",
         paddingLeft: "var(--space-md)",

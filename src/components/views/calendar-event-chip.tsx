@@ -3,10 +3,11 @@
 interface CalendarEventChipProps {
   label: string;
   color: string;
+  textColor?: string;
   onClick: () => void;
 }
 
-export function CalendarEventChip({ label, color, onClick }: CalendarEventChipProps) {
+export function CalendarEventChip({ label, color, textColor, onClick }: CalendarEventChipProps) {
   return (
     <button
       type="button"
@@ -14,8 +15,8 @@ export function CalendarEventChip({ label, color, onClick }: CalendarEventChipPr
         e.stopPropagation();
         onClick();
       }}
-      className="w-full truncate rounded-sm px-xs py-xs text-left text-body text-white"
-      style={{ backgroundColor: color }}
+      className="w-full truncate rounded-sm px-xs py-xs text-left text-body"
+      style={{ backgroundColor: color, color: textColor ?? "var(--surface-60)" }}
       title={label}
     >
       {label}

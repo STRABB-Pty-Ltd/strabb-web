@@ -15,16 +15,21 @@ export function KanbanBoard<T>({
   getBorderColor,
 }: KanbanBoardProps<T>) {
   return (
-    <div className="flex gap-sm overflow-x-auto pb-sm">
-      {columns.map((col) => (
-        <KanbanColumn key={col.id} id={col.id} label={col.label} count={col.items.length}>
-          {col.items.map((item) => (
-            <KanbanCard key={getItemId(item)} borderColor={getBorderColor(item)}>
-              {renderCard(item)}
-            </KanbanCard>
-          ))}
-        </KanbanColumn>
-      ))}
+    <div
+      className="no-scrollbar overflow-auto"
+      style={{ maxHeight: "calc(100vh - 233px)" }}
+    >
+      <div className="flex gap-sm pb-sm">
+        {columns.map((col) => (
+          <KanbanColumn key={col.id} id={col.id} label={col.label} count={col.items.length}>
+            {col.items.map((item) => (
+              <KanbanCard key={getItemId(item)} borderColor={getBorderColor(item)}>
+                {renderCard(item)}
+              </KanbanCard>
+            ))}
+          </KanbanColumn>
+        ))}
+      </div>
     </div>
   );
 }

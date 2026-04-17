@@ -95,11 +95,10 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="flex shrink-0 items-center justify-center overflow-x-auto"
+      className="flex shrink-0 items-center justify-center gap-xs overflow-x-auto"
       style={{
-        height: "var(--submenu-height)",
-        gap: "var(--space-sm)",
         backgroundColor: "var(--surface-submenu)",
+        paddingRight: "calc(var(--sidebar-width) / 2)",
       }}
     >
       {chips.map((chip) => {
@@ -118,25 +117,24 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="inline-flex shrink-0 items-center gap-1 border-0 whitespace-nowrap text-body font-medium transition-colors"
+              className="inline-flex shrink-0 items-center justify-center gap-xs border-0 whitespace-nowrap px-sm py-base text-body font-medium transition-colors"
               style={{
-                height: "var(--chip-height)",
-                borderRadius: 8,
-                padding: "0 var(--space-sm)",
+                width: 95,
+                borderRadius: 5,
                 backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
             >
               {chip.label}
-              {isMore && <ChevronDown size={14} />}
+              {isMore && <ChevronDown size={13} />}
             </button>
 
             {isMore && moreOpen && (
               <div
-                className="absolute top-full left-0 z-50 mt-1 rounded-lg bg-white py-1 shadow-md"
-                style={{ minWidth: 160 }}
+                className="absolute top-full left-0 z-50 mt-xs rounded-lg bg-white py-xs shadow-md"
+                style={{ minWidth: 144 }}
               >
-                <div className="px-3 py-2 text-sm text-gray-400">Coming soon</div>
+                <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
               </div>
             )}
           </div>

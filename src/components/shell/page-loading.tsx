@@ -5,25 +5,33 @@ export function PageLoading() {
     <div className="flex h-screen flex-col" role="status" aria-label="Loading page">
       {/* Skeleton top nav */}
       <div
-        className="flex shrink-0 items-center gap-4 px-4"
+        className="flex shrink-0 items-center gap-md px-md"
         style={{
           height: "var(--topnav-height)",
           backgroundColor: "var(--strabb-primary)",
         }}
       >
-        <div className="h-5 w-20 animate-pulse rounded bg-white/20" />
-        <div className="flex flex-1 justify-center gap-3">
+        <div className="animate-pulse rounded bg-white/20" style={{ height: 21, width: 89 }} />
+        <div className="flex flex-1 justify-center gap-xs">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-10 w-16 animate-pulse rounded-lg bg-white/10" />
+            <div
+              key={i}
+              className="animate-pulse rounded-lg bg-white/10"
+              style={{ height: 34, width: 89 }}
+            />
           ))}
         </div>
-        <div className="h-10 w-16 animate-pulse rounded-lg bg-white/10" />
+        <div className="animate-pulse rounded-lg bg-white/10" style={{ height: 34, width: 89 }} />
       </div>
 
       {/* Skeleton submenu bar */}
-      <div className="flex shrink-0 items-center gap-2 border-b px-4 py-2">
+      <div className="flex shrink-0 items-center gap-xs border-b px-md py-base">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-7 w-20 animate-pulse rounded-full bg-gray-100" />
+          <div
+            key={i}
+            className="animate-pulse rounded-full bg-gray-100"
+            style={{ height: 34, width: 89 }}
+          />
         ))}
       </div>
 
@@ -31,31 +39,42 @@ export function PageLoading() {
       <div className="flex flex-1 overflow-hidden">
         {/* Skeleton sidebar */}
         <div
-          className="hidden shrink-0 border-r p-4 lg:block"
+          className="hidden shrink-0 border-r p-md lg:block"
           style={{ width: "var(--sidebar-width)" }}
         >
-          <div className="space-y-4">
-            <div className="h-4 w-24 animate-pulse rounded bg-gray-100" />
+          <div className="space-y-md">
+            <div className="animate-pulse rounded bg-gray-100" style={{ height: 13, width: 89 }} />
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-8 w-full animate-pulse rounded bg-gray-50" />
+              <div
+                key={i}
+                className="animate-pulse rounded bg-gray-50"
+                style={{ height: 34, width: "100%" }}
+              />
             ))}
-            <div className="mt-6 h-4 w-20 animate-pulse rounded bg-gray-100" />
+            <div
+              className="mt-md animate-pulse rounded bg-gray-100"
+              style={{ height: 13, width: 89 }}
+            />
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-6 w-full animate-pulse rounded bg-gray-50" />
+              <div
+                key={i}
+                className="animate-pulse rounded bg-gray-50"
+                style={{ height: 21, width: "100%" }}
+              />
             ))}
           </div>
         </div>
 
         {/* Skeleton content */}
-        <div className="flex-1 p-6">
-          <div className="space-y-6">
-            <div className="h-6 w-48 animate-pulse rounded bg-gray-100" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex-1 p-lg">
+          <div className="space-y-lg">
+            <div className="animate-pulse rounded bg-gray-100" style={{ height: 21, width: 144 }} />
+            <div className="grid grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-50" />
+                <div key={i} className="h-[89px] animate-pulse rounded-lg bg-gray-50" />
               ))}
             </div>
-            <div className="h-64 animate-pulse rounded-lg bg-gray-50" />
+            <div className="h-[233px] animate-pulse rounded-lg bg-gray-50" />
           </div>
         </div>
       </div>

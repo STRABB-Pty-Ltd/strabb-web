@@ -8,10 +8,15 @@ import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
 const typeColors: Record<string, string> = {
-  booking: "var(--status-danger)",
+  booking: "var(--neutral-30)",
   cleaning: "var(--status-success)",
-  maintenance: "var(--brand-10)",
+  maintenance: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
+};
+
+const typeTextColors: Record<string, string> = {
+  booking: "var(--brand-10)",
+  vacancy: "var(--brand-10)",
 };
 
 interface CalendarGanttViewProps {
@@ -53,6 +58,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
         end: new Date(item.end),
       })}
       getColor={(item) => typeColors[item.type] ?? item.color}
+      getTextColor={(item) => typeTextColors[item.type] ?? "var(--surface-60)"}
       getLabel={(item) => item.label}
       dateRange={dateRange}
       onItemClick={(item) => openDrillDownPanel(item.type, item.id)}

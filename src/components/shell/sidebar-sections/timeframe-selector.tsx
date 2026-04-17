@@ -55,14 +55,14 @@ export function TimeframeSelector({ page }: { page: PageId }) {
   const currentTf = tfByPage[page] ?? "";
 
   return (
-    <div style={{ padding: "var(--space-md)" }}>
+    <div style={{ padding: "var(--space-sm)" }}>
       <h3
-        className="mb-2 text-xs font-semibold tracking-wide uppercase"
+        className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--brand-10)", opacity: 0.7 }}
       >
         Timeframe
       </h3>
-      <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-2 gap-xs">
         {options.map((opt) => {
           const isActive = currentTf === opt.id;
           return (
@@ -85,7 +85,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         <button
           type="button"
           onClick={openTimeframePopup}
-          className="rounded-lg px-sm py-base text-body font-medium transition-colors"
+          className="col-span-2 rounded-lg px-sm py-base text-body font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",

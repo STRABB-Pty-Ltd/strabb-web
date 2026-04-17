@@ -115,9 +115,9 @@
 
 .dark {
   /* 60/30/10 Palette — dark mode (brightened for dark bg) */
-  --surface-60: #121212;
+  --surface-60: #1A1A1A;
   --neutral-30: #262626;
-  --brand-10: #6b6bff;
+  --brand-10: #3B82F6;
   --status-success: #22c55e;
   --status-danger: #f87171;
 
@@ -140,6 +140,33 @@
   --border: transparent;
   --input: var(--neutral-30);
   --ring: var(--brand-10);
+}
+
+/* === Testing palettes — override the 60/30/10 tokens via [data-palette] on <html> === */
+[data-palette="butter-yellow"] {
+  --surface-60: #f7e998;
+  --neutral-30: #f1d84d;
+  --brand-10: #7f1d1d;
+}
+[data-palette="midnight"] {
+  --surface-60: #191970;
+  --neutral-30: #22229a;
+  --brand-10: #eceff1;
+}
+[data-palette="ivory-donkey"] {
+  --surface-60: #a79277;
+  --neutral-30: #f0e3cf;
+  --brand-10: #102c26;
+}
+[data-palette="deep-forest"] {
+  --surface-60: #102c26;
+  --neutral-30: #1b4332;
+  --brand-10: #f7e7ce;
+}
+[data-palette="space-black"] {
+  --surface-60: #121313;
+  --neutral-30: #2a1f1e;
+  --brand-10: #ff6044;
 }
 
 @theme inline {

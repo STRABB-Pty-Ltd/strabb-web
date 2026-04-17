@@ -12,6 +12,7 @@ export interface GanttViewProps<T> {
   getRowId: (item: T) => string;
   getDateRange: (item: T) => { start: Date; end: Date };
   getColor: (item: T) => string;
+  getTextColor?: (item: T) => string;
   getLabel: (item: T) => string;
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
@@ -27,6 +28,7 @@ export function GanttView<T>({
   getRowId,
   getDateRange,
   getColor,
+  getTextColor,
   getLabel,
   dateRange,
   onItemClick,
@@ -118,6 +120,7 @@ export function GanttView<T>({
                     key={`${row.id}-${getLabel(item)}-${idx}`}
                     label={getLabel(item)}
                     color={getColor(item)}
+                    textColor={getTextColor?.(item)}
                     startCol={startCol}
                     spanCols={spanCols}
                     cellWidth={cellWidth}

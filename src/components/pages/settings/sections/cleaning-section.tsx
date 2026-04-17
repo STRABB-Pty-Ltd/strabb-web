@@ -16,7 +16,7 @@ export function CleaningSection() {
   };
 
   return (
-    <div className="max-w-lg space-y-md">
+    <div className="space-y-md">
       <div>
         <h2 className="text-subheading font-semibold text-gray-900">Cleaning</h2>
         <p className="text-body text-gray-500">Default cleaning task configuration.</p>

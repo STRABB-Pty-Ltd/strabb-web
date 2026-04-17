@@ -46,14 +46,14 @@ export function ViewSwitcher({ page }: { page: PageId }) {
   const currentView = viewByPage[page] ?? "";
 
   return (
-    <div style={{ padding: "var(--space-md)" }}>
+    <div style={{ padding: "var(--space-sm)" }}>
       <h3
-        className="mb-2 text-xs font-semibold tracking-wide uppercase"
+        className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--brand-10)", opacity: 0.7 }}
       >
         View
       </h3>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-xs">
         {options.map((opt) => {
           const isActive = currentView === opt.id;
           const Icon = opt.icon;
@@ -69,7 +69,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
                 fontWeight: isActive ? 600 : 500,
               }}
             >
-              <Icon size={16} />
+              <Icon size={13} />
               {opt.label}
             </button>
           );

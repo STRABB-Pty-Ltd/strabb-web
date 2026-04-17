@@ -25,6 +25,7 @@ export interface CalendarGridProps<T> {
   events: T[];
   getEventDate: (event: T) => { start: Date; end: Date };
   getEventColor: (event: T) => string;
+  getEventTextColor?: (event: T) => string;
   getEventLabel: (event: T) => string;
   onEventClick: (event: T) => void;
   onDateChange: (date: Date) => void;
@@ -39,6 +40,7 @@ export function CalendarGrid<T>({
   events,
   getEventDate,
   getEventColor,
+  getEventTextColor,
   getEventLabel,
   onEventClick,
   onDateChange,
@@ -172,7 +174,7 @@ export function CalendarGrid<T>({
       <div
         className="grid border-t border-l"
         style={{
-          gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+          gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
           borderColor: "var(--border)",
         }}
       >
@@ -191,6 +193,7 @@ export function CalendarGrid<T>({
           const chipEvents = dayEvents.map((ev) => ({
             label: getEventLabel(ev),
             color: getEventColor(ev),
+            textColor: getEventTextColor?.(ev),
             onClick: () => onEventClick(ev),
           }));
 

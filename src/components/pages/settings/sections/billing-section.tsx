@@ -2,7 +2,7 @@
 
 export function BillingSection() {
   return (
-    <div className="max-w-lg space-y-md">
+    <div className="space-y-md">
       <div>
         <h2 className="text-subheading font-semibold text-gray-900">Billing</h2>
         <p className="text-body text-gray-500">Manage your subscription and payment details.</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Building2, CreditCard, Globe, Radio, Settings, Sparkles, Users } from "lucide-react";
+import { Bell, CreditCard, Globe, Radio, Settings, Sparkles, Users } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -14,13 +14,13 @@ const sections = [
   { id: "channels", label: "Channels", icon: Radio },
 ] as const;
 
-export function SettingsNav() {
+export function SettingsNavSection() {
   const section = useAppStore((s) => s.settings.section);
   const setSection = useAppStore((s) => s.setSection);
 
   return (
-    <nav className="shrink-0 border-r" style={{ width: 233, borderColor: "var(--border)" }}>
-      <div className="space-y-xs p-base">
+    <nav aria-label="Settings" style={{ padding: "var(--space-sm)" }}>
+      <div className="flex flex-col gap-xs">
         {sections.map((s) => {
           const Icon = s.icon;
           const active = section === s.id;
@@ -29,15 +29,14 @@ export function SettingsNav() {
               key={s.id}
               type="button"
               onClick={() => setSection(s.id)}
-              className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body transition-colors"
+              aria-current={active ? "page" : undefined}
+              className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
               style={{
-                backgroundColor: active ? "rgba(59, 130, 246, 0.08)" : undefined,
-                color: active ? "var(--strabb-secondary)" : "var(--brand-10)",
-                fontWeight: active ? 600 : 400,
-                borderLeft: active ? "3px solid var(--strabb-secondary)" : "3px solid transparent",
+                backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
             >
-              <Icon size={16} />
+              <Icon size={14} />
               {s.label}
             </button>
           );

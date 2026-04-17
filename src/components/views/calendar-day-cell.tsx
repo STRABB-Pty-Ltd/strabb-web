@@ -7,6 +7,7 @@ import { CalendarEventChip } from "./calendar-event-chip";
 interface DayCellEvent {
   label: string;
   color: string;
+  textColor?: string;
   onClick: () => void;
 }
 
@@ -51,7 +52,13 @@ export function CalendarDayCell({
       </span>
       <div className="flex flex-col gap-xs">
         {visibleEvents.map((ev, i) => (
-          <CalendarEventChip key={i} label={ev.label} color={ev.color} onClick={ev.onClick} />
+          <CalendarEventChip
+            key={i}
+            label={ev.label}
+            color={ev.color}
+            textColor={ev.textColor}
+            onClick={ev.onClick}
+          />
         ))}
         {overflow > 0 && <span className="mt-xs text-body text-gray-400">+{overflow} more</span>}
       </div>

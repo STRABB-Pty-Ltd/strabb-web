@@ -23,23 +23,6 @@ describe("AppStore", () => {
     });
   });
 
-  describe("sidebar", () => {
-    it("toggleSidebar flips sidebarOpen", () => {
-      expect(useAppStore.getState().sidebarOpen).toBe(true);
-      useAppStore.getState().toggleSidebar();
-      expect(useAppStore.getState().sidebarOpen).toBe(false);
-      useAppStore.getState().toggleSidebar();
-      expect(useAppStore.getState().sidebarOpen).toBe(true);
-    });
-
-    it("setSidebarOpen sets explicit value", () => {
-      useAppStore.getState().setSidebarOpen(false);
-      expect(useAppStore.getState().sidebarOpen).toBe(false);
-      useAppStore.getState().setSidebarOpen(true);
-      expect(useAppStore.getState().sidebarOpen).toBe(true);
-    });
-  });
-
   describe("listings", () => {
     it("toggleListing adds and removes from selectedListings", () => {
       useAppStore.getState().toggleListing("lst-001");

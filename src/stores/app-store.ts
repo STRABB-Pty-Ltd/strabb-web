@@ -1,7 +1,5 @@
 import { create } from "zustand";
 
-import type { PageId } from "./types";
-
 import { type CalendarSlice, createCalendarSlice } from "./slices/calendar-slice";
 import { type CleaningSlice, createCleaningSlice } from "./slices/cleaning-slice";
 import { type DashboardSlice, createDashboardSlice } from "./slices/dashboard-slice";
@@ -11,7 +9,6 @@ import { type NavigationSlice, createNavigationSlice } from "./slices/navigation
 import { type OverlaySlice, createOverlaySlice } from "./slices/overlay-slice";
 import { type ReportingSlice, createReportingSlice } from "./slices/reporting-slice";
 import { type SettingsSlice, createSettingsSlice } from "./slices/settings-slice";
-import { type SidebarSlice, createSidebarSlice } from "./slices/sidebar-slice";
 
 // Pages that support a view switcher
 type ViewablePage = "calendar" | "messaging" | "cleaning";
@@ -30,7 +27,6 @@ export interface CrossCuttingActions {
 }
 
 export type AppState = NavigationSlice &
-  SidebarSlice &
   ListingsSlice &
   DashboardSlice &
   CalendarSlice &
@@ -45,7 +41,6 @@ export const useAppStore = create<AppState>()((...a) => {
   const [set, get] = a;
   return {
     ...createNavigationSlice(...a),
-    ...createSidebarSlice(...a),
     ...createListingsSlice(...a),
     ...createDashboardSlice(...a),
     ...createCalendarSlice(...a),

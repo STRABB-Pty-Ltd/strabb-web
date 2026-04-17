@@ -14,35 +14,31 @@ export function ChannelFilter() {
   const toggleChannel = useAppStore((s) => s.toggleChannel);
 
   return (
-    <div style={{ padding: "var(--space-md)" }}>
+    <div style={{ padding: "var(--space-sm)" }}>
       <h3
-        className="mb-2 text-xs font-semibold tracking-wide uppercase"
+        className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--brand-10)", opacity: 0.7 }}
       >
         Channels
       </h3>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-xs">
         {channels.map((ch) => {
-          const isActive = activeChannels.length === 0 || activeChannels.includes(ch.id);
+          const isActive = activeChannels.includes(ch.id);
           return (
-            <label
+            <button
               key={ch.id}
-              className="flex cursor-pointer items-center gap-base rounded-lg px-sm py-base"
+              type="button"
+              onClick={() => toggleChannel(ch.id)}
+              aria-pressed={isActive}
+              className="flex cursor-pointer items-center gap-base rounded-lg px-sm py-base text-left"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
             >
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={() => toggleChannel(ch.id)}
-                className="h-4 w-4"
-                style={{ accentColor: "var(--brand-10)" }}
-              />
-              <span className="h-4 w-4 shrink-0 rounded-sm" style={{ backgroundColor: ch.color }} />
+              <span className="h-sm w-sm shrink-0 rounded-sm" style={{ backgroundColor: ch.color }} />
               <span className="text-body font-medium">{ch.label}</span>
-            </label>
+            </button>
           );
         })}
       </div>

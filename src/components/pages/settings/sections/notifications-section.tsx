@@ -54,7 +54,7 @@ export function NotificationsSection() {
   };
 
   return (
-    <div className="max-w-lg space-y-md">
+    <div className="space-y-md">
       <div>
         <h2 className="text-subheading font-semibold text-gray-900">Notifications</h2>
         <p className="text-body text-gray-500">Choose which email notifications you receive.</p>
