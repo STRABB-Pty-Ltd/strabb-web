@@ -13,13 +13,13 @@ export function GanttHeader({ dateRange, cellWidth }: GanttHeaderProps) {
   return (
     <div className="flex" style={{ position: "sticky", top: 0, zIndex: 10 }}>
       {/* Spacer for label column */}
-      <div className="shrink-0 bg-white" style={{ width: 160 }} />
+      <div className="shrink-0 bg-white" style={{ width: 144 }} />
       {/* Day headers */}
       <div className="flex">
         {days.map((day) => (
           <div
             key={day.toISOString()}
-            className="shrink-0 border-r border-b px-1 py-1 text-center text-xs text-gray-500"
+            className="shrink-0 border-r border-b px-xs py-xs text-center text-body text-gray-500"
             style={{
               width: cellWidth,
               backgroundColor: isToday(day) ? "rgba(59, 130, 246, 0.05)" : "white",

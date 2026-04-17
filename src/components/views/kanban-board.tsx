@@ -15,7 +15,7 @@ export function KanbanBoard<T>({
   getBorderColor,
 }: KanbanBoardProps<T>) {
   return (
-    <div className="flex gap-3 overflow-x-auto pb-4">
+    <div className="flex gap-sm overflow-x-auto pb-sm">
       {columns.map((col) => (
         <KanbanColumn key={col.id} id={col.id} label={col.label} count={col.items.length}>
           {col.items.map((item) => (

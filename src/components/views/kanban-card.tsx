@@ -8,7 +8,6 @@ export function KanbanCard({ borderColor, children }: KanbanCardProps) {
     <div
       style={{
         borderLeft: `4px solid ${borderColor}`,
-        boxShadow: "var(--shadow-sm)",
       }}
       className="rounded-lg bg-white"
     >

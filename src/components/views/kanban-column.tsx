@@ -14,18 +14,18 @@ export function KanbanColumn({ id, label, count, children }: KanbanColumnProps) 
       }}
     >
       <div
-        className="flex items-center gap-2 border-b px-3 py-2"
+        className="flex items-center gap-base border-b px-sm py-base"
         style={{ borderColor: "var(--border)" }}
       >
-        <span className="text-sm font-semibold text-gray-700">{label}</span>
-        <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
+        <span className="text-body font-semibold text-gray-700">{label}</span>
+        <span className="rounded-full bg-gray-200 px-base py-xs text-body font-medium text-gray-600">
           {count}
         </span>
       </div>
 
       <div
-        className="flex flex-1 flex-col gap-2 overflow-y-auto p-2"
-        style={{ maxHeight: "calc(100vh - 200px)" }}
+        className="flex flex-1 flex-col gap-base overflow-y-auto p-base"
+        style={{ maxHeight: "calc(100vh - 233px)" }}
       >
         {children}
       </div>

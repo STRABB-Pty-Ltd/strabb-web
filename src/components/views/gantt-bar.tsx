@@ -14,17 +14,17 @@ export function GanttBar({ label, color, startCol, spanCols, cellWidth, onClick 
     <button
       type="button"
       onClick={onClick}
-      className="absolute truncate rounded text-xs text-white"
+      className="absolute truncate rounded-sm text-body text-white"
       title={label}
       style={{
         left: startCol * cellWidth,
-        width: spanCols * cellWidth - 4,
-        height: 28,
-        top: 2,
+        width: spanCols * cellWidth - 5,
+        height: 34,
+        top: 0,
         backgroundColor: color,
-        borderRadius: 4,
-        padding: "0 6px",
-        lineHeight: "28px",
+        borderRadius: 3,
+        padding: "0 5px",
+        lineHeight: "34px",
       }}
     >
       {label}

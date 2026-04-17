@@ -33,7 +33,7 @@ export function CalendarDayCell({
     <div
       className="flex flex-col border-r border-b"
       style={{
-        minHeight: compact ? 60 : 100,
+        minHeight: compact ? 55 : 89,
         borderColor: "var(--border)",
         backgroundColor: today ? "rgba(59, 130, 246, 0.04)" : "white",
         opacity: isCurrentMonth ? 1 : 0.4,
@@ -41,7 +41,7 @@ export function CalendarDayCell({
       }}
     >
       <span
-        className="mb-1 text-xs font-medium"
+        className="mb-xs text-body font-medium"
         style={{
           color: today ? "var(--strabb-secondary)" : isCurrentMonth ? "#374151" : "#9CA3AF",
           fontWeight: today ? 700 : 500,
@@ -49,11 +49,11 @@ export function CalendarDayCell({
       >
         {date.getDate()}
       </span>
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-xs">
         {visibleEvents.map((ev, i) => (
           <CalendarEventChip key={i} label={ev.label} color={ev.color} onClick={ev.onClick} />
         ))}
-        {overflow > 0 && <span className="mt-0.5 text-xs text-gray-400">+{overflow} more</span>}
+        {overflow > 0 && <span className="mt-xs text-body text-gray-400">+{overflow} more</span>}
       </div>
     </div>
   );
