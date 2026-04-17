@@ -8,7 +8,7 @@ export function LoadingSpinner({ className }: LoadingSpinnerProps) {
   return (
     <div
       className={cn(
-        "border-muted border-t-primary h-6 w-6 animate-spin rounded-full border-2",
+        "border-muted border-t-primary h-md w-md animate-spin rounded-full border-2",
         className,
       )}
       role="status"
