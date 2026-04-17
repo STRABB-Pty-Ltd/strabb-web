@@ -12,7 +12,6 @@ import { LogoSection } from "./sidebar-sections/logo-section";
 import { TimeframeSelector } from "./sidebar-sections/timeframe-selector";
 import { ViewSwitcher } from "./sidebar-sections/view-switcher";
 
-const showLogo = (p: PageId) => p !== "settings";
 const showViewSwitcher = (p: PageId) => p === "calendar" || p === "messaging" || p === "cleaning";
 const showListingFilter = (p: PageId) => p !== "settings";
 const showTimeframe = (p: PageId) =>
@@ -69,7 +68,7 @@ export function ContextualSidebar() {
           </button>
         </div>
 
-        {/* Logo removed — shown in top nav only */}
+        <LogoSection />
         {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
         {showListingFilter(currentPage) && <ListingFilterTree />}
         {showTimeframe(currentPage) && <TimeframeSelector page={currentPage} />}

@@ -19,27 +19,19 @@ export function TopNav() {
       className="flex shrink-0 items-center"
       style={{
         height: "var(--topnav-height)",
-        backgroundColor: "var(--strabb-primary)",
+        backgroundColor: "var(--surface-60)",
       }}
     >
       {/* Mobile hamburger */}
       <button
         type="button"
-        className="p-2 text-white lg:hidden"
-        style={{ marginLeft: "var(--space-sm)" }}
+        className="p-2 lg:hidden"
+        style={{ marginLeft: "var(--space-sm)", color: "var(--brand-10)" }}
         onClick={toggleSidebar}
         aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
       >
         <Menu size={24} />
       </button>
-
-      {/* Logo */}
-      <span
-        className="font-data shrink-0 text-lg font-bold text-white"
-        style={{ paddingLeft: "var(--space-md)" }}
-      >
-        STRABB
-      </span>
 
       {/* Page buttons */}
       <div className="flex flex-1 items-center justify-center gap-1">
@@ -51,12 +43,12 @@ export function TopNav() {
               href={item.href}
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              style={
-                isActive
-                  ? { backgroundColor: "rgba(255, 255, 255, 0.12)", borderRadius: 8 }
-                  : undefined
-              }
+              className="flex items-center px-4 py-2 text-sm font-medium transition-colors"
+              style={{
+                borderRadius: 8,
+                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              }}
             >
               {item.label}
             </Link>
@@ -69,12 +61,13 @@ export function TopNav() {
         href={settingsNavItem.href}
         onClick={() => setCurrentPage(settingsNavItem.id)}
         aria-current={currentPage === "settings" ? "page" : undefined}
-        className="mr-4 flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-        style={
-          currentPage === "settings"
-            ? { backgroundColor: "rgba(255, 255, 255, 0.12)", borderRadius: 8 }
-            : undefined
-        }
+        className="mr-4 flex items-center px-4 py-2 text-sm font-medium transition-colors"
+        style={{
+          borderRadius: 8,
+          backgroundColor:
+            currentPage === "settings" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+          color: currentPage === "settings" ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+        }}
       >
         {settingsNavItem.label}
       </Link>
