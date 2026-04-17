@@ -95,11 +95,11 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="flex shrink-0 items-center justify-center overflow-x-auto border-b"
+      className="flex shrink-0 items-center justify-center overflow-x-auto"
       style={{
         height: "var(--submenu-height)",
         gap: "var(--space-sm)",
-        borderColor: "var(--border)",
+        backgroundColor: "var(--surface-submenu)",
       }}
     >
       {chips.map((chip) => {
@@ -118,23 +118,14 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap transition-colors"
+              className="inline-flex shrink-0 items-center gap-1 border-0 whitespace-nowrap transition-colors"
               style={{
                 height: "var(--chip-height)",
                 borderRadius: 8,
                 padding: "0 var(--space-md)",
                 fontSize: 14,
-                ...(active
-                  ? {
-                      backgroundColor: "var(--strabb-secondary)",
-                      color: "white",
-                      border: "none",
-                    }
-                  : {
-                      backgroundColor: "white",
-                      color: "#374151",
-                      border: "1px solid #E5E7EB",
-                    }),
+                backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
             >
               {chip.label}
@@ -143,7 +134,7 @@ export function SubmenuBar() {
 
             {isMore && moreOpen && (
               <div
-                className="absolute top-full left-0 z-50 mt-1 rounded-lg border bg-white py-1 shadow-md"
+                className="absolute top-full left-0 z-50 mt-1 rounded-lg bg-white py-1 shadow-md"
                 style={{ minWidth: 160 }}
               >
                 <div className="px-3 py-2 text-sm text-gray-400">Coming soon</div>

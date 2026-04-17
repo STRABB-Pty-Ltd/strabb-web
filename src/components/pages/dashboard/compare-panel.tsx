@@ -22,8 +22,10 @@ const formatValue = (value: string | number, type: KPIData["type"]) => {
 
 export function ComparePanel({ current, comparison }: ComparePanelProps) {
   return (
-    <div className="rounded-lg border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">Period Comparison</h3>
+    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+      <h3 className="mb-3 text-sm font-semibold" style={{ color: "var(--brand-10)" }}>
+        Period Comparison
+      </h3>
       <div className="space-y-2">
         {current.map((kpi, i) => {
           const comp = comparison[i];
@@ -36,20 +38,18 @@ export function ComparePanel({ current, comparison }: ComparePanelProps) {
           return (
             <div
               key={kpi.label}
-              className="flex items-center justify-between rounded px-3 py-2 text-sm"
-              style={{ backgroundColor: "#F9FAFB" }}
+              className="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
+              style={{ backgroundColor: "var(--surface-60)", color: "var(--brand-10)" }}
             >
-              <span className="text-gray-600">{kpi.label}</span>
+              <span>{kpi.label}</span>
               <div className="flex items-center gap-4">
-                <span className="font-data font-medium text-gray-900">
-                  {formatValue(kpi.value, kpi.type)}
-                </span>
-                <span className="font-data text-gray-400">
+                <span className="font-data font-semibold">{formatValue(kpi.value, kpi.type)}</span>
+                <span className="font-data" style={{ opacity: 0.55 }}>
                   {formatValue(comp.value, comp.type)}
                 </span>
                 <span
-                  className="font-data text-xs font-medium"
-                  style={{ color: positive ? "#16A34A" : "#DC2626" }}
+                  className="font-data text-xs font-semibold"
+                  style={{ color: positive ? "var(--status-completed)" : "var(--status-issues)" }}
                 >
                   {positive ? "+" : ""}
                   {Math.round(delta * 10) / 10}%

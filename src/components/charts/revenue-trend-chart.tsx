@@ -28,13 +28,13 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
       <AreaChart data={data}>
         <defs>
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--strabb-primary)" stopOpacity={0.15} />
-            <stop offset="95%" stopColor="var(--strabb-primary)" stopOpacity={0} />
+            <stop offset="5%" stopColor="#1E1E85" stopOpacity={0.25} />
+            <stop offset="95%" stopColor="#1E1E85" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} tickFormatter={formatAUD} />
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
+        <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#1E1E85" }} />
+        <YAxis tick={{ fontSize: 12, fill: "#1E1E85" }} tickFormatter={formatAUD} />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
           contentStyle={{ fontSize: 12 }}
@@ -42,7 +42,7 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
         <Area
           type="monotone"
           dataKey="revenue"
-          stroke="var(--strabb-primary)"
+          stroke="#1E1E85"
           strokeWidth={2}
           fill="url(#revenueGradient)"
         />

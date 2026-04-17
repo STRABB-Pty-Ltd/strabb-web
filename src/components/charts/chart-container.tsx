@@ -22,10 +22,15 @@ export function ChartContainer({
   if (loading) {
     return (
       <div
-        className="flex items-center justify-center rounded-lg border bg-white"
-        style={{ minHeight, borderColor: "var(--border)" }}
+        className="flex items-center justify-center rounded-xl"
+        style={{
+          minHeight,
+          backgroundColor: "var(--surface-card)",
+          color: "var(--brand-10)",
+          opacity: 0.7,
+        }}
       >
-        <p className="text-sm text-gray-400">Loading chart...</p>
+        <p className="text-sm">Loading chart...</p>
       </div>
     );
   }
@@ -33,10 +38,12 @@ export function ChartContainer({
   if (error) {
     return (
       <div
-        className="flex items-center justify-center rounded-lg border bg-white"
-        style={{ minHeight, borderColor: "var(--border)" }}
+        className="flex items-center justify-center rounded-xl"
+        style={{ minHeight, backgroundColor: "var(--surface-card)" }}
       >
-        <p className="text-sm text-red-500">{error}</p>
+        <p className="text-sm" style={{ color: "var(--status-issues)" }}>
+          {error}
+        </p>
       </div>
     );
   }
@@ -44,17 +51,26 @@ export function ChartContainer({
   if (empty) {
     return (
       <div
-        className="flex items-center justify-center rounded-lg border bg-white"
-        style={{ minHeight, borderColor: "var(--border)" }}
+        className="flex items-center justify-center rounded-xl"
+        style={{
+          minHeight,
+          backgroundColor: "var(--surface-card)",
+          color: "var(--brand-10)",
+          opacity: 0.7,
+        }}
       >
-        <p className="text-sm text-gray-400">No data available</p>
+        <p className="text-sm">No data available</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-      {title && <h3 className="mb-3 text-sm font-semibold text-gray-700">{title}</h3>}
+    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+      {title && (
+        <h3 className="mb-3 text-sm font-semibold" style={{ color: "var(--brand-10)" }}>
+          {title}
+        </h3>
+      )}
       <ResponsiveContainer width="100%" height={minHeight}>
         {children as React.ReactElement}
       </ResponsiveContainer>

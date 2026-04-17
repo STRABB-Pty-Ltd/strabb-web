@@ -46,9 +46,14 @@ export function ViewSwitcher({ page }: { page: PageId }) {
   const currentView = viewByPage[page] ?? "";
 
   return (
-    <div className="border-b" style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}>
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">View</h3>
-      <div className="flex flex-col gap-0.5">
+    <div style={{ padding: "var(--space-md)" }}>
+      <h3
+        className="mb-2 text-xs font-semibold tracking-wide uppercase"
+        style={{ color: "var(--brand-10)", opacity: 0.7 }}
+      >
+        View
+      </h3>
+      <div className="flex flex-col gap-1">
         {options.map((opt) => {
           const isActive = currentView === opt.id;
           const Icon = opt.icon;
@@ -57,20 +62,12 @@ export function ViewSwitcher({ page }: { page: PageId }) {
               key={opt.id}
               type="button"
               onClick={() => setView(page as "calendar" | "messaging" | "cleaning", opt.id)}
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
-              style={
-                isActive
-                  ? {
-                      borderLeft: "3px solid var(--strabb-secondary)",
-                      fontWeight: 600,
-                      backgroundColor: "rgba(59, 130, 246, 0.05)",
-                      color: "var(--strabb-secondary)",
-                    }
-                  : {
-                      borderLeft: "3px solid transparent",
-                      color: "#374151",
-                    }
-              }
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+              style={{
+                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                fontWeight: isActive ? 600 : 500,
+              }}
             >
               <Icon size={16} />
               {opt.label}

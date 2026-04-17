@@ -14,7 +14,7 @@ interface ExpenseChartProps {
   loading?: boolean;
 }
 
-const COLORS = ["#3B82F6", "#8B5CF6", "#F59E0B", "#6B7280"];
+const COLORS = ["#1E1E85", "#6B7280", "#16A34A", "#DC2626"];
 
 const formatAUD = (value: number) =>
   new Intl.NumberFormat("en-AU", {

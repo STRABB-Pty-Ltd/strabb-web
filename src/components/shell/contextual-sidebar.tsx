@@ -46,7 +46,7 @@ export function ContextualSidebar() {
         role="complementary"
         aria-label="Sidebar"
         className={[
-          "flex flex-col overflow-y-auto border-r bg-white",
+          "flex flex-col overflow-y-auto",
           "transition-transform duration-300 ease-in-out",
           // Mobile: floating overlay
           "fixed top-0 left-0 z-50 h-full lg:relative lg:z-10",
@@ -54,7 +54,7 @@ export function ContextualSidebar() {
         ].join(" ")}
         style={{
           width: "var(--sidebar-width)",
-          borderColor: "var(--border)",
+          backgroundColor: "var(--surface-sidebar)",
           top: 0,
         }}
       >
@@ -76,14 +76,15 @@ export function ContextualSidebar() {
         {showChannelFilter(currentPage) && <ChannelFilter />}
 
         {showShoppingList(currentPage) && (
-          <div
-            className="border-b"
-            style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}
-          >
+          <div style={{ padding: "var(--space-md)" }}>
             <button
               type="button"
               onClick={openShoppingListPopup}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+              style={{
+                backgroundColor: "var(--btn-inactive-bg)",
+                color: "var(--btn-inactive-text)",
+              }}
             >
               <ShoppingCart size={16} />
               Shopping List
@@ -92,14 +93,15 @@ export function ContextualSidebar() {
         )}
 
         {showSavedReports(currentPage) && (
-          <div
-            className="border-b"
-            style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}
-          >
+          <div style={{ padding: "var(--space-md)" }}>
             <button
               type="button"
               onClick={toggleSavedReports}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+              style={{
+                backgroundColor: "var(--btn-inactive-bg)",
+                color: "var(--btn-inactive-text)",
+              }}
             >
               <BookOpen size={16} />
               Saved Reports
@@ -107,13 +109,19 @@ export function ContextualSidebar() {
             {savedReportsOpen && (
               <div className="mt-2 space-y-1">
                 {savedReports.length === 0 ? (
-                  <p className="px-2 text-xs text-gray-400">No saved reports</p>
+                  <p className="px-2 text-xs" style={{ color: "var(--brand-10)", opacity: 0.6 }}>
+                    No saved reports
+                  </p>
                 ) : (
                   savedReports.map((r) => (
                     <button
                       key={r.id}
                       type="button"
-                      className="block w-full truncate rounded px-2 py-1 text-left text-sm text-gray-600 hover:bg-gray-50"
+                      className="block w-full truncate rounded-lg px-3 py-1.5 text-left text-sm"
+                      style={{
+                        backgroundColor: "var(--btn-inactive-bg)",
+                        color: "var(--btn-inactive-text)",
+                      }}
                     >
                       {r.name}
                     </button>

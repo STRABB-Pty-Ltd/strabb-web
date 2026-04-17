@@ -54,7 +54,7 @@ export function TopNav() {
               className="flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
               style={
                 isActive
-                  ? { backgroundColor: "var(--strabb-secondary)", borderRadius: 8 }
+                  ? { backgroundColor: "rgba(255, 255, 255, 0.12)", borderRadius: 8 }
                   : undefined
               }
             >
@@ -72,7 +72,7 @@ export function TopNav() {
         className="mr-4 flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
         style={
           currentPage === "settings"
-            ? { backgroundColor: "var(--strabb-secondary)", borderRadius: 8 }
+            ? { backgroundColor: "rgba(255, 255, 255, 0.12)", borderRadius: 8 }
             : undefined
         }
       >
