@@ -28,22 +28,22 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
     <ChartContainer title="Channel Breakdown" loading={loading} empty={data.length === 0}>
       <BarChart data={data} layout="vertical">
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
-        <XAxis type="number" tick={{ fontSize: 12, fill: "#1E1E85" }} tickFormatter={formatAUD} />
+        <XAxis type="number" tick={{ fontSize: 13, fill: "#1E1E85" }} tickFormatter={formatAUD} />
         <YAxis
           dataKey="channel"
           type="category"
-          tick={{ fontSize: 12, fill: "#1E1E85" }}
-          width={100}
+          tick={{ fontSize: 13, fill: "#1E1E85" }}
+          width={89}
         />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 12 }}
+          contentStyle={{ fontSize: 13 }}
         />
         <Bar
           dataKey="revenue"
-          radius={[0, 4, 4, 0]}
+          radius={[0, 3, 3, 0]}
           fill="#1E1E85"
-          label={{ position: "right", fontSize: 11, formatter: (v) => formatAUD(Number(v)) }}
+          label={{ position: "right", fontSize: 13, formatter: (v) => formatAUD(Number(v)) }}
         />
       </BarChart>
     </ChartContainer>

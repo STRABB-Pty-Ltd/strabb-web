@@ -33,8 +33,8 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
           nameKey="category"
           cx="50%"
           cy="50%"
-          innerRadius={60}
-          outerRadius={100}
+          innerRadius={55}
+          outerRadius={89}
           paddingAngle={2}
           label={({ name, value }) => `${name}: ${formatAUD(Number(value))}`}
         >
@@ -42,11 +42,11 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip formatter={(value) => formatAUD(Number(value))} contentStyle={{ fontSize: 12 }} />
+        <Tooltip formatter={(value) => formatAUD(Number(value))} contentStyle={{ fontSize: 13 }} />
         <Legend
           verticalAlign="bottom"
           iconType="circle"
-          formatter={(v) => <span className="text-sm">{v}</span>}
+          formatter={(v) => <span className="text-body">{v}</span>}
         />
       </PieChart>
     </ChartContainer>

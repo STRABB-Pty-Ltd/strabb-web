@@ -17,7 +17,7 @@ export function ChartContainer({
   error = null,
   empty = false,
   children,
-  minHeight = 300,
+  minHeight = 377,
 }: ChartContainerProps) {
   if (loading) {
     return (
@@ -30,7 +30,7 @@ export function ChartContainer({
           opacity: 0.7,
         }}
       >
-        <p className="text-sm">Loading chart...</p>
+        <p className="text-body">Loading chart...</p>
       </div>
     );
   }
@@ -41,7 +41,7 @@ export function ChartContainer({
         className="flex items-center justify-center rounded-xl"
         style={{ minHeight, backgroundColor: "var(--surface-card)" }}
       >
-        <p className="text-sm" style={{ color: "var(--status-issues)" }}>
+        <p className="text-body" style={{ color: "var(--status-issues)" }}>
           {error}
         </p>
       </div>
@@ -59,15 +59,15 @@ export function ChartContainer({
           opacity: 0.7,
         }}
       >
-        <p className="text-sm">No data available</p>
+        <p className="text-body">No data available</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl p-5" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="rounded-xl p-md" style={{ backgroundColor: "var(--surface-card)" }}>
       {title && (
-        <h3 className="mb-3 text-sm font-semibold" style={{ color: "var(--brand-10)" }}>
+        <h3 className="mb-sm text-body font-semibold" style={{ color: "var(--brand-10)" }}>
           {title}
         </h3>
       )}

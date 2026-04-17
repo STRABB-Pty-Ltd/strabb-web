@@ -33,11 +33,11 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
-        <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#1E1E85" }} />
-        <YAxis tick={{ fontSize: 12, fill: "#1E1E85" }} tickFormatter={formatAUD} />
+        <XAxis dataKey="label" tick={{ fontSize: 13, fill: "#1E1E85" }} />
+        <YAxis tick={{ fontSize: 13, fill: "#1E1E85" }} tickFormatter={formatAUD} />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 12 }}
+          contentStyle={{ fontSize: 13 }}
         />
         <Area
           type="monotone"

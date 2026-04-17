@@ -27,22 +27,22 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
         <XAxis
           dataKey="listing"
-          tick={{ fontSize: 11, fill: "#1E1E85" }}
+          tick={{ fontSize: 13, fill: "#1E1E85" }}
           interval={0}
           angle={-20}
           textAnchor="end"
-          height={60}
+          height={55}
         />
         <YAxis
-          tick={{ fontSize: 12, fill: "#1E1E85" }}
+          tick={{ fontSize: 13, fill: "#1E1E85" }}
           domain={[0, 100]}
           tickFormatter={(v) => `${v}%`}
         />
         <Tooltip
           formatter={(value) => [`${value}%`, "Occupancy"]}
-          contentStyle={{ fontSize: 12 }}
+          contentStyle={{ fontSize: 13 }}
         />
-        <Bar dataKey="occupancy" radius={[4, 4, 0, 0]}>
+        <Bar dataKey="occupancy" radius={[3, 3, 0, 0]}>
           {data.map((entry, i) => (
             <Cell key={i} fill={getOccupancyColor(entry.occupancy)} />
           ))}
