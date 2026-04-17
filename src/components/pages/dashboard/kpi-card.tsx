@@ -59,14 +59,20 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
     >
       <div className="mb-base flex items-center gap-base">
         <div
-          className="flex h-9 w-9 items-center justify-center rounded-lg"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
           style={{ backgroundColor: "var(--icon-bg)" }}
         >
           <Icon size={18} style={{ color: "var(--icon-color)" }} />
         </div>
+        <p
+          className="min-w-0 flex-1 truncate text-subheading font-medium"
+          style={{ color: "var(--brand-10)", opacity: 0.7 }}
+        >
+          {kpi.label}
+        </p>
         {mounted && hasTrend && (
           <div
-            className="ml-auto flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
+            className="flex shrink-0 items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
             style={{
               backgroundColor: trendPositive ? "var(--status-success-bg)" : "var(--status-danger-bg)",
               color: trendPositive ? "var(--status-completed)" : "var(--status-issues)",
@@ -90,10 +96,6 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
           vs {formatValue(compareValue, kpi.type)}
         </p>
       )}
-
-      <p className="mt-1 text-subheading font-medium" style={{ color: "var(--brand-10)", opacity: 0.7 }}>
-        {kpi.label}
-      </p>
     </button>
   );
 }
