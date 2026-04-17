@@ -65,7 +65,7 @@ export function ThreadOverlay({
             <div className="flex items-center gap-base">
               <span
                 className="rounded px-base py-xs text-body font-medium text-white"
-                style={{ backgroundColor: channelColors[channel] ?? "#6B7280" }}
+                style={{ backgroundColor: channelColors[channel] ?? "var(--channel-direct)" }}
               >
                 {channel.replace("_", ".")}
               </span>
@@ -87,8 +87,8 @@ export function ThreadOverlay({
               <div
                 className="max-w-[80%] px-sm py-base"
                 style={{
-                  backgroundColor: msg.isGuest ? "#F3F4F6" : "var(--strabb-secondary)",
-                  color: msg.isGuest ? "#374151" : "white",
+                  backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
+                  color: msg.isGuest ? "var(--brand-10)" : "white",
                   borderRadius: msg.isGuest ? "8px 8px 8px 0" : "8px 8px 0 8px",
                 }}
               >

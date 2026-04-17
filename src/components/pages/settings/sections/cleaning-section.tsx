@@ -53,7 +53,7 @@ export function CleaningSection() {
             onClick={() => setAutoAssign(!autoAssign)}
             className="relative h-md w-lg rounded-full transition-colors"
             style={{
-              backgroundColor: autoAssign ? "var(--strabb-secondary)" : "#D1D5DB",
+              backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
             }}
           >
             <span

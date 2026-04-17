@@ -122,7 +122,7 @@ export function TimeframePopup() {
                 }}
                 className="flex h-lg items-center justify-center rounded text-body transition-colors hover:bg-blue-50"
                 style={{
-                  color: inMonth ? "#374151" : "#D1D5DB",
+                  color: inMonth ? "var(--brand-10)" : "var(--neutral-30)",
                   backgroundColor: isSelected ? "var(--strabb-secondary)" : undefined,
                   ...(isSelected ? { color: "white" } : {}),
                 }}

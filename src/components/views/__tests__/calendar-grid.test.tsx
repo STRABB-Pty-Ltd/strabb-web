@@ -39,7 +39,7 @@ describe("CalendarGrid", () => {
 
   it("renders events as chips", () => {
     const events: TestEvent[] = [
-      { id: "e-1", label: "Booking Alpha", start: today, end: addDays(today, 2), color: "#FF5A5F" },
+      { id: "e-1", label: "Booking Alpha", start: today, end: addDays(today, 2), color: "var(--channel-airbnb)" },
     ];
     render(<CalendarGrid {...defaultProps} events={events} />);
     expect(screen.getAllByText("Booking Alpha").length).toBeGreaterThan(0);
@@ -51,7 +51,7 @@ describe("CalendarGrid", () => {
       label: `Event ${i}`,
       start: today,
       end: today,
-      color: "#3B82F6",
+      color: "var(--brand-10)",
     }));
     render(<CalendarGrid {...defaultProps} events={events} maxEventsPerCell={3} />);
     expect(screen.getAllByText("+2 more").length).toBeGreaterThan(0);

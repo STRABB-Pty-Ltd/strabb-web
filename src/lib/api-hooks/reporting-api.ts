@@ -39,11 +39,11 @@ interface RawExpense {
 }
 
 const channelColors: Record<string, string> = {
-  airbnb: "#FF5A5F",
-  bookingCom: "#003580",
-  booking_com: "#003580",
-  vrbo: "#3B5998",
-  direct: "#D97706",
+  airbnb: "var(--channel-airbnb)",
+  bookingCom: "var(--channel-booking)",
+  booking_com: "var(--channel-booking)",
+  vrbo: "var(--channel-vrbo)",
+  direct: "var(--channel-direct)",
 };
 
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
@@ -140,12 +140,12 @@ export function useReportingChartDataAPI(selectedListings: string[], timeframe?:
         channel,
         revenue,
         percentage: totalChannelRevenue > 0 ? Math.round((revenue / totalChannelRevenue) * 100) : 0,
-        color: channelColors[channel] ?? "#6B7280",
+        color: channelColors[channel] ?? "var(--channel-direct)",
       }));
       const revenueByListing = [...listingMap.entries()].map(([listing, { revenue }]) => ({
         listing,
         revenue,
-        color: "#3B82F6",
+        color: "var(--brand-10)",
       }));
 
       const expenses = expensesRes.data.map((e) => ({

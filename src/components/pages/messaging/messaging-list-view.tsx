@@ -50,7 +50,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
             className="flex w-full items-center gap-sm border-b px-sm py-sm text-left transition-colors hover:bg-gray-50"
             style={{
               borderColor: "var(--border)",
-              backgroundColor: selectedMessage === msg.id ? "#F0F7FF" : undefined,
+              backgroundColor: selectedMessage === msg.id ? "var(--neutral-30)" : undefined,
             }}
           >
             {/* Unread dot */}
@@ -73,7 +73,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
                 <span
                   className="h-xs w-xs shrink-0 rounded-full"
                   style={{
-                    backgroundColor: channelColors[msg.channel] ?? "#6B7280",
+                    backgroundColor: channelColors[msg.channel] ?? "var(--channel-direct)",
                   }}
                 />
                 <span className="truncate text-body text-gray-500">{msg.listingName}</span>

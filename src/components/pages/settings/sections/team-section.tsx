@@ -58,16 +58,16 @@ const mockMembers: TeamMember[] = [
 ];
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
-  admin: { bg: "#DBEAFE", text: "#1E40AF" },
-  manager: { bg: "#E0E7FF", text: "#3730A3" },
-  cleaner: { bg: "#D1FAE5", text: "#065F46" },
-  viewer: { bg: "#F3F4F6", text: "#6B7280" },
+  admin: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  manager: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  cleaner: { bg: "var(--neutral-30)", text: "var(--status-success)" },
+  viewer: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
 const statusColors: Record<string, string> = {
-  active: "#16A34A",
-  invited: "#D97706",
-  inactive: "#6B7280",
+  active: "var(--status-success)",
+  invited: "var(--status-danger)",
+  inactive: "var(--brand-10)",
 };
 
 export function TeamSection() {

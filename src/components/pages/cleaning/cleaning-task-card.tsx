@@ -15,10 +15,10 @@ const typeLabels: Record<string, string> = {
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  urgent: { bg: "#FEE2E2", text: "#DC2626" },
-  high: { bg: "#FEF3C7", text: "#92400E" },
-  medium: { bg: "#DBEAFE", text: "#1E40AF" },
-  low: { bg: "#F3F4F6", text: "#6B7280" },
+  urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
 interface CleaningTaskCardProps {

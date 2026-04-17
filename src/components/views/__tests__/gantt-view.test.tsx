@@ -18,9 +18,9 @@ const today = new Date();
 const dateRange = { start: today, end: addDays(today, 13) };
 
 const rows = [
-  { id: "row-1", label: "Listing A", color: "#3B82F6" },
-  { id: "row-2", label: "Listing B", color: "#10B981" },
-  { id: "row-3", label: "Listing C", color: "#F59E0B" },
+  { id: "row-1", label: "Listing A", color: "var(--brand-10)" },
+  { id: "row-2", label: "Listing B", color: "var(--status-success)" },
+  { id: "row-3", label: "Listing C", color: "var(--status-danger)" },
 ];
 
 const items: TestItem[] = [
@@ -30,7 +30,7 @@ const items: TestItem[] = [
     label: "Guest Alpha",
     start: today,
     end: addDays(today, 3),
-    color: "#FF5A5F",
+    color: "var(--channel-airbnb)",
   },
   {
     id: "item-2",
@@ -38,7 +38,7 @@ const items: TestItem[] = [
     label: "Guest Beta",
     start: addDays(today, 2),
     end: addDays(today, 5),
-    color: "#003580",
+    color: "var(--channel-booking)",
   },
 ];
 

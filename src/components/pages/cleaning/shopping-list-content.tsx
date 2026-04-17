@@ -4,9 +4,9 @@ import { useShoppingList } from "@/hooks/use-cleaning";
 import { useAppStore } from "@/stores/app-store";
 
 const priorityBadge: Record<string, { bg: string; text: string }> = {
-  high: { bg: "#FEE2E2", text: "#DC2626" },
-  medium: { bg: "#FEF3C7", text: "#92400E" },
-  low: { bg: "#F3F4F6", text: "#6B7280" },
+  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  medium: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
 export function ShoppingListContent() {
@@ -59,7 +59,7 @@ export function ShoppingListContent() {
                       className="flex-1 text-body"
                       style={{
                         textDecoration: isBought ? "line-through" : "none",
-                        color: isBought ? "#9CA3AF" : "#374151",
+                        color: isBought ? "var(--brand-10)" : "var(--brand-10)",
                       }}
                     >
                       {item.item}

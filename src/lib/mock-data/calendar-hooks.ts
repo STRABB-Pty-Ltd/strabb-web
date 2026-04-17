@@ -25,10 +25,10 @@ export interface CalendarEvent {
 }
 
 const channelColors: Record<string, string> = {
-  airbnb: "#FF5A5F",
-  booking_com: "#003580",
-  vrbo: "#3B5998",
-  direct: "#D97706",
+  airbnb: "var(--channel-airbnb)",
+  booking_com: "var(--channel-booking)",
+  vrbo: "var(--channel-vrbo)",
+  direct: "var(--channel-direct)",
 };
 
 function bookingToEvent(b: Booking): CalendarEvent {
@@ -40,7 +40,7 @@ function bookingToEvent(b: Booking): CalendarEvent {
     label: `${b.guestName} — ${b.listingName}`,
     start: b.checkIn,
     end: b.checkOut,
-    color: channelColors[b.channel] ?? "#6B7280",
+    color: channelColors[b.channel] ?? "var(--channel-direct)",
     channel: b.channel,
     guest: b.guestName,
     status: b.status,
@@ -57,7 +57,7 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
     label: `Vacancy — ${v.listingName} (${v.gapDays}d)`,
     start: v.startDate,
     end: v.endDate,
-    color: "#9CA3AF",
+    color: "var(--brand-10)",
   };
 }
 
@@ -72,7 +72,7 @@ function maintenanceToEvent(m: Maintenance): CalendarEvent {
     label: `${m.description} — ${m.listingName}`,
     start,
     end,
-    color: "#D97706",
+    color: "var(--status-danger)",
     status: m.status,
   };
 }

@@ -97,7 +97,7 @@ export function IntegrationsSection() {
                   className="rounded-full px-base py-xs text-body font-medium"
                   style={{
                     backgroundColor: "rgba(22, 163, 74, 0.1)",
-                    color: "#16A34A",
+                    color: "var(--status-success)",
                   }}
                 >
                   Connected
@@ -109,7 +109,7 @@ export function IntegrationsSection() {
                 className="rounded-lg border px-sm py-xs text-body font-medium"
                 style={{
                   borderColor: "var(--border)",
-                  color: platform.connected ? "#DC2626" : "var(--strabb-secondary)",
+                  color: platform.connected ? "var(--status-danger)" : "var(--strabb-secondary)",
                 }}
               >
                 {platform.connected ? "Disconnect" : "Connect"}

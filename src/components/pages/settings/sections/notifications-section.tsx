@@ -76,7 +76,7 @@ export function NotificationsSection() {
               onClick={() => toggle(t.id)}
               className="relative h-md w-lg rounded-full transition-colors"
               style={{
-                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "#D1D5DB",
+                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
               }}
             >
               <span

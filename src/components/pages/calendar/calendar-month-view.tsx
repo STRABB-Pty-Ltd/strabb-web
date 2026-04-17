@@ -18,10 +18,10 @@ const timeframeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = 
 };
 
 const typeColors: Record<string, string> = {
-  booking: "#F59E0B",
-  cleaning: "#10B981",
-  maintenance: "#6366F1",
-  vacancy: "#D1D5DB",
+  booking: "var(--status-danger)",
+  cleaning: "var(--status-success)",
+  maintenance: "var(--brand-10)",
+  vacancy: "var(--neutral-30)",
 };
 
 interface CalendarMonthViewProps {

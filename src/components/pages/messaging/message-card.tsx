@@ -20,9 +20,9 @@ const channelLabels: Record<string, string> = {
 };
 
 const priorityDot: Record<string, string> = {
-  high: "#DC2626",
-  medium: "#D97706",
-  low: "#9CA3AF",
+  high: "var(--status-danger)",
+  medium: "var(--status-danger)",
+  low: "var(--brand-10)",
 };
 
 interface MessageCardProps {
@@ -48,7 +48,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
           <span
             className="h-base w-base shrink-0 rounded-full"
             style={{
-              backgroundColor: channelColors[message.channel] ?? "#6B7280",
+              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           />
           <span className="truncate text-body text-gray-500">{message.listingName}</span>
@@ -58,7 +58,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
           <span
             className="shrink-0 rounded-sm px-xs py-xs text-body font-medium text-white"
             style={{
-              backgroundColor: channelColors[message.channel] ?? "#6B7280",
+              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
             {channelLabels[message.channel] ?? message.channel}

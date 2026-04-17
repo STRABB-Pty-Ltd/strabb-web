@@ -32,7 +32,7 @@ export function SettingsNav() {
               className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body transition-colors"
               style={{
                 backgroundColor: active ? "rgba(59, 130, 246, 0.08)" : undefined,
-                color: active ? "var(--strabb-secondary)" : "#6B7280",
+                color: active ? "var(--strabb-secondary)" : "var(--brand-10)",
                 fontWeight: active ? 600 : 400,
                 borderLeft: active ? "3px solid var(--strabb-secondary)" : "3px solid transparent",
               }}

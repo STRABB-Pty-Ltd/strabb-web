@@ -26,10 +26,10 @@ const typeLabels: Record<string, string> = {
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  urgent: { bg: "#FEE2E2", text: "#DC2626" },
-  high: { bg: "#FEF3C7", text: "#92400E" },
-  medium: { bg: "#DBEAFE", text: "#1E40AF" },
-  low: { bg: "#F3F4F6", text: "#6B7280" },
+  urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
 const columns: ColumnDef<CleaningTask>[] = [
@@ -81,7 +81,7 @@ const columns: ColumnDef<CleaningTask>[] = [
       <span
         className="rounded-full px-base py-xs text-body font-medium text-white"
         style={{
-          backgroundColor: statusColors[t.status] ?? "#6B7280",
+          backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
         }}
       >
         {t.status === "issues" ? "ticket" : t.status.replace("_", " ")}

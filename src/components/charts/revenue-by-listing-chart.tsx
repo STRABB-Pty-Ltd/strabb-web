@@ -28,7 +28,7 @@ export function RevenueByListingChart({ data, loading }: RevenueByListingChartPr
   return (
     <ChartContainer title="Revenue by Listing" loading={loading} empty={data.length === 0}>
       <BarChart data={sorted}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--neutral-30)" />
         <XAxis
           dataKey="listing"
           tick={{ fontSize: 13 }}

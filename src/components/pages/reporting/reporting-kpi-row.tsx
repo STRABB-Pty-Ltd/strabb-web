@@ -77,7 +77,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
                     backgroundColor: trendPositive
                       ? "rgba(22, 163, 74, 0.1)"
                       : "rgba(220, 38, 38, 0.1)",
-                    color: trendPositive ? "#16A34A" : "#DC2626",
+                    color: trendPositive ? "var(--status-success)" : "var(--status-danger)",
                   }}
                 >
                   {trendPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}

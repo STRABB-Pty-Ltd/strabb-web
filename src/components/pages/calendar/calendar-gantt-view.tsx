@@ -8,10 +8,10 @@ import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
 const typeColors: Record<string, string> = {
-  booking: "#F59E0B",
-  cleaning: "#10B981",
-  maintenance: "#6366F1",
-  vacancy: "#D1D5DB",
+  booking: "var(--status-danger)",
+  cleaning: "var(--status-success)",
+  maintenance: "var(--brand-10)",
+  vacancy: "var(--neutral-30)",
 };
 
 interface CalendarGanttViewProps {

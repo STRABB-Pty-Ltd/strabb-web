@@ -51,7 +51,7 @@ export function CleaningCalendarView({ tasks }: CleaningCalendarViewProps) {
         const d = new Date(task.scheduledTime);
         return { start: d, end: d };
       }}
-      getEventColor={(task) => statusColors[task.status] ?? "#6B7280"}
+      getEventColor={(task) => statusColors[task.status] ?? "var(--brand-10)"}
       getEventLabel={(task) => `${task.listingName} — ${typeLabels[task.type] ?? task.type}`}
       onEventClick={(task) => openDrillDownPanel("cleaning", task.id)}
       onDateChange={() => {}}

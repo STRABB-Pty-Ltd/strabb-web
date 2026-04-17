@@ -30,7 +30,7 @@ export function GanttView<T>({
   getLabel,
   dateRange,
   onItemClick,
-  todayLineColor = "#DC2626",
+  todayLineColor = "var(--status-danger)",
 }: GanttViewProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cellWidth, setCellWidth] = useState(34);

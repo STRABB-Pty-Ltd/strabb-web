@@ -43,7 +43,7 @@ export function CalendarDayCell({
       <span
         className="mb-xs text-body font-medium"
         style={{
-          color: today ? "var(--strabb-secondary)" : isCurrentMonth ? "#374151" : "#9CA3AF",
+          color: today ? "var(--strabb-secondary)" : isCurrentMonth ? "var(--brand-10)" : "var(--brand-10)",
           fontWeight: today ? 700 : 500,
         }}
       >

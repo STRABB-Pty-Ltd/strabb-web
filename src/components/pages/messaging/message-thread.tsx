@@ -54,7 +54,7 @@ export function MessageThread({
           <span
             className="rounded-sm px-base py-xs text-body font-medium text-white"
             style={{
-              backgroundColor: channelColors[message.channel] ?? "#6B7280",
+              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
             {message.channel.replace("_", ".")}
@@ -69,8 +69,8 @@ export function MessageThread({
             <div
               className="max-w-[80%] px-sm py-base"
               style={{
-                backgroundColor: msg.isGuest ? "#F3F4F6" : "var(--strabb-secondary)",
-                color: msg.isGuest ? "#374151" : "white",
+                backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
+                color: msg.isGuest ? "var(--brand-10)" : "white",
                 borderRadius: msg.isGuest ? "8px 8px 8px 0" : "8px 8px 0 8px",
               }}
             >

@@ -41,7 +41,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
         <span
           className="rounded-full px-base py-xs text-body font-medium text-white"
           style={{
-            backgroundColor: channelColors[ev.channel] ?? "#6B7280",
+            backgroundColor: channelColors[ev.channel] ?? "var(--channel-direct)",
           }}
         >
           {channelLabels[ev.channel] ?? ev.channel}
