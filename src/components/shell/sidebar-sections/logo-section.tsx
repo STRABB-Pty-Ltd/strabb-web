@@ -10,7 +10,7 @@ export function LogoSection() {
         paddingRight: "var(--space-md)",
       }}
     >
-      <span className="font-data text-lg font-bold" style={{ color: "var(--strabb-primary)" }}>
+      <span className="font-data text-heading font-bold" style={{ color: "var(--strabb-primary)" }}>
         STRABB
       </span>
     </div>
