@@ -6,17 +6,17 @@ import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-sm">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">STRABB</CardTitle>
+          <CardTitle className="text-subheading font-bold">STRABB</CardTitle>
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
           <LoginForm />
         </CardContent>
       </Card>
-      <div className="text-muted-foreground flex gap-4 text-xs">
+      <div className="text-muted-foreground flex gap-sm text-body">
         <Link href="/privacy" className="hover:underline">
           Privacy Policy
         </Link>

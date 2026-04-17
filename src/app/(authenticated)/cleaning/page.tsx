@@ -21,8 +21,8 @@ export default function CleaningPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <p className="text-sm text-gray-400">Loading cleaning tasks...</p>
+      <div className="flex items-center justify-center py-xl">
+        <p className="text-body text-gray-400">Loading cleaning tasks...</p>
       </div>
     );
   }
@@ -30,7 +30,7 @@ export default function CleaningPage() {
   return (
     <div>
       {showMobileBanner && (
-        <div className="mb-sm flex items-center gap-base rounded-lg bg-blue-50 px-sm py-base text-sm text-blue-700">
+        <div className="mb-sm flex items-center gap-base rounded-lg bg-blue-50 px-sm py-base text-body text-blue-700">
           <Monitor size={16} />
           Switch to desktop for Gantt/Calendar view
         </div>

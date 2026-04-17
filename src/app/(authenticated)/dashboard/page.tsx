@@ -25,8 +25,8 @@ export default function DashboardPage() {
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <p className="text-sm text-gray-400">Loading dashboard...</p>
+      <div className="flex items-center justify-center py-xl">
+        <p className="text-body text-gray-400">Loading dashboard...</p>
       </div>
     );
   }
