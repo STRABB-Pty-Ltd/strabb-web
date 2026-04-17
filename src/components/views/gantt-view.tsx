@@ -97,7 +97,7 @@ export function GanttView<T>({
                     width: cellWidth,
                     height: 34,
                     borderColor: "var(--border)",
-                    backgroundColor: isToday(day) ? "rgba(59, 130, 246, 0.03)" : undefined,
+                    backgroundColor: isToday(day) ? "var(--neutral-30)" : undefined,
                   }}
                 />
               ))}

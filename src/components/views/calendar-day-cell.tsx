@@ -35,7 +35,7 @@ export function CalendarDayCell({
       style={{
         minHeight: compact ? 55 : 89,
         borderColor: "var(--border)",
-        backgroundColor: today ? "rgba(59, 130, 246, 0.04)" : "white",
+        backgroundColor: today ? "var(--neutral-30)" : "var(--surface-60)",
         opacity: isCurrentMonth ? 1 : 0.4,
         padding: "var(--space-xs)",
       }}

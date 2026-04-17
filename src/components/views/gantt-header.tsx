@@ -22,7 +22,7 @@ export function GanttHeader({ dateRange, cellWidth }: GanttHeaderProps) {
             className="shrink-0 border-r border-b px-xs py-xs text-center text-body text-gray-500"
             style={{
               width: cellWidth,
-              backgroundColor: isToday(day) ? "rgba(59, 130, 246, 0.05)" : "white",
+              backgroundColor: isToday(day) ? "var(--neutral-30)" : "var(--surface-60)",
               borderColor: "var(--border)",
             }}
           >

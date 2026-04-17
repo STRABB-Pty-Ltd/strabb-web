@@ -124,7 +124,7 @@ export function TimeframePopup() {
                 style={{
                   color: inMonth ? "var(--brand-10)" : "var(--neutral-30)",
                   backgroundColor: isSelected ? "var(--strabb-secondary)" : undefined,
-                  ...(isSelected ? { color: "white" } : {}),
+                  ...(isSelected ? { color: "var(--surface-60)" } : {}),
                 }}
               >
                 {day.getDate()}
