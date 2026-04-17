@@ -72,7 +72,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               onClick={() =>
                 setTimeframe(page as "dashboard" | "calendar" | "cleaning" | "reporting", opt.id)
               }
-              className="rounded-lg px-md py-sm text-subheading font-medium transition-colors"
+              className="rounded-lg px-sm py-base text-body font-medium transition-colors"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
@@ -85,7 +85,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         <button
           type="button"
           onClick={openTimeframePopup}
-          className="rounded-lg px-md py-sm text-subheading font-medium transition-colors"
+          className="rounded-lg px-sm py-base text-body font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",

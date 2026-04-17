@@ -44,7 +44,7 @@ export function ListingFilterTree() {
     return (
       <label
         key={listing.id}
-        className="flex cursor-pointer items-center gap-base rounded-lg px-md py-sm"
+        className="flex cursor-pointer items-center gap-base rounded-lg px-sm py-base"
         style={{
           backgroundColor: isChecked ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
           color: isChecked ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
@@ -58,7 +58,7 @@ export function ListingFilterTree() {
           className="h-4 w-4"
           style={{ accentColor: "var(--brand-10)" }}
         />
-        <span className="truncate text-subheading font-medium">{listing.name}</span>
+        <span className="truncate text-body font-medium">{listing.name}</span>
       </label>
     );
   };
@@ -117,10 +117,10 @@ export function ListingFilterTree() {
                   className="shrink-0 p-0.5"
                   style={{ color: "var(--brand-10)" }}
                 >
-                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                 </button>
                 <label
-                  className="flex flex-1 cursor-pointer items-center gap-base rounded-lg px-md py-sm"
+                  className="flex flex-1 cursor-pointer items-center gap-base rounded-lg px-sm py-base"
                   style={{
                     backgroundColor: parentChecked
                       ? "var(--btn-active-bg)"
@@ -135,7 +135,7 @@ export function ListingFilterTree() {
                     className="h-4 w-4"
                     style={{ accentColor: "var(--brand-10)" }}
                   />
-                  <span className="truncate text-subheading font-medium">{parent.name}</span>
+                  <span className="truncate text-body font-medium">{parent.name}</span>
                 </label>
               </div>
               {isExpanded && children.map((child) => renderListingRow(child, true))}
@@ -153,7 +153,7 @@ export function ListingFilterTree() {
           return (
             <div key={group.id} className="flex flex-col gap-1">
               <div
-                className="flex items-center gap-1 rounded-lg px-md py-sm"
+                className="flex items-center gap-1 rounded-lg px-sm py-base"
                 style={{
                   backgroundColor: "var(--btn-inactive-bg)",
                   color: "var(--btn-inactive-text)",
@@ -164,9 +164,9 @@ export function ListingFilterTree() {
                   onClick={() => toggleGroup(group.id)}
                   className="shrink-0 p-0.5"
                 >
-                  {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </button>
-                <span className="flex-1 truncate text-subheading font-medium">{group.name}</span>
+                <span className="flex-1 truncate text-body font-medium">{group.name}</span>
                 <button
                   type="button"
                   onClick={() => deleteCustomGroup(group.id)}

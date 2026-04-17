@@ -82,9 +82,9 @@
   --border-default: transparent;
   --border-light: transparent;
 
-  /* Layout dimensions — golden-ratio scaled to fit 26px button text */
-  --topnav-height: 68px;
-  --submenu-height: 68px;
+  /* Layout dimensions — golden-ratio scaled to fit 16px button text (STRABB wordmark held at 42px) */
+  --topnav-height: 55px;
+  --submenu-height: 55px;
   --sidebar-width: 260px;
   --drilldown-width: 420px;
   --thread-width: 520px;
@@ -105,7 +105,7 @@
 
   /* Chip (submenu) styling */
   --chip-radius: 20px;
-  --chip-height: 55px;
+  --chip-height: 34px;
 
   /* === shadcn overrides === */
   --background: #ffffff;

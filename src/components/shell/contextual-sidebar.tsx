@@ -79,13 +79,13 @@ export function ContextualSidebar() {
             <button
               type="button"
               onClick={openShoppingListPopup}
-              className="flex w-full items-center gap-base rounded-lg px-md py-sm text-subheading font-medium transition-colors"
+              className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
               style={{
                 backgroundColor: "var(--btn-inactive-bg)",
                 color: "var(--btn-inactive-text)",
               }}
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={16} />
               Shopping List
             </button>
           </div>
@@ -96,13 +96,13 @@ export function ContextualSidebar() {
             <button
               type="button"
               onClick={toggleSavedReports}
-              className="flex w-full items-center gap-base rounded-lg px-md py-sm text-subheading font-medium transition-colors"
+              className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
               style={{
                 backgroundColor: "var(--btn-inactive-bg)",
                 color: "var(--btn-inactive-text)",
               }}
             >
-              <BookOpen size={20} />
+              <BookOpen size={16} />
               Saved Reports
             </button>
             {savedReportsOpen && (
@@ -116,7 +116,7 @@ export function ContextualSidebar() {
                     <button
                       key={r.id}
                       type="button"
-                      className="block w-full truncate rounded-lg px-md py-sm text-left text-subheading font-medium"
+                      className="block w-full truncate rounded-lg px-sm py-base text-left text-body font-medium"
                       style={{
                         backgroundColor: "var(--btn-inactive-bg)",
                         color: "var(--btn-inactive-text)",
