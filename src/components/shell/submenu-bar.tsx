@@ -118,12 +118,11 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="inline-flex shrink-0 items-center gap-1 border-0 whitespace-nowrap transition-colors"
+              className="inline-flex shrink-0 items-center gap-1 border-0 whitespace-nowrap text-subheading font-medium transition-colors"
               style={{
                 height: "var(--chip-height)",
                 borderRadius: 8,
                 padding: "0 var(--space-md)",
-                fontSize: 14,
                 backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}

@@ -43,7 +43,7 @@ export function TopNav() {
               href={item.href}
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="flex items-center px-md py-base text-sm font-medium transition-colors"
+              className="flex items-center px-md py-sm text-subheading font-medium transition-colors"
               style={{
                 borderRadius: 8,
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
@@ -61,7 +61,7 @@ export function TopNav() {
         href={settingsNavItem.href}
         onClick={() => setCurrentPage(settingsNavItem.id)}
         aria-current={currentPage === "settings" ? "page" : undefined}
-        className="mr-md flex items-center px-md py-base text-sm font-medium transition-colors"
+        className="mr-md flex items-center px-md py-sm text-subheading font-medium transition-colors"
         style={{
           borderRadius: 8,
           backgroundColor:

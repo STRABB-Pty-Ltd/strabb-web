@@ -44,7 +44,7 @@ export function ListingFilterTree() {
     return (
       <label
         key={listing.id}
-        className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5"
+        className="flex cursor-pointer items-center gap-base rounded-lg px-md py-sm"
         style={{
           backgroundColor: isChecked ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
           color: isChecked ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
@@ -55,10 +55,10 @@ export function ListingFilterTree() {
           type="checkbox"
           checked={isChecked}
           onChange={() => toggleListing(listing.id)}
-          className="h-3.5 w-3.5"
+          className="h-4 w-4"
           style={{ accentColor: "var(--brand-10)" }}
         />
-        <span className="truncate text-sm">{listing.name}</span>
+        <span className="truncate text-subheading font-medium">{listing.name}</span>
       </label>
     );
   };
@@ -120,7 +120,7 @@ export function ListingFilterTree() {
                   {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </button>
                 <label
-                  className="flex flex-1 cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5"
+                  className="flex flex-1 cursor-pointer items-center gap-base rounded-lg px-md py-sm"
                   style={{
                     backgroundColor: parentChecked
                       ? "var(--btn-active-bg)"
@@ -132,10 +132,10 @@ export function ListingFilterTree() {
                     type="checkbox"
                     checked={parentChecked}
                     onChange={() => toggleListing(parent.id)}
-                    className="h-3.5 w-3.5"
+                    className="h-4 w-4"
                     style={{ accentColor: "var(--brand-10)" }}
                   />
-                  <span className="truncate text-sm font-medium">{parent.name}</span>
+                  <span className="truncate text-subheading font-medium">{parent.name}</span>
                 </label>
               </div>
               {isExpanded && children.map((child) => renderListingRow(child, true))}
@@ -153,7 +153,7 @@ export function ListingFilterTree() {
           return (
             <div key={group.id} className="flex flex-col gap-1">
               <div
-                className="flex items-center gap-1 rounded-lg px-3 py-1.5"
+                className="flex items-center gap-1 rounded-lg px-md py-sm"
                 style={{
                   backgroundColor: "var(--btn-inactive-bg)",
                   color: "var(--btn-inactive-text)",
@@ -164,9 +164,9 @@ export function ListingFilterTree() {
                   onClick={() => toggleGroup(group.id)}
                   className="shrink-0 p-0.5"
                 >
-                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                 </button>
-                <span className="flex-1 truncate text-sm font-medium">{group.name}</span>
+                <span className="flex-1 truncate text-subheading font-medium">{group.name}</span>
                 <button
                   type="button"
                   onClick={() => deleteCustomGroup(group.id)}

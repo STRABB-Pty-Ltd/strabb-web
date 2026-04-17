@@ -62,7 +62,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
       >
         Timeframe
       </h3>
-      <div className="grid grid-cols-2 gap-1">
+      <div className="flex flex-col gap-1">
         {options.map((opt) => {
           const isActive = currentTf === opt.id;
           return (
@@ -72,7 +72,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               onClick={() =>
                 setTimeframe(page as "dashboard" | "calendar" | "cleaning" | "reporting", opt.id)
               }
-              className="rounded-lg px-3 py-1.5 text-xs transition-colors"
+              className="rounded-lg px-md py-sm text-subheading font-medium transition-colors"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
@@ -85,7 +85,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         <button
           type="button"
           onClick={openTimeframePopup}
-          className="col-span-2 rounded-lg px-3 py-1.5 text-xs transition-colors"
+          className="rounded-lg px-md py-sm text-subheading font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",

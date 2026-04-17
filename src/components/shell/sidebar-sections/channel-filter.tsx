@@ -27,7 +27,7 @@ export function ChannelFilter() {
           return (
             <label
               key={ch.id}
-              className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5"
+              className="flex cursor-pointer items-center gap-base rounded-lg px-md py-sm"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
@@ -37,11 +37,11 @@ export function ChannelFilter() {
                 type="checkbox"
                 checked={isActive}
                 onChange={() => toggleChannel(ch.id)}
-                className="h-3.5 w-3.5"
+                className="h-4 w-4"
                 style={{ accentColor: "var(--brand-10)" }}
               />
-              <span className="h-3 w-3 shrink-0 rounded-sm" style={{ backgroundColor: ch.color }} />
-              <span className="text-sm">{ch.label}</span>
+              <span className="h-4 w-4 shrink-0 rounded-sm" style={{ backgroundColor: ch.color }} />
+              <span className="text-subheading font-medium">{ch.label}</span>
             </label>
           );
         })}

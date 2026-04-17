@@ -19,13 +19,13 @@ export function ActionsSection() {
         <button
           type="button"
           onClick={openSharePopup}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+          className="flex items-center gap-base rounded-lg px-md py-sm text-subheading font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",
           }}
         >
-          <Share2 size={16} />
+          <Share2 size={20} />
           Share
         </button>
         <button
@@ -38,7 +38,7 @@ export function ActionsSection() {
             opacity: 0.6,
           }}
         >
-          <Cog size={16} />
+          <Cog size={20} />
           Configure
         </button>
         <button
@@ -51,7 +51,7 @@ export function ActionsSection() {
             opacity: 0.6,
           }}
         >
-          <Zap size={16} />
+          <Zap size={20} />
           Automations
         </button>
       </div>
