@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { Check, ChevronDown, Monitor, Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -24,17 +24,6 @@ const themeOptions = [
   { value: "system", label: "System", icon: Monitor },
 ] as const;
 
-const testingPalettes = [
-  { value: "default", label: "Default (globals.css)" },
-  { value: "butter-yellow", label: "Butter Yellow & Marigold x Burgundy" },
-  { value: "midnight", label: "Midnight & Gentian Blue x Mist Grey" },
-  { value: "ivory-donkey", label: "Ivory x Donkey Brown" },
-  { value: "deep-forest", label: "Deep Forest x Champagne" },
-  { value: "space-black", label: "Space Black x Neon Coral" },
-] as const;
-
-const PALETTE_STORAGE_KEY = "strabb-testing-palette";
-
 export function GeneralSection() {
   const addToast = useAppStore((s) => s.addToast);
   const [companyName, setCompanyName] = useState("STRABB Properties");
@@ -42,24 +31,7 @@ export function GeneralSection() {
   const [currency, setCurrency] = useState("AUD");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [palette, setPalette] = useState<string>("default");
   useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(PALETTE_STORAGE_KEY);
-    if (stored) setPalette(stored);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const root = document.documentElement;
-    if (palette === "default") {
-      root.removeAttribute("data-palette");
-    } else {
-      root.setAttribute("data-palette", palette);
-    }
-    localStorage.setItem(PALETTE_STORAGE_KEY, palette);
-  }, [palette, mounted]);
 
   const handleSave = () => {
     addToast({ type: "success", message: "General settings saved" });
@@ -145,10 +117,6 @@ export function GeneralSection() {
           </div>
         </div>
 
-        <div>
-          <label className="mb-xs block text-body font-medium text-gray-700">Testing</label>
-          <PaletteDropdown value={palette} onChange={setPalette} />
-        </div>
       </div>
 
       <button
@@ -159,165 +127,6 @@ export function GeneralSection() {
       >
         Save Changes
       </button>
-    </div>
-  );
-}
-
-function PaletteDropdown({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  const current = testingPalettes.find((p) => p.value === value)?.label ?? "Default";
-
-  return (
-    <div
-      ref={ref}
-      style={{ position: "relative", display: "inline-block", width: 320 }}
-    >
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        style={{
-          display: "flex",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 8,
-          padding: "8px 13px",
-          fontSize: 13,
-          lineHeight: "21px",
-          borderRadius: 8,
-          border: "1px solid var(--brand-10)",
-          backgroundColor: "var(--surface-60)",
-          color: "var(--brand-10)",
-          cursor: "pointer",
-        }}
-      >
-        <span
-          style={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {current}
-        </span>
-        <ChevronDown
-          size={14}
-          style={{
-            flexShrink: 0,
-            transform: open ? "rotate(180deg)" : undefined,
-            transition: "transform 150ms",
-          }}
-        />
-      </button>
-      {open && (
-        <ul
-          role="listbox"
-          style={{
-            position: "absolute",
-            top: "calc(100% + 4px)",
-            left: 0,
-            width: "100%",
-            zIndex: 50,
-            margin: 0,
-            padding: 4,
-            listStyle: "none",
-            borderRadius: 8,
-            border: "1px solid var(--brand-10)",
-            backgroundColor: "var(--surface-60)",
-            color: "var(--brand-10)",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-          }}
-        >
-          {testingPalettes.map((p) => {
-            const selected = p.value === value;
-            return (
-              <li key={p.value}>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={selected}
-                  onClick={() => {
-                    onChange(p.value);
-                    setOpen(false);
-                  }}
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "6px 8px",
-                    fontSize: 13,
-                    lineHeight: "21px",
-                    borderRadius: 5,
-                    border: "none",
-                    backgroundColor: selected
-                      ? "var(--neutral-30)"
-                      : "transparent",
-                    color: "var(--brand-10)",
-                    textAlign: "left",
-                    cursor: "pointer",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!selected)
-                      e.currentTarget.style.backgroundColor =
-                        "var(--neutral-30)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!selected)
-                      e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 14,
-                      flexShrink: 0,
-                      display: "inline-flex",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {selected && <Check size={12} />}
-                  </span>
-                  <span
-                    style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {p.label}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
     </div>
   );
 }
