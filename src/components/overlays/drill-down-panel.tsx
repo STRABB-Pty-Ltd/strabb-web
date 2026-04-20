@@ -52,21 +52,21 @@ export function DrillDownPanel({
 
         {/* Header */}
         <div
-          className="flex items-center justify-between border-b px-sm py-sm"
+          className="px-sm py-sm flex items-center justify-between border-b"
           style={{ borderColor: "var(--border)" }}
         >
           <h2 className="text-body font-semibold text-gray-800">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-xs text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="p-xs rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-sm">{children}</div>
+        <div className="p-sm flex-1 overflow-y-auto">{children}</div>
       </div>
     </>
   );

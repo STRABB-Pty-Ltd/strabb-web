@@ -59,7 +59,7 @@ export function BookingDetailDialog({
 
         <div className="space-y-sm text-body">
           {booking.conflictStatus === "conflicted" && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-sm dark:border-red-900 dark:bg-red-950">
+            <div className="p-sm rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <p className="font-medium text-red-800 dark:text-red-200">Date conflict detected</p>
               <p className="text-muted-foreground mt-xs text-body">
                 This booking overlaps with another booking on a different listing for the same
@@ -77,7 +77,7 @@ export function BookingDetailDialog({
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-sm">
+          <div className="gap-sm grid grid-cols-2">
             <div>
               <Label className="text-muted-foreground">Check-in</Label>
               <p className="font-medium">{formatInPropertyTimezone(booking.checkIn, tz)}</p>
@@ -90,7 +90,7 @@ export function BookingDetailDialog({
 
           <p className="text-muted-foreground text-body">Times shown in {tzAbbr}</p>
 
-          <div className="grid grid-cols-2 gap-sm">
+          <div className="gap-sm grid grid-cols-2">
             <div>
               <Label className="text-muted-foreground">Platform</Label>
               <p>{booking.source}</p>
@@ -116,7 +116,7 @@ export function BookingDetailDialog({
           {booking.externalBookingId && (
             <div>
               <Label className="text-muted-foreground">External ID</Label>
-              <p className="font-mono text-body">{booking.externalBookingId}</p>
+              <p className="text-body font-mono">{booking.externalBookingId}</p>
             </div>
           )}
 

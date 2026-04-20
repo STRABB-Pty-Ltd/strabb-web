@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -43,9 +42,6 @@ interface KPICardProps {
 }
 
 export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
   const Icon = iconMap[kpi.icon] ?? DollarSign;
   const hasTrend = typeof kpi.trend === "number" && kpi.trend !== 0;
   const trendPositive = (kpi.trend ?? 0) > 0;
@@ -54,10 +50,10 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg p-md text-left transition-shadow hover:shadow-md"
+      className="p-md rounded-lg text-left transition-shadow hover:shadow-md"
       style={{ backgroundColor: "var(--surface-card)" }}
     >
-      <div className="mb-sm flex items-center gap-base">
+      <div className="mb-sm gap-base flex items-center">
         <div
           className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg"
           style={{ backgroundColor: "var(--icon-bg)" }}
@@ -65,14 +61,14 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
           <Icon size={21} style={{ color: "var(--icon-color)" }} />
         </div>
         <p
-          className="min-w-0 flex-1 truncate text-subheading font-medium"
+          className="text-subheading min-w-0 flex-1 truncate font-medium"
           style={{ color: "var(--brand-10)" }}
         >
           {kpi.label}
         </p>
-        {mounted && hasTrend && (
+        {hasTrend && (
           <div
-            className="flex shrink-0 items-center gap-xs rounded-full px-base py-xs text-body font-medium"
+            className="gap-xs px-base py-xs text-body flex shrink-0 items-center rounded-full font-medium"
             style={{
               backgroundColor: "var(--neutral-30)",
               color: trendPositive ? "var(--status-completed)" : "var(--status-issues)",

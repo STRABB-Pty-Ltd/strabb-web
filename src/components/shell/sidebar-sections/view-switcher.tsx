@@ -53,7 +53,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
       >
         View
       </h3>
-      <div className="flex flex-col gap-xs">
+      <div className="gap-xs flex flex-col">
         {options.map((opt) => {
           const isActive = currentView === opt.id;
           const Icon = opt.icon;
@@ -62,7 +62,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
               key={opt.id}
               type="button"
               onClick={() => setView(page as "calendar" | "messaging" | "cleaning", opt.id)}
-              className="flex items-center gap-base rounded-lg px-sm py-base text-body transition-colors"
+              className="gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",

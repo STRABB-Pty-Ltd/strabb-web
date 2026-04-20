@@ -15,11 +15,8 @@ export function KanbanBoard<T>({
   getBorderColor,
 }: KanbanBoardProps<T>) {
   return (
-    <div
-      className="no-scrollbar overflow-auto"
-      style={{ maxHeight: "calc(100vh - 233px)" }}
-    >
-      <div className="flex gap-sm pb-sm">
+    <div className="no-scrollbar overflow-auto" style={{ maxHeight: "calc(100vh - 233px)" }}>
+      <div className="gap-sm pb-sm flex">
         {columns.map((col) => (
           <KanbanColumn key={col.id} id={col.id} label={col.label} count={col.items.length}>
             {col.items.map((item) => (

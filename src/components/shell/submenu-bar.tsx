@@ -95,7 +95,7 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="flex shrink-0 items-center justify-center gap-xs overflow-x-auto"
+      className="gap-xs flex shrink-0 items-center justify-center overflow-x-auto"
       style={{
         backgroundColor: "var(--surface-submenu)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
@@ -117,7 +117,7 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="inline-flex shrink-0 items-center justify-center gap-xs border-0 whitespace-nowrap px-sm py-base text-body font-medium transition-colors"
+              className="gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
                 width: 95,
                 borderRadius: 5,
@@ -131,7 +131,7 @@ export function SubmenuBar() {
 
             {isMore && moreOpen && (
               <div
-                className="absolute top-full left-0 z-50 mt-xs rounded-lg bg-white py-xs shadow-md"
+                className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
                 style={{ minWidth: 144 }}
               >
                 <div className="px-sm py-base text-body text-gray-400">Coming soon</div>

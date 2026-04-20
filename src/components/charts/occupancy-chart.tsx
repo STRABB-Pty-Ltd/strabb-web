@@ -24,7 +24,7 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
   return (
     <ChartContainer title="Occupancy by Listing" loading={loading} empty={data.length === 0}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           dataKey="listing"
           tick={{ fontSize: 13, fill: "var(--brand-10)" }}

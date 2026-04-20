@@ -38,12 +38,12 @@ const columns: ColumnDef<CleaningTask>[] = [
     label: "Listing",
     width: "144px",
     render: (t) => (
-      <div className="flex items-center gap-base">
+      <div className="gap-base flex items-center">
         <span
           className="h-base w-base shrink-0 rounded-full"
           style={{ backgroundColor: t.listingColor }}
         />
-        <span className="truncate text-body">{t.listingName}</span>
+        <span className="text-body truncate">{t.listingName}</span>
       </div>
     ),
   },
@@ -52,7 +52,7 @@ const columns: ColumnDef<CleaningTask>[] = [
     label: "Type",
     width: "89px",
     render: (t) => (
-      <span className="rounded-sm bg-gray-100 px-base py-xs text-body text-gray-600">
+      <span className="px-base py-xs text-body rounded-sm bg-gray-100 text-gray-600">
         {typeLabels[t.type] ?? t.type}
       </span>
     ),
@@ -71,7 +71,9 @@ const columns: ColumnDef<CleaningTask>[] = [
     key: "assignee",
     label: "Assignee",
     width: "144px",
-    render: (t) => <span className="text-body text-gray-600">{t.assigneeName ?? "Unassigned"}</span>,
+    render: (t) => (
+      <span className="text-body text-gray-600">{t.assigneeName ?? "Unassigned"}</span>
+    ),
   },
   {
     key: "status",
@@ -79,7 +81,7 @@ const columns: ColumnDef<CleaningTask>[] = [
     width: "89px",
     render: (t) => (
       <span
-        className="rounded-full px-base py-xs text-body font-medium text-white"
+        className="px-base py-xs text-body rounded-full font-medium text-white"
         style={{
           backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
         }}
@@ -96,7 +98,7 @@ const columns: ColumnDef<CleaningTask>[] = [
       const p = priorityColors[t.priority] ?? priorityColors.low;
       return (
         <span
-          className="rounded-sm px-base py-xs text-body font-medium"
+          className="px-base py-xs text-body rounded-sm font-medium"
           style={{ backgroundColor: p.bg, color: p.text }}
         >
           {t.priority}

@@ -50,7 +50,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "bg-background ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-sm rounded-xl p-sm text-body ring-1 duration-100 outline-none sm:max-w-sm",
+          "bg-background ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 gap-sm p-sm text-body fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl ring-1 duration-100 outline-none sm:max-w-sm",
           className,
         )}
         {...props}
@@ -59,7 +59,9 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            render={<Button variant="ghost" className="absolute top-base right-base" size="icon-sm" />}
+            render={
+              <Button variant="ghost" className="top-base right-base absolute" size="icon-sm" />
+            }
           >
             <XIcon />
             <span className="sr-only">Close</span>
@@ -72,7 +74,7 @@ function DialogContent({
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot="dialog-header" className={cn("flex flex-col gap-base", className)} {...props} />
+    <div data-slot="dialog-header" className={cn("gap-base flex flex-col", className)} {...props} />
   );
 }
 
@@ -88,7 +90,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "bg-muted/50 -mx-sm -mb-sm flex flex-col-reverse gap-base rounded-b-xl border-t p-sm sm:flex-row sm:justify-end",
+        "bg-muted/50 -mx-sm -mb-sm gap-base p-sm flex flex-col-reverse rounded-b-xl border-t sm:flex-row sm:justify-end",
         className,
       )}
       {...props}

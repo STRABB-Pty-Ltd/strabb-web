@@ -37,7 +37,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
   if (visible.length === 0) return null;
 
   return (
-    <div className="flex gap-sm overflow-x-auto pb-xs">
+    <div className="gap-sm pb-xs flex overflow-x-auto">
       {visible.map((alert) => {
         const Icon = typeIcon[alert.type] ?? AlertTriangle;
         const bg = severityBg[alert.severity] ?? "var(--neutral-30)";
@@ -45,7 +45,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
         return (
           <div
             key={alert.id}
-            className="flex shrink-0 items-center gap-sm rounded-lg px-md py-sm"
+            className="gap-sm px-md py-sm flex shrink-0 items-center rounded-lg"
             style={{ backgroundColor: bg }}
           >
             <Icon size={16} style={{ color: accent }} />

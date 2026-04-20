@@ -18,13 +18,13 @@ export function SavedReportsDrawer() {
   };
 
   return (
-    <div className="rounded-lg border bg-white p-sm" style={{ borderColor: "var(--border)" }}>
+    <div className="p-sm rounded-lg border bg-white" style={{ borderColor: "var(--border)" }}>
       <div className="mb-sm flex items-center justify-between">
         <h3 className="text-body font-semibold text-gray-700">Saved Reports</h3>
         <button
           type="button"
           onClick={() => setShowInput(true)}
-          className="flex items-center gap-xs text-body font-medium"
+          className="gap-xs text-body flex items-center font-medium"
           style={{ color: "var(--strabb-secondary)" }}
         >
           <Plus size={12} />
@@ -33,20 +33,20 @@ export function SavedReportsDrawer() {
       </div>
 
       {showInput && (
-        <div className="mb-sm flex gap-base">
+        <div className="mb-sm gap-base flex">
           <input
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Report name..."
-            className="flex-1 rounded-sm border px-base py-xs text-body"
+            className="px-base py-xs text-body flex-1 rounded-sm border"
             style={{ borderColor: "var(--border)" }}
             onKeyDown={(e) => e.key === "Enter" && handleSave()}
           />
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-sm px-sm py-xs text-body text-white"
+            className="px-sm py-xs text-body rounded-sm text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             Save
@@ -57,7 +57,7 @@ export function SavedReportsDrawer() {
               setShowInput(false);
               setNewName("");
             }}
-            className="rounded-sm px-sm py-xs text-body text-gray-500 hover:bg-gray-100"
+            className="px-sm py-xs text-body rounded-sm text-gray-500 hover:bg-gray-100"
           >
             Cancel
           </button>
@@ -65,23 +65,23 @@ export function SavedReportsDrawer() {
       )}
 
       {savedReports.length === 0 ? (
-        <p className="py-sm text-center text-body text-gray-400">No saved reports yet</p>
+        <p className="py-sm text-body text-center text-gray-400">No saved reports yet</p>
       ) : (
         <div className="space-y-base">
           {savedReports.map((report) => (
             <div
               key={report.id}
-              className="flex items-center justify-between rounded-sm px-sm py-base hover:bg-gray-50"
+              className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-gray-50"
             >
               <div>
                 <p className="text-body font-medium text-gray-700">{report.name}</p>
                 <p className="text-body text-gray-400">{report.timeframe.replace("_", " ")}</p>
               </div>
-              <div className="flex gap-xs">
+              <div className="gap-xs flex">
                 <button
                   type="button"
                   onClick={() => loadReport(report.id)}
-                  className="rounded-sm px-base py-xs text-body font-medium"
+                  className="px-base py-xs text-body rounded-sm font-medium"
                   style={{ color: "var(--strabb-secondary)" }}
                 >
                   Load
@@ -89,7 +89,7 @@ export function SavedReportsDrawer() {
                 <button
                   type="button"
                   onClick={() => deleteReport(report.id)}
-                  className="rounded-sm p-xs text-gray-400 hover:text-red-500"
+                  className="p-xs rounded-sm text-gray-400 hover:text-red-500"
                 >
                   <Trash2 size={12} />
                 </button>

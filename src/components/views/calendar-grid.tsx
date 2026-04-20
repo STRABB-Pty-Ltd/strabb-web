@@ -124,25 +124,33 @@ export function CalendarGrid<T>({
     const dayEvents = getEventsForDay(currentDate);
     return (
       <div>
-        <div className="mb-sm flex items-center gap-base">
-          <button type="button" onClick={navigatePrev} className="rounded-sm p-xs hover:bg-gray-100">
+        <div className="mb-sm gap-base flex items-center">
+          <button
+            type="button"
+            onClick={navigatePrev}
+            className="p-xs rounded-sm hover:bg-gray-100"
+          >
             <ChevronLeft size={18} />
           </button>
           <h3 className="text-body font-semibold">{headerLabel}</h3>
-          <button type="button" onClick={navigateNext} className="rounded-sm p-xs hover:bg-gray-100">
+          <button
+            type="button"
+            onClick={navigateNext}
+            className="p-xs rounded-sm hover:bg-gray-100"
+          >
             <ChevronRight size={18} />
           </button>
         </div>
-        <div className="flex flex-col gap-base">
+        <div className="gap-base flex flex-col">
           {dayEvents.length === 0 && (
-            <p className="py-lg text-center text-body text-gray-400">No events</p>
+            <p className="py-lg text-body text-center text-gray-400">No events</p>
           )}
           {dayEvents.map((ev, i) => (
             <button
               key={i}
               type="button"
               onClick={() => onEventClick(ev)}
-              className="flex items-center gap-base rounded-lg border p-sm text-left transition-colors hover:bg-gray-50"
+              className="gap-base p-sm flex items-center rounded-lg border text-left transition-colors hover:bg-gray-50"
               style={{ borderColor: "var(--border)" }}
             >
               <span
@@ -160,12 +168,12 @@ export function CalendarGrid<T>({
   return (
     <div>
       {/* Header nav */}
-      <div className="mb-sm flex items-center gap-base">
-        <button type="button" onClick={navigatePrev} className="rounded-sm p-xs hover:bg-gray-100">
+      <div className="mb-sm gap-base flex items-center">
+        <button type="button" onClick={navigatePrev} className="p-xs rounded-sm hover:bg-gray-100">
           <ChevronLeft size={18} />
         </button>
         <h3 className="text-body font-semibold">{headerLabel}</h3>
-        <button type="button" onClick={navigateNext} className="rounded-sm p-xs hover:bg-gray-100">
+        <button type="button" onClick={navigateNext} className="p-xs rounded-sm hover:bg-gray-100">
           <ChevronRight size={18} />
         </button>
       </div>
@@ -181,7 +189,7 @@ export function CalendarGrid<T>({
         {DAY_LABELS.map((d) => (
           <div
             key={d}
-            className="border-r border-b bg-gray-50 py-xs text-center text-body font-medium text-gray-500"
+            className="py-xs text-body border-r border-b bg-gray-50 text-center font-medium text-gray-500"
             style={{ borderColor: "var(--border)" }}
           >
             {d}

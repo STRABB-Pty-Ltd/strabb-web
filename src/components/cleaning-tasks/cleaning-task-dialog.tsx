@@ -78,7 +78,7 @@ export function CleaningTaskDialog({
           <DialogTitle>Cleaning Task — {propertyName}</DialogTitle>
           <DialogDescription>
             <span
-              className={`inline-block rounded-sm px-base py-xs text-body font-medium ${statusColors[task.status] ?? ""}`}
+              className={`px-base py-xs text-body inline-block rounded-sm font-medium ${statusColors[task.status] ?? ""}`}
             >
               {task.status}
             </span>
@@ -92,7 +92,7 @@ export function CleaningTaskDialog({
             <p className="text-muted-foreground text-body">{tzAbbr}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-sm">
+          <div className="gap-sm grid grid-cols-2">
             <div className="space-y-xs">
               <Label htmlFor="cleaner-name">Cleaner name</Label>
               <Input
@@ -136,7 +136,7 @@ export function CleaningTaskDialog({
             />
           </div>
 
-          <div className="flex gap-base">
+          <div className="gap-base flex">
             {task.status !== "completed" && task.status !== "cancelled" && (
               <Button
                 variant="outline"

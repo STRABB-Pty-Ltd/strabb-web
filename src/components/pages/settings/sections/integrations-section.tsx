@@ -72,11 +72,11 @@ export function IntegrationsSection() {
         {mockPlatforms.map((platform) => (
           <div
             key={platform.id}
-            className="flex items-center gap-sm rounded-lg border px-sm py-sm"
+            className="gap-sm px-sm py-sm flex items-center rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             <div
-              className="flex h-lg w-lg items-center justify-center rounded-lg text-subheading font-bold text-white"
+              className="h-lg text-subheading flex w-lg items-center justify-center rounded-lg font-bold text-white"
               style={{ backgroundColor: platform.color }}
             >
               {platform.logo}
@@ -91,10 +91,10 @@ export function IntegrationsSection() {
                 <p className="text-body text-gray-400">Not connected</p>
               )}
             </div>
-            <div className="flex items-center gap-base">
+            <div className="gap-base flex items-center">
               {platform.connected && (
                 <span
-                  className="rounded-full px-base py-xs text-body font-medium"
+                  className="px-base py-xs text-body rounded-full font-medium"
                   style={{
                     backgroundColor: "rgba(22, 163, 74, 0.1)",
                     color: "var(--status-success)",
@@ -106,7 +106,7 @@ export function IntegrationsSection() {
               <button
                 type="button"
                 onClick={() => handleConnect(platform.name)}
-                className="rounded-lg border px-sm py-xs text-body font-medium"
+                className="px-sm py-xs text-body rounded-lg border font-medium"
                 style={{
                   borderColor: "var(--border)",
                   color: platform.connected ? "var(--status-danger)" : "var(--strabb-secondary)",
@@ -119,21 +119,21 @@ export function IntegrationsSection() {
         ))}
       </div>
 
-      <div className="rounded-lg border p-sm" style={{ borderColor: "var(--border)" }}>
+      <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <h3 className="mb-sm text-body font-semibold text-gray-700">Manual iCal Feed</h3>
-        <div className="flex gap-base">
+        <div className="gap-base flex">
           <input
             type="url"
             value={icalUrl}
             onChange={(e) => setIcalUrl(e.target.value)}
             placeholder="https://example.com/calendar.ics"
-            className="flex-1 rounded-lg border px-sm py-base text-body"
+            className="px-sm py-base text-body flex-1 rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           />
           <button
             type="button"
             onClick={handleAddIcal}
-            className="rounded-lg px-sm py-base text-body font-medium text-white"
+            className="px-sm py-base text-body rounded-lg font-medium text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             Add Feed

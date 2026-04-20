@@ -42,7 +42,7 @@ export function MessageThread({
   return (
     <div className="flex h-full flex-col">
       {/* Booking context header */}
-      <div className="shrink-0 border-b px-sm py-sm" style={{ borderColor: "var(--border)" }}>
+      <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-body font-semibold text-gray-800">{message.guestName}</h3>
@@ -52,7 +52,7 @@ export function MessageThread({
             </p>
           </div>
           <span
-            className="rounded-sm px-base py-xs text-body font-medium text-white"
+            className="px-base py-xs text-body rounded-sm font-medium text-white"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
@@ -63,11 +63,11 @@ export function MessageThread({
       </div>
 
       {/* Thread messages */}
-      <div className="flex-1 space-y-sm overflow-y-auto p-sm">
+      <div className="space-y-sm p-sm flex-1 overflow-y-auto">
         {thread.map((msg) => (
           <div key={msg.id} className={`flex ${msg.isGuest ? "justify-start" : "justify-end"}`}>
             <div
-              className="max-w-[80%] px-sm py-base"
+              className="px-sm py-base max-w-[80%]"
               style={{
                 backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
                 color: msg.isGuest ? "var(--brand-10)" : "white",
@@ -88,50 +88,53 @@ export function MessageThread({
       </div>
 
       {/* Triage bar */}
-      <div className="flex gap-base border-t px-sm py-base" style={{ borderColor: "var(--border)" }}>
+      <div
+        className="gap-base px-sm py-base flex border-t"
+        style={{ borderColor: "var(--border)" }}
+      >
         <button
           type="button"
           onClick={onResolve}
-          className="rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Resolved
         </button>
         <button
           type="button"
           onClick={onFollowUp}
-          className="rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Follow Up
         </button>
         <button
           type="button"
           onClick={onPriority}
-          className="rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Priority
         </button>
         <button
           type="button"
           onClick={onConvertMaintenance}
-          className="rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Maintenance
         </button>
       </div>
 
       {/* Compose */}
-      <div className="flex gap-base border-t px-sm py-sm" style={{ borderColor: "var(--border)" }}>
+      <div className="gap-base px-sm py-sm flex border-t" style={{ borderColor: "var(--border)" }}>
         <textarea
           value={compose}
           onChange={(e) => setCompose(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 resize-none rounded-lg border p-base text-body"
+          className="p-base text-body flex-1 resize-none rounded-lg border"
           rows={2}
         />
         <button
           type="button"
           onClick={handleSend}
-          className="self-end rounded-lg p-base text-white"
+          className="p-base self-end rounded-lg text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           <Send size={18} />

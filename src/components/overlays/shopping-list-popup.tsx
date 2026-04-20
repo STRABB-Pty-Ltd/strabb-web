@@ -66,11 +66,11 @@ export function ShoppingListPopup() {
       <div className="fixed inset-0 z-[185] flex items-center justify-center">
         <div className="w-full max-w-lg rounded-xl bg-white shadow-xl">
           <div
-            className="flex items-center justify-between border-b px-sm py-sm"
+            className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
             <h2 className="text-body font-semibold">Shopping List</h2>
-            <div className="flex items-center gap-base">
+            <div className="gap-base flex items-center">
               <button
                 type="button"
                 onClick={() => setShowAll(!showAll)}
@@ -81,14 +81,14 @@ export function ShoppingListPopup() {
               <button
                 type="button"
                 onClick={closeShoppingListPopup}
-                className="rounded p-xs text-gray-400 hover:bg-gray-100"
+                className="p-xs rounded text-gray-400 hover:bg-gray-100"
               >
                 <X size={18} />
               </button>
             </div>
           </div>
 
-          <div className="max-h-[377px] overflow-y-auto p-sm">
+          <div className="p-sm max-h-[377px] overflow-y-auto">
             {Object.entries(grouped).map(([listing, listItems]) => (
               <div key={listing} className="mb-sm">
                 <h3 className="mb-xs text-body font-semibold text-gray-500 uppercase">{listing}</h3>
@@ -99,7 +99,7 @@ export function ShoppingListPopup() {
                     return (
                       <label
                         key={item.id}
-                        className="flex items-center gap-base rounded px-base py-xs hover:bg-gray-50"
+                        className="gap-base px-base py-xs flex items-center rounded hover:bg-gray-50"
                       >
                         <input
                           type="checkbox"
@@ -108,7 +108,7 @@ export function ShoppingListPopup() {
                           className="h-sm w-sm rounded border-gray-300"
                         />
                         <span
-                          className="flex-1 text-body"
+                          className="text-body flex-1"
                           style={{
                             textDecoration: isBought ? "line-through" : "none",
                             color: isBought ? "var(--brand-10)" : "var(--brand-10)",
@@ -118,7 +118,7 @@ export function ShoppingListPopup() {
                         </span>
                         <span className="font-data text-body text-gray-500">x{item.quantity}</span>
                         <span
-                          className="rounded-full px-base py-xs text-body"
+                          className="px-base py-xs text-body rounded-full"
                           style={{ backgroundColor: badge.bg, color: badge.text }}
                         >
                           {item.priority}
@@ -132,23 +132,27 @@ export function ShoppingListPopup() {
           </div>
 
           <div
-            className="flex justify-end gap-base border-t px-sm py-sm"
+            className="gap-base px-sm py-sm flex justify-end border-t"
             style={{ borderColor: "var(--border)" }}
           >
             <button
               type="button"
               onClick={closeShoppingListPopup}
-              className="rounded-lg px-sm py-base text-body text-gray-600 hover:bg-gray-100"
+              className="px-sm py-base text-body rounded-lg text-gray-600 hover:bg-gray-100"
             >
               Close
             </button>
-            <button type="button" disabled className="rounded-lg px-sm py-base text-body text-gray-400">
+            <button
+              type="button"
+              disabled
+              className="px-sm py-base text-body rounded-lg text-gray-400"
+            >
               Share Link
             </button>
             <button
               type="button"
               onClick={handleCopyList}
-              className="rounded-lg px-sm py-base text-body text-white"
+              className="px-sm py-base text-body rounded-lg text-white"
               style={{ backgroundColor: "var(--strabb-secondary)" }}
             >
               Copy List

@@ -53,7 +53,7 @@ export function ThreadOverlay({
         }}
       >
         {/* Booking context header */}
-        <div className="shrink-0 border-b px-sm py-sm" style={{ borderColor: "var(--border)" }}>
+        <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-body font-semibold text-gray-800">{guestName}</h2>
@@ -62,9 +62,9 @@ export function ThreadOverlay({
                 {checkIn} &ndash; {checkOut}
               </p>
             </div>
-            <div className="flex items-center gap-base">
+            <div className="gap-base flex items-center">
               <span
-                className="rounded px-base py-xs text-body font-medium text-white"
+                className="px-base py-xs text-body rounded font-medium text-white"
                 style={{ backgroundColor: channelColors[channel] ?? "var(--channel-direct)" }}
               >
                 {channel.replace("_", ".")}
@@ -72,7 +72,7 @@ export function ThreadOverlay({
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded p-xs text-gray-400 hover:bg-gray-100"
+                className="p-xs rounded text-gray-400 hover:bg-gray-100"
               >
                 <X size={18} />
               </button>
@@ -81,11 +81,11 @@ export function ThreadOverlay({
         </div>
 
         {/* Thread body */}
-        <div className="flex-1 space-y-sm overflow-y-auto p-sm">
+        <div className="space-y-sm p-sm flex-1 overflow-y-auto">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.isGuest ? "justify-start" : "justify-end"}`}>
               <div
-                className="max-w-[80%] px-sm py-base"
+                className="px-sm py-base max-w-[80%]"
                 style={{
                   backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
                   color: msg.isGuest ? "var(--brand-10)" : "white",
@@ -106,24 +106,27 @@ export function ThreadOverlay({
         </div>
 
         {/* Triage bar */}
-        <div className="flex gap-base border-t px-sm py-base" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="gap-base px-sm py-base flex border-t"
+          style={{ borderColor: "var(--border)" }}
+        >
           <button
             type="button"
-            className="inline-flex items-center gap-xs rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
+            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
           >
             <Flag size={12} />
             Flag
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-xs rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
           >
             <TicketPlus size={12} />
             Create Ticket
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-xs rounded-full border border-gray-300 px-sm py-xs text-body text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
           >
             <Archive size={12} />
             Archive
@@ -131,17 +134,20 @@ export function ThreadOverlay({
         </div>
 
         {/* Compose area */}
-        <div className="flex gap-base border-t px-sm py-sm" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="gap-base px-sm py-sm flex border-t"
+          style={{ borderColor: "var(--border)" }}
+        >
           <textarea
             value={compose}
             onChange={(e) => setCompose(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 resize-none rounded-lg border p-base text-body"
+            className="p-base text-body flex-1 resize-none rounded-lg border"
             rows={2}
           />
           <button
             type="button"
-            className="self-end rounded-lg p-base text-white"
+            className="p-base self-end rounded-lg text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             <Send size={18} />

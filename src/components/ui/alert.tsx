@@ -52,7 +52,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="alert-description"
       className={cn(
-        "text-muted-foreground [&_a]:hover:text-foreground text-body text-balance md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-sm",
+        "text-muted-foreground [&_a]:hover:text-foreground text-body [&_p:not(:last-child)]:mb-sm text-balance md:text-pretty [&_a]:underline [&_a]:underline-offset-3",
         className,
       )}
       {...props}
@@ -62,7 +62,11 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
 
 function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot="alert-action" className={cn("absolute top-base right-base", className)} {...props} />
+    <div
+      data-slot="alert-action"
+      className={cn("top-base right-base absolute", className)}
+      {...props}
+    />
   );
 }
 

@@ -15,11 +15,11 @@ export function ActionsSection() {
       >
         Actions
       </h3>
-      <div className="flex flex-col gap-xs">
+      <div className="gap-xs flex flex-col">
         <button
           type="button"
           onClick={openSharePopup}
-          className="flex items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
+          className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",
@@ -31,7 +31,7 @@ export function ActionsSection() {
         <button
           type="button"
           disabled
-          className="flex items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
+          className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",
@@ -44,7 +44,7 @@ export function ActionsSection() {
         <button
           type="button"
           disabled
-          className="flex items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
+          className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
             backgroundColor: "var(--btn-inactive-bg)",
             color: "var(--btn-inactive-text)",

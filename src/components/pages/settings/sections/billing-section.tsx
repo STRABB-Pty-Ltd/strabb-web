@@ -8,21 +8,21 @@ export function BillingSection() {
         <p className="text-body text-gray-500">Manage your subscription and payment details.</p>
       </div>
 
-      <div className="rounded-lg border p-sm" style={{ borderColor: "var(--border)" }}>
+      <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <div className="mb-sm flex items-center justify-between">
           <div>
             <p className="text-body font-medium text-gray-800">Current Plan</p>
             <p className="text-body text-gray-500">Professional</p>
           </div>
           <span
-            className="rounded-full px-sm py-xs text-body font-medium text-white"
+            className="px-sm py-xs text-body rounded-full font-medium text-white"
             style={{ backgroundColor: "var(--semantic-success)" }}
           >
             Active
           </span>
         </div>
 
-        <div className="mb-sm grid grid-cols-2 gap-sm">
+        <div className="mb-sm gap-sm grid grid-cols-2">
           <div>
             <p className="text-body text-gray-500">Monthly Cost</p>
             <p className="font-data text-subheading font-semibold text-gray-900">$49/mo</p>
@@ -43,14 +43,14 @@ export function BillingSection() {
 
         <button
           type="button"
-          className="rounded-lg px-sm py-base text-body font-medium text-white"
+          className="px-sm py-base text-body rounded-lg font-medium text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           Manage Subscription
         </button>
       </div>
 
-      <div className="rounded-lg border p-sm" style={{ borderColor: "var(--border)" }}>
+      <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <h3 className="mb-sm text-body font-semibold text-gray-700">Usage Summary</h3>
         <div className="space-y-base text-body">
           <div className="flex justify-between">

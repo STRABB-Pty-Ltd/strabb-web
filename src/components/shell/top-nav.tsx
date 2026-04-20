@@ -21,7 +21,7 @@ export function TopNav() {
       {/* Page buttons — optical centre, shifted left by sidebar_width/4
           to counterbalance the sidebar's visual weight */}
       <div
-        className="absolute top-1/2 flex items-center gap-xs"
+        className="gap-xs absolute top-1/2 flex items-center"
         style={{
           left: "calc(50% - var(--sidebar-width) / 4)",
           transform: "translate(-50%, -50%)",
@@ -35,7 +35,7 @@ export function TopNav() {
               href={item.href}
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="flex items-center justify-center px-sm py-base text-body font-medium transition-colors"
+              className="px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
                 width: 95,
                 borderRadius: 5,
@@ -57,7 +57,7 @@ export function TopNav() {
         href={settingsNavItem.href}
         onClick={() => setCurrentPage(settingsNavItem.id)}
         aria-current={currentPage === "settings" ? "page" : undefined}
-        className="mr-sm flex items-center justify-center px-sm py-base text-body font-medium transition-colors"
+        className="mr-sm px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
         style={{
           width: 95,
           borderRadius: 5,

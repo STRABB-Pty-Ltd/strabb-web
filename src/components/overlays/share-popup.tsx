@@ -45,14 +45,14 @@ export function SharePopup() {
       <div className="fixed inset-0 z-[185] flex items-center justify-center">
         <div className="w-full max-w-md rounded-xl bg-white shadow-xl">
           <div
-            className="flex items-center justify-between border-b px-sm py-sm"
+            className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
             <h2 className="text-body font-semibold">Share Report</h2>
             <button
               type="button"
               onClick={closeSharePopup}
-              className="rounded p-xs text-gray-400 hover:bg-gray-100"
+              className="p-xs rounded text-gray-400 hover:bg-gray-100"
             >
               <X size={18} />
             </button>
@@ -61,7 +61,7 @@ export function SharePopup() {
           <div className="space-y-sm p-sm">
             <p className="text-body text-gray-500">Select fields to include:</p>
             {defaultFields.map((f) => (
-              <label key={f.key} className="flex items-center gap-base">
+              <label key={f.key} className="gap-base flex items-center">
                 <input
                   type="checkbox"
                   checked={shareFields[f.key] ?? true}
@@ -74,24 +74,24 @@ export function SharePopup() {
           </div>
 
           <div
-            className="flex justify-end gap-base border-t px-sm py-sm"
+            className="gap-base px-sm py-sm flex justify-end border-t"
             style={{ borderColor: "var(--border)" }}
           >
             <button
               type="button"
               onClick={closeSharePopup}
-              className="rounded-lg px-sm py-base text-body text-gray-600 hover:bg-gray-100"
+              className="px-sm py-base text-body rounded-lg text-gray-600 hover:bg-gray-100"
             >
               Cancel
             </button>
             <button
               type="button"
               disabled
-              className="relative rounded-lg border border-dashed border-gray-300 px-sm py-base text-body text-gray-400"
+              className="px-sm py-base text-body relative rounded-lg border border-dashed border-gray-300 text-gray-400"
               title="PDF export coming soon"
             >
               Download PDF
-              <span className="absolute -top-base -right-base rounded-full bg-gray-100 px-xs py-xs text-body font-medium text-gray-500">
+              <span className="-top-base -right-base px-xs py-xs text-body absolute rounded-full bg-gray-100 font-medium text-gray-500">
                 Soon
               </span>
             </button>
@@ -101,7 +101,7 @@ export function SharePopup() {
                 navigator.clipboard.writeText(window.location.href);
                 closeSharePopup();
               }}
-              className="rounded-lg px-sm py-base text-body text-white"
+              className="px-sm py-base text-body rounded-lg text-white"
               style={{ backgroundColor: "var(--strabb-secondary)" }}
             >
               Copy Link

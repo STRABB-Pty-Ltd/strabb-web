@@ -70,7 +70,7 @@ export function GanttView<T>({
           <div key={row.id} className="flex" style={{ minHeight: 34 }}>
             {/* Row label */}
             <div
-              className="flex shrink-0 items-center gap-base border-r border-b bg-white px-base text-body"
+              className="gap-base px-base text-body flex shrink-0 items-center border-r border-b bg-white"
               style={{
                 width: LABEL_WIDTH,
                 position: "sticky",

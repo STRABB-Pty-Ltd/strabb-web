@@ -32,7 +32,7 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
             <stop offset="95%" stopColor="var(--brand-10)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis dataKey="label" tick={{ fontSize: 13, fill: "var(--brand-10)" }} />
         <YAxis tick={{ fontSize: 13, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
         <Tooltip

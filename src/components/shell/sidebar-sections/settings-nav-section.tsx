@@ -20,7 +20,7 @@ export function SettingsNavSection() {
 
   return (
     <nav aria-label="Settings" style={{ padding: "var(--space-sm)" }}>
-      <div className="flex flex-col gap-xs">
+      <div className="gap-xs flex flex-col">
         {sections.map((s) => {
           const Icon = s.icon;
           const active = section === s.id;
@@ -30,7 +30,7 @@ export function SettingsNavSection() {
               type="button"
               onClick={() => setSection(s.id)}
               aria-current={active ? "page" : undefined}
-              className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
+              className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
               style={{
                 backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",

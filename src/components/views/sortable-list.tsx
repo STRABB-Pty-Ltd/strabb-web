@@ -34,7 +34,7 @@ export function SortableList<T>({
       />
       <div>
         {data.length === 0 && (
-          <div className="py-lg text-center text-body text-gray-400">No items to display</div>
+          <div className="py-lg text-body text-center text-gray-400">No items to display</div>
         )}
         {data.map((item, index) => (
           <SortableListRow

@@ -71,14 +71,14 @@ export function TimeframePopup() {
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between border-b px-sm py-base"
+        className="px-sm py-base flex items-center justify-between border-b"
         style={{ borderColor: "var(--border)" }}
       >
-        <div className="flex items-center gap-base">
+        <div className="gap-base flex items-center">
           <button
             type="button"
             onClick={() => setViewDate(subMonths(viewDate, 1))}
-            className="rounded p-xs hover:bg-gray-100"
+            className="p-xs rounded hover:bg-gray-100"
           >
             <ChevronLeft size={16} />
           </button>
@@ -86,7 +86,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={() => setViewDate(addMonths(viewDate, 1))}
-            className="rounded p-xs hover:bg-gray-100"
+            className="p-xs rounded hover:bg-gray-100"
           >
             <ChevronRight size={16} />
           </button>
@@ -94,7 +94,7 @@ export function TimeframePopup() {
         <button
           type="button"
           onClick={closeTimeframePopup}
-          className="rounded p-xs text-gray-400 hover:bg-gray-100"
+          className="p-xs rounded text-gray-400 hover:bg-gray-100"
         >
           <X size={16} />
         </button>
@@ -102,14 +102,14 @@ export function TimeframePopup() {
 
       {/* Mini calendar */}
       <div className="p-sm">
-        <div className="mb-xs grid grid-cols-7 gap-xs">
+        <div className="mb-xs gap-xs grid grid-cols-7">
           {DAY_LABELS.map((d) => (
-            <div key={d} className="text-center text-body text-gray-400">
+            <div key={d} className="text-body text-center text-gray-400">
               {d}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-xs">
+        <div className="gap-xs grid grid-cols-7">
           {gridDays.map((day) => {
             const inMonth = isSameMonth(day, viewDate);
             const isSelected = isSameDay(day, calendarDate);
@@ -120,7 +120,7 @@ export function TimeframePopup() {
                 onClick={() => {
                   closeTimeframePopup();
                 }}
-                className="flex h-lg items-center justify-center rounded text-body transition-colors hover:bg-blue-50"
+                className="h-lg text-body flex items-center justify-center rounded transition-colors hover:bg-blue-50"
                 style={{
                   color: inMonth ? "var(--brand-10)" : "var(--neutral-30)",
                   backgroundColor: isSelected ? "var(--strabb-secondary)" : undefined,
@@ -135,27 +135,27 @@ export function TimeframePopup() {
       </div>
 
       {/* Custom range */}
-      <div className="border-t px-sm py-base" style={{ borderColor: "var(--border)" }}>
+      <div className="px-sm py-base border-t" style={{ borderColor: "var(--border)" }}>
         <p className="mb-xs text-body font-medium text-gray-500">Custom Range</p>
-        <div className="flex items-center gap-base">
+        <div className="gap-base flex items-center">
           <input
             type="date"
             value={localStart}
             onChange={(e) => setLocalStart(e.target.value)}
-            className="flex-1 rounded border px-base py-xs text-body"
+            className="px-base py-xs text-body flex-1 rounded border"
           />
           <span className="text-body text-gray-400">to</span>
           <input
             type="date"
             value={localEnd}
             onChange={(e) => setLocalEnd(e.target.value)}
-            className="flex-1 rounded border px-base py-xs text-body"
+            className="px-base py-xs text-body flex-1 rounded border"
           />
         </div>
         <button
           type="button"
           onClick={handleApplyCustom}
-          className="mt-base w-full rounded-lg py-xs text-body text-white"
+          className="mt-base py-xs text-body w-full rounded-lg text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           Apply

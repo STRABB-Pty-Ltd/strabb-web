@@ -43,7 +43,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
   const setDrillDown = useAppStore((s) => s.setDrillDown);
 
   return (
-    <div className="grid grid-cols-2 gap-sm lg:grid-cols-3 xl:grid-cols-6">
+    <div className="gap-sm grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {kpis.map((kpi) => {
         const Icon = iconMap[kpi.icon] ?? DollarSign;
         const trendPositive = kpi.trend > 0;
@@ -60,10 +60,10 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
                 label: kpi.label,
               })
             }
-            className="rounded-lg border bg-white p-md text-left transition-shadow hover:shadow-md"
+            className="p-md rounded-lg border bg-white text-left transition-shadow hover:shadow-md"
             style={{ borderColor: "var(--border)" }}
           >
-            <div className="mb-base flex items-center gap-base">
+            <div className="mb-base gap-base flex items-center">
               <div
                 className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg"
                 style={{ backgroundColor: "var(--icon-bg)" }}
@@ -72,7 +72,7 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
               </div>
               {!trendNeutral && (
                 <div
-                  className="ml-auto flex items-center gap-xs rounded-full px-base py-xs text-body font-medium"
+                  className="gap-xs px-base py-xs text-body ml-auto flex items-center rounded-full font-medium"
                   style={{
                     backgroundColor: trendPositive
                       ? "rgba(22, 163, 74, 0.1)"
@@ -85,10 +85,12 @@ export function ReportingKPIRow({ kpis }: ReportingKPIRowProps) {
                 </div>
               )}
             </div>
-            <p className="font-data text-subheading font-bold text-gray-900" suppressHydrationWarning>
+            <p className="font-data text-subheading font-bold text-gray-900">
               {formatValue(kpi.value, kpi.type)}
             </p>
-            <p className="mt-xs text-body" style={{ color: "var(--brand-10)" }}>{kpi.label}</p>
+            <p className="mt-xs text-body" style={{ color: "var(--brand-10)" }}>
+              {kpi.label}
+            </p>
           </button>
         );
       })}

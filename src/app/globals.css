@@ -10,9 +10,9 @@
   /* 60/30/10 Palette */
   --surface-60: #fafafa;
   --neutral-30: #eeeeee;
-  --brand-10: #15206B;
-  --status-success: #16a34a;
-  --status-danger: #dc2626;
+  --brand-10: #15206b;
+  --status-success: #15803d;
+  --status-danger: #b91c1c;
 
   /* Surfaces */
   --surface-page: var(--surface-60);
@@ -56,6 +56,7 @@
   /* Chart */
   --chart-bar: var(--brand-10);
   --chart-bar-hover: var(--brand-10);
+  --chart-grid: rgba(30, 30, 133, 0.08);
 
   /* Interactive — pill buttons */
   --btn-active-bg: var(--brand-10);
@@ -115,11 +116,12 @@
 
 .dark {
   /* 60/30/10 Palette — dark mode */
-  --surface-60: #0C123C;
-  --neutral-30: #0F164B;
+  --surface-60: #0c123c;
+  --neutral-30: #0f164b;
   --brand-10: #eeeeee;
-  --status-success: #16a34a;
-  --status-danger: #dc2626;
+  --status-success: #4ade80;
+  --status-danger: #f87171;
+  --chart-grid: rgba(238, 238, 238, 0.12);
 
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
@@ -313,6 +315,17 @@
   }
   html {
     @apply font-sans;
+  }
+  /* Global keyboard focus indicator — uses box-shadow so it can't be
+     overridden by inline style={{ backgroundColor }} on custom buttons */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 

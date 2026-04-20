@@ -47,7 +47,7 @@ export function ShoppingListContent() {
                 return (
                   <label
                     key={item.id}
-                    className="flex items-center gap-base rounded-sm px-base py-xs hover:bg-gray-50"
+                    className="gap-base px-base py-xs flex items-center rounded-sm hover:bg-gray-50"
                   >
                     <input
                       type="checkbox"
@@ -56,7 +56,7 @@ export function ShoppingListContent() {
                       className="h-sm w-sm rounded-sm border-gray-300"
                     />
                     <span
-                      className="flex-1 text-body"
+                      className="text-body flex-1"
                       style={{
                         textDecoration: isBought ? "line-through" : "none",
                         color: isBought ? "var(--brand-10)" : "var(--brand-10)",
@@ -66,7 +66,7 @@ export function ShoppingListContent() {
                     </span>
                     <span className="font-data text-body text-gray-500">x{item.quantity}</span>
                     <span
-                      className="rounded-full px-base py-xs text-body"
+                      className="px-base py-xs text-body rounded-full"
                       style={{ backgroundColor: badge.bg, color: badge.text }}
                     >
                       {item.priority}
@@ -79,14 +79,14 @@ export function ShoppingListContent() {
         ))}
       </div>
 
-      <div className="mt-sm flex justify-end gap-base">
-        <button type="button" disabled className="rounded-lg px-sm py-base text-body text-gray-400">
+      <div className="mt-sm gap-base flex justify-end">
+        <button type="button" disabled className="px-sm py-base text-body rounded-lg text-gray-400">
           Share Link
         </button>
         <button
           type="button"
           onClick={handleCopy}
-          className="rounded-lg px-sm py-base text-body text-white"
+          className="px-sm py-base text-body rounded-lg text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           Copy List

@@ -64,7 +64,7 @@ export function NotificationsSection() {
         {toggles.map((t) => (
           <div
             key={t.id}
-            className="flex items-center justify-between rounded-lg border px-sm py-sm"
+            className="px-sm py-sm flex items-center justify-between rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             <div>
@@ -74,13 +74,13 @@ export function NotificationsSection() {
             <button
               type="button"
               onClick={() => toggle(t.id)}
-              className="relative h-md w-lg rounded-full transition-colors"
+              className="h-md relative w-lg rounded-full transition-colors"
               style={{
                 backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
               }}
             >
               <span
-                className="absolute top-xs h-md w-md rounded-full bg-white shadow transition-transform"
+                className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
                 style={{
                   left: settings[t.id] ? 18 : 2,
                 }}
@@ -93,7 +93,7 @@ export function NotificationsSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="rounded-lg px-sm py-base text-body font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-white"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Save Preferences

@@ -23,7 +23,7 @@ export function GanttBar({
     <button
       type="button"
       onClick={onClick}
-      className="absolute truncate rounded-sm text-body"
+      className="text-body absolute truncate rounded-sm"
       title={label}
       style={{
         left: startCol * cellWidth,

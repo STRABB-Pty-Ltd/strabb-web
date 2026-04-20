@@ -23,7 +23,7 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
       {columns.map((col) => (
         <div
           key={col.key}
-          className="flex items-center truncate px-sm text-body text-gray-700"
+          className="px-sm text-body flex items-center truncate text-gray-700"
           style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
         >
           {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}

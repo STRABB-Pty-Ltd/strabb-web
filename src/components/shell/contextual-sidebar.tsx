@@ -40,11 +40,7 @@ export function ContextualSidebar() {
       }}
     >
       {/* Spacer reserves topnav row for the absolute logo overlay in app-shell */}
-      <div
-        className="shrink-0"
-        style={{ height: "var(--topnav-height)" }}
-        aria-hidden="true"
-      />
+      <div className="shrink-0" style={{ height: "var(--topnav-height)" }} aria-hidden="true" />
 
       {showSettingsNav(currentPage) && <SettingsNavSection />}
       {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
@@ -57,7 +53,7 @@ export function ContextualSidebar() {
           <button
             type="button"
             onClick={openShoppingListPopup}
-            className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
+            className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
             style={{
               backgroundColor: "var(--btn-inactive-bg)",
               color: "var(--btn-inactive-text)",
@@ -74,7 +70,7 @@ export function ContextualSidebar() {
           <button
             type="button"
             onClick={toggleSavedReports}
-            className="flex w-full items-center gap-base rounded-lg px-sm py-base text-body font-medium transition-colors"
+            className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
             style={{
               backgroundColor: "var(--btn-inactive-bg)",
               color: "var(--btn-inactive-text)",
@@ -94,7 +90,7 @@ export function ContextualSidebar() {
                   <button
                     key={r.id}
                     type="button"
-                    className="block w-full truncate rounded-lg px-sm py-base text-left text-body font-medium"
+                    className="px-sm py-base text-body block w-full truncate rounded-lg text-left font-medium"
                     style={{
                       backgroundColor: "var(--btn-inactive-bg)",
                       color: "var(--btn-inactive-text)",

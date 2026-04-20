@@ -27,9 +27,9 @@ function HealthCard({
   const hasIssue = count > 0;
   const content = (
     <div
-      className={`rounded-xl border p-sm ${hasIssue ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950" : "bg-card"}`}
+      className={`p-sm rounded-xl border ${hasIssue ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950" : "bg-card"}`}
     >
-      <div className="flex items-center gap-sm">
+      <div className="gap-sm flex items-center">
         <Icon
           className={`size-md ${hasIssue ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}
         />
@@ -66,7 +66,7 @@ export default function AdminPage() {
       />
 
       {isLoading && (
-        <div className="flex justify-center py-xl">
+        <div className="py-xl flex justify-center">
           <LoadingSpinner />
         </div>
       )}
@@ -74,7 +74,7 @@ export default function AdminPage() {
       {data && (
         <>
           {!data.hasIssues && (
-            <div className="flex items-center gap-base rounded-xl border border-green-200 bg-green-50 p-sm dark:border-green-900 dark:bg-green-950">
+            <div className="gap-base p-sm flex items-center rounded-xl border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
               <CheckCircleIcon className="size-md text-green-600 dark:text-green-400" />
               <p className="text-body font-medium text-green-800 dark:text-green-200">
                 All systems healthy — no failures detected.
@@ -82,7 +82,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 lg:grid-cols-5">
+          <div className="gap-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <HealthCard
               label="Sync Errors"
               count={data.syncErrors}

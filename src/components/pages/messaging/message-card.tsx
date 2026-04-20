@@ -34,8 +34,8 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
     <button type="button" onClick={onClick} className="w-full text-left">
       <div className="space-y-xs">
-        <div className="flex items-center gap-base">
-          <span className="truncate text-body font-medium text-gray-800">{message.guestName}</span>
+        <div className="gap-base flex items-center">
+          <span className="text-body truncate font-medium text-gray-800">{message.guestName}</span>
           {message.priority !== "low" && (
             <span
               className="h-base w-base shrink-0 rounded-full"
@@ -44,33 +44,33 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
           )}
         </div>
 
-        <div className="flex items-center gap-xs">
+        <div className="gap-xs flex items-center">
           <span
             className="h-base w-base shrink-0 rounded-full"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           />
-          <span className="truncate text-body text-gray-500">{message.listingName}</span>
+          <span className="text-body truncate text-gray-500">{message.listingName}</span>
         </div>
 
-        <div className="flex items-center gap-base">
+        <div className="gap-base flex items-center">
           <span
-            className="shrink-0 rounded-sm px-xs py-xs text-body font-medium text-white"
+            className="px-xs py-xs text-body shrink-0 rounded-sm font-medium text-white"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
             {channelLabels[message.channel] ?? message.channel}
           </span>
-          <span className="truncate text-body text-gray-600">{message.subject}</span>
+          <span className="text-body truncate text-gray-600">{message.subject}</span>
         </div>
 
-        <p className="truncate text-body text-gray-400">{message.previewText}</p>
+        <p className="text-body truncate text-gray-400">{message.previewText}</p>
 
-        <div className="flex items-center gap-base text-body text-gray-400">
+        <div className="gap-base text-body flex items-center text-gray-400">
           <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
-          <span className="flex items-center gap-xs">
+          <span className="gap-xs flex items-center">
             <MessageSquare size={10} />
             {message.messageCount}
           </span>

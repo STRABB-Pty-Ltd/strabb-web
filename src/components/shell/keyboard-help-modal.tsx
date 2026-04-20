@@ -29,7 +29,7 @@ export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
       aria-label="Keyboard shortcuts"
     >
       <div
-        className="w-full max-w-sm rounded-xl bg-white p-md shadow-xl"
+        className="p-md w-full max-w-sm rounded-xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-md flex items-center justify-between">
@@ -38,7 +38,7 @@ export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="rounded p-xs hover:bg-gray-100"
+            className="p-xs rounded hover:bg-gray-100"
             aria-label="Close shortcuts help"
           >
             <X size={21} />
@@ -46,13 +46,13 @@ export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
         </div>
         <div className="space-y-base">
           {shortcuts.map((s) => (
-            <div key={s.keys.join("+")} className="flex items-center justify-between text-body">
+            <div key={s.keys.join("+")} className="text-body flex items-center justify-between">
               <span className="text-gray-600">{s.description}</span>
-              <div className="flex gap-xs">
+              <div className="gap-xs flex">
                 {s.keys.map((k) => (
                   <kbd
                     key={k}
-                    className="rounded border border-gray-200 bg-gray-50 px-base py-xs font-mono text-body"
+                    className="px-base py-xs text-body rounded border border-gray-200 bg-gray-50 font-mono"
                   >
                     {k}
                   </kbd>

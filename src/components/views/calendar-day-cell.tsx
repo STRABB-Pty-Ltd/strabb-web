@@ -44,13 +44,17 @@ export function CalendarDayCell({
       <span
         className="mb-xs text-body font-medium"
         style={{
-          color: today ? "var(--strabb-secondary)" : isCurrentMonth ? "var(--brand-10)" : "var(--brand-10)",
+          color: today
+            ? "var(--strabb-secondary)"
+            : isCurrentMonth
+              ? "var(--brand-10)"
+              : "var(--brand-10)",
           fontWeight: today ? 700 : 500,
         }}
       >
         {date.getDate()}
       </span>
-      <div className="flex flex-col gap-xs">
+      <div className="gap-xs flex flex-col">
         {visibleEvents.map((ev, i) => (
           <CalendarEventChip
             key={i}

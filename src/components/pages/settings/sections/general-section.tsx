@@ -46,22 +46,24 @@ export function GeneralSection() {
 
       <div className="space-y-sm">
         <div>
-          <label className="mb-xs block text-body font-medium text-gray-700">Company Name</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">Company Name</label>
           <input
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full rounded-lg border px-sm py-base text-body"
+            className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           />
         </div>
 
         <div>
-          <label className="mb-xs block text-body font-medium text-gray-700">Default Timezone</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">
+            Default Timezone
+          </label>
           <select
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="w-full rounded-lg border px-sm py-base text-body"
+            className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             {timezones.map((tz) => (
@@ -73,11 +75,13 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs block text-body font-medium text-gray-700">Default Currency</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">
+            Default Currency
+          </label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="w-full rounded-lg border px-sm py-base text-body"
+            className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             {currencies.map((c) => (
@@ -89,9 +93,9 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs block text-body font-medium text-gray-700">Appearance</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">Appearance</label>
           <div
-            className="inline-flex rounded-lg border p-xs"
+            className="p-xs inline-flex rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             {themeOptions.map((opt) => {
@@ -102,7 +106,7 @@ export function GeneralSection() {
                   key={opt.value}
                   type="button"
                   onClick={() => setTheme(opt.value)}
-                  className="flex items-center gap-xs rounded-sm px-sm py-xs text-body font-medium transition-colors"
+                  className="gap-xs px-sm py-xs text-body flex items-center rounded-sm font-medium transition-colors"
                   style={{
                     backgroundColor: active ? "var(--strabb-secondary)" : "transparent",
                     color: active ? "var(--surface-60)" : "var(--brand-10)",
@@ -116,13 +120,12 @@ export function GeneralSection() {
             })}
           </div>
         </div>
-
       </div>
 
       <button
         type="button"
         onClick={handleSave}
-        className="rounded-lg px-sm py-base text-body font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-white"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Save Changes

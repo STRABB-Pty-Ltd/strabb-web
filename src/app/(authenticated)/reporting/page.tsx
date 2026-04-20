@@ -20,7 +20,7 @@ export default function ReportingPage() {
 
   if (kpisLoading || chartsLoading) {
     return (
-      <div className="flex items-center justify-center py-xl">
+      <div className="py-xl flex items-center justify-center">
         <p className="text-body text-gray-400">Loading reports...</p>
       </div>
     );

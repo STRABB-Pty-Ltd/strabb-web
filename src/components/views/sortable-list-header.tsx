@@ -31,14 +31,14 @@ export function SortableListHeader<T>({
       {columns.map((col) => (
         <div
           key={col.key}
-          className="flex items-center px-sm text-body font-semibold tracking-wide text-gray-500 uppercase"
+          className="px-sm text-body flex items-center font-semibold tracking-wide text-gray-500 uppercase"
           style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
         >
           {col.sortable !== false ? (
             <button
               type="button"
               onClick={() => onSort(col.key)}
-              className="flex items-center gap-xs hover:text-gray-700"
+              className="gap-xs flex items-center hover:text-gray-700"
             >
               {col.label}
               {sortKey === col.key ? (

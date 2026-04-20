@@ -21,7 +21,7 @@ export function ChannelFilter() {
       >
         Channels
       </h3>
-      <div className="flex flex-col gap-xs">
+      <div className="gap-xs flex flex-col">
         {channels.map((ch) => {
           const isActive = activeChannels.includes(ch.id);
           return (
@@ -30,13 +30,16 @@ export function ChannelFilter() {
               type="button"
               onClick={() => toggleChannel(ch.id)}
               aria-pressed={isActive}
-              className="flex cursor-pointer items-center gap-base rounded-lg px-sm py-base text-left"
+              className="gap-base px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
             >
-              <span className="h-sm w-sm shrink-0 rounded-sm" style={{ backgroundColor: ch.color }} />
+              <span
+                className="h-sm w-sm shrink-0 rounded-sm"
+                style={{ backgroundColor: ch.color }}
+              />
               <span className="text-body font-medium">{ch.label}</span>
             </button>
           );

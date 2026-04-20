@@ -19,7 +19,7 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="text-muted-foreground flex items-center justify-center rounded-md border py-xl">
+      <div className="text-muted-foreground py-xl flex items-center justify-center rounded-md border">
         {emptyMessage}
       </div>
     );
@@ -27,7 +27,7 @@ export function DataTable<T>({
 
   return (
     <div className="overflow-x-auto rounded-md border">
-      <table className="w-full text-body">
+      <table className="text-body w-full">
         <thead>
           <tr className="bg-muted/50 border-b">
             {columns.map((col) => (

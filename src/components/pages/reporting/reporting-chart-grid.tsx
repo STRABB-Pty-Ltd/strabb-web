@@ -20,7 +20,7 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
 
   if (showOverview) {
     return (
-      <div className="grid grid-cols-1 gap-sm lg:grid-cols-2">
+      <div className="gap-sm grid grid-cols-1 lg:grid-cols-2">
         <RevenueTrendChart data={data.revenueTrend} />
         <ChannelBreakdownChart data={data.channelBreakdown} />
         <OccupancyChart data={data.occupancy} />
@@ -61,7 +61,7 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
   }
 
   return (
-    <div className="grid grid-cols-1 gap-sm lg:grid-cols-2">
+    <div className="gap-sm grid grid-cols-1 lg:grid-cols-2">
       <RevenueTrendChart data={data.revenueTrend} />
       <ChannelBreakdownChart data={data.channelBreakdown} />
     </div>

@@ -81,25 +81,25 @@ export function ChannelsSection() {
         {channels.map((ch) => (
           <div
             key={ch.id}
-            className="rounded-lg border px-sm py-sm"
+            className="px-sm py-sm rounded-lg border"
             style={{
               borderColor: "var(--border)",
               borderLeftWidth: 4,
               borderLeftColor: ch.color,
             }}
           >
-            <div className="mb-sm flex items-center gap-base">
+            <div className="mb-sm gap-base flex items-center">
               <h3 className="text-body font-semibold text-gray-800">{ch.name}</h3>
             </div>
-            <div className="grid grid-cols-2 gap-sm">
+            <div className="gap-sm grid grid-cols-2">
               <div>
-                <label className="mb-xs block text-body font-medium text-gray-600">
+                <label className="mb-xs text-body block font-medium text-gray-600">
                   Sync Frequency
                 </label>
                 <select
                   value={ch.syncFrequency}
                   onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
-                  className="w-full rounded-sm border px-sm py-base text-body"
+                  className="px-sm py-base text-body w-full rounded-sm border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {syncOptions.map((opt) => (
@@ -110,13 +110,13 @@ export function ChannelsSection() {
                 </select>
               </div>
               <div>
-                <label className="mb-xs block text-body font-medium text-gray-600">
+                <label className="mb-xs text-body block font-medium text-gray-600">
                   Default Pricing Rule
                 </label>
                 <select
                   value={ch.pricingRule}
                   onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
-                  className="w-full rounded-sm border px-sm py-base text-body"
+                  className="px-sm py-base text-body w-full rounded-sm border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {pricingOptions.map((opt) => (
@@ -134,7 +134,7 @@ export function ChannelsSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="rounded-lg px-sm py-base text-body font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-white"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Save Changes

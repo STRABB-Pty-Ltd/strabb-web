@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-2xl px-sm py-xl">
+    <div className="px-sm py-xl mx-auto max-w-2xl">
       <h1 className="mb-md text-heading font-bold">Privacy Policy</h1>
       <p className="text-muted-foreground mb-sm text-body">Last updated: March 2026</p>
 

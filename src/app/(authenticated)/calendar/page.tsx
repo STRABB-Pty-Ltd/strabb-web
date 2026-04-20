@@ -21,7 +21,7 @@ export default function CalendarPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-xl">
+      <div className="py-xl flex items-center justify-center">
         <p className="text-body text-gray-400">Loading calendar...</p>
       </div>
     );
@@ -30,7 +30,7 @@ export default function CalendarPage() {
   return (
     <div>
       {showMobileBanner && (
-        <div className="mb-sm flex items-center gap-base rounded-lg bg-blue-50 px-sm py-base text-body text-blue-700">
+        <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />
           Switch to desktop for Gantt/Calendar view
         </div>

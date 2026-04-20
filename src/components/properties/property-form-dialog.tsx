@@ -105,10 +105,12 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
           <div className="space-y-base">
             <Label htmlFor="address">Address</Label>
             <Input id="address" placeholder="123 Main St, Byron Bay NSW" {...register("address")} />
-            {errors.address && <p className="text-destructive text-body">{errors.address.message}</p>}
+            {errors.address && (
+              <p className="text-destructive text-body">{errors.address.message}</p>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-sm">
+          <div className="gap-sm grid grid-cols-2">
             <div className="space-y-base">
               <Label htmlFor="timezone">Timezone</Label>
               <Select id="timezone" options={AUSTRALIAN_TIMEZONES} {...register("timezone")} />
@@ -127,7 +129,9 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
                 {...register("cleaningDurationMinutes")}
               />
               {errors.cleaningDurationMinutes && (
-                <p className="text-destructive text-body">{errors.cleaningDurationMinutes.message}</p>
+                <p className="text-destructive text-body">
+                  {errors.cleaningDurationMinutes.message}
+                </p>
               )}
             </div>
           </div>
@@ -141,9 +145,9 @@ export function PropertyFormDialog({ property, trigger }: PropertyFormDialogProp
             />
           </div>
 
-          <div className="border-t pt-sm">
+          <div className="pt-sm border-t">
             <p className="mb-sm text-body font-medium">Default Cleaner</p>
-            <div className="grid grid-cols-3 gap-sm">
+            <div className="gap-sm grid grid-cols-3">
               <div className="space-y-xs">
                 <Label htmlFor="cleanerName">Name</Label>
                 <Input id="cleanerName" placeholder="Cleaner name" {...register("cleanerName")} />

@@ -27,8 +27,12 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
   return (
     <ChartContainer title="Channel Breakdown" loading={loading} empty={data.length === 0}>
       <BarChart data={data} layout="vertical">
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 30, 133, 0.08)" />
-        <XAxis type="number" tick={{ fontSize: 13, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+        <XAxis
+          type="number"
+          tick={{ fontSize: 13, fill: "var(--brand-10)" }}
+          tickFormatter={formatAUD}
+        />
         <YAxis
           dataKey="channel"
           type="category"

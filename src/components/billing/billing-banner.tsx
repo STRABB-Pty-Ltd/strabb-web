@@ -28,8 +28,8 @@ export function BillingBanner() {
   if (!message) return null;
 
   return (
-    <div className="border-b border-yellow-200 bg-yellow-50 px-sm py-base dark:border-yellow-900 dark:bg-yellow-950">
-      <div className="flex items-center gap-base text-body text-yellow-800 dark:text-yellow-200">
+    <div className="px-sm py-base border-b border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950">
+      <div className="gap-base text-body flex items-center text-yellow-800 dark:text-yellow-200">
         <AlertTriangleIcon className="size-sm shrink-0" />
         <p>
           {message}{" "}

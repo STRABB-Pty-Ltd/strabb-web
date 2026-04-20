@@ -19,7 +19,7 @@ export function GanttHeader({ dateRange, cellWidth }: GanttHeaderProps) {
         {days.map((day) => (
           <div
             key={day.toISOString()}
-            className="shrink-0 border-r border-b px-xs py-xs text-center text-body text-gray-500"
+            className="px-xs py-xs text-body shrink-0 border-r border-b text-center text-gray-500"
             style={{
               width: cellWidth,
               backgroundColor: isToday(day) ? "var(--neutral-30)" : "var(--surface-60)",

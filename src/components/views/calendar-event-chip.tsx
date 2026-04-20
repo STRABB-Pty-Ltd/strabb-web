@@ -15,7 +15,7 @@ export function CalendarEventChip({ label, color, textColor, onClick }: Calendar
         e.stopPropagation();
         onClick();
       }}
-      className="w-full truncate rounded-sm px-xs py-xs text-left text-body"
+      className="px-xs py-xs text-body w-full truncate rounded-sm text-left"
       style={{ backgroundColor: color, color: textColor ?? "var(--surface-60)" }}
       title={label}
     >
