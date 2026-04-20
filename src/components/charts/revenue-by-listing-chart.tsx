@@ -28,21 +28,21 @@ export function RevenueByListingChart({ data, loading }: RevenueByListingChartPr
   return (
     <ChartContainer title="Revenue by Listing" loading={loading} empty={data.length === 0}>
       <BarChart data={sorted}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--neutral-30)" />
         <XAxis
           dataKey="listing"
-          tick={{ fontSize: 11 }}
+          tick={{ fontSize: 13 }}
           interval={0}
           angle={-20}
           textAnchor="end"
-          height={60}
+          height={55}
         />
-        <YAxis tick={{ fontSize: 12 }} tickFormatter={formatAUD} />
+        <YAxis tick={{ fontSize: 13 }} tickFormatter={formatAUD} />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 12 }}
+          contentStyle={{ fontSize: 13 }}
         />
-        <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
+        <Bar dataKey="revenue" radius={[3, 3, 0, 0]}>
           {sorted.map((entry, i) => (
             <Cell key={i} fill={entry.color} />
           ))}

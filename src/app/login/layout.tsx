@@ -1,5 +1,5 @@
 export default function LoginLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-muted/40 flex min-h-screen items-center justify-center p-4">{children}</div>
+    <div className="bg-muted/40 p-sm flex min-h-screen items-center justify-center">{children}</div>
   );
 }

@@ -55,11 +55,14 @@ export function TimeframeSelector({ page }: { page: PageId }) {
   const currentTf = tfByPage[page] ?? "";
 
   return (
-    <div className="border-b" style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}>
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+    <div style={{ padding: "var(--space-sm)" }}>
+      <h3
+        className="mb-base text-body font-semibold tracking-wide uppercase"
+        style={{ color: "var(--brand-10)", opacity: 0.7 }}
+      >
         Timeframe
       </h3>
-      <div className="grid grid-cols-2 gap-1">
+      <div className="gap-xs grid grid-cols-2">
         {options.map((opt) => {
           const isActive = currentTf === opt.id;
           return (
@@ -69,18 +72,11 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               onClick={() =>
                 setTimeframe(page as "dashboard" | "calendar" | "cleaning" | "reporting", opt.id)
               }
-              className="rounded-lg px-3 py-1 text-xs transition-colors"
-              style={
-                isActive
-                  ? {
-                      backgroundColor: "var(--strabb-secondary)",
-                      color: "white",
-                    }
-                  : {
-                      backgroundColor: "#F3F4F6",
-                      color: "#374151",
-                    }
-              }
+              className="px-sm py-base text-body rounded-lg font-medium transition-colors"
+              style={{
+                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              }}
             >
               {opt.label}
             </button>
@@ -89,7 +85,11 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         <button
           type="button"
           onClick={openTimeframePopup}
-          className="col-span-2 rounded-lg border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-400 transition-colors hover:border-gray-400 hover:text-gray-500"
+          className="px-sm py-base text-body col-span-2 rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: "var(--btn-inactive-bg)",
+            color: "var(--btn-inactive-text)",
+          }}
         >
           Custom
         </button>

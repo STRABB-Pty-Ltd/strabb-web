@@ -18,10 +18,15 @@ const timeframeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = 
 };
 
 const typeColors: Record<string, string> = {
-  booking: "#F59E0B",
-  cleaning: "#10B981",
-  maintenance: "#6366F1",
-  vacancy: "#D1D5DB",
+  booking: "var(--neutral-30)",
+  cleaning: "var(--status-success)",
+  maintenance: "var(--status-danger)",
+  vacancy: "var(--neutral-30)",
+};
+
+const typeTextColors: Record<string, string> = {
+  booking: "var(--brand-10)",
+  vacancy: "var(--brand-10)",
 };
 
 interface CalendarMonthViewProps {
@@ -47,6 +52,7 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
         end: new Date(ev.end),
       })}
       getEventColor={(ev) => typeColors[ev.type] ?? ev.color}
+      getEventTextColor={(ev) => typeTextColors[ev.type] ?? "var(--surface-60)"}
       getEventLabel={(ev) => ev.label}
       onEventClick={(ev) => openDrillDownPanel(ev.type, ev.id)}
       onDateChange={() => {}}

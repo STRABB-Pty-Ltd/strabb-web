@@ -46,7 +46,7 @@ export function FeedbackDialog() {
     >
       <DialogTrigger>
         <Button variant="ghost" size="sm">
-          <MessageSquareIcon className="mr-1.5 h-4 w-4" />
+          <MessageSquareIcon className="mr-xs h-sm w-sm" />
           Feedback
         </Button>
       </DialogTrigger>
@@ -67,11 +67,11 @@ export function FeedbackDialog() {
         />
 
         {submitFeedback.isError && (
-          <p className="text-destructive text-sm">Failed to send feedback. Please try again.</p>
+          <p className="text-destructive text-body">Failed to send feedback. Please try again.</p>
         )}
 
         {submitFeedback.isSuccess && (
-          <p className="text-sm text-green-700 dark:text-green-400">Thanks for your feedback!</p>
+          <p className="text-body text-green-700 dark:text-green-400">Thanks for your feedback!</p>
         )}
 
         <DialogFooter>

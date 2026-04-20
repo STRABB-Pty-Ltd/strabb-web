@@ -28,21 +28,21 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
       <AreaChart data={data}>
         <defs>
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--strabb-primary)" stopOpacity={0.15} />
-            <stop offset="95%" stopColor="var(--strabb-primary)" stopOpacity={0} />
+            <stop offset="5%" stopColor="var(--brand-10)" stopOpacity={0.25} />
+            <stop offset="95%" stopColor="var(--brand-10)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} tickFormatter={formatAUD} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+        <XAxis dataKey="label" tick={{ fontSize: 13, fill: "var(--brand-10)" }} />
+        <YAxis tick={{ fontSize: 13, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 12 }}
+          contentStyle={{ fontSize: 13 }}
         />
         <Area
           type="monotone"
           dataKey="revenue"
-          stroke="var(--strabb-primary)"
+          stroke="var(--brand-10)"
           strokeWidth={2}
           fill="url(#revenueGradient)"
         />

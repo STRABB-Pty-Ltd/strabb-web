@@ -12,14 +12,15 @@ export interface GanttViewProps<T> {
   getRowId: (item: T) => string;
   getDateRange: (item: T) => { start: Date; end: Date };
   getColor: (item: T) => string;
+  getTextColor?: (item: T) => string;
   getLabel: (item: T) => string;
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
 }
 
-const LABEL_WIDTH = 160;
-const MIN_CELL_WIDTH = 32;
+const LABEL_WIDTH = 144;
+const MIN_CELL_WIDTH = 34;
 
 export function GanttView<T>({
   rows,
@@ -27,13 +28,14 @@ export function GanttView<T>({
   getRowId,
   getDateRange,
   getColor,
+  getTextColor,
   getLabel,
   dateRange,
   onItemClick,
-  todayLineColor = "#DC2626",
+  todayLineColor = "var(--status-danger)",
 }: GanttViewProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [cellWidth, setCellWidth] = useState(40);
+  const [cellWidth, setCellWidth] = useState(34);
 
   const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
   const totalDays = days.length;
@@ -65,10 +67,10 @@ export function GanttView<T>({
         const rowItems = items.filter((item) => getRowId(item) === row.id);
 
         return (
-          <div key={row.id} className="flex" style={{ minHeight: 36 }}>
+          <div key={row.id} className="flex" style={{ minHeight: 34 }}>
             {/* Row label */}
             <div
-              className="flex shrink-0 items-center gap-2 border-r border-b bg-white px-2 text-sm"
+              className="gap-base px-base text-body flex shrink-0 items-center border-r border-b bg-white"
               style={{
                 width: LABEL_WIDTH,
                 position: "sticky",
@@ -79,7 +81,7 @@ export function GanttView<T>({
             >
               {row.color && (
                 <span
-                  className="h-2.5 w-2.5 shrink-0 rounded-full"
+                  className="h-base w-base shrink-0 rounded-full"
                   style={{ backgroundColor: row.color }}
                 />
               )}
@@ -95,9 +97,9 @@ export function GanttView<T>({
                   className="shrink-0 border-r"
                   style={{
                     width: cellWidth,
-                    height: 36,
+                    height: 34,
                     borderColor: "var(--border)",
-                    backgroundColor: isToday(day) ? "rgba(59, 130, 246, 0.03)" : undefined,
+                    backgroundColor: isToday(day) ? "var(--neutral-30)" : undefined,
                   }}
                 />
               ))}
@@ -118,6 +120,7 @@ export function GanttView<T>({
                     key={`${row.id}-${getLabel(item)}-${idx}`}
                     label={getLabel(item)}
                     color={getColor(item)}
+                    textColor={getTextColor?.(item)}
                     startCol={startCol}
                     spanCols={spanCols}
                     cellWidth={cellWidth}

@@ -58,16 +58,16 @@ const mockMembers: TeamMember[] = [
 ];
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
-  admin: { bg: "#DBEAFE", text: "#1E40AF" },
-  manager: { bg: "#E0E7FF", text: "#3730A3" },
-  cleaner: { bg: "#D1FAE5", text: "#065F46" },
-  viewer: { bg: "#F3F4F6", text: "#6B7280" },
+  admin: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  manager: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  cleaner: { bg: "var(--neutral-30)", text: "var(--status-success)" },
+  viewer: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
 const statusColors: Record<string, string> = {
-  active: "#16A34A",
-  invited: "#D97706",
-  inactive: "#6B7280",
+  active: "var(--status-success)",
+  invited: "var(--status-danger)",
+  inactive: "var(--brand-10)",
 };
 
 export function TeamSection() {
@@ -87,16 +87,16 @@ export function TeamSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-md">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Team</h2>
-          <p className="text-sm text-gray-500">Manage team members and roles.</p>
+          <h2 className="text-subheading font-semibold text-gray-900">Team</h2>
+          <p className="text-body text-gray-500">Manage team members and roles.</p>
         </div>
         <button
           type="button"
           onClick={() => setShowInvite(true)}
-          className="flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium text-white"
+          className="gap-xs px-sm py-base text-body flex items-center rounded-lg font-medium text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           <Plus size={16} />
@@ -106,26 +106,26 @@ export function TeamSection() {
 
       {showInvite && (
         <div
-          className="flex items-end gap-3 rounded-lg border bg-gray-50 p-4"
+          className="gap-sm p-sm flex items-end rounded-lg border bg-gray-50"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex-1">
-            <label className="mb-1 block text-xs font-medium text-gray-600">Email</label>
+            <label className="mb-xs text-body block font-medium text-gray-600">Email</label>
             <input
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
-              className="w-full rounded border bg-white px-3 py-2 text-sm"
+              className="px-sm py-base text-body w-full rounded-sm border bg-white"
               style={{ borderColor: "var(--border)" }}
               placeholder="email@example.com"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-600">Role</label>
+            <label className="mb-xs text-body block font-medium text-gray-600">Role</label>
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              className="rounded border bg-white px-3 py-2 text-sm"
+              className="px-sm py-base text-body rounded-sm border bg-white"
               style={{ borderColor: "var(--border)" }}
             >
               <option value="admin">Admin</option>
@@ -137,7 +137,7 @@ export function TeamSection() {
           <button
             type="button"
             onClick={handleInvite}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+            className="px-sm py-base text-body rounded-lg font-medium text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             Send Invite
@@ -145,7 +145,7 @@ export function TeamSection() {
           <button
             type="button"
             onClick={() => setShowInvite(false)}
-            className="rounded-lg p-2 text-gray-400 hover:text-gray-600"
+            className="p-base rounded-lg text-gray-400 hover:text-gray-600"
           >
             <X size={16} />
           </button>
@@ -153,39 +153,39 @@ export function TeamSection() {
       )}
 
       <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <div className="flex border-b bg-gray-50 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-          <div className="flex-1 px-4 py-3">Name</div>
-          <div className="w-48 px-4 py-3">Email</div>
-          <div className="w-24 px-4 py-3">Role</div>
-          <div className="w-28 px-4 py-3">Last Login</div>
-          <div className="w-20 px-4 py-3">Status</div>
+        <div className="text-body flex border-b bg-gray-50 font-semibold tracking-wide text-gray-500 uppercase">
+          <div className="px-sm py-sm flex-1">Name</div>
+          <div className="px-sm py-sm w-[233px]">Email</div>
+          <div className="px-sm py-sm w-[89px]">Role</div>
+          <div className="px-sm py-sm w-[89px]">Last Login</div>
+          <div className="px-sm py-sm w-[89px]">Status</div>
         </div>
         {mockMembers.map((member) => {
           const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
           return (
             <div
               key={member.id}
-              className="flex items-center border-b text-sm"
+              className="text-body flex items-center border-b"
               style={{ borderColor: "var(--border)" }}
             >
-              <div className="flex-1 px-4 py-3 font-medium text-gray-800">{member.name}</div>
-              <div className="w-48 px-4 py-3 text-gray-500">{member.email}</div>
-              <div className="w-24 px-4 py-3">
+              <div className="px-sm py-sm flex-1 font-medium text-gray-800">{member.name}</div>
+              <div className="px-sm py-sm w-[233px] text-gray-500">{member.email}</div>
+              <div className="px-sm py-sm w-[89px]">
                 <span
-                  className="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
+                  className="px-base py-xs text-body rounded-full font-medium capitalize"
                   style={{ backgroundColor: badge.bg, color: badge.text }}
                 >
                   {member.role}
                 </span>
               </div>
-              <div className="w-28 px-4 py-3 text-xs text-gray-400">{member.lastLogin}</div>
-              <div className="w-20 px-4 py-3">
+              <div className="px-sm py-sm text-body w-[89px] text-gray-400">{member.lastLogin}</div>
+              <div className="px-sm py-sm w-[89px]">
                 <span
-                  className="flex items-center gap-1 text-xs"
+                  className="gap-xs text-body flex items-center"
                   style={{ color: statusColors[member.status] }}
                 >
                   <span
-                    className="h-1.5 w-1.5 rounded-full"
+                    className="h-xs w-xs rounded-full"
                     style={{
                       backgroundColor: statusColors[member.status],
                     }}

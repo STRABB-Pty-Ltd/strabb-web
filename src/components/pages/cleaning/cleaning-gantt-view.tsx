@@ -72,7 +72,7 @@ export function CleaningGanttView({ tasks }: CleaningGanttViewProps) {
         const end = addDays(start, Math.max(0.5, task.estimatedHours / 24));
         return { start, end };
       }}
-      getColor={(task) => statusColors[task.status] ?? "#6B7280"}
+      getColor={(task) => statusColors[task.status] ?? "var(--brand-10)"}
       getLabel={(task) =>
         `${typeLabels[task.type] ?? task.type} ${task.assigneeName ? `— ${task.assigneeName}` : ""}`
       }

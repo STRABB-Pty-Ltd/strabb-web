@@ -57,18 +57,18 @@ export function BookingDetailDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 text-sm">
+        <div className="space-y-sm text-body">
           {booking.conflictStatus === "conflicted" && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950">
+            <div className="p-sm rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
               <p className="font-medium text-red-800 dark:text-red-200">Date conflict detected</p>
-              <p className="text-muted-foreground mt-1 text-xs">
+              <p className="text-muted-foreground mt-xs text-body">
                 This booking overlaps with another booking on a different listing for the same
                 property. Resolve the conflict on the booking platform.
               </p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-2"
+                className="mt-base"
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
               >
@@ -77,7 +77,7 @@ export function BookingDetailDialog({
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="gap-sm grid grid-cols-2">
             <div>
               <Label className="text-muted-foreground">Check-in</Label>
               <p className="font-medium">{formatInPropertyTimezone(booking.checkIn, tz)}</p>
@@ -88,9 +88,9 @@ export function BookingDetailDialog({
             </div>
           </div>
 
-          <p className="text-muted-foreground text-xs">Times shown in {tzAbbr}</p>
+          <p className="text-muted-foreground text-body">Times shown in {tzAbbr}</p>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="gap-sm grid grid-cols-2">
             <div>
               <Label className="text-muted-foreground">Platform</Label>
               <p>{booking.source}</p>
@@ -107,7 +107,7 @@ export function BookingDetailDialog({
               <p>
                 {booking.guestName}
                 {booking.guestEmail && (
-                  <span className="text-muted-foreground ml-1">({booking.guestEmail})</span>
+                  <span className="text-muted-foreground ml-xs">({booking.guestEmail})</span>
                 )}
               </p>
             </div>
@@ -116,18 +116,18 @@ export function BookingDetailDialog({
           {booking.externalBookingId && (
             <div>
               <Label className="text-muted-foreground">External ID</Label>
-              <p className="font-mono text-xs">{booking.externalBookingId}</p>
+              <p className="text-body font-mono">{booking.externalBookingId}</p>
             </div>
           )}
 
           {booking.rawSummary && (
             <div>
               <Label className="text-muted-foreground">iCal Summary</Label>
-              <p className="text-xs">{booking.rawSummary}</p>
+              <p className="text-body">{booking.rawSummary}</p>
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-base">
             <Label htmlFor="booking-notes">Notes</Label>
             <Textarea
               id="booking-notes"

@@ -2,7 +2,6 @@
 
 import { useAppStore } from "@/stores/app-store";
 
-import { SettingsNav } from "./settings-nav";
 import { GeneralSection } from "./sections/general-section";
 import { TeamSection } from "./sections/team-section";
 import { BillingSection } from "./sections/billing-section";
@@ -26,17 +25,8 @@ export function SettingsLayout() {
   const ActiveSection = sectionComponents[section] ?? GeneralSection;
 
   return (
-    <div
-      className="flex rounded-lg border bg-white"
-      style={{
-        borderColor: "var(--border)",
-        minHeight: "calc(100vh - 160px)",
-      }}
-    >
-      <SettingsNav />
-      <div className="flex-1 overflow-y-auto p-6">
-        <ActiveSection />
-      </div>
+    <div className="p-md">
+      <ActiveSection />
     </div>
   );
 }

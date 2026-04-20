@@ -62,42 +62,42 @@ export function IntegrationsSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-md">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Integrations</h2>
-        <p className="text-sm text-gray-500">Connect platforms and manage sync settings.</p>
+        <h2 className="text-subheading font-semibold text-gray-900">Integrations</h2>
+        <p className="text-body text-gray-500">Connect platforms and manage sync settings.</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-sm">
         {mockPlatforms.map((platform) => (
           <div
             key={platform.id}
-            className="flex items-center gap-4 rounded-lg border px-4 py-3"
+            className="gap-sm px-sm py-sm flex items-center rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold text-white"
+              className="h-lg text-subheading flex w-lg items-center justify-center rounded-lg font-bold text-white"
               style={{ backgroundColor: platform.color }}
             >
               {platform.logo}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-800">{platform.name}</p>
+              <p className="text-body font-medium text-gray-800">{platform.name}</p>
               {platform.connected ? (
-                <p className="text-xs text-gray-500">
+                <p className="text-body text-gray-500">
                   Last sync: {platform.lastSync} &middot; {platform.listingCount} listings
                 </p>
               ) : (
-                <p className="text-xs text-gray-400">Not connected</p>
+                <p className="text-body text-gray-400">Not connected</p>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="gap-base flex items-center">
               {platform.connected && (
                 <span
-                  className="rounded-full px-2 py-0.5 text-xs font-medium"
+                  className="px-base py-xs text-body rounded-full font-medium"
                   style={{
                     backgroundColor: "rgba(22, 163, 74, 0.1)",
-                    color: "#16A34A",
+                    color: "var(--status-success)",
                   }}
                 >
                   Connected
@@ -106,10 +106,10 @@ export function IntegrationsSection() {
               <button
                 type="button"
                 onClick={() => handleConnect(platform.name)}
-                className="rounded-lg border px-3 py-1.5 text-xs font-medium"
+                className="px-sm py-xs text-body rounded-lg border font-medium"
                 style={{
                   borderColor: "var(--border)",
-                  color: platform.connected ? "#DC2626" : "var(--strabb-secondary)",
+                  color: platform.connected ? "var(--status-danger)" : "var(--strabb-secondary)",
                 }}
               >
                 {platform.connected ? "Disconnect" : "Connect"}
@@ -119,21 +119,21 @@ export function IntegrationsSection() {
         ))}
       </div>
 
-      <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)" }}>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">Manual iCal Feed</h3>
-        <div className="flex gap-2">
+      <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
+        <h3 className="mb-sm text-body font-semibold text-gray-700">Manual iCal Feed</h3>
+        <div className="gap-base flex">
           <input
             type="url"
             value={icalUrl}
             onChange={(e) => setIcalUrl(e.target.value)}
             placeholder="https://example.com/calendar.ics"
-            className="flex-1 rounded-lg border px-3 py-2 text-sm"
+            className="px-sm py-base text-body flex-1 rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           />
           <button
             type="button"
             onClick={handleAddIcal}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+            className="px-sm py-base text-body rounded-lg font-medium text-white"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             Add Feed

@@ -42,35 +42,42 @@ export function ListingFilterTree() {
   const renderListingRow = (listing: Listing, indent: boolean = false) => {
     const isChecked = selectedListings.includes(listing.id);
     return (
-      <label
+      <button
         key={listing.id}
-        className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 hover:bg-gray-50"
-        style={indent ? { paddingLeft: "var(--space-lg)" } : undefined}
+        type="button"
+        onClick={() => toggleListing(listing.id)}
+        aria-pressed={isChecked}
+        className="px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
+        style={{
+          backgroundColor: isChecked ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+          color: isChecked ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          marginLeft: indent ? "var(--space-md)" : undefined,
+        }}
       >
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={() => toggleListing(listing.id)}
-          className="h-3.5 w-3.5 rounded border-gray-300"
-        />
-        <span className="truncate text-sm text-gray-700">{listing.name}</span>
-      </label>
+        <span className="text-body truncate font-medium">{listing.name}</span>
+      </button>
     );
   };
 
   return (
-    <div
-      className="overflow-y-auto border-b"
-      style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}
-    >
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-xs font-semibold tracking-wide text-gray-500 uppercase">Listings</h3>
-        <div className="flex gap-2">
+    <div style={{ padding: "var(--space-sm)" }}>
+      <div className="mb-base flex items-center justify-between">
+        <h3
+          className="text-body font-semibold tracking-wide uppercase"
+          style={{ color: "var(--brand-10)", opacity: 0.7 }}
+        >
+          Listings
+        </h3>
+        <div className="gap-xs flex">
           <button
             type="button"
             onClick={handleSelectAll}
-            className="text-xs hover:underline"
-            style={{ color: "var(--strabb-secondary)" }}
+            className="px-base py-xs text-body rounded-lg"
+            style={{
+              backgroundColor: "var(--btn-inactive-bg)",
+              color: "var(--btn-inactive-text)",
+              opacity: allSelected ? 0.5 : 1,
+            }}
             disabled={allSelected}
           >
             Select All
@@ -78,7 +85,12 @@ export function ListingFilterTree() {
           <button
             type="button"
             onClick={handleClear}
-            className="text-xs text-gray-400 hover:underline"
+            className="px-base py-xs text-body rounded-lg"
+            style={{
+              backgroundColor: "var(--btn-inactive-bg)",
+              color: "var(--btn-inactive-text)",
+              opacity: selectedListings.length === 0 ? 0.5 : 1,
+            }}
             disabled={selectedListings.length === 0}
           >
             Clear
@@ -86,30 +98,40 @@ export function ListingFilterTree() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-0.5">
+      <div className="gap-xs flex flex-col">
         {/* Parent listings with children */}
         {parents.map((parent) => {
           const children = allListings.filter((l) => l.parentId === parent.id);
           const isExpanded = expandedGroups[parent.id] ?? true;
+          const parentChecked = selectedListings.includes(parent.id);
           return (
-            <div key={parent.id}>
-              <div className="flex items-center gap-1">
+            <div key={parent.id} className="gap-xs flex flex-col">
+              <div
+                className="flex items-center rounded-lg"
+                style={{
+                  backgroundColor: parentChecked
+                    ? "var(--btn-active-bg)"
+                    : "var(--btn-inactive-bg)",
+                  color: parentChecked ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => toggleGroup(parent.id)}
-                  className="shrink-0 p-0.5 text-gray-400"
+                  className="py-base flex shrink-0 items-center justify-center"
+                  style={{ width: "var(--space-lg)" }}
+                  aria-label={isExpanded ? "Collapse" : "Expand"}
                 >
-                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                 </button>
-                <label className="flex flex-1 cursor-pointer items-center gap-2 rounded px-1 py-1 hover:bg-gray-50">
-                  <input
-                    type="checkbox"
-                    checked={selectedListings.includes(parent.id)}
-                    onChange={() => toggleListing(parent.id)}
-                    className="h-3.5 w-3.5 rounded border-gray-300"
-                  />
-                  <span className="truncate text-sm font-medium text-gray-700">{parent.name}</span>
-                </label>
+                <button
+                  type="button"
+                  onClick={() => toggleListing(parent.id)}
+                  aria-pressed={parentChecked}
+                  className="pr-sm py-base flex flex-1 cursor-pointer items-center text-left"
+                >
+                  <span className="text-body truncate font-medium">{parent.name}</span>
+                </button>
               </div>
               {isExpanded && children.map((child) => renderListingRow(child, true))}
             </div>
@@ -124,24 +146,29 @@ export function ListingFilterTree() {
           const isExpanded = expandedGroups[group.id] ?? false;
           const groupListings = allListings.filter((l) => group.listingIds.includes(l.id));
           return (
-            <div key={group.id}>
-              <div className="flex items-center gap-1">
+            <div key={group.id} className="gap-xs flex flex-col">
+              <div
+                className="gap-xs px-sm py-base flex items-center rounded-lg"
+                style={{
+                  backgroundColor: "var(--btn-inactive-bg)",
+                  color: "var(--btn-inactive-text)",
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => toggleGroup(group.id)}
-                  className="shrink-0 p-0.5 text-gray-400"
+                  className="p-xs shrink-0"
                 >
-                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                 </button>
-                <span className="flex-1 truncate text-sm font-medium text-gray-600">
-                  {group.name}
-                </span>
+                <span className="text-body flex-1 truncate font-medium">{group.name}</span>
                 <button
                   type="button"
                   onClick={() => deleteCustomGroup(group.id)}
-                  className="p-0.5 text-gray-400 hover:text-red-500"
+                  className="p-xs"
+                  style={{ color: "var(--status-issues)" }}
                 >
-                  <X size={12} />
+                  <X size={13} />
                 </button>
               </div>
               {isExpanded && groupListings.map((l) => renderListingRow(l, true))}
@@ -152,40 +179,59 @@ export function ListingFilterTree() {
 
       {/* Create Group */}
       {showCreateGroup ? (
-        <div className="mt-2 flex gap-1">
+        <div className="mt-base gap-xs flex flex-col">
           <input
             type="text"
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreateGroup()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleCreateGroup();
+              if (e.key === "Escape") setShowCreateGroup(false);
+            }}
             placeholder="Group name"
-            className="flex-1 rounded border px-2 py-1 text-sm"
+            className="px-sm py-base text-body rounded-lg"
+            style={{
+              backgroundColor: "var(--neutral-30)",
+              color: "var(--brand-10)",
+            }}
             autoFocus
           />
-          <button
-            type="button"
-            onClick={handleCreateGroup}
-            className="rounded px-2 py-1 text-sm text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
-          >
-            Add
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowCreateGroup(false)}
-            className="rounded px-2 py-1 text-sm text-gray-500"
-          >
-            Cancel
-          </button>
+          <div className="gap-xs flex">
+            <button
+              type="button"
+              onClick={handleCreateGroup}
+              className="px-sm py-base text-body flex-1 rounded-lg"
+              style={{
+                backgroundColor: "var(--btn-active-bg)",
+                color: "var(--btn-active-text)",
+              }}
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowCreateGroup(false)}
+              className="px-sm py-base text-body flex-1 rounded-lg"
+              style={{
+                backgroundColor: "var(--btn-inactive-bg)",
+                color: "var(--btn-inactive-text)",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       ) : (
         <button
           type="button"
           onClick={() => setShowCreateGroup(true)}
-          className="mt-2 flex items-center gap-1 text-xs hover:underline"
-          style={{ color: "var(--strabb-secondary)" }}
+          className="mt-base gap-xs px-sm py-base text-body flex items-center rounded-lg"
+          style={{
+            backgroundColor: "var(--btn-inactive-bg)",
+            color: "var(--btn-inactive-text)",
+          }}
         >
-          <Plus size={12} />
+          <Plus size={13} />
           Create Group
         </button>
       )}

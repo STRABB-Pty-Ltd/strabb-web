@@ -14,22 +14,34 @@ export function ChannelFilter() {
   const toggleChannel = useAppStore((s) => s.toggleChannel);
 
   return (
-    <div className="border-b" style={{ padding: "var(--space-md)", borderColor: "var(--border)" }}>
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">Channels</h3>
-      <div className="flex flex-col gap-1">
+    <div style={{ padding: "var(--space-sm)" }}>
+      <h3
+        className="mb-base text-body font-semibold tracking-wide uppercase"
+        style={{ color: "var(--brand-10)", opacity: 0.7 }}
+      >
+        Channels
+      </h3>
+      <div className="gap-xs flex flex-col">
         {channels.map((ch) => {
-          const isActive = activeChannels.length === 0 || activeChannels.includes(ch.id);
+          const isActive = activeChannels.includes(ch.id);
           return (
-            <label key={ch.id} className="flex cursor-pointer items-center gap-2 py-1">
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={() => toggleChannel(ch.id)}
-                className="h-3.5 w-3.5 rounded border-gray-300"
+            <button
+              key={ch.id}
+              type="button"
+              onClick={() => toggleChannel(ch.id)}
+              aria-pressed={isActive}
+              className="gap-base px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
+              style={{
+                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              }}
+            >
+              <span
+                className="h-sm w-sm shrink-0 rounded-sm"
+                style={{ backgroundColor: ch.color }}
               />
-              <span className="h-3 w-3 shrink-0 rounded-sm" style={{ backgroundColor: ch.color }} />
-              <span className="text-sm text-gray-700">{ch.label}</span>
-            </label>
+              <span className="text-body font-medium">{ch.label}</span>
+            </button>
           );
         })}
       </div>

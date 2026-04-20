@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
+import { Monitor, Moon, Sun } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -16,41 +18,52 @@ const timezones = [
 
 const currencies = ["AUD", "NZD", "USD", "EUR", "GBP"];
 
+const themeOptions = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Monitor },
+] as const;
+
 export function GeneralSection() {
   const addToast = useAppStore((s) => s.addToast);
   const [companyName, setCompanyName] = useState("STRABB Properties");
   const [timezone, setTimezone] = useState("Australia/Sydney");
   const [currency, setCurrency] = useState("AUD");
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const handleSave = () => {
     addToast({ type: "success", message: "General settings saved" });
   };
 
   return (
-    <div className="max-w-lg space-y-6">
+    <div className="space-y-md">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">General</h2>
-        <p className="text-sm text-gray-500">Basic account and display settings.</p>
+        <h2 className="text-subheading font-semibold text-gray-900">General</h2>
+        <p className="text-body text-gray-500">Basic account and display settings.</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-sm">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Company Name</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">Company Name</label>
           <input
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Default Timezone</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">
+            Default Timezone
+          </label>
           <select
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             {timezones.map((tz) => (
@@ -62,11 +75,13 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Default Currency</label>
+          <label className="mb-xs text-body block font-medium text-gray-700">
+            Default Currency
+          </label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             {currencies.map((c) => (
@@ -76,12 +91,41 @@ export function GeneralSection() {
             ))}
           </select>
         </div>
+
+        <div>
+          <label className="mb-xs text-body block font-medium text-gray-700">Appearance</label>
+          <div
+            className="p-xs inline-flex rounded-lg border"
+            style={{ borderColor: "var(--border)" }}
+          >
+            {themeOptions.map((opt) => {
+              const Icon = opt.icon;
+              const active = mounted && theme === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setTheme(opt.value)}
+                  className="gap-xs px-sm py-xs text-body flex items-center rounded-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: active ? "var(--strabb-secondary)" : "transparent",
+                    color: active ? "var(--surface-60)" : "var(--brand-10)",
+                  }}
+                  aria-pressed={active}
+                >
+                  <Icon size={14} />
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <button
         type="button"
         onClick={handleSave}
-        className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-white"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Save Changes

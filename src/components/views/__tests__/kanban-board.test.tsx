@@ -14,14 +14,14 @@ const columns = [
     id: "todo",
     label: "To Do",
     items: [
-      { id: "t-1", title: "Task 1", color: "#3B82F6" },
-      { id: "t-2", title: "Task 2", color: "#10B981" },
+      { id: "t-1", title: "Task 1", color: "var(--brand-10)" },
+      { id: "t-2", title: "Task 2", color: "var(--status-success)" },
     ],
   },
   {
     id: "in_progress",
     label: "In Progress",
-    items: [{ id: "t-3", title: "Task 3", color: "#F59E0B" }],
+    items: [{ id: "t-3", title: "Task 3", color: "var(--status-danger)" }],
   },
   {
     id: "done",

@@ -16,13 +16,6 @@ interface ChannelBreakdownChartProps {
   loading?: boolean;
 }
 
-const channelColors: Record<string, string> = {
-  Airbnb: "#FF5A5F",
-  "Booking.com": "#003580",
-  VRBO: "#3B5998",
-  Direct: "#D97706",
-};
-
 const formatAUD = (value: number) =>
   new Intl.NumberFormat("en-AU", {
     style: "currency",
@@ -34,23 +27,28 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
   return (
     <ChartContainer title="Channel Breakdown" loading={loading} empty={data.length === 0}>
       <BarChart data={data} layout="vertical">
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis type="number" tick={{ fontSize: 12 }} tickFormatter={formatAUD} />
-        <YAxis dataKey="channel" type="category" tick={{ fontSize: 12 }} width={100} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+        <XAxis
+          type="number"
+          tick={{ fontSize: 13, fill: "var(--brand-10)" }}
+          tickFormatter={formatAUD}
+        />
+        <YAxis
+          dataKey="channel"
+          type="category"
+          tick={{ fontSize: 13, fill: "var(--brand-10)" }}
+          width={89}
+        />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 12 }}
+          contentStyle={{ fontSize: 13 }}
         />
         <Bar
           dataKey="revenue"
-          radius={[0, 4, 4, 0]}
-          fill="#3B82F6"
-          label={{ position: "right", fontSize: 11, formatter: (v) => formatAUD(Number(v)) }}
-        >
-          {data.map((entry, i) => (
-            <rect key={i} fill={channelColors[entry.channel] ?? entry.color} />
-          ))}
-        </Bar>
+          radius={[0, 3, 3, 0]}
+          fill="var(--brand-10)"
+          label={{ position: "right", fontSize: 13, formatter: (v) => formatAUD(Number(v)) }}
+        />
       </BarChart>
     </ChartContainer>
   );

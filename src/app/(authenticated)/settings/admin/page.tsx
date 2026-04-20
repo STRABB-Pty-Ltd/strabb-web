@@ -27,16 +27,16 @@ function HealthCard({
   const hasIssue = count > 0;
   const content = (
     <div
-      className={`rounded-xl border p-4 ${hasIssue ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950" : "bg-card"}`}
+      className={`p-sm rounded-xl border ${hasIssue ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950" : "bg-card"}`}
     >
-      <div className="flex items-center gap-3">
+      <div className="gap-sm flex items-center">
         <Icon
-          className={`size-5 ${hasIssue ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}
+          className={`size-md ${hasIssue ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}
         />
         <div>
-          <p className="text-muted-foreground text-xs">{label}</p>
+          <p className="text-muted-foreground text-body">{label}</p>
           <p
-            className={`text-xl font-semibold ${hasIssue ? "text-red-700 dark:text-red-300" : ""}`}
+            className={`text-subheading font-semibold ${hasIssue ? "text-red-700 dark:text-red-300" : ""}`}
           >
             {count}
           </p>
@@ -59,14 +59,14 @@ export default function AdminPage() {
   const { data, isLoading } = useSystemHealth();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-md">
       <PageHeader
         title="System Health"
         description="Monitor sync failures, email failures, and task issues."
       />
 
       {isLoading && (
-        <div className="flex justify-center py-12">
+        <div className="py-xl flex justify-center">
           <LoadingSpinner />
         </div>
       )}
@@ -74,15 +74,15 @@ export default function AdminPage() {
       {data && (
         <>
           {!data.hasIssues && (
-            <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950">
-              <CheckCircleIcon className="size-5 text-green-600 dark:text-green-400" />
-              <p className="text-sm font-medium text-green-800 dark:text-green-200">
+            <div className="gap-base p-sm flex items-center rounded-xl border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
+              <CheckCircleIcon className="size-md text-green-600 dark:text-green-400" />
+              <p className="text-body font-medium text-green-800 dark:text-green-200">
                 All systems healthy — no failures detected.
               </p>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="gap-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <HealthCard
               label="Sync Errors"
               count={data.syncErrors}

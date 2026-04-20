@@ -95,11 +95,10 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="flex shrink-0 items-center justify-center overflow-x-auto border-b"
+      className="gap-xs flex shrink-0 items-center justify-center overflow-x-auto"
       style={{
-        height: "var(--submenu-height)",
-        gap: "var(--space-sm)",
-        borderColor: "var(--border)",
+        backgroundColor: "var(--surface-submenu)",
+        paddingRight: "calc(var(--sidebar-width) / 2)",
       }}
     >
       {chips.map((chip) => {
@@ -118,35 +117,24 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap transition-colors"
+              className="gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
-                height: "var(--chip-height)",
-                borderRadius: 8,
-                padding: "0 var(--space-md)",
-                fontSize: 14,
-                ...(active
-                  ? {
-                      backgroundColor: "var(--strabb-secondary)",
-                      color: "white",
-                      border: "none",
-                    }
-                  : {
-                      backgroundColor: "white",
-                      color: "#374151",
-                      border: "1px solid #E5E7EB",
-                    }),
+                width: 95,
+                borderRadius: 5,
+                backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
             >
               {chip.label}
-              {isMore && <ChevronDown size={14} />}
+              {isMore && <ChevronDown size={13} />}
             </button>
 
             {isMore && moreOpen && (
               <div
-                className="absolute top-full left-0 z-50 mt-1 rounded-lg border bg-white py-1 shadow-md"
-                style={{ minWidth: 160 }}
+                className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
+                style={{ minWidth: 144 }}
               >
-                <div className="px-3 py-2 text-sm text-gray-400">Coming soon</div>
+                <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
               </div>
             )}
           </div>

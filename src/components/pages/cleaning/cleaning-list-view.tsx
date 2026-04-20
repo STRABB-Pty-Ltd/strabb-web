@@ -26,33 +26,33 @@ const typeLabels: Record<string, string> = {
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  urgent: { bg: "#FEE2E2", text: "#DC2626" },
-  high: { bg: "#FEF3C7", text: "#92400E" },
-  medium: { bg: "#DBEAFE", text: "#1E40AF" },
-  low: { bg: "#F3F4F6", text: "#6B7280" },
+  urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
+  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
 const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "listing",
     label: "Listing",
-    width: "180px",
+    width: "144px",
     render: (t) => (
-      <div className="flex items-center gap-2">
+      <div className="gap-base flex items-center">
         <span
-          className="h-2.5 w-2.5 shrink-0 rounded-full"
+          className="h-base w-base shrink-0 rounded-full"
           style={{ backgroundColor: t.listingColor }}
         />
-        <span className="truncate text-sm">{t.listingName}</span>
+        <span className="text-body truncate">{t.listingName}</span>
       </div>
     ),
   },
   {
     key: "type",
     label: "Type",
-    width: "100px",
+    width: "89px",
     render: (t) => (
-      <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+      <span className="px-base py-xs text-body rounded-sm bg-gray-100 text-gray-600">
         {typeLabels[t.type] ?? t.type}
       </span>
     ),
@@ -60,9 +60,9 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "scheduled",
     label: "Scheduled",
-    width: "130px",
+    width: "144px",
     render: (t) => (
-      <span className="font-data text-xs">
+      <span className="font-data text-body">
         {format(new Date(t.scheduledTime), "d MMM yyyy, HH:mm")}
       </span>
     ),
@@ -70,18 +70,20 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "assignee",
     label: "Assignee",
-    width: "120px",
-    render: (t) => <span className="text-xs text-gray-600">{t.assigneeName ?? "Unassigned"}</span>,
+    width: "144px",
+    render: (t) => (
+      <span className="text-body text-gray-600">{t.assigneeName ?? "Unassigned"}</span>
+    ),
   },
   {
     key: "status",
     label: "Status",
-    width: "110px",
+    width: "89px",
     render: (t) => (
       <span
-        className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+        className="px-base py-xs text-body rounded-full font-medium text-white"
         style={{
-          backgroundColor: statusColors[t.status] ?? "#6B7280",
+          backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
         }}
       >
         {t.status === "issues" ? "ticket" : t.status.replace("_", " ")}
@@ -91,12 +93,12 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "priority",
     label: "Priority",
-    width: "90px",
+    width: "89px",
     render: (t) => {
       const p = priorityColors[t.priority] ?? priorityColors.low;
       return (
         <span
-          className="rounded px-2 py-0.5 text-xs font-medium"
+          className="px-base py-xs text-body rounded-sm font-medium"
           style={{ backgroundColor: p.bg, color: p.text }}
         >
           {t.priority}
@@ -107,9 +109,9 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "checklist",
     label: "Checklist",
-    width: "80px",
+    width: "89px",
     render: (t) => (
-      <span className="font-data text-xs">
+      <span className="font-data text-body">
         {t.checklistDone}/{t.checklistTotal}
       </span>
     ),
@@ -117,8 +119,8 @@ const columns: ColumnDef<CleaningTask>[] = [
   {
     key: "hours",
     label: "Est. Hours",
-    width: "80px",
-    render: (t) => <span className="font-data text-xs">{t.estimatedHours}h</span>,
+    width: "89px",
+    render: (t) => <span className="font-data text-body">{t.estimatedHours}h</span>,
   },
 ];
 

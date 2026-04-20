@@ -32,7 +32,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
   return (
     <div
       className="flex rounded-lg border"
-      style={{ borderColor: "var(--border)", height: "calc(100vh - 160px)" }}
+      style={{ borderColor: "var(--border)", height: "calc(100vh - 144px)" }}
     >
       {/* Left pane — message list */}
       <div
@@ -40,22 +40,22 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
         style={{ width: "40%", borderColor: "var(--border)" }}
       >
         {messages.length === 0 && (
-          <p className="py-8 text-center text-sm text-gray-400">No messages</p>
+          <p className="py-lg text-body text-center text-gray-400">No messages</p>
         )}
         {messages.map((msg) => (
           <button
             key={msg.id}
             type="button"
             onClick={() => setSelectedMessage(msg.id)}
-            className="flex w-full items-center gap-3 border-b px-4 py-3 text-left transition-colors hover:bg-gray-50"
+            className="gap-sm px-sm py-sm flex w-full items-center border-b text-left transition-colors hover:bg-gray-50"
             style={{
               borderColor: "var(--border)",
-              backgroundColor: selectedMessage === msg.id ? "#F0F7FF" : undefined,
+              backgroundColor: selectedMessage === msg.id ? "var(--neutral-30)" : undefined,
             }}
           >
             {/* Unread dot */}
             <span
-              className="h-2 w-2 shrink-0 rounded-full"
+              className="h-base w-base shrink-0 rounded-full"
               style={{
                 backgroundColor:
                   msg.status === "unread" ? "var(--strabb-secondary)" : "transparent",
@@ -63,25 +63,27 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
             />
 
             <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <span className="truncate text-sm font-medium text-gray-800">{msg.guestName}</span>
-                <span className="shrink-0 text-xs text-gray-400">
+              <div className="gap-base flex items-center justify-between">
+                <span className="text-body truncate font-medium text-gray-800">
+                  {msg.guestName}
+                </span>
+                <span className="text-body shrink-0 text-gray-400">
                   {format(new Date(msg.lastMessageTime), "d MMM")}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="gap-xs flex items-center">
                 <span
-                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  className="h-xs w-xs shrink-0 rounded-full"
                   style={{
-                    backgroundColor: channelColors[msg.channel] ?? "#6B7280",
+                    backgroundColor: channelColors[msg.channel] ?? "var(--channel-direct)",
                   }}
                 />
-                <span className="truncate text-xs text-gray-500">{msg.listingName}</span>
+                <span className="text-body truncate text-gray-500">{msg.listingName}</span>
               </div>
-              <p className="truncate text-xs text-gray-400">{msg.subject}</p>
+              <p className="text-body truncate text-gray-400">{msg.subject}</p>
             </div>
 
-            <span className="flex shrink-0 items-center gap-0.5 text-xs text-gray-400">
+            <span className="gap-xs text-body flex shrink-0 items-center text-gray-400">
               <MessageSquare size={10} />
               {msg.messageCount}
             </span>
@@ -93,7 +95,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
       <div className="flex-1">
         {!selectedMsg ? (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-gray-400">Select a message to view</p>
+            <p className="text-body text-gray-400">Select a message to view</p>
           </div>
         ) : (
           <MessageThread

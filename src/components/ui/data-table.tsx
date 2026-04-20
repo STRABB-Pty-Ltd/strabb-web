@@ -19,7 +19,7 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="text-muted-foreground flex items-center justify-center rounded-md border py-12">
+      <div className="text-muted-foreground py-xl flex items-center justify-center rounded-md border">
         {emptyMessage}
       </div>
     );
@@ -27,11 +27,11 @@ export function DataTable<T>({
 
   return (
     <div className="overflow-x-auto rounded-md border">
-      <table className="w-full text-sm">
+      <table className="text-body w-full">
         <thead>
           <tr className="bg-muted/50 border-b">
             {columns.map((col) => (
-              <th key={String(col.key)} className="px-4 py-3 text-left font-medium">
+              <th key={String(col.key)} className="px-sm py-sm text-left font-medium">
                 {col.header}
               </th>
             ))}
@@ -41,7 +41,7 @@ export function DataTable<T>({
           {data.map((row, i) => (
             <tr key={i} className="border-b last:border-0">
               {columns.map((col) => (
-                <td key={String(col.key)} className="px-4 py-3">
+                <td key={String(col.key)} className="px-sm py-sm">
                   {col.render
                     ? col.render((row as Record<string, unknown>)[col.key as string], row)
                     : String((row as Record<string, unknown>)[col.key as string] ?? "")}

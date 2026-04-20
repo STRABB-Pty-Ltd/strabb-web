@@ -20,9 +20,9 @@ const channelLabels: Record<string, string> = {
 };
 
 const priorityDot: Record<string, string> = {
-  high: "#DC2626",
-  medium: "#D97706",
-  low: "#9CA3AF",
+  high: "var(--status-danger)",
+  medium: "var(--status-danger)",
+  low: "var(--brand-10)",
 };
 
 interface MessageCardProps {
@@ -33,44 +33,44 @@ interface MessageCardProps {
 export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
     <button type="button" onClick={onClick} className="w-full text-left">
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium text-gray-800">{message.guestName}</span>
+      <div className="space-y-xs">
+        <div className="gap-base flex items-center">
+          <span className="text-body truncate font-medium text-gray-800">{message.guestName}</span>
           {message.priority !== "low" && (
             <span
-              className="h-2 w-2 shrink-0 rounded-full"
+              className="h-base w-base shrink-0 rounded-full"
               style={{ backgroundColor: priorityDot[message.priority] }}
             />
           )}
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="gap-xs flex items-center">
           <span
-            className="h-2 w-2 shrink-0 rounded-full"
+            className="h-base w-base shrink-0 rounded-full"
             style={{
-              backgroundColor: channelColors[message.channel] ?? "#6B7280",
+              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           />
-          <span className="truncate text-xs text-gray-500">{message.listingName}</span>
+          <span className="text-body truncate text-gray-500">{message.listingName}</span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="gap-base flex items-center">
           <span
-            className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium text-white"
+            className="px-xs py-xs text-body shrink-0 rounded-sm font-medium text-white"
             style={{
-              backgroundColor: channelColors[message.channel] ?? "#6B7280",
+              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
             {channelLabels[message.channel] ?? message.channel}
           </span>
-          <span className="truncate text-xs text-gray-600">{message.subject}</span>
+          <span className="text-body truncate text-gray-600">{message.subject}</span>
         </div>
 
-        <p className="truncate text-xs text-gray-400">{message.previewText}</p>
+        <p className="text-body truncate text-gray-400">{message.previewText}</p>
 
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="gap-base text-body flex items-center text-gray-400">
           <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
-          <span className="flex items-center gap-0.5">
+          <span className="gap-xs flex items-center">
             <MessageSquare size={10} />
             {message.messageCount}
           </span>

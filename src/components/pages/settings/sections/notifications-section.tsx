@@ -54,33 +54,33 @@ export function NotificationsSection() {
   };
 
   return (
-    <div className="max-w-lg space-y-6">
+    <div className="space-y-md">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
-        <p className="text-sm text-gray-500">Choose which email notifications you receive.</p>
+        <h2 className="text-subheading font-semibold text-gray-900">Notifications</h2>
+        <p className="text-body text-gray-500">Choose which email notifications you receive.</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-sm">
         {toggles.map((t) => (
           <div
             key={t.id}
-            className="flex items-center justify-between rounded-lg border px-4 py-3"
+            className="px-sm py-sm flex items-center justify-between rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >
             <div>
-              <p className="text-sm font-medium text-gray-800">{t.label}</p>
-              <p className="text-xs text-gray-500">{t.description}</p>
+              <p className="text-body font-medium text-gray-800">{t.label}</p>
+              <p className="text-body text-gray-500">{t.description}</p>
             </div>
             <button
               type="button"
               onClick={() => toggle(t.id)}
-              className="relative h-6 w-10 rounded-full transition-colors"
+              className="h-md relative w-lg rounded-full transition-colors"
               style={{
-                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "#D1D5DB",
+                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
               }}
             >
               <span
-                className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform"
+                className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
                 style={{
                   left: settings[t.id] ? 18 : 2,
                 }}
@@ -93,7 +93,7 @@ export function NotificationsSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-white"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Save Preferences

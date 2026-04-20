@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
 
 import { topNavItems, settingsNavItem } from "@/lib/navigation";
 import { useAppStore } from "@/stores/app-store";
@@ -9,40 +8,25 @@ import { useAppStore } from "@/stores/app-store";
 export function TopNav() {
   const currentPage = useAppStore((s) => s.currentPage);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
-  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
-  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
 
   return (
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className="flex shrink-0 items-center"
+      className="relative flex shrink-0 items-center"
       style={{
-        height: "var(--topnav-height)",
-        backgroundColor: "var(--strabb-primary)",
+        backgroundColor: "var(--surface-60)",
       }}
     >
-      {/* Mobile hamburger */}
-      <button
-        type="button"
-        className="p-2 text-white lg:hidden"
-        style={{ marginLeft: "var(--space-sm)" }}
-        onClick={toggleSidebar}
-        aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+      {/* Page buttons — optical centre, shifted left by sidebar_width/4
+          to counterbalance the sidebar's visual weight */}
+      <div
+        className="gap-xs absolute top-1/2 flex items-center"
+        style={{
+          left: "calc(50% - var(--sidebar-width) / 4)",
+          transform: "translate(-50%, -50%)",
+        }}
       >
-        <Menu size={24} />
-      </button>
-
-      {/* Logo */}
-      <span
-        className="font-data shrink-0 text-lg font-bold text-white"
-        style={{ paddingLeft: "var(--space-md)" }}
-      >
-        STRABB
-      </span>
-
-      {/* Page buttons */}
-      <div className="flex flex-1 items-center justify-center gap-1">
         {topNavItems.map((item) => {
           const isActive = currentPage === item.id;
           return (
@@ -51,12 +35,13 @@ export function TopNav() {
               href={item.href}
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              style={
-                isActive
-                  ? { backgroundColor: "var(--strabb-secondary)", borderRadius: 8 }
-                  : undefined
-              }
+              className="px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              style={{
+                width: 95,
+                borderRadius: 5,
+                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              }}
             >
               {item.label}
             </Link>
@@ -64,17 +49,22 @@ export function TopNav() {
         })}
       </div>
 
+      {/* Spacer to push Settings to the right (buttons div is absolutely positioned) */}
+      <div className="flex-1" />
+
       {/* Settings button */}
       <Link
         href={settingsNavItem.href}
         onClick={() => setCurrentPage(settingsNavItem.id)}
         aria-current={currentPage === "settings" ? "page" : undefined}
-        className="mr-4 flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-        style={
-          currentPage === "settings"
-            ? { backgroundColor: "var(--strabb-secondary)", borderRadius: 8 }
-            : undefined
-        }
+        className="mr-sm px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+        style={{
+          width: 95,
+          borderRadius: 5,
+          backgroundColor:
+            currentPage === "settings" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+          color: currentPage === "settings" ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+        }}
       >
         {settingsNavItem.label}
       </Link>

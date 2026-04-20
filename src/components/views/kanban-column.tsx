@@ -10,25 +10,20 @@ export function KanbanColumn({ id, label, count, children }: KanbanColumnProps) 
     <div
       className="flex min-w-0 flex-1 flex-col rounded-lg"
       style={{
-        backgroundColor: "#F9FAFB",
+        backgroundColor: "var(--neutral-30)",
       }}
     >
       <div
-        className="flex items-center gap-2 border-b px-3 py-2"
+        className="gap-base px-sm py-base flex items-center border-b"
         style={{ borderColor: "var(--border)" }}
       >
-        <span className="text-sm font-semibold text-gray-700">{label}</span>
-        <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
+        <span className="text-body font-semibold text-gray-700">{label}</span>
+        <span className="px-base py-xs text-body rounded-full bg-gray-200 font-medium text-gray-600">
           {count}
         </span>
       </div>
 
-      <div
-        className="flex flex-1 flex-col gap-2 overflow-y-auto p-2"
-        style={{ maxHeight: "calc(100vh - 200px)" }}
-      >
-        {children}
-      </div>
+      <div className="gap-base p-base flex flex-1 flex-col">{children}</div>
     </div>
   );
 }

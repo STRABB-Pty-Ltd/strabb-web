@@ -29,8 +29,6 @@ function isInputFocused(): boolean {
 export function useKeyboardShortcuts() {
   const router = useRouter();
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
-  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
-  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
 
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
@@ -79,16 +77,6 @@ export function useKeyboardShortcuts() {
         return;
       }
 
-      // [ and ] — sidebar toggle
-      if (e.key === "[") {
-        if (sidebarOpen) toggleSidebar();
-        return;
-      }
-      if (e.key === "]") {
-        if (!sidebarOpen) toggleSidebar();
-        return;
-      }
-
       // ? — help modal
       if (e.key === "?") {
         setHelpOpen((prev) => !prev);
@@ -108,8 +96,6 @@ export function useKeyboardShortcuts() {
   }, [
     router,
     setCurrentPage,
-    sidebarOpen,
-    toggleSidebar,
     helpOpen,
     drillDownPanel,
     threadOverlay,

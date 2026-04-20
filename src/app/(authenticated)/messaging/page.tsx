@@ -23,14 +23,14 @@ export default function MessagingPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <p className="text-sm text-gray-400">Loading messages...</p>
+      <div className="py-xl flex items-center justify-center">
+        <p className="text-body text-gray-400">Loading messages...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4">
+    <div>
       {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
       {view === "list" && <MessagingListView messages={messages ?? []} />}
 

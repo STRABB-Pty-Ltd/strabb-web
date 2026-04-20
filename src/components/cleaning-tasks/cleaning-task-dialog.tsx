@@ -78,22 +78,22 @@ export function CleaningTaskDialog({
           <DialogTitle>Cleaning Task — {propertyName}</DialogTitle>
           <DialogDescription>
             <span
-              className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${statusColors[task.status] ?? ""}`}
+              className={`px-base py-xs text-body inline-block rounded-sm font-medium ${statusColors[task.status] ?? ""}`}
             >
               {task.status}
             </span>
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 text-sm">
+        <div className="space-y-sm text-body">
           <div>
             <Label className="text-muted-foreground">Scheduled</Label>
             <p className="font-medium">{formatInPropertyTimezone(task.scheduledDate, tz)}</p>
-            <p className="text-muted-foreground text-xs">{tzAbbr}</p>
+            <p className="text-muted-foreground text-body">{tzAbbr}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
+          <div className="gap-sm grid grid-cols-2">
+            <div className="space-y-xs">
               <Label htmlFor="cleaner-name">Cleaner name</Label>
               <Input
                 id="cleaner-name"
@@ -102,7 +102,7 @@ export function CleaningTaskDialog({
                 placeholder="Cleaner name"
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-xs">
               <Label htmlFor="cleaner-email">Email</Label>
               <Input
                 id="cleaner-email"
@@ -114,7 +114,7 @@ export function CleaningTaskDialog({
             </div>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-xs">
             <Label htmlFor="cleaner-phone">Phone</Label>
             <Input
               id="cleaner-phone"
@@ -125,7 +125,7 @@ export function CleaningTaskDialog({
             />
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-xs">
             <Label htmlFor="task-notes">Notes</Label>
             <Textarea
               id="task-notes"
@@ -136,7 +136,7 @@ export function CleaningTaskDialog({
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="gap-base flex">
             {task.status !== "completed" && task.status !== "cancelled" && (
               <Button
                 variant="outline"

@@ -50,7 +50,7 @@ export function MessagingKanbanView({ messages }: MessagingKanbanViewProps) {
         />
       )}
       getItemId={(msg) => msg.id}
-      getBorderColor={(msg) => channelColors[msg.channel] ?? "#6B7280"}
+      getBorderColor={(msg) => channelColors[msg.channel] ?? "var(--channel-direct)"}
     />
   );
 }

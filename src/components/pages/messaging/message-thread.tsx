@@ -42,19 +42,19 @@ export function MessageThread({
   return (
     <div className="flex h-full flex-col">
       {/* Booking context header */}
-      <div className="shrink-0 border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
+      <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-gray-800">{message.guestName}</h3>
-            <p className="text-xs text-gray-500">{message.listingName}</p>
-            <p className="text-xs text-gray-400">
+            <h3 className="text-body font-semibold text-gray-800">{message.guestName}</h3>
+            <p className="text-body text-gray-500">{message.listingName}</p>
+            <p className="text-body text-gray-400">
               {message.checkIn} &ndash; {message.checkOut}
             </p>
           </div>
           <span
-            className="rounded px-2 py-0.5 text-xs font-medium text-white"
+            className="px-base py-xs text-body rounded-sm font-medium text-white"
             style={{
-              backgroundColor: channelColors[message.channel] ?? "#6B7280",
+              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
             {message.channel.replace("_", ".")}
@@ -63,20 +63,20 @@ export function MessageThread({
       </div>
 
       {/* Thread messages */}
-      <div className="flex-1 space-y-3 overflow-y-auto p-4">
+      <div className="space-y-sm p-sm flex-1 overflow-y-auto">
         {thread.map((msg) => (
           <div key={msg.id} className={`flex ${msg.isGuest ? "justify-start" : "justify-end"}`}>
             <div
-              className="max-w-[80%] px-3 py-2"
+              className="px-sm py-base max-w-[80%]"
               style={{
-                backgroundColor: msg.isGuest ? "#F3F4F6" : "var(--strabb-secondary)",
-                color: msg.isGuest ? "#374151" : "white",
-                borderRadius: msg.isGuest ? "12px 12px 12px 0" : "12px 12px 0 12px",
+                backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
+                color: msg.isGuest ? "var(--brand-10)" : "white",
+                borderRadius: msg.isGuest ? "8px 8px 8px 0" : "8px 8px 0 8px",
               }}
             >
-              <p className="text-xs font-medium opacity-70">{msg.senderName}</p>
-              <p className="text-sm">{msg.content}</p>
-              <p className="mt-1 text-xs opacity-50">
+              <p className="text-body font-medium opacity-70">{msg.senderName}</p>
+              <p className="text-body">{msg.content}</p>
+              <p className="mt-xs text-body opacity-50">
                 {new Date(msg.sentAt).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -88,50 +88,53 @@ export function MessageThread({
       </div>
 
       {/* Triage bar */}
-      <div className="flex gap-2 border-t px-4 py-2" style={{ borderColor: "var(--border)" }}>
+      <div
+        className="gap-base px-sm py-base flex border-t"
+        style={{ borderColor: "var(--border)" }}
+      >
         <button
           type="button"
           onClick={onResolve}
-          className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Resolved
         </button>
         <button
           type="button"
           onClick={onFollowUp}
-          className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Follow Up
         </button>
         <button
           type="button"
           onClick={onPriority}
-          className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Priority
         </button>
         <button
           type="button"
           onClick={onConvertMaintenance}
-          className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
           Maintenance
         </button>
       </div>
 
       {/* Compose */}
-      <div className="flex gap-2 border-t px-4 py-3" style={{ borderColor: "var(--border)" }}>
+      <div className="gap-base px-sm py-sm flex border-t" style={{ borderColor: "var(--border)" }}>
         <textarea
           value={compose}
           onChange={(e) => setCompose(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 resize-none rounded-lg border p-2 text-sm"
+          className="p-base text-body flex-1 resize-none rounded-lg border"
           rows={2}
         />
         <button
           type="button"
           onClick={handleSend}
-          className="self-end rounded-lg p-2 text-white"
+          className="p-base self-end rounded-lg text-white"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           <Send size={18} />

@@ -26,19 +26,19 @@ export function SortableListHeader<T>({
   return (
     <div
       className="flex border-b bg-gray-50"
-      style={{ borderColor: "var(--border)", minHeight: 40 }}
+      style={{ borderColor: "var(--border)", minHeight: 34 }}
     >
       {columns.map((col) => (
         <div
           key={col.key}
-          className="flex items-center px-3 text-xs font-semibold tracking-wide text-gray-500 uppercase"
+          className="px-sm text-body flex items-center font-semibold tracking-wide text-gray-500 uppercase"
           style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
         >
           {col.sortable !== false ? (
             <button
               type="button"
               onClick={() => onSort(col.key)}
-              className="flex items-center gap-1 hover:text-gray-700"
+              className="gap-xs flex items-center hover:text-gray-700"
             >
               {col.label}
               {sortKey === col.key ? (

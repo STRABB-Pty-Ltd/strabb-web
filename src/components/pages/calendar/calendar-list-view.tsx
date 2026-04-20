@@ -29,19 +29,19 @@ const formatAUD = (value: number) =>
   }).format(value);
 
 const columns: ColumnDef<CalendarEvent>[] = [
-  { key: "listing", label: "Listing", width: "180px" },
-  { key: "guest", label: "Guest", width: "140px" },
+  { key: "listing", label: "Listing", width: "144px" },
+  { key: "guest", label: "Guest", width: "144px" },
   {
     key: "channel",
     label: "Channel",
-    width: "110px",
+    width: "89px",
     render: (ev) => {
       if (!ev.channel) return <span className="text-gray-400">-</span>;
       return (
         <span
-          className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+          className="px-base py-xs text-body rounded-full font-medium text-white"
           style={{
-            backgroundColor: channelColors[ev.channel] ?? "#6B7280",
+            backgroundColor: channelColors[ev.channel] ?? "var(--channel-direct)",
           }}
         >
           {channelLabels[ev.channel] ?? ev.channel}
@@ -52,25 +52,25 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "checkin",
     label: "Check-in",
-    width: "100px",
+    width: "89px",
     render: (ev) => (
-      <span className="font-data text-xs">{format(new Date(ev.start), "d MMM yyyy")}</span>
+      <span className="font-data text-body">{format(new Date(ev.start), "d MMM yyyy")}</span>
     ),
   },
   {
     key: "checkout",
     label: "Check-out",
-    width: "100px",
+    width: "89px",
     render: (ev) => (
-      <span className="font-data text-xs">{format(new Date(ev.end), "d MMM yyyy")}</span>
+      <span className="font-data text-body">{format(new Date(ev.end), "d MMM yyyy")}</span>
     ),
   },
   {
     key: "status",
     label: "Status",
-    width: "100px",
+    width: "89px",
     render: (ev) => (
-      <span className="text-xs text-gray-600 capitalize">
+      <span className="text-body text-gray-600 capitalize">
         {(ev.status ?? ev.type).replace("_", " ")}
       </span>
     ),
@@ -78,9 +78,9 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "amount",
     label: "Amount",
-    width: "100px",
+    width: "89px",
     render: (ev) => (
-      <span className="font-data text-xs">{ev.amount ? formatAUD(ev.amount) : "-"}</span>
+      <span className="font-data text-body">{ev.amount ? formatAUD(ev.amount) : "-"}</span>
     ),
   },
 ];

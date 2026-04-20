@@ -3,13 +3,14 @@
 export function LogoSection() {
   return (
     <div
-      className="flex items-center border-b"
+      className="flex shrink-0 items-center"
       style={{
-        padding: "var(--space-md)",
-        borderColor: "var(--border)",
+        height: "var(--topnav-height)",
+        paddingLeft: "var(--space-md)",
+        paddingRight: "var(--space-md)",
       }}
     >
-      <span className="font-data text-base font-bold" style={{ color: "var(--strabb-primary)" }}>
+      <span className="font-data text-heading font-bold" style={{ color: "var(--strabb-primary)" }}>
         STRABB
       </span>
     </div>

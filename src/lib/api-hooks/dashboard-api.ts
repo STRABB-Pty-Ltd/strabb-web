@@ -190,7 +190,7 @@ function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
     taskSummary: Object.entries(raw.cleaningStatus ?? {}).map(([status, count]) => ({
       status,
       count,
-      color: statusColors[status] ?? "#6B7280",
+      color: statusColors[status] ?? "var(--brand-10)",
     })),
   };
 }

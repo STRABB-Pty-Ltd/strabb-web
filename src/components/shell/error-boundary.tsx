@@ -32,17 +32,17 @@ export class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-1 items-center justify-center p-8">
+        <div className="p-lg flex flex-1 items-center justify-center">
           <div className="max-w-md text-center">
-            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-amber-500" />
-            <h2 className="mb-2 text-lg font-semibold">Something went wrong</h2>
-            <p className="mb-4 text-sm text-gray-500">
+            <AlertTriangle size={55} className="mb-md mx-auto text-amber-500" />
+            <h2 className="mb-base text-subheading font-semibold">Something went wrong</h2>
+            <p className="mb-md text-body text-gray-500">
               An unexpected error occurred. Try reloading this section.
             </p>
             {process.env.NODE_ENV === "development" && this.state.error && (
-              <details className="mb-4 rounded border p-3 text-left text-xs">
+              <details className="mb-md p-sm text-body rounded border text-left">
                 <summary className="cursor-pointer font-medium">Error details</summary>
-                <pre className="mt-2 overflow-auto whitespace-pre-wrap text-red-600">
+                <pre className="mt-base overflow-auto whitespace-pre-wrap text-red-600">
                   {this.state.error.message}
                   {"\n"}
                   {this.state.error.stack}
@@ -52,9 +52,9 @@ export class ErrorBoundary extends React.Component<
             <button
               type="button"
               onClick={this.handleReload}
-              className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              className="gap-base px-sm py-base text-body inline-flex items-center rounded-lg bg-gray-900 font-medium text-white hover:bg-gray-800"
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw size={13} />
               Reload
             </button>
           </div>

@@ -45,53 +45,53 @@ export function SharePopup() {
       <div className="fixed inset-0 z-[185] flex items-center justify-center">
         <div className="w-full max-w-md rounded-xl bg-white shadow-xl">
           <div
-            className="flex items-center justify-between border-b px-4 py-3"
+            className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
-            <h2 className="text-sm font-semibold">Share Report</h2>
+            <h2 className="text-body font-semibold">Share Report</h2>
             <button
               type="button"
               onClick={closeSharePopup}
-              className="rounded p-1 text-gray-400 hover:bg-gray-100"
+              className="p-xs rounded text-gray-400 hover:bg-gray-100"
             >
               <X size={18} />
             </button>
           </div>
 
-          <div className="space-y-3 p-4">
-            <p className="text-sm text-gray-500">Select fields to include:</p>
+          <div className="space-y-sm p-sm">
+            <p className="text-body text-gray-500">Select fields to include:</p>
             {defaultFields.map((f) => (
-              <label key={f.key} className="flex items-center gap-2">
+              <label key={f.key} className="gap-base flex items-center">
                 <input
                   type="checkbox"
                   checked={shareFields[f.key] ?? true}
                   onChange={() => toggleField(f.key)}
-                  className="h-4 w-4 rounded border-gray-300"
+                  className="h-sm w-sm rounded border-gray-300"
                 />
-                <span className="text-sm text-gray-700">{f.label}</span>
+                <span className="text-body text-gray-700">{f.label}</span>
               </label>
             ))}
           </div>
 
           <div
-            className="flex justify-end gap-2 border-t px-4 py-3"
+            className="gap-base px-sm py-sm flex justify-end border-t"
             style={{ borderColor: "var(--border)" }}
           >
             <button
               type="button"
               onClick={closeSharePopup}
-              className="rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
+              className="px-sm py-base text-body rounded-lg text-gray-600 hover:bg-gray-100"
             >
               Cancel
             </button>
             <button
               type="button"
               disabled
-              className="relative rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-400"
+              className="px-sm py-base text-body relative rounded-lg border border-dashed border-gray-300 text-gray-400"
               title="PDF export coming soon"
             >
               Download PDF
-              <span className="absolute -top-2 -right-2 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
+              <span className="-top-base -right-base px-xs py-xs text-body absolute rounded-full bg-gray-100 font-medium text-gray-500">
                 Soon
               </span>
             </button>
@@ -101,7 +101,7 @@ export function SharePopup() {
                 navigator.clipboard.writeText(window.location.href);
                 closeSharePopup();
               }}
-              className="rounded-lg px-4 py-2 text-sm text-white"
+              className="px-sm py-base text-body rounded-lg text-white"
               style={{ backgroundColor: "var(--strabb-secondary)" }}
             >
               Copy Link

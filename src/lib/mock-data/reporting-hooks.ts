@@ -27,10 +27,10 @@ export interface ChartDataSet {
 }
 
 const channelColors: Record<string, string> = {
-  airbnb: "#FF5A5F",
-  booking_com: "#003580",
-  vrbo: "#3B5998",
-  direct: "#D97706",
+  airbnb: "var(--channel-airbnb)",
+  booking_com: "var(--channel-booking)",
+  vrbo: "var(--channel-vrbo)",
+  direct: "var(--channel-direct)",
 };
 
 const channelLabels: Record<string, string> = {
@@ -134,7 +134,7 @@ function computeChartData(financials: Financial[], selectedListings: string[]): 
     channel: channelLabels[ch] ?? ch,
     revenue: rev,
     percentage: totalChannelRev > 0 ? Math.round((rev / totalChannelRev) * 100) : 0,
-    color: channelColors[ch] ?? "#6B7280",
+    color: channelColors[ch] ?? "var(--channel-direct)",
   }));
 
   const latestMonth = months[months.length - 1] ?? "";
@@ -159,7 +159,7 @@ function computeChartData(financials: Financial[], selectedListings: string[]): 
   const revenueByListing = latestData.map((f) => ({
     listing: f.listingName.replace(/.*— /, "").substring(0, 15),
     revenue: f.revenue,
-    color: listingMap.get(f.listingId) ?? "#6B7280",
+    color: listingMap.get(f.listingId) ?? "var(--brand-10)",
   }));
 
   return { revenueTrend, channelBreakdown, occupancy, expenses, revenueByListing };
