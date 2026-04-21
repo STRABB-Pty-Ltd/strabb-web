@@ -156,6 +156,20 @@
   --spacing-lg: 34px;
   --spacing-xl: 55px;
 
+  /* Restore Tailwind default max-width scale — Fibonacci spacing tokens
+     above would otherwise hijack max-w-sm/md/lg/xl via fallback */
+  --max-width-xs: 20rem;
+  --max-width-sm: 24rem;
+  --max-width-md: 28rem;
+  --max-width-lg: 32rem;
+  --max-width-xl: 36rem;
+  --max-width-2xl: 42rem;
+  --max-width-3xl: 48rem;
+  --max-width-4xl: 56rem;
+  --max-width-5xl: 64rem;
+  --max-width-6xl: 72rem;
+  --max-width-7xl: 80rem;
+
   /* Type scale — Fibonacci ladder (13 → 21 → 34 → 55) */
   --text-body: 13px;
   --text-body--line-height: 1.615;
