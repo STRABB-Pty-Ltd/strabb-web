@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { BillingNavPill } from "@/components/billing/billing-nav-pill";
 import { topNavItems, settingsNavItem } from "@/lib/navigation";
 import { useAppStore } from "@/stores/app-store";
 
@@ -51,6 +52,8 @@ export function TopNav() {
 
       {/* Spacer to push Settings to the right (buttons div is absolutely positioned) */}
       <div className="flex-1" />
+
+      <BillingNavPill />
 
       {/* Settings button */}
       <Link

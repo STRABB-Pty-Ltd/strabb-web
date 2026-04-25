@@ -7,6 +7,7 @@ import { useAppStore } from "@/stores/app-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import type { PageId } from "@/stores/types";
 
+import { BillingBanner } from "@/components/billing/billing-banner";
 import { CleaningDetailDrawer } from "@/components/overlays/cleaning-detail-drawer";
 import { TicketDetailDrawer } from "@/components/overlays/ticket-detail-drawer";
 import { TimeframePopup } from "@/components/overlays/timeframe-popup";
@@ -67,6 +68,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         />
       )}
       <div className="flex flex-1 flex-col overflow-hidden">
+        <BillingBanner />
         <div
           className="relative flex shrink-0 flex-col"
           style={{
