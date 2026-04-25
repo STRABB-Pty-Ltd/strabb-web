@@ -25,7 +25,7 @@ import { useAppStore } from "@/stores/app-store";
 import { MAINTENANCE_PRIORITY_OPTIONS } from "@/types/maintenance";
 
 interface MaintenanceFormDialogProps {
-  trigger: React.ReactNode;
+  trigger: React.ReactElement;
 }
 
 export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
@@ -87,7 +87,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
         if (!nextOpen) reset();
       }}
     >
-      <DialogTrigger>{trigger}</DialogTrigger>
+      <DialogTrigger render={trigger} />
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>New ticket</DialogTitle>
