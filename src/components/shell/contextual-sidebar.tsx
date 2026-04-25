@@ -39,8 +39,14 @@ export function ContextualSidebar() {
         backgroundColor: "var(--surface-sidebar)",
       }}
     >
-      {/* Spacer reserves topnav row for the absolute logo overlay in app-shell */}
-      <div className="shrink-0" style={{ height: "var(--topnav-height)" }} aria-hidden="true" />
+      {/* Spacer reserves room for the absolute logo overlay in app-shell.
+          Logo width = sidebar − 2×21px; intrinsic aspect 2.5:1 → height
+          factor 0.4. */}
+      <div
+        className="shrink-0"
+        style={{ height: "calc((var(--sidebar-width) - 2 * var(--space-md)) * 0.4)" }}
+        aria-hidden="true"
+      />
 
       {showSettingsNav(currentPage) && <SettingsNavSection />}
       {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
