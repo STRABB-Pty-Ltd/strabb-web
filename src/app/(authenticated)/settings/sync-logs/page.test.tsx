@@ -46,7 +46,10 @@ describe("SyncLogsPage", () => {
   });
 
   it("renders the rate-limit hint and trigger button", () => {
-    syncLogsMock.mockReturnValue({ data: { data: [], meta: { total: 0, page: 1, pageSize: 20, totalPages: 1 } }, isLoading: false });
+    syncLogsMock.mockReturnValue({
+      data: { data: [], meta: { total: 0, page: 1, pageSize: 20, totalPages: 1 } },
+      isLoading: false,
+    });
     render(<SyncLogsPage />);
     expect(screen.getByText(/limited to 3 syncs per 5 minutes\./i)).toBeInTheDocument();
     const trigger = screen.getByRole("button", { name: /trigger sync/i });

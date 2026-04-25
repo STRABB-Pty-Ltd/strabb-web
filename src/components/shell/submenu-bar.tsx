@@ -142,34 +142,50 @@ export function SubmenuBar() {
             );
           }
 
-          return (
-            <div key={chip.id} className="relative" ref={isMore ? moreRef : undefined}>
-              <button
-                type="button"
-                onClick={() => handleChipClick(chip)}
-                aria-pressed={
-                  chip.behavior === "toggle" ||
-                  chip.behavior === "multi" ||
-                  chip.behavior === "exclusive"
-                    ? active
-                    : undefined
-                }
-                className={chipClass}
-                style={chipStyle}
-              >
-                {chip.label}
-                {isMore && <ChevronDown size={13} />}
-              </button>
-
-              {isMore && moreOpen && (
-                <div
-                  className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
-                  style={{ minWidth: 144 }}
+          // The More dropdown needs a positioned wrapper so the menu can
+          // anchor under it. Other chips render directly as flex children
+          // — same structure as TopNav so the parent's gap applies cleanly.
+          if (isMore) {
+            return (
+              <div key={chip.id} className="relative" ref={moreRef}>
+                <button
+                  type="button"
+                  onClick={() => handleChipClick(chip)}
+                  className={chipClass}
+                  style={chipStyle}
                 >
-                  <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
-                </div>
-              )}
-            </div>
+                  {chip.label}
+                  <ChevronDown size={13} />
+                </button>
+                {moreOpen && (
+                  <div
+                    className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
+                    style={{ minWidth: 144 }}
+                  >
+                    <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={chip.id}
+              type="button"
+              onClick={() => handleChipClick(chip)}
+              aria-pressed={
+                chip.behavior === "toggle" ||
+                chip.behavior === "multi" ||
+                chip.behavior === "exclusive"
+                  ? active
+                  : undefined
+              }
+              className={chipClass}
+              style={chipStyle}
+            >
+              {chip.label}
+            </button>
           );
         })}
       </div>

@@ -2,7 +2,12 @@
 
 import { differenceInCalendarDays, format } from "date-fns";
 
-import { useBillingStatus, useCreateCheckout, useCreatePortal, useStartTrial } from "@/hooks/use-billing";
+import {
+  useBillingStatus,
+  useCreateCheckout,
+  useCreatePortal,
+  useStartTrial,
+} from "@/hooks/use-billing";
 import { ApiError } from "@/lib/api-client";
 import {
   BILLING_STATUS_COLORS,
@@ -112,7 +117,9 @@ export function BillingSection() {
                 color: daysLeft <= 3 ? "rgb(133 77 14)" : "var(--neutral-90)",
               }}
             >
-              {daysLeft === 0 ? "Ends today" : `${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
+              {daysLeft === 0
+                ? "Ends today"
+                : `${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
             </span>
           )}
         </div>

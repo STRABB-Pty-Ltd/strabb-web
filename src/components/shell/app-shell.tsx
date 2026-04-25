@@ -75,31 +75,32 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           style={{
             paddingTop: "var(--space-md)",
             paddingBottom: 0,
-            gap: "var(--space-md)",
+            gap: 0,
           }}
         >
           <TopNav />
-          <SubmenuBar />
-          {/* Separator between top nav and submenu — 2px, stops 55px inside
-              the outer edges of Dashboard and Reporting buttons.
-              Nav group width: 5 × 95px + 4 × 5px = 495px → separator = 495 - 110 = 385px
-              Hidden on settings (no submenu row, so the line would slice through TopNav). */}
-          {currentPage !== "settings" && (
+          {/* Separator between top nav and submenu — 2px high, sits in a
+              flex-stretched track of var(--space-md) so it's exactly centred
+              regardless of TopNav's rendered height. Hidden on settings. */}
+          {currentPage !== "settings" ? (
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute"
-              style={{
-                // Anchored to the gap between TopNav and SubmenuBar so it stays
-                // there regardless of wrapper paddingBottom.
-                top: "calc(var(--space-md) + var(--topnav-height) + var(--space-md) / 2)",
-                left: "calc(50% - var(--sidebar-width) / 4)",
-                transform: "translate(-50%, -50%)",
-                width: 385,
-                height: 2,
-                backgroundColor: "var(--neutral-30)",
-              }}
-            />
+              className="pointer-events-none flex shrink-0 items-center justify-center"
+              style={{ height: "var(--space-md)" }}
+            >
+              <div
+                style={{
+                  width: 385,
+                  height: 2,
+                  marginLeft: "calc(0px - var(--sidebar-width) / 2)",
+                  backgroundColor: "var(--neutral-30)",
+                }}
+              />
+            </div>
+          ) : (
+            <div style={{ height: "var(--space-md)" }} />
           )}
+          <SubmenuBar />
         </div>
         <ErrorBoundary>
           <Suspense fallback={<PageLoading />}>
