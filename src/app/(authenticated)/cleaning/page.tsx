@@ -1,6 +1,7 @@
 "use client";
 
-import { Monitor } from "lucide-react";
+import { Monitor, Wrench } from "lucide-react";
+import Link from "next/link";
 
 import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
 import { CleaningCalendarView } from "@/components/pages/cleaning/cleaning-calendar-view";
@@ -19,16 +20,33 @@ export default function CleaningPage() {
 
   const { data: tasks, isLoading } = useCleaningTasks(submenu, selectedListings);
 
+  const headerLink = (
+    <div className="mb-sm flex justify-end">
+      <Link
+        href="/properties/maintenance"
+        className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-lg border font-medium text-gray-700 hover:bg-gray-50"
+        style={{ borderColor: "var(--border)" }}
+      >
+        <Wrench size={14} />
+        Maintenance
+      </Link>
+    </div>
+  );
+
   if (isLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading cleaning tasks...</p>
+      <div>
+        {headerLink}
+        <div className="py-xl flex items-center justify-center">
+          <p className="text-body text-gray-400">Loading cleaning tasks...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
+      {headerLink}
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />
