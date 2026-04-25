@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CreditCard, Globe, Radio, Settings, Sparkles, Users } from "lucide-react";
+import { Bell, CreditCard, Globe, Phone, Radio, Settings, Sparkles, Users } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -9,6 +9,7 @@ const sections = [
   { id: "team", label: "Team", icon: Users },
   { id: "billing", label: "Billing", icon: CreditCard },
   { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "phone", label: "Phone", icon: Phone },
   { id: "integrations", label: "Integrations", icon: Globe },
   { id: "cleaning", label: "Cleaning", icon: Sparkles },
   { id: "channels", label: "Channels", icon: Radio },
