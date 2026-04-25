@@ -24,7 +24,7 @@ import type { PageId } from "@/stores/types";
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const WEEK_OPTS = { weekStartsOn: 1 as const };
-const AUTO_CONFIRM_SECONDS = 5;
+const AUTO_CONFIRM_SECONDS = 7;
 
 type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
 
@@ -44,34 +44,27 @@ export function TimeframePopup() {
   const reporting = useAppStore((s) => s.reporting);
 
   // Auto-confirm: when popup opens because of a window-size change, auto-close
-  // after AUTO_CONFIRM_SECONDS (which keeps the current period). User clicks
-  // anywhere in the popup body cancels the timer via cancelAutoConfirm so they
-  // can browse without losing the popup.
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  // after AUTO_CONFIRM_SECONDS. Mouse-down inside the popup body cancels via
+  // cancelAutoConfirm. Picking a period or closing the popup ends it naturally.
+  const [progressActive, setProgressActive] = useState(false);
   const cancelledRef = useRef(false);
 
   useEffect(() => {
     cancelledRef.current = false;
     if (!tfPopup.open || !tfPopup.autoSelect) {
-      setSecondsLeft(null);
+      setProgressActive(false);
       return;
     }
-    setSecondsLeft(AUTO_CONFIRM_SECONDS);
-    const interval = setInterval(() => {
-      setSecondsLeft((s) => (s === null || s <= 0 ? s : s - 1));
-    }, 1000);
+    setProgressActive(true);
     const timer = setTimeout(() => {
       if (!cancelledRef.current) closeTimeframePopup();
     }, AUTO_CONFIRM_SECONDS * 1000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [tfPopup.open, tfPopup.autoSelect, closeTimeframePopup]);
 
   const cancelAutoConfirm = useCallback(() => {
     cancelledRef.current = true;
-    setSecondsLeft(null);
+    setProgressActive(false);
   }, []);
 
   const handleKeyDown = useCallback(
@@ -133,16 +126,21 @@ export function TimeframePopup() {
           </button>
         </div>
 
-        {secondsLeft !== null && secondsLeft > 0 && (
+        {progressActive && (
           <div
-            className="px-sm py-xs text-body border-b text-gray-500"
-            style={{
-              borderColor: "var(--border)",
-              backgroundColor: "var(--neutral-30)",
-            }}
+            aria-label="Auto-confirming current period"
+            className="overflow-hidden"
+            style={{ height: 3, backgroundColor: "var(--neutral-30)" }}
           >
-            Confirming current {labelForCountdown(windowSize)} in {secondsLeft}s — pick a different
-            one or click away to keep it.
+            <div
+              className="h-full"
+              style={{
+                width: "100%",
+                transformOrigin: "left",
+                backgroundColor: "var(--strabb-secondary)",
+                animation: `drainProgress ${AUTO_CONFIRM_SECONDS}s linear forwards`,
+              }}
+            />
           </div>
         )}
 
@@ -174,29 +172,6 @@ export function TimeframePopup() {
   );
 }
 
-function labelForCountdown(ws: string): string {
-  switch (ws) {
-    case "day":
-      return "day";
-    case "week":
-      return "week";
-    case "fortnight":
-      return "fortnight";
-    case "month":
-      return "month";
-    case "quarter":
-      return "quarter";
-    case "year":
-      return "year";
-    case "ytd":
-      return "year-to-date";
-    case "custom":
-      return "range";
-    default:
-      return "period";
-  }
-}
-
 function labelForWindow(ws: string): string {
   switch (ws) {
     case "day":
@@ -225,11 +200,11 @@ function resolveDate(anchor: string | null): Date {
 }
 
 function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: string) => void }) {
-  const initial = resolveDate(anchor);
-  const [year, setYear] = useState(initial.getFullYear());
+  const effective = resolveDate(anchor);
+  const [year, setYear] = useState(effective.getFullYear());
   const months = Array.from({ length: 12 }, (_, i) => new Date(year, i, 1));
-  const selectedMonth = anchor ? parseISO(anchor).getMonth() : -1;
-  const selectedYear = anchor ? parseISO(anchor).getFullYear() : -1;
+  const selectedMonth = effective.getMonth();
+  const selectedYear = effective.getFullYear();
 
   return (
     <div>
@@ -282,11 +257,10 @@ function QuarterPicker({
   anchor: string | null;
   onPick: (iso: string) => void;
 }) {
-  const initial = resolveDate(anchor);
-  const [year, setYear] = useState(initial.getFullYear());
-  const selected = anchor ? parseISO(anchor) : null;
-  const selectedQ = selected ? Math.floor(selected.getMonth() / 3) : -1;
-  const selectedYear = selected ? selected.getFullYear() : -1;
+  const effective = resolveDate(anchor);
+  const [year, setYear] = useState(effective.getFullYear());
+  const selectedQ = Math.floor(effective.getMonth() / 3);
+  const selectedYear = effective.getFullYear();
 
   return (
     <div>
@@ -339,7 +313,7 @@ function YearPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: s
   return (
     <div className="gap-xs grid grid-cols-3">
       {years.map((y) => {
-        const isSelected = y === selected && anchor !== null;
+        const isSelected = y === selected;
         return (
           <button
             key={y}
@@ -368,15 +342,17 @@ function DayPicker({
   anchor: string | null;
   onPick: (iso: string) => void;
 }) {
-  const initial = resolveDate(anchor);
-  const [viewDate, setViewDate] = useState(startOfMonth(initial));
+  const effective = resolveDate(anchor);
+  const [viewDate, setViewDate] = useState(startOfMonth(effective));
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);
   const gridStart = startOfWeek(monthStart, WEEK_OPTS);
   const gridEnd = endOfWeek(monthEnd, WEEK_OPTS);
   const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
 
-  const selectedDate = anchor ? parseISO(anchor) : null;
+  // Highlight the period containing `effective`. For week/fortnight, that's the
+  // start-of-week date for the period.
+  const selectedDate = windowSize === "day" ? effective : startOfWeek(effective, WEEK_OPTS);
 
   const handlePick = (day: Date) => {
     let snap: Date;
@@ -416,7 +392,7 @@ function DayPicker({
       <div className="gap-xs grid grid-cols-7">
         {gridDays.map((day) => {
           const inMonth = isSameMonth(day, viewDate);
-          const isSelected = selectedDate ? isSameDay(day, selectedDate) : false;
+          const isSelected = isSameDay(day, selectedDate);
           return (
             <button
               key={day.toISOString()}

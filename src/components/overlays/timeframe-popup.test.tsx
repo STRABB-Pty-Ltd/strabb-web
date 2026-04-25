@@ -61,22 +61,21 @@ describe("TimeframePopup", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("autoSelect=true shows the countdown banner", () => {
+  it("autoSelect=true renders the progress bar", () => {
     storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: true };
     storeState.dashboard = { windowSize: "month", anchor: null };
     render(<TimeframePopup />);
-    expect(screen.getByText(/confirming current month in 5s/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/auto-confirming current period/i)).toBeInTheDocument();
   });
 
-  it("autoSelect=false hides the countdown banner", () => {
+  it("autoSelect=false hides the progress bar", () => {
     storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: false };
     storeState.dashboard = { windowSize: "month", anchor: null };
     render(<TimeframePopup />);
-    expect(screen.queryByText(/confirming current/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/auto-confirming/i)).not.toBeInTheDocument();
   });
 
-  it("autoSelect timer auto-closes after 5 seconds", () => {
-    // Override the shouldAdvanceTime fake timers from beforeEach so we control time.
+  it("autoSelect timer auto-closes after 7 seconds", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 3, 15));
     storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: true };
@@ -85,7 +84,7 @@ describe("TimeframePopup", () => {
 
     expect(closeMock).not.toHaveBeenCalled();
     act(() => {
-      vi.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(7000);
     });
     expect(closeMock).toHaveBeenCalled();
   });
