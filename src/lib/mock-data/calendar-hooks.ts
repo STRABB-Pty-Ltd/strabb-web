@@ -21,14 +21,11 @@ const listingNamesById: Record<string, string> = Object.fromEntries(
 
 export type CalendarEventType = "booking" | "vacancy" | "ticket" | "cleaning";
 
-const cleaningTypeLabels: Record<string, string> = {
-  turnover: "Turnover",
-  checkout: "Checkout clean",
-  checkin: "Check-in prep",
-  deep_clean: "Deep clean",
-  mid_stay: "Mid-stay",
-  inspection: "Inspection",
-};
+// Cleaning task types that get rendered on the calendar gantt as a turnover-
+// style middle-50% bar. checkout and checkin cleanings are folded into the
+// same "turnover" presentation since they all sit in the gap between guests.
+// Mid-stay / deep-clean / inspection cleanings stay on the Cleaning page only.
+const TURNOVER_LIKE_TYPES: ReadonlySet<string> = new Set(["turnover", "checkout", "checkin"]);
 
 export interface CalendarEvent {
   id: string;
@@ -82,16 +79,16 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
   };
 }
 
-function cleaningToEvent(t: CleaningTask): CalendarEvent {
+function cleaningToEvent(t: CleaningTask): CalendarEvent | null {
+  if (!TURNOVER_LIKE_TYPES.has(t.type)) return null;
   const start = new Date(t.scheduledTime);
   const end = addHours(start, Math.max(1, t.estimatedHours));
-  const label = cleaningTypeLabels[t.type] ?? t.type;
   return {
     id: t.id,
     type: "cleaning",
     listingId: t.listingId,
     listingName: t.listingName,
-    label: t.assigneeName ? `${label} — ${t.assigneeName}` : label,
+    label: t.assigneeName ? `Turnover — ${t.assigneeName}` : "Turnover",
     start: start.toISOString(),
     end: end.toISOString(),
     color: "var(--status-success)",
@@ -140,7 +137,12 @@ function computeEvents(
     const filtered = filterByListing
       ? cleanings.filter((c) => selectedListings.includes(c.listingId))
       : cleanings;
-    events.push(...filtered.filter((c) => c.status !== "cancelled").map(cleaningToEvent));
+    events.push(
+      ...filtered
+        .filter((c) => c.status !== "cancelled")
+        .map(cleaningToEvent)
+        .filter((e): e is CalendarEvent => e !== null),
+    );
   }
 
   if (submenuFilters.includes("vacancy")) {
