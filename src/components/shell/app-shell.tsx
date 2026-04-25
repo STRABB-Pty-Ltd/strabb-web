@@ -71,7 +71,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           className="relative flex shrink-0 flex-col"
           style={{
             paddingTop: "var(--space-md)",
-            paddingBottom: "var(--space-md)",
+            paddingBottom: 0,
             gap: "var(--space-md)",
           }}
         >

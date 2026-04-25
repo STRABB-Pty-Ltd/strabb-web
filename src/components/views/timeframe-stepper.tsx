@@ -44,7 +44,7 @@ export function TimeframeStepper() {
   };
 
   return (
-    <div className="mb-sm gap-base flex items-center" data-slot="timeframe-stepper">
+    <div className="gap-base flex items-center" data-slot="timeframe-stepper">
       {canStep && (
         <button
           type="button"

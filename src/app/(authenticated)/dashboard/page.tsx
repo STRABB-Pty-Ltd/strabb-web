@@ -7,7 +7,6 @@ import { AlertStrip } from "@/components/pages/dashboard/alert-strip";
 import { ComparePanel } from "@/components/pages/dashboard/compare-panel";
 import { KPIGrid } from "@/components/pages/dashboard/kpi-grid";
 import { PreviewGrid } from "@/components/pages/dashboard/preview-grid";
-import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 
 export default function DashboardPage() {
   const windowSize = useAppStore((s) => s.dashboard.windowSize);
@@ -32,19 +31,14 @@ export default function DashboardPage() {
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
-      <div className="space-y-lg">
-        <TimeframeStepper />
-        <div className="py-xl flex items-center justify-center">
-          <p className="text-body text-gray-400">Loading dashboard...</p>
-        </div>
+      <div className="py-xl flex items-center justify-center">
+        <p className="text-body text-gray-400">Loading dashboard...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-lg">
-      <TimeframeStepper />
-
       <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
 
       {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}

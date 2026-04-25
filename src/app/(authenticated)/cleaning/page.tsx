@@ -7,7 +7,6 @@ import { CleaningCalendarView } from "@/components/pages/cleaning/cleaning-calen
 import { CleaningGanttView } from "@/components/pages/cleaning/cleaning-gantt-view";
 import { CleaningKanbanView } from "@/components/pages/cleaning/cleaning-kanban-view";
 import { CleaningListView } from "@/components/pages/cleaning/cleaning-list-view";
-import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import { useCleaningTasks } from "@/hooks/use-cleaning";
 import { useMobileViewOverride } from "@/hooks/use-responsive-view";
 import { useAppStore } from "@/stores/app-store";
@@ -22,18 +21,14 @@ export default function CleaningPage() {
 
   if (isLoading) {
     return (
-      <div>
-        <TimeframeStepper />
-        <div className="py-xl flex items-center justify-center">
-          <p className="text-body text-gray-400">Loading cleaning tasks...</p>
-        </div>
+      <div className="py-xl flex items-center justify-center">
+        <p className="text-body text-gray-400">Loading cleaning tasks...</p>
       </div>
     );
   }
 
   return (
     <div>
-      <TimeframeStepper />
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />

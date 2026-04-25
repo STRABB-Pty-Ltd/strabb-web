@@ -9,7 +9,6 @@ import { useAppStore } from "@/stores/app-store";
 import { CalendarGanttView } from "@/components/pages/calendar/calendar-gantt-view";
 import { CalendarListView } from "@/components/pages/calendar/calendar-list-view";
 import { CalendarMonthView } from "@/components/pages/calendar/calendar-month-view";
-import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 
 export default function CalendarPage() {
   const view = useAppStore((s) => s.calendar.view);
@@ -28,18 +27,14 @@ export default function CalendarPage() {
 
   if (isLoading) {
     return (
-      <div>
-        <TimeframeStepper />
-        <div className="py-xl flex items-center justify-center">
-          <p className="text-body text-gray-400">Loading calendar...</p>
-        </div>
+      <div className="py-xl flex items-center justify-center">
+        <p className="text-body text-gray-400">Loading calendar...</p>
       </div>
     );
   }
 
   return (
     <div>
-      <TimeframeStepper />
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />

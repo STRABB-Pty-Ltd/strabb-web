@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -100,64 +101,80 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="gap-xs flex shrink-0 items-center justify-center overflow-x-auto"
+      className="relative flex shrink-0 items-center"
       style={{
         backgroundColor: "var(--surface-submenu)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
       }}
     >
-      {chips.map((chip) => {
-        const active = isChipActive(chip);
-        const isMore = chip.behavior === "more-dropdown";
-        const isNav = chip.behavior === "nav";
+      {/* Left: timeframe stepper (only renders on timeframeable pages) */}
+      <div className="px-md flex shrink-0 items-center">
+        <TimeframeStepper />
+      </div>
 
-        const chipClass =
-          "gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
-        const chipStyle = {
-          width: 95,
-          borderRadius: 5,
-          backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-          color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
-        };
+      {/* Centered chip group, mirrors TopNav's optical-centre pattern */}
+      <div
+        className="gap-xs absolute top-1/2 flex items-center"
+        style={{
+          left: "calc(50% - var(--sidebar-width) / 4)",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        {chips.map((chip) => {
+          const active = isChipActive(chip);
+          const isMore = chip.behavior === "more-dropdown";
+          const isNav = chip.behavior === "nav";
 
-        if (isNav && chip.href) {
+          const chipClass =
+            "gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
+          const chipStyle = {
+            width: 95,
+            borderRadius: 5,
+            backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+            color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          };
+
+          if (isNav && chip.href) {
+            return (
+              <Link key={chip.id} href={chip.href} className={chipClass} style={chipStyle}>
+                {chip.label}
+              </Link>
+            );
+          }
+
           return (
-            <Link key={chip.id} href={chip.href} className={chipClass} style={chipStyle}>
-              {chip.label}
-            </Link>
-          );
-        }
-
-        return (
-          <div key={chip.id} className="relative" ref={isMore ? moreRef : undefined}>
-            <button
-              type="button"
-              onClick={() => handleChipClick(chip)}
-              aria-pressed={
-                chip.behavior === "toggle" ||
-                chip.behavior === "multi" ||
-                chip.behavior === "exclusive"
-                  ? active
-                  : undefined
-              }
-              className={chipClass}
-              style={chipStyle}
-            >
-              {chip.label}
-              {isMore && <ChevronDown size={13} />}
-            </button>
-
-            {isMore && moreOpen && (
-              <div
-                className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
-                style={{ minWidth: 144 }}
+            <div key={chip.id} className="relative" ref={isMore ? moreRef : undefined}>
+              <button
+                type="button"
+                onClick={() => handleChipClick(chip)}
+                aria-pressed={
+                  chip.behavior === "toggle" ||
+                  chip.behavior === "multi" ||
+                  chip.behavior === "exclusive"
+                    ? active
+                    : undefined
+                }
+                className={chipClass}
+                style={chipStyle}
               >
-                <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
-              </div>
-            )}
-          </div>
-        );
-      })}
+                {chip.label}
+                {isMore && <ChevronDown size={13} />}
+              </button>
+
+              {isMore && moreOpen && (
+                <div
+                  className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
+                  style={{ minWidth: 144 }}
+                >
+                  <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex-1" />
     </div>
   );
 }
