@@ -42,15 +42,30 @@ export function TimeframePopup() {
   const cleaning = useAppStore((s) => s.cleaning);
   const reporting = useAppStore((s) => s.reporting);
 
+  // Resolve the active slice up-front so the auto-confirm timer can read
+  // windowSize before the early return below.
+  const slice = isTimeframePage(currentPage)
+    ? currentPage === "dashboard"
+      ? dashboard
+      : currentPage === "calendar"
+        ? calendar
+        : currentPage === "cleaning"
+          ? cleaning
+          : reporting
+    : null;
+  const windowSize = (slice as { windowSize?: string } | null)?.windowSize ?? "";
+  const anchor = (slice as { anchor?: string | null } | null)?.anchor ?? null;
+
   // Auto-confirm: when popup opens because of a window-size change, auto-close
   // after AUTO_CONFIRM_SECONDS. Mouse-down inside the popup body cancels via
-  // cancelAutoConfirm. Picking a period or closing the popup ends it naturally.
+  // cancelAutoConfirm. Custom range is excluded — users are filling a form,
+  // a timer would interrupt them.
   const [progressActive, setProgressActive] = useState(false);
   const cancelledRef = useRef(false);
 
   useEffect(() => {
     cancelledRef.current = false;
-    if (!tfPopup.open || !tfPopup.autoSelect) {
+    if (!tfPopup.open || !tfPopup.autoSelect || windowSize === "custom") {
       setProgressActive(false);
       return;
     }
@@ -59,7 +74,7 @@ export function TimeframePopup() {
       if (!cancelledRef.current) closeTimeframePopup();
     }, AUTO_CONFIRM_SECONDS * 1000);
     return () => clearTimeout(timer);
-  }, [tfPopup.open, tfPopup.autoSelect, closeTimeframePopup]);
+  }, [tfPopup.open, tfPopup.autoSelect, windowSize, closeTimeframePopup]);
 
   const cancelAutoConfirm = useCallback(() => {
     cancelledRef.current = true;
@@ -81,16 +96,6 @@ export function TimeframePopup() {
   }, [tfPopup.open, handleKeyDown]);
 
   if (!tfPopup.open || !isTimeframePage(currentPage)) return null;
-
-  const slice =
-    currentPage === "dashboard"
-      ? dashboard
-      : currentPage === "calendar"
-        ? calendar
-        : currentPage === "cleaning"
-          ? cleaning
-          : reporting;
-  const { windowSize, anchor } = slice as { windowSize: string; anchor: string | null };
 
   const writeAnchor = (next: string) => {
     setTimeframeAnchor(currentPage, next);
