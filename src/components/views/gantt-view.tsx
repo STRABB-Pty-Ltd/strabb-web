@@ -139,6 +139,27 @@ export function GanttView<T>({
                 const insetStart = startClipped ? 0 : (partial?.insetStart ?? 0);
                 const insetEnd = endClipped ? 1 : (partial?.insetEnd ?? 1);
 
+                // TEMP DEBUG — remove once Fraser positioning is solved
+                if (typeof window !== "undefined" && getLabel(item).includes("Fraser")) {
+                  // eslint-disable-next-line no-console
+                  console.log("[GanttView debug]", {
+                    label: getLabel(item),
+                    itemType: (item as { type?: string }).type,
+                    itemStartIso: range.start.toISOString(),
+                    itemEndIso: range.end.toISOString(),
+                    rangeStartIso: rangeStart.toISOString(),
+                    rawStart,
+                    rawEnd,
+                    startClipped,
+                    endClipped,
+                    visibleStart,
+                    visibleEnd,
+                    partial,
+                    insetStart,
+                    insetEnd,
+                  });
+                }
+
                 const leftPx = startClipped ? 0 : (visibleStart + insetStart) * cellWidth;
                 const rightPx = endClipped
                   ? totalDays * cellWidth
