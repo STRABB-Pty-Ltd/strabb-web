@@ -7,6 +7,8 @@ import { useAppStore } from "@/stores/app-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import type { PageId } from "@/stores/types";
 
+import { CleaningDetailDrawer } from "@/components/overlays/cleaning-detail-drawer";
+
 import { Canvas } from "./canvas";
 import { ContextualSidebar } from "./contextual-sidebar";
 import { ErrorBoundary } from "./error-boundary";
@@ -98,6 +100,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         </ErrorBoundary>
       </div>
       {helpOpen && <KeyboardHelpModal onClose={() => setHelpOpen(false)} />}
+      <CleaningDetailDrawer />
     </div>
   );
 }

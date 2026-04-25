@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient } from "./use-api-client";
 import { useAuthenticatedQuery } from "./use-authenticated-query";
@@ -46,6 +46,20 @@ export function useCleaningTaskSummary() {
     "/cleaning-tasks/summary",
     { select: (raw) => keysToCamel<CleaningTaskSummaryResponse>(raw) },
   );
+}
+
+export function useCleaningTask(id: string | null) {
+  const apiClient = useApiClient();
+
+  return useQuery<CleaningTaskResponse | null>({
+    queryKey: [...TASKS_KEY, "detail", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const response = await apiClient.get<{ data: CleaningTaskResponse }>(`/cleaning-tasks/${id}`);
+      return response.data;
+    },
+    enabled: !!id,
+  });
 }
 
 export function useUpdateCleaningTask() {
