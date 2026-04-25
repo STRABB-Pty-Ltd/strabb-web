@@ -81,11 +81,12 @@
   --thread-width: 610px;
 
   /* Logo overlay box (and the matching sidebar spacer below it). Sized so the
-     first sidebar listing button aligns with the canvas top: spacer (77) +
-     ListingFilterTree padding-top (13) + heading row (31) + mb-base (8) = 129,
+     first sidebar listing button aligns with the canvas top: spacer (84) +
+     ListingFilterTree padding-top (13) + heading row (31) + mb-base (8) = 136,
      which equals paddingTop (21) + TopNav (37) + separator (21) + SubmenuBar
-     (37) + paddingBottom (13) on the canvas side. */
-  --logo-area-height: 77px;
+     (44, lifted from chip-natural 37 by the 44pt min hit area on the
+     timeframe stepper chevrons) + paddingBottom (13) on the canvas side. */
+  --logo-area-height: 84px;
 
   /* Spacing scale — golden-ratio / Fibonacci ladder */
   --space-xs: 5px;
