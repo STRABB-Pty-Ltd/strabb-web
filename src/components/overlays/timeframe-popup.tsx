@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  addDays,
   addMonths,
   eachDayOfInterval,
   endOfMonth,
@@ -132,15 +131,7 @@ export function TimeframePopup() {
             className="overflow-hidden"
             style={{ height: 3, backgroundColor: "var(--neutral-30)" }}
           >
-            <div
-              className="h-full"
-              style={{
-                width: "100%",
-                transformOrigin: "left",
-                backgroundColor: "var(--strabb-secondary)",
-                animation: `drainProgress ${AUTO_CONFIRM_SECONDS}s linear forwards`,
-              }}
-            />
+            <div className="drain-progress h-full" />
           </div>
         )}
 
@@ -423,35 +414,47 @@ function CustomRangeForm({
 }) {
   const [start, setStart] = useState(initial?.start ?? "");
   const [end, setEnd] = useState(initial?.end ?? "");
-  const today = format(new Date(), "yyyy-MM-dd");
-  const sevenAgo = format(addDays(new Date(), -7), "yyyy-MM-dd");
+
+  // ISO yyyy-MM-dd strings sort lexicographically, so string compare works.
+  const bothFilled = start !== "" && end !== "";
+  const orderInvalid = bothFilled && start > end;
+  const valid = bothFilled && !orderInvalid;
 
   return (
     <div>
       <div className="gap-base flex items-center">
-        <input
-          type="date"
-          value={start}
-          onChange={(e) => setStart(e.target.value)}
-          className="px-base py-xs text-body flex-1 rounded border"
-          style={{ borderColor: "var(--border)" }}
-        />
+        <label className="flex-1">
+          <span className="sr-only">Start date</span>
+          <input
+            type="date"
+            value={start}
+            onChange={(e) => setStart(e.target.value)}
+            className="px-base py-xs text-body w-full rounded border"
+            style={{ borderColor: "var(--border)" }}
+          />
+        </label>
         <span className="text-body text-gray-400">to</span>
-        <input
-          type="date"
-          value={end}
-          onChange={(e) => setEnd(e.target.value)}
-          className="px-base py-xs text-body flex-1 rounded border"
-          style={{ borderColor: "var(--border)" }}
-        />
+        <label className="flex-1">
+          <span className="sr-only">End date</span>
+          <input
+            type="date"
+            value={end}
+            onChange={(e) => setEnd(e.target.value)}
+            className="px-base py-xs text-body w-full rounded border"
+            style={{ borderColor: "var(--border)" }}
+          />
+        </label>
       </div>
+      {orderInvalid && (
+        <p role="alert" className="mt-xs text-body" style={{ color: "var(--status-danger)" }}>
+          End date must be on or after start date.
+        </p>
+      )}
       <button
         type="button"
-        onClick={() => {
-          if (start && end) onApply(start, end);
-          else onApply(sevenAgo, today);
-        }}
-        className="mt-base py-xs text-body w-full rounded-lg text-white"
+        disabled={!valid}
+        onClick={() => onApply(start, end)}
+        className="mt-base py-xs text-body w-full rounded-lg text-white disabled:cursor-not-allowed disabled:opacity-50"
         style={{ backgroundColor: "var(--strabb-secondary)" }}
       >
         Apply
