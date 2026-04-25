@@ -70,7 +70,7 @@ export function GanttView<T>({
         const rowItems = items.filter((item) => getRowId(item) === row.id);
 
         return (
-          <div key={row.id} className="flex" style={{ minHeight: ROW_HEIGHT }}>
+          <div key={row.id} className="mb-xs flex" style={{ minHeight: ROW_HEIGHT }}>
             {/* Row label */}
             <div
               className="gap-base px-base text-body flex shrink-0 items-center border-r border-b bg-white"
