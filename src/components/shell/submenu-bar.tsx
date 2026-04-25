@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { CalendarClock, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { TimeframeStepper } from "@/components/views/timeframe-stepper";
@@ -111,9 +111,19 @@ export function SubmenuBar() {
         minHeight: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
       }}
     >
-      {/* Left: timeframe stepper (only renders on timeframeable pages) */}
+      {/* Left: page-specific widget (timeframe stepper, scheduled-messages link, …) */}
       <div className="px-md flex shrink-0 items-center">
-        <TimeframeStepper />
+        {currentPage === "messaging" ? (
+          <Link
+            href="/messaging/scheduled"
+            className="gap-xs px-xs py-xs text-body inline-flex items-center rounded-sm font-semibold hover:bg-gray-100"
+          >
+            <CalendarClock size={16} />
+            Scheduled messages
+          </Link>
+        ) : (
+          <TimeframeStepper />
+        )}
       </div>
 
       {/* Centered chip group, mirrors TopNav's optical-centre pattern */}

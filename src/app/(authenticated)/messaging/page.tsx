@@ -1,8 +1,5 @@
 "use client";
 
-import { CalendarClock } from "lucide-react";
-import Link from "next/link";
-
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
 import { MessagingKanbanView } from "@/components/pages/messaging/messaging-kanban-view";
 import { MessagingListView } from "@/components/pages/messaging/messaging-list-view";
@@ -24,33 +21,16 @@ export default function MessagingPage() {
     : null;
   const { data: threadMessages } = useMessageThread(threadOverlay?.messageId ?? null);
 
-  const headerLink = (
-    <div className="mb-sm flex justify-end">
-      <Link
-        href="/messaging/scheduled"
-        className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-lg border font-medium text-gray-700 hover:bg-gray-50"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <CalendarClock size={14} />
-        Scheduled messages
-      </Link>
-    </div>
-  );
-
   if (isLoading) {
     return (
-      <div>
-        {headerLink}
-        <div className="py-xl flex items-center justify-center">
-          <p className="text-body text-gray-400">Loading messages...</p>
-        </div>
+      <div className="py-xl flex items-center justify-center">
+        <p className="text-body text-gray-400">Loading messages...</p>
       </div>
     );
   }
 
   return (
     <div>
-      {headerLink}
       {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
       {view === "list" && <MessagingListView messages={messages ?? []} />}
 
