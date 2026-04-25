@@ -11,6 +11,12 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/dashboard",
 }));
 
+// BillingNavPill (mounted inside TopNav) calls useBillingStatus → useSession.
+// Stub the hook so the nav test can render TopNav without a SessionProvider.
+vi.mock("@/hooks/use-billing", () => ({
+  useBillingStatus: () => ({ data: undefined }),
+}));
+
 // Mock next/link to render a plain <a>
 vi.mock("next/link", () => ({
   default: ({

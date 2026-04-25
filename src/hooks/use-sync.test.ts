@@ -105,7 +105,7 @@ describe("use-sync hooks", () => {
     const { result } = renderHook(() => useTriggerSync(), { wrapper: Wrapper });
     await result.current.mutateAsync();
 
-    const calls = invalidateSpy.mock.calls.map(([arg]) => arg.queryKey);
+    const calls = invalidateSpy.mock.calls.map(([arg]) => arg?.queryKey);
     expect(calls).toContainEqual(["listings"]);
     expect(calls).toContainEqual(["sync"]);
     expect(calls).toContainEqual(["bookings"]);
