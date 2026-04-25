@@ -62,6 +62,13 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       getColor={(item) => typeColors[item.type] ?? item.color}
       getTextColor={(item) => typeTextColors[item.type] ?? "var(--surface-60)"}
       getLabel={(item) => item.label}
+      // Bookings: render with partial-day insets at both ends so back-to-back
+      // turnovers leave a visible cleaning gap. Vacancy / ticket events stay
+      // full-day.
+      getPartialDay={(item) => ({
+        atStart: item.type === "booking",
+        atEnd: item.type === "booking",
+      })}
       dateRange={dateRange}
       onItemClick={(item) => openDrillDownPanel(item.type, item.id)}
     />

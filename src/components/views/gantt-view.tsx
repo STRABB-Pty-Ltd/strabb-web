@@ -14,6 +14,13 @@ export interface GanttViewProps<T> {
   getColor: (item: T) => string;
   getTextColor?: (item: T) => string;
   getLabel: (item: T) => string;
+  /**
+   * Optional per-item flags. When set, the bar is inset on its first/last day
+   * cell — start day shows only the right 25% (afternoon check-in), end day
+   * shows only the left 25% (morning checkout). Back-to-back same-day
+   * turnovers naturally leave the middle 50% as the cleaning gap.
+   */
+  getPartialDay?: (item: T) => { atStart?: boolean; atEnd?: boolean };
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
@@ -33,6 +40,7 @@ export function GanttView<T>({
   getColor,
   getTextColor,
   getLabel,
+  getPartialDay,
   dateRange,
   onItemClick,
   todayLineColor = "var(--status-danger)",
@@ -110,13 +118,28 @@ export function GanttView<T>({
               {/* Bars */}
               {rowItems.map((item, idx) => {
                 const range = getDateRange(item);
-                const startCol = Math.max(0, differenceInDays(startOfDay(range.start), rangeStart));
-                const endCol = Math.min(
-                  totalDays,
-                  differenceInDays(startOfDay(range.end), rangeStart) + 1,
-                );
-                const spanCols = endCol - startCol;
-                if (spanCols <= 0) return null;
+                const rawStart = differenceInDays(startOfDay(range.start), rangeStart);
+                const rawEnd = differenceInDays(startOfDay(range.end), rangeStart);
+
+                const startClipped = rawStart < 0;
+                const endClipped = rawEnd >= totalDays;
+                const visibleStart = Math.max(0, rawStart);
+                const visibleEnd = Math.min(totalDays - 1, rawEnd);
+                if (visibleEnd < 0 || visibleStart > visibleEnd) return null;
+
+                const partial = getPartialDay?.(item);
+                // Insets only apply to the visible end of the bar — when the
+                // booking extends past the viewport the bar continues to the
+                // edge instead of being chopped at 25%/75%.
+                const insetStart = !startClipped && partial?.atStart ? 0.75 : 0;
+                const insetEnd = !endClipped && partial?.atEnd ? 0.25 : 1;
+
+                const leftPx = startClipped ? 0 : (visibleStart + insetStart) * cellWidth;
+                const rightPx = endClipped
+                  ? totalDays * cellWidth
+                  : (visibleEnd + insetEnd) * cellWidth;
+                const widthPx = rightPx - leftPx - 5;
+                if (widthPx <= 0) return null;
 
                 return (
                   <GanttBar
@@ -124,9 +147,8 @@ export function GanttView<T>({
                     label={getLabel(item)}
                     color={getColor(item)}
                     textColor={getTextColor?.(item)}
-                    startCol={startCol}
-                    spanCols={spanCols}
-                    cellWidth={cellWidth}
+                    leftPx={leftPx}
+                    widthPx={widthPx}
                     rowHeight={ROW_HEIGHT}
                     onClick={() => onItemClick(item)}
                   />

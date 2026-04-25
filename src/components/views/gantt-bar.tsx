@@ -4,9 +4,8 @@ interface GanttBarProps {
   label: string;
   color: string;
   textColor?: string;
-  startCol: number;
-  spanCols: number;
-  cellWidth: number;
+  leftPx: number;
+  widthPx: number;
   rowHeight: number;
   onClick: () => void;
 }
@@ -15,9 +14,8 @@ export function GanttBar({
   label,
   color,
   textColor,
-  startCol,
-  spanCols,
-  cellWidth,
+  leftPx,
+  widthPx,
   rowHeight,
   onClick,
 }: GanttBarProps) {
@@ -28,8 +26,8 @@ export function GanttBar({
       className="text-body absolute truncate rounded-sm"
       title={label}
       style={{
-        left: startCol * cellWidth,
-        width: spanCols * cellWidth - 5,
+        left: leftPx,
+        width: widthPx,
         height: rowHeight,
         top: 0,
         backgroundColor: color,
