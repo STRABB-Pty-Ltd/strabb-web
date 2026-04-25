@@ -23,7 +23,7 @@ export function GanttBar({
     <button
       type="button"
       onClick={onClick}
-      className="text-body absolute truncate rounded-sm"
+      className="text-body absolute flex items-center justify-center overflow-hidden rounded-sm text-center break-words"
       title={label}
       style={{
         left: leftPx,
@@ -33,8 +33,8 @@ export function GanttBar({
         backgroundColor: color,
         color: textColor ?? "var(--surface-60)",
         borderRadius: 3,
-        padding: "0 5px",
-        lineHeight: `${rowHeight}px`,
+        padding: "2px 5px",
+        lineHeight: 1.25,
       }}
     >
       {label}
