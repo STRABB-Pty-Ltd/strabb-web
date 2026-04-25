@@ -2,10 +2,14 @@
 
 import { useMemo } from "react";
 
-import { mockBookingList, mockMaintenanceList, mockVacancyList } from "./index";
+import { mockBookingList, mockListingList, mockMaintenanceList, mockVacancyList } from "./index";
 import type { Booking } from "@/types/booking";
 import type { Maintenance } from "@/types/maintenance";
 import type { Vacancy } from "@/types/vacancy";
+
+const listingNamesById: Record<string, string> = Object.fromEntries(
+  mockListingList.map((l) => [l.id, l.name]),
+);
 
 export type CalendarEventType = "booking" | "vacancy" | "maintenance";
 
@@ -61,15 +65,17 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
   };
 }
 
-function maintenanceToEvent(m: Maintenance): CalendarEvent {
+function maintenanceToEvent(m: Maintenance): CalendarEvent | null {
+  if (!m.listingId) return null;
+  const listingName = listingNamesById[m.listingId] ?? m.listingId;
   const start = m.dateScheduled ?? m.dateReported;
   const end = m.dateScheduled ?? m.dateReported;
   return {
     id: m.id,
     type: "maintenance",
     listingId: m.listingId,
-    listingName: m.listingName,
-    label: `${m.description} — ${m.listingName}`,
+    listingName,
+    label: `${m.description} — ${listingName}`,
     start,
     end,
     color: "var(--status-danger)",
@@ -104,9 +110,13 @@ function computeEvents(
 
   if (showAll || submenuFilters.includes("maintenance")) {
     const filtered = filterByListing
-      ? maintenance.filter((m) => selectedListings.includes(m.listingId))
+      ? maintenance.filter((m) => m.listingId && selectedListings.includes(m.listingId))
       : maintenance;
-    events.push(...filtered.filter((m) => m.status !== "cancelled").map(maintenanceToEvent));
+    const mapped = filtered
+      .filter((m) => m.status !== "cancelled")
+      .map(maintenanceToEvent)
+      .filter((e): e is CalendarEvent => e !== null);
+    events.push(...mapped);
   }
 
   return events;

@@ -4,17 +4,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
-import type { Maintenance } from "@/types/maintenance";
+import type { Maintenance, MaintenanceListResponse } from "@/types/maintenance";
 import type { Vacancy } from "@/types/vacancy";
 
-export function useMaintenanceAPI(filters?: {
+export interface MaintenanceFilters {
   propertyId?: string;
   listingId?: string;
   status?: string;
   priority?: string;
   dateFrom?: string;
   dateTo?: string;
-}) {
+  page?: number;
+  pageSize?: number;
+}
+
+export function useMaintenanceAPI(filters?: MaintenanceFilters) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const params = new URLSearchParams();
@@ -24,16 +28,33 @@ export function useMaintenanceAPI(filters?: {
   if (filters?.priority) params.set("priority", filters.priority);
   if (filters?.dateFrom) params.set("date_from", filters.dateFrom);
   if (filters?.dateTo) params.set("date_to", filters.dateTo);
+  params.set("page", String(filters?.page ?? 1));
+  params.set("page_size", String(filters?.pageSize ?? 20));
 
-  return useQuery<Maintenance[]>({
-    queryKey: ["maintenance", JSON.stringify(filters)],
+  return useQuery<MaintenanceListResponse>({
+    queryKey: ["maintenance", JSON.stringify(filters ?? {})],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: Maintenance[] }>(
+      const response = await apiClient.get<MaintenanceListResponse>(
         `/maintenance?${params.toString()}`,
       );
-      return response.data;
+      return response;
     },
     enabled: !USE_MOCK && isReady,
+  });
+}
+
+export function useMaintenance(id: string | null) {
+  const apiClient = useApiClient();
+  const isReady = useAuthReady();
+
+  return useQuery<Maintenance | null>({
+    queryKey: ["maintenance", "detail", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const response = await apiClient.get<{ data: Maintenance }>(`/maintenance/${id}`);
+      return response.data;
+    },
+    enabled: !USE_MOCK && isReady && !!id,
   });
 }
 
