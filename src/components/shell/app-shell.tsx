@@ -86,7 +86,9 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
               aria-hidden="true"
               className="pointer-events-none absolute"
               style={{
-                top: "50%",
+                // Anchored to the gap between TopNav and SubmenuBar so it stays
+                // there regardless of wrapper paddingBottom.
+                top: "calc(var(--space-md) + var(--topnav-height) + var(--space-md) / 2)",
                 left: "calc(50% - var(--sidebar-width) / 4)",
                 transform: "translate(-50%, -50%)",
                 width: 385,
