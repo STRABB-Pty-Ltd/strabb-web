@@ -6,6 +6,7 @@ import {
   Globe,
   Phone,
   Radio,
+  RefreshCw,
   Settings,
   ShieldCheck,
   Sparkles,
@@ -33,10 +34,12 @@ export function SettingsNavSection() {
   const pathname = usePathname();
   const router = useRouter();
   const onAdminRoute = pathname?.startsWith("/settings/admin") ?? false;
+  const onSyncLogsRoute = pathname?.startsWith("/settings/sync-logs") ?? false;
+  const onSubRoute = onAdminRoute || onSyncLogsRoute;
 
   const handleSectionClick = (id: string) => {
     setSection(id);
-    if (onAdminRoute) router.push("/settings");
+    if (onSubRoute) router.push("/settings");
   };
 
   return (
@@ -44,7 +47,7 @@ export function SettingsNavSection() {
       <div className="gap-xs flex flex-col">
         {sections.map((s) => {
           const Icon = s.icon;
-          const active = !onAdminRoute && section === s.id;
+          const active = !onSubRoute && section === s.id;
           return (
             <button
               key={s.id}
@@ -73,6 +76,18 @@ export function SettingsNavSection() {
         >
           <ShieldCheck size={14} />
           Admin
+        </Link>
+        <Link
+          href="/settings/sync-logs"
+          aria-current={onSyncLogsRoute ? "page" : undefined}
+          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: onSyncLogsRoute ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+            color: onSyncLogsRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          }}
+        >
+          <RefreshCw size={14} />
+          Sync logs
         </Link>
       </div>
     </nav>

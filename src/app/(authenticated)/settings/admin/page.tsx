@@ -95,7 +95,7 @@ export default function AdminPage() {
               label="Sync Errors"
               count={data.syncErrors}
               icon={CloudOffIcon}
-              href="/sync/logs"
+              href="/settings/sync-logs"
             />
             <HealthCard
               label="Listings Errored"
