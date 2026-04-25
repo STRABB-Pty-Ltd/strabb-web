@@ -17,13 +17,14 @@ import {
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const WEEK_OPTS = { weekStartsOn: 1 as const };
+const AUTO_CONFIRM_SECONDS = 5;
 
 type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
 
@@ -41,6 +42,37 @@ export function TimeframePopup() {
   const calendar = useAppStore((s) => s.calendar);
   const cleaning = useAppStore((s) => s.cleaning);
   const reporting = useAppStore((s) => s.reporting);
+
+  // Auto-confirm: when popup opens because of a window-size change, auto-close
+  // after AUTO_CONFIRM_SECONDS (which keeps the current period). User clicks
+  // anywhere in the popup body cancels the timer via cancelAutoConfirm so they
+  // can browse without losing the popup.
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const cancelledRef = useRef(false);
+
+  useEffect(() => {
+    cancelledRef.current = false;
+    if (!tfPopup.open || !tfPopup.autoSelect) {
+      setSecondsLeft(null);
+      return;
+    }
+    setSecondsLeft(AUTO_CONFIRM_SECONDS);
+    const interval = setInterval(() => {
+      setSecondsLeft((s) => (s === null || s <= 0 ? s : s - 1));
+    }, 1000);
+    const timer = setTimeout(() => {
+      if (!cancelledRef.current) closeTimeframePopup();
+    }, AUTO_CONFIRM_SECONDS * 1000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
+  }, [tfPopup.open, tfPopup.autoSelect, closeTimeframePopup]);
+
+  const cancelAutoConfirm = useCallback(() => {
+    cancelledRef.current = true;
+    setSecondsLeft(null);
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -84,6 +116,7 @@ export function TimeframePopup() {
           width: 377,
           borderColor: "var(--border)",
         }}
+        onMouseDown={cancelAutoConfirm}
       >
         <div
           className="px-sm py-base flex items-center justify-between border-b"
@@ -99,6 +132,19 @@ export function TimeframePopup() {
             <X size={16} />
           </button>
         </div>
+
+        {secondsLeft !== null && secondsLeft > 0 && (
+          <div
+            className="px-sm py-xs text-body border-b text-gray-500"
+            style={{
+              borderColor: "var(--border)",
+              backgroundColor: "var(--neutral-30)",
+            }}
+          >
+            Confirming current {labelForCountdown(windowSize)} in {secondsLeft}s — pick a different
+            one or click away to keep it.
+          </div>
+        )}
 
         <div className="p-sm">
           {windowSize === "month" && <MonthPicker anchor={anchor} onPick={writeAnchor} />}
@@ -126,6 +172,29 @@ export function TimeframePopup() {
       </div>
     </>
   );
+}
+
+function labelForCountdown(ws: string): string {
+  switch (ws) {
+    case "day":
+      return "day";
+    case "week":
+      return "week";
+    case "fortnight":
+      return "fortnight";
+    case "month":
+      return "month";
+    case "quarter":
+      return "quarter";
+    case "year":
+      return "year";
+    case "ytd":
+      return "year-to-date";
+    case "custom":
+      return "range";
+    default:
+      return "period";
+  }
 }
 
 function labelForWindow(ws: string): string {

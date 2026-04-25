@@ -81,13 +81,16 @@ export function TimeframeSelector({ page }: { page: PageId }) {
             <button
               key={opt.id}
               type="button"
-              onClick={() =>
+              onClick={() => {
                 setTimeframe(
                   page as "dashboard" | "calendar" | "cleaning" | "reporting",
                   targetWindowSize,
                   null,
-                )
-              }
+                );
+                // Window changed → 5s grace period for picking a specific period.
+                // Same chip clicked again → no timer, popup stays for browsing.
+                openTimeframePopup(!isActive);
+              }}
               className="px-sm py-base text-body rounded-lg font-medium transition-colors"
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
@@ -101,12 +104,13 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         <button
           type="button"
           onClick={() => {
+            const wasCustom = currentWs === "custom";
             setTimeframe(
               page as "dashboard" | "calendar" | "cleaning" | "reporting",
               "custom",
               null,
             );
-            openTimeframePopup();
+            openTimeframePopup(!wasCustom);
           }}
           className="px-sm py-base text-body col-span-2 rounded-lg font-medium transition-colors"
           style={{

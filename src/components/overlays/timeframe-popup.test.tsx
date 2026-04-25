@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -9,7 +9,11 @@ const { closeMock, setAnchorMock, setCustomRangeMock } = vi.hoisted(() => ({
 }));
 
 const storeState = {
-  tfPopup: { open: true, anchor: "sidebar" },
+  tfPopup: { open: true, anchor: "sidebar", autoSelect: false } as {
+    open: boolean;
+    anchor: "sidebar";
+    autoSelect: boolean;
+  },
   closeTimeframePopup: closeMock,
   setTimeframeAnchor: setAnchorMock,
   setCustomRange: setCustomRangeMock,
@@ -42,7 +46,7 @@ describe("TimeframePopup", () => {
     closeMock.mockReset();
     setAnchorMock.mockReset();
     setCustomRangeMock.mockReset();
-    storeState.tfPopup = { open: true, anchor: "sidebar" };
+    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: false };
     storeState.currentPage = "dashboard";
     storeState.dashboard = { windowSize: "month", anchor: null };
     storeState.customRange = null;
@@ -52,9 +56,38 @@ describe("TimeframePopup", () => {
   });
 
   it("renders nothing when closed", () => {
-    storeState.tfPopup = { open: false, anchor: "sidebar" };
+    storeState.tfPopup = { open: false, anchor: "sidebar", autoSelect: false };
     const { container } = render(<TimeframePopup />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("autoSelect=true shows the countdown banner", () => {
+    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: true };
+    storeState.dashboard = { windowSize: "month", anchor: null };
+    render(<TimeframePopup />);
+    expect(screen.getByText(/confirming current month in 5s/i)).toBeInTheDocument();
+  });
+
+  it("autoSelect=false hides the countdown banner", () => {
+    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: false };
+    storeState.dashboard = { windowSize: "month", anchor: null };
+    render(<TimeframePopup />);
+    expect(screen.queryByText(/confirming current/i)).not.toBeInTheDocument();
+  });
+
+  it("autoSelect timer auto-closes after 5 seconds", () => {
+    // Override the shouldAdvanceTime fake timers from beforeEach so we control time.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 3, 15));
+    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: true };
+    storeState.dashboard = { windowSize: "month", anchor: null };
+    render(<TimeframePopup />);
+
+    expect(closeMock).not.toHaveBeenCalled();
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(closeMock).toHaveBeenCalled();
   });
 
   it("month picker: clicking a month writes anchor and closes", async () => {

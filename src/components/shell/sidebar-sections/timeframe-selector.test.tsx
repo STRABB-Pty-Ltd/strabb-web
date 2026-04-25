@@ -49,10 +49,19 @@ describe("TimeframeSelector", () => {
     expect(monthBtn).toHaveStyle({ backgroundColor: "var(--btn-active-bg)" });
   });
 
-  it("clicking a chip calls setTimeframe(page, windowSize, null)", async () => {
+  it("clicking a non-active chip sets timeframe AND opens popup with autoSelect=true", async () => {
+    storeState.dashboard.windowSize = "month";
     render(<TimeframeSelector page="dashboard" />);
     await userEvent.click(screen.getByRole("button", { name: "Quarter" }));
     expect(setTimeframeMock).toHaveBeenCalledWith("dashboard", "quarter", null);
+    expect(openTimeframePopupMock).toHaveBeenCalledWith(true);
+  });
+
+  it("clicking the already-active chip opens popup with autoSelect=false", async () => {
+    storeState.dashboard.windowSize = "month";
+    render(<TimeframeSelector page="dashboard" />);
+    await userEvent.click(screen.getByRole("button", { name: "Month" }));
+    expect(openTimeframePopupMock).toHaveBeenCalledWith(false);
   });
 
   it("cleaning's 'Today' chip maps to windowSize 'day'", async () => {

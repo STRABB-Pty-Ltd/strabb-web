@@ -57,7 +57,7 @@ export function TimeframeStepper() {
       )}
       <button
         type="button"
-        onClick={openTimeframePopup}
+        onClick={() => openTimeframePopup()}
         className="text-body px-xs py-xs rounded-sm font-semibold hover:bg-gray-100"
       >
         {label}
