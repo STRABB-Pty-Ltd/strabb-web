@@ -21,7 +21,8 @@ type SubmenuPage = "dashboard" | "calendar" | "messaging" | "cleaning" | "report
 
 export interface CrossCuttingActions {
   setView: (page: ViewablePage, view: string) => void;
-  setTimeframe: (page: TimeframePage, tf: string) => void;
+  setTimeframe: (page: TimeframePage, windowSize: string, anchor?: string | null) => void;
+  setTimeframeAnchor: (page: TimeframePage, anchor: string | null) => void;
   toggleSubmenuChip: (page: SubmenuPage, chip: string) => void;
   setSubmenu: (page: SubmenuPage, chips: string[]) => void;
 }
@@ -57,10 +58,18 @@ export const useAppStore = create<AppState>()((...a) => {
       set({ [page]: pageState } as Partial<AppState>);
     },
 
-    // Cross-cutting: set timeframe for a timeframeable page
-    setTimeframe: (page: TimeframePage, tf: string) => {
+    // Cross-cutting: set timeframe window size (and reset anchor by default)
+    setTimeframe: (page: TimeframePage, windowSize: string, anchor: string | null = null) => {
       const pageState = { ...get()[page] };
-      (pageState as Record<string, unknown>).timeframe = tf;
+      (pageState as Record<string, unknown>).windowSize = windowSize;
+      (pageState as Record<string, unknown>).anchor = anchor;
+      set({ [page]: pageState } as Partial<AppState>);
+    },
+
+    // Cross-cutting: update only the anchor (e.g. popup picks a different period)
+    setTimeframeAnchor: (page: TimeframePage, anchor: string | null) => {
+      const pageState = { ...get()[page] };
+      (pageState as Record<string, unknown>).anchor = anchor;
       set({ [page]: pageState } as Partial<AppState>);
     },
 

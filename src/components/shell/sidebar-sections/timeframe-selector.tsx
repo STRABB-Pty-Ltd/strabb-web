@@ -10,10 +10,10 @@ interface TimeframeOption {
 
 const timeframeOptions: Record<string, TimeframeOption[]> = {
   dashboard: [
-    { id: "this_month", label: "This Month" },
-    { id: "last_month", label: "Last Month" },
-    { id: "this_quarter", label: "This Quarter" },
+    { id: "month", label: "Month" },
+    { id: "quarter", label: "Quarter" },
     { id: "ytd", label: "YTD" },
+    { id: "year", label: "Year" },
   ],
   calendar: [
     { id: "day", label: "Day" },
@@ -23,36 +23,47 @@ const timeframeOptions: Record<string, TimeframeOption[]> = {
   ],
   cleaning: [
     { id: "today", label: "Today" },
-    { id: "this_week", label: "This Week" },
-    { id: "this_month", label: "This Month" },
+    { id: "week", label: "Week" },
+    { id: "fortnight", label: "Fortnight" },
+    { id: "month", label: "Month" },
   ],
   reporting: [
-    { id: "this_month", label: "This Month" },
-    { id: "last_month", label: "Last Month" },
-    { id: "this_quarter", label: "This Quarter" },
-    { id: "this_year", label: "This Year" },
+    { id: "month", label: "Month" },
+    { id: "quarter", label: "Quarter" },
     { id: "ytd", label: "YTD" },
+    { id: "year", label: "Year" },
   ],
+};
+
+// Cleaning's "Today" chip maps to windowSize "day" — keep the friendlier label.
+const chipIdToWindowSize: Record<string, string> = {
+  today: "day",
+};
+
+const windowSizeToChipId: Record<string, string> = {
+  day: "today",
 };
 
 export function TimeframeSelector({ page }: { page: PageId }) {
   const setTimeframe = useAppStore((s) => s.setTimeframe);
   const openTimeframePopup = useAppStore((s) => s.openTimeframePopup);
-  const dashboardTf = useAppStore((s) => s.dashboard.timeframe);
-  const calendarTf = useAppStore((s) => s.calendar.timeframe);
-  const cleaningTf = useAppStore((s) => s.cleaning.timeframe);
-  const reportingTf = useAppStore((s) => s.reporting.timeframe);
+  const dashboardWs = useAppStore((s) => s.dashboard.windowSize);
+  const calendarWs = useAppStore((s) => s.calendar.windowSize);
+  const cleaningWs = useAppStore((s) => s.cleaning.windowSize);
+  const reportingWs = useAppStore((s) => s.reporting.windowSize);
 
   const options = timeframeOptions[page];
   if (!options) return null;
 
-  const tfByPage: Record<string, string> = {
-    dashboard: dashboardTf,
-    calendar: calendarTf,
-    cleaning: cleaningTf,
-    reporting: reportingTf,
+  const wsByPage: Record<string, string> = {
+    dashboard: dashboardWs,
+    calendar: calendarWs,
+    cleaning: cleaningWs,
+    reporting: reportingWs,
   };
-  const currentTf = tfByPage[page] ?? "";
+  const currentWs = wsByPage[page] ?? "";
+  const activeChipId =
+    page === "cleaning" ? (windowSizeToChipId[currentWs] ?? currentWs) : currentWs;
 
   return (
     <div style={{ padding: "var(--space-sm)" }}>
@@ -64,13 +75,18 @@ export function TimeframeSelector({ page }: { page: PageId }) {
       </h3>
       <div className="gap-xs grid grid-cols-2">
         {options.map((opt) => {
-          const isActive = currentTf === opt.id;
+          const isActive = activeChipId === opt.id;
+          const targetWindowSize = chipIdToWindowSize[opt.id] ?? opt.id;
           return (
             <button
               key={opt.id}
               type="button"
               onClick={() =>
-                setTimeframe(page as "dashboard" | "calendar" | "cleaning" | "reporting", opt.id)
+                setTimeframe(
+                  page as "dashboard" | "calendar" | "cleaning" | "reporting",
+                  targetWindowSize,
+                  null,
+                )
               }
               className="px-sm py-base text-body rounded-lg font-medium transition-colors"
               style={{
@@ -84,11 +100,19 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         })}
         <button
           type="button"
-          onClick={openTimeframePopup}
+          onClick={() => {
+            setTimeframe(
+              page as "dashboard" | "calendar" | "cleaning" | "reporting",
+              "custom",
+              null,
+            );
+            openTimeframePopup();
+          }}
           className="px-sm py-base text-body col-span-2 rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: "var(--btn-inactive-bg)",
-            color: "var(--btn-inactive-text)",
+            backgroundColor:
+              currentWs === "custom" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+            color: currentWs === "custom" ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
           }}
         >
           Custom

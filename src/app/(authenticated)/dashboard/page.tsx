@@ -7,32 +7,44 @@ import { AlertStrip } from "@/components/pages/dashboard/alert-strip";
 import { ComparePanel } from "@/components/pages/dashboard/compare-panel";
 import { KPIGrid } from "@/components/pages/dashboard/kpi-grid";
 import { PreviewGrid } from "@/components/pages/dashboard/preview-grid";
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 
 export default function DashboardPage() {
-  const timeframe = useAppStore((s) => s.dashboard.timeframe);
+  const windowSize = useAppStore((s) => s.dashboard.windowSize);
+  const anchor = useAppStore((s) => s.dashboard.anchor);
   const submenu = useAppStore((s) => s.dashboard.submenu);
   const compare = useAppStore((s) => s.dashboard.compare);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
-  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(timeframe, selectedListings);
+  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
+    windowSize,
+    anchor,
+    selectedListings,
+  );
   const { data: alerts } = useDashboardAlerts(selectedListings);
   const { data: preview, isLoading: previewLoading } = useDashboardPreview(
     selectedListings,
-    timeframe,
+    windowSize,
+    anchor,
   );
 
   const isCompare = compare || submenu.includes("compare");
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading dashboard...</p>
+      <div className="space-y-lg">
+        <TimeframeStepper />
+        <div className="py-xl flex items-center justify-center">
+          <p className="text-body text-gray-400">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-lg">
+      <TimeframeStepper />
+
       <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
 
       {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}

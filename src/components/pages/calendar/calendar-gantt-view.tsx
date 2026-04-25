@@ -27,7 +27,8 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const submenu = useAppStore((s) => s.calendar.submenu);
-  const timeframe = useAppStore((s) => s.calendar.timeframe);
+  const windowSize = useAppStore((s) => s.calendar.windowSize);
+  const anchor = useAppStore((s) => s.calendar.anchor);
   const isOverview = submenu.length === 0 || submenu.includes("overview");
   const { data: listingsData } = useListings();
   const allListings = (listingsData?.data ?? []) as unknown as Listing[];
@@ -42,7 +43,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
     label: l.name,
   }));
 
-  const range = timeframeToDateRange(timeframe);
+  const range = timeframeToDateRange(windowSize, anchor);
   const dateRange = {
     start: new Date(range.startDate),
     end: new Date(range.endDate),

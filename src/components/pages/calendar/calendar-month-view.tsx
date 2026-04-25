@@ -1,20 +1,16 @@
 "use client";
 
+import { parseISO } from "date-fns";
+
 import { CalendarGrid } from "@/components/views/calendar-grid";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useAppStore } from "@/stores/app-store";
 
-const timeframeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
+const windowSizeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
   month: "month",
-  this_month: "month",
   week: "week",
-  this_week: "week",
   day: "day",
-  today: "day",
   fortnight: "fortnight",
-  this_fortnight: "fortnight",
-  last_month: "month",
-  last_week: "week",
 };
 
 const typeColors: Record<string, string> = {
@@ -34,18 +30,19 @@ interface CalendarMonthViewProps {
 }
 
 export function CalendarMonthView({ events }: CalendarMonthViewProps) {
-  const timeframe = useAppStore((s) => s.calendar.timeframe);
+  const windowSize = useAppStore((s) => s.calendar.windowSize);
+  const anchor = useAppStore((s) => s.calendar.anchor);
   const submenu = useAppStore((s) => s.calendar.submenu);
-  const calendarDate = useAppStore((s) => s.calendarDate);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const isOverview = submenu.length === 0 || submenu.includes("overview");
 
-  const mode = timeframeToMode[timeframe] ?? "month";
+  const mode = windowSizeToMode[windowSize] ?? "month";
+  const currentDate = anchor ? parseISO(anchor) : new Date();
 
   return (
     <CalendarGrid<CalendarEvent>
       mode={mode}
-      currentDate={calendarDate}
+      currentDate={currentDate}
       events={events}
       getEventDate={(ev) => ({
         start: new Date(ev.start),
@@ -55,7 +52,6 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
       getEventTextColor={(ev) => typeTextColors[ev.type] ?? "var(--surface-60)"}
       getEventLabel={(ev) => ev.label}
       onEventClick={(ev) => openDrillDownPanel(ev.type, ev.id)}
-      onDateChange={() => {}}
     />
   );
 }

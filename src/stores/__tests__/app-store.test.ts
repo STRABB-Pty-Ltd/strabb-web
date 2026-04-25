@@ -111,12 +111,30 @@ describe("AppStore", () => {
   });
 
   describe("cross-cutting: timeframe", () => {
-    it("setTimeframe updates the correct page timeframe", () => {
-      useAppStore.getState().setTimeframe("dashboard", "last_month");
-      expect(useAppStore.getState().dashboard.timeframe).toBe("last_month");
+    it("setTimeframe updates windowSize and resets anchor", () => {
+      useAppStore.getState().setTimeframe("dashboard", "quarter");
+      expect(useAppStore.getState().dashboard.windowSize).toBe("quarter");
+      expect(useAppStore.getState().dashboard.anchor).toBeNull();
 
-      useAppStore.getState().setTimeframe("reporting", "this_quarter");
-      expect(useAppStore.getState().reporting.timeframe).toBe("this_quarter");
+      useAppStore.getState().setTimeframe("reporting", "year");
+      expect(useAppStore.getState().reporting.windowSize).toBe("year");
+      expect(useAppStore.getState().reporting.anchor).toBeNull();
+    });
+
+    it("setTimeframe with anchor sets both fields", () => {
+      useAppStore.getState().setTimeframe("dashboard", "month", "2025-01-01");
+      expect(useAppStore.getState().dashboard.windowSize).toBe("month");
+      expect(useAppStore.getState().dashboard.anchor).toBe("2025-01-01");
+    });
+
+    it("setTimeframeAnchor updates anchor without touching windowSize", () => {
+      useAppStore.getState().setTimeframe("dashboard", "month");
+      useAppStore.getState().setTimeframeAnchor("dashboard", "2024-06-01");
+      expect(useAppStore.getState().dashboard.windowSize).toBe("month");
+      expect(useAppStore.getState().dashboard.anchor).toBe("2024-06-01");
+
+      useAppStore.getState().setTimeframeAnchor("dashboard", null);
+      expect(useAppStore.getState().dashboard.anchor).toBeNull();
     });
   });
 

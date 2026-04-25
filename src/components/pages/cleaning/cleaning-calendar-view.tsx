@@ -1,5 +1,7 @@
 "use client";
 
+import { parseISO } from "date-fns";
+
 import { CalendarGrid } from "@/components/views/calendar-grid";
 import type { CleaningTask } from "@/types/cleaning-task";
 import { useAppStore } from "@/stores/app-store";
@@ -22,13 +24,11 @@ const typeLabels: Record<string, string> = {
   turnover: "Turnover",
 };
 
-const timeframeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
-  this_month: "month",
-  this_week: "week",
-  today: "day",
-  this_fortnight: "fortnight",
-  last_month: "month",
-  last_week: "week",
+const windowSizeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
+  month: "month",
+  week: "week",
+  day: "day",
+  fortnight: "fortnight",
 };
 
 interface CleaningCalendarViewProps {
@@ -36,16 +36,17 @@ interface CleaningCalendarViewProps {
 }
 
 export function CleaningCalendarView({ tasks }: CleaningCalendarViewProps) {
-  const timeframe = useAppStore((s) => s.cleaning.timeframe);
-  const calendarDate = useAppStore((s) => s.calendarDate);
+  const windowSize = useAppStore((s) => s.cleaning.windowSize);
+  const anchor = useAppStore((s) => s.cleaning.anchor);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
 
-  const mode = timeframeToMode[timeframe] ?? "week";
+  const mode = windowSizeToMode[windowSize] ?? "week";
+  const currentDate = anchor ? parseISO(anchor) : new Date();
 
   return (
     <CalendarGrid<CleaningTask>
       mode={mode}
-      currentDate={calendarDate}
+      currentDate={currentDate}
       events={tasks}
       getEventDate={(task) => {
         const d = new Date(task.scheduledTime);
@@ -54,7 +55,6 @@ export function CleaningCalendarView({ tasks }: CleaningCalendarViewProps) {
       getEventColor={(task) => statusColors[task.status] ?? "var(--brand-10)"}
       getEventLabel={(task) => `${task.listingName} — ${typeLabels[task.type] ?? task.type}`}
       onEventClick={(task) => openDrillDownPanel("cleaning", task.id)}
-      onDateChange={() => {}}
     />
   );
 }

@@ -22,7 +22,6 @@ const defaultProps: CalendarGridProps<TestEvent> = {
   getEventColor: (ev) => ev.color,
   getEventLabel: (ev) => ev.label,
   onEventClick: vi.fn(),
-  onDateChange: vi.fn(),
 };
 
 describe("CalendarGrid", () => {
@@ -63,10 +62,9 @@ describe("CalendarGrid", () => {
     expect(screen.getAllByText("+2 more").length).toBeGreaterThan(0);
   });
 
-  it("renders navigation arrows", () => {
+  it("renders the day-of-week header row even with no events", () => {
     render(<CalendarGrid {...defaultProps} />);
-    // The header contains month/year label
-    const heading = screen.getByText(/\w+ \d{4}/);
-    expect(heading).toBeInTheDocument();
+    // grid renders Mon..Sun headers (verified above) plus day cells
+    expect(screen.getAllByText(/^\d+$/).length).toBeGreaterThan(0);
   });
 });

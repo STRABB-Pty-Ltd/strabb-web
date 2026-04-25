@@ -9,6 +9,7 @@ import type { PageId } from "@/stores/types";
 
 import { CleaningDetailDrawer } from "@/components/overlays/cleaning-detail-drawer";
 import { TicketDetailDrawer } from "@/components/overlays/ticket-detail-drawer";
+import { TimeframePopup } from "@/components/overlays/timeframe-popup";
 import { ToastContainer } from "@/components/overlays/toast-container";
 
 import { Canvas } from "./canvas";
@@ -104,6 +105,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       {helpOpen && <KeyboardHelpModal onClose={() => setHelpOpen(false)} />}
       <CleaningDetailDrawer />
       <TicketDetailDrawer />
+      <TimeframePopup />
       <ToastContainer />
     </div>
   );

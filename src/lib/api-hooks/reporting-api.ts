@@ -77,10 +77,14 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   ];
 }
 
-export function useReportingKPIsAPI(selectedListings: string[], timeframe?: string) {
+export function useReportingKPIsAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
@@ -98,10 +102,14 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
   });
 }
 
-export function useReportingChartDataAPI(selectedListings: string[], timeframe?: string) {
+export function useReportingChartDataAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);

@@ -117,17 +117,21 @@ function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
   return alerts;
 }
 
-export function useDashboardKPIsAPI(timeframe: string, selectedListings: string[]) {
+export function useDashboardKPIsAPI(
+  windowSize: string,
+  anchor: string | null,
+  selectedListings: string[],
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
   return useQuery<KPIData[]>({
-    queryKey: ["dashboard-kpis", timeframe, ...selectedListings],
+    queryKey: ["dashboard-kpis", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawKPIResponse }>(
         `/dashboard/kpis?${params.toString()}`,
@@ -195,17 +199,21 @@ function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
   };
 }
 
-export function useDashboardPreviewAPI(selectedListings: string[], timeframe: string) {
+export function useDashboardPreviewAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
   return useQuery<PreviewData>({
-    queryKey: ["dashboard-preview", timeframe, ...selectedListings],
+    queryKey: ["dashboard-preview", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawPreviewResponse }>(
         `/dashboard/preview?${params.toString()}`,
@@ -216,17 +224,21 @@ export function useDashboardPreviewAPI(selectedListings: string[], timeframe: st
   });
 }
 
-export function useDashboardCompareAPI(selectedListings: string[], timeframe: string) {
+export function useDashboardCompareAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
   return useQuery({
-    queryKey: ["dashboard-compare", timeframe, ...selectedListings],
+    queryKey: ["dashboard-compare", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: unknown }>(
         `/dashboard/compare?${params.toString()}`,

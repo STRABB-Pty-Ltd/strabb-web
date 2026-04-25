@@ -9,26 +9,37 @@ import { useAppStore } from "@/stores/app-store";
 import { CalendarGanttView } from "@/components/pages/calendar/calendar-gantt-view";
 import { CalendarListView } from "@/components/pages/calendar/calendar-list-view";
 import { CalendarMonthView } from "@/components/pages/calendar/calendar-month-view";
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 
 export default function CalendarPage() {
   const view = useAppStore((s) => s.calendar.view);
   const submenu = useAppStore((s) => s.calendar.submenu);
-  const timeframe = useAppStore((s) => s.calendar.timeframe);
+  const windowSize = useAppStore((s) => s.calendar.windowSize);
+  const anchor = useAppStore((s) => s.calendar.anchor);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { effectiveView, showMobileBanner } = useMobileViewOverride(view);
 
-  const { data: events, isLoading } = useCalendarEvents(selectedListings, submenu, timeframe);
+  const { data: events, isLoading } = useCalendarEvents(
+    selectedListings,
+    submenu,
+    windowSize,
+    anchor,
+  );
 
   if (isLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading calendar...</p>
+      <div>
+        <TimeframeStepper />
+        <div className="py-xl flex items-center justify-center">
+          <p className="text-body text-gray-400">Loading calendar...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
+      <TimeframeStepper />
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />

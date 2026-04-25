@@ -14,9 +14,10 @@ export type { CalendarEvent, CalendarEventType } from "@/lib/mock-data/calendar-
 export function useCalendarEvents(
   selectedListings: string[],
   submenuFilters: string[],
-  timeframe: string = "this_month",
+  windowSize: string = "month",
+  anchor: string | null = null,
 ) {
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const mockResult = useCalendarEventsMock(selectedListings, submenuFilters);
   const apiResult = useCalendarEventsAPI(selectedListings, submenuFilters, startDate, endDate);
 

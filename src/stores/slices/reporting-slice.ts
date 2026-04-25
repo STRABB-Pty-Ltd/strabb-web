@@ -3,7 +3,8 @@ import type { StateCreator } from "zustand";
 import type { SavedReport } from "../types";
 
 export interface ReportingPageState {
-  timeframe: string;
+  windowSize: string;
+  anchor: string | null;
   submenu: string[];
   moreOpen: boolean;
   savedReportsOpen: boolean;
@@ -24,7 +25,8 @@ export const createReportingSlice: StateCreator<ReportingSlice, [], [], Reportin
   get,
 ) => ({
   reporting: {
-    timeframe: "this_month",
+    windowSize: "month",
+    anchor: null,
     submenu: ["overview"],
     moreOpen: false,
     savedReportsOpen: false,

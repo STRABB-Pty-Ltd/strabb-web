@@ -7,9 +7,13 @@ import { useAppStore } from "@/stores/app-store";
 
 export type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
 
-export function useReportingKPIs(selectedListings: string[], timeframe?: string) {
+export function useReportingKPIs(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const mockResult = useReportingKPIsMock(selectedListings);
-  const apiResult = useReportingKPIsAPI(selectedListings, timeframe);
+  const apiResult = useReportingKPIsAPI(selectedListings, windowSize, anchor);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };
@@ -22,9 +26,13 @@ export function useReportingKPIs(selectedListings: string[], timeframe?: string)
   };
 }
 
-export function useReportingChartData(selectedListings: string[], timeframe?: string) {
+export function useReportingChartData(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const mockResult = useReportingChartDataMock(selectedListings);
-  const apiResult = useReportingChartDataAPI(selectedListings, timeframe);
+  const apiResult = useReportingChartDataAPI(selectedListings, windowSize, anchor);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };
@@ -42,7 +50,7 @@ export function useSavedReports() {
   const addSavedReport = useAppStore((s) => s.addSavedReport);
   const deleteSavedReport = useAppStore((s) => s.deleteSavedReport);
   const setActiveSavedReport = useAppStore((s) => s.setActiveSavedReport);
-  const timeframe = useAppStore((s) => s.reporting.timeframe);
+  const windowSize = useAppStore((s) => s.reporting.windowSize);
   const submenu = useAppStore((s) => s.reporting.submenu);
 
   const loadReport = (id: string) => {
@@ -55,7 +63,7 @@ export function useSavedReports() {
     addSavedReport({
       id: `sr-${Date.now()}`,
       name,
-      timeframe,
+      timeframe: windowSize,
       submenu,
       createdAt: new Date().toISOString(),
     });

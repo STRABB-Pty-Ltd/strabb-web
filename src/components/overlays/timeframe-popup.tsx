@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import {
+  addDays,
   addMonths,
   eachDayOfInterval,
   endOfMonth,
@@ -9,26 +9,38 @@ import {
   format,
   isSameDay,
   isSameMonth,
+  parseISO,
   startOfMonth,
+  startOfQuarter,
   startOfWeek,
+  startOfYear,
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useAppStore } from "@/stores/app-store";
+import type { PageId } from "@/stores/types";
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const WEEK_OPTS = { weekStartsOn: 1 as const };
+
+type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
+
+const isTimeframePage = (p: PageId): p is TimeframePage =>
+  p === "dashboard" || p === "calendar" || p === "cleaning" || p === "reporting";
 
 export function TimeframePopup() {
   const tfPopup = useAppStore((s) => s.tfPopup);
   const closeTimeframePopup = useAppStore((s) => s.closeTimeframePopup);
-  const calendarDate = useAppStore((s) => s.calendarDate);
-  const customRange = useAppStore((s) => s.customRange);
+  const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
   const setCustomRange = useAppStore((s) => s.setCustomRange);
-
-  const [viewDate, setViewDate] = useState(calendarDate);
-  const [localStart, setLocalStart] = useState(customRange?.start ?? "");
-  const [localEnd, setLocalEnd] = useState(customRange?.end ?? "");
+  const customRange = useAppStore((s) => s.customRange);
+  const currentPage = useAppStore((s) => s.currentPage);
+  const dashboard = useAppStore((s) => s.dashboard);
+  const calendar = useAppStore((s) => s.calendar);
+  const cleaning = useAppStore((s) => s.cleaning);
+  const reporting = useAppStore((s) => s.reporting);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -44,123 +56,361 @@ export function TimeframePopup() {
     }
   }, [tfPopup.open, handleKeyDown]);
 
-  if (!tfPopup.open) return null;
+  if (!tfPopup.open || !isTimeframePage(currentPage)) return null;
 
-  const monthStart = startOfMonth(viewDate);
-  const monthEnd = endOfMonth(viewDate);
-  const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
-  const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
+  const slice =
+    currentPage === "dashboard"
+      ? dashboard
+      : currentPage === "calendar"
+        ? calendar
+        : currentPage === "cleaning"
+          ? cleaning
+          : reporting;
+  const { windowSize, anchor } = slice as { windowSize: string; anchor: string | null };
 
-  const handleApplyCustom = () => {
-    if (localStart && localEnd) {
-      setCustomRange({ start: localStart, end: localEnd });
-      closeTimeframePopup();
-    }
+  const writeAnchor = (next: string) => {
+    setTimeframeAnchor(currentPage, next);
+    closeTimeframePopup();
   };
 
   return (
-    <div
-      className="fixed z-[160] rounded-xl border bg-white shadow-xl"
-      style={{
-        top: 144,
-        left: `calc(var(--sidebar-width) + 8px)`,
-        width: 377,
-        borderColor: "var(--border)",
-      }}
-    >
-      {/* Header */}
+    <>
+      <div className="fixed inset-0 z-[140]" onClick={closeTimeframePopup} />
       <div
-        className="px-sm py-base flex items-center justify-between border-b"
-        style={{ borderColor: "var(--border)" }}
+        className="fixed z-[150] rounded-xl border bg-white shadow-xl"
+        style={{
+          top: 144,
+          left: `calc(var(--sidebar-width) + 8px)`,
+          width: 377,
+          borderColor: "var(--border)",
+        }}
       >
-        <div className="gap-base flex items-center">
+        <div
+          className="px-sm py-base flex items-center justify-between border-b"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <span className="text-body font-semibold capitalize">{labelForWindow(windowSize)}</span>
           <button
             type="button"
-            onClick={() => setViewDate(subMonths(viewDate, 1))}
-            className="p-xs rounded hover:bg-gray-100"
+            onClick={closeTimeframePopup}
+            className="p-xs rounded text-gray-400 hover:bg-gray-100"
+            aria-label="Close"
           >
-            <ChevronLeft size={16} />
+            <X size={16} />
           </button>
-          <span className="text-body font-semibold">{format(viewDate, "MMMM yyyy")}</span>
+        </div>
+
+        <div className="p-sm">
+          {windowSize === "month" && <MonthPicker anchor={anchor} onPick={writeAnchor} />}
+          {windowSize === "quarter" && <QuarterPicker anchor={anchor} onPick={writeAnchor} />}
+          {windowSize === "year" && <YearPicker anchor={anchor} onPick={writeAnchor} />}
+          {(windowSize === "day" || windowSize === "week" || windowSize === "fortnight") && (
+            <DayPicker windowSize={windowSize} anchor={anchor} onPick={writeAnchor} />
+          )}
+          {windowSize === "ytd" && (
+            <p className="text-body text-gray-600">
+              Year-to-date is always relative to today. Switch to <strong>Year</strong> to pick a
+              specific year.
+            </p>
+          )}
+          {windowSize === "custom" && (
+            <CustomRangeForm
+              initial={customRange}
+              onApply={(start, end) => {
+                setCustomRange({ start, end });
+                closeTimeframePopup();
+              }}
+            />
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function labelForWindow(ws: string): string {
+  switch (ws) {
+    case "day":
+      return "Pick a day";
+    case "week":
+      return "Pick a week";
+    case "fortnight":
+      return "Pick a fortnight";
+    case "month":
+      return "Pick a month";
+    case "quarter":
+      return "Pick a quarter";
+    case "year":
+      return "Pick a year";
+    case "ytd":
+      return "Year to date";
+    case "custom":
+      return "Custom range";
+    default:
+      return ws;
+  }
+}
+
+function resolveDate(anchor: string | null): Date {
+  return anchor ? parseISO(anchor) : new Date();
+}
+
+function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: string) => void }) {
+  const initial = resolveDate(anchor);
+  const [year, setYear] = useState(initial.getFullYear());
+  const months = Array.from({ length: 12 }, (_, i) => new Date(year, i, 1));
+  const selectedMonth = anchor ? parseISO(anchor).getMonth() : -1;
+  const selectedYear = anchor ? parseISO(anchor).getFullYear() : -1;
+
+  return (
+    <div>
+      <div className="mb-sm flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => setYear((y) => y - 1)}
+          className="p-xs rounded hover:bg-gray-100"
+          aria-label="Previous year"
+        >
+          <ChevronLeft size={16} />
+        </button>
+        <span className="text-body font-semibold">{year}</span>
+        <button
+          type="button"
+          onClick={() => setYear((y) => y + 1)}
+          className="p-xs rounded hover:bg-gray-100"
+          aria-label="Next year"
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+      <div className="gap-xs grid grid-cols-3">
+        {months.map((m) => {
+          const isSelected = selectedMonth === m.getMonth() && selectedYear === year;
+          return (
+            <button
+              key={m.toISOString()}
+              type="button"
+              onClick={() => onPick(format(startOfMonth(m), "yyyy-MM-dd"))}
+              className="px-sm py-base text-body rounded-lg transition-colors"
+              style={{
+                backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              }}
+            >
+              {format(m, "MMM")}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function QuarterPicker({
+  anchor,
+  onPick,
+}: {
+  anchor: string | null;
+  onPick: (iso: string) => void;
+}) {
+  const initial = resolveDate(anchor);
+  const [year, setYear] = useState(initial.getFullYear());
+  const selected = anchor ? parseISO(anchor) : null;
+  const selectedQ = selected ? Math.floor(selected.getMonth() / 3) : -1;
+  const selectedYear = selected ? selected.getFullYear() : -1;
+
+  return (
+    <div>
+      <div className="mb-sm flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => setYear((y) => y - 1)}
+          className="p-xs rounded hover:bg-gray-100"
+          aria-label="Previous year"
+        >
+          <ChevronLeft size={16} />
+        </button>
+        <span className="text-body font-semibold">{year}</span>
+        <button
+          type="button"
+          onClick={() => setYear((y) => y + 1)}
+          className="p-xs rounded hover:bg-gray-100"
+          aria-label="Next year"
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+      <div className="gap-xs grid grid-cols-2">
+        {[0, 1, 2, 3].map((q) => {
+          const isSelected = selectedQ === q && selectedYear === year;
+          return (
+            <button
+              key={q}
+              type="button"
+              onClick={() => onPick(format(startOfQuarter(new Date(year, q * 3, 1)), "yyyy-MM-dd"))}
+              className="px-sm py-base text-body rounded-lg"
+              style={{
+                backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+                color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              }}
+            >
+              Q{q + 1} {year}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function YearPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: string) => void }) {
+  const current = new Date().getFullYear();
+  const selected = anchor ? parseISO(anchor).getFullYear() : current;
+  const years = Array.from({ length: 11 }, (_, i) => current - 5 + i);
+  return (
+    <div className="gap-xs grid grid-cols-3">
+      {years.map((y) => {
+        const isSelected = y === selected && anchor !== null;
+        return (
           <button
+            key={y}
             type="button"
-            onClick={() => setViewDate(addMonths(viewDate, 1))}
-            className="p-xs rounded hover:bg-gray-100"
+            onClick={() => onPick(format(startOfYear(new Date(y, 0, 1)), "yyyy-MM-dd"))}
+            className="px-sm py-base text-body rounded-lg"
+            style={{
+              backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+              color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            }}
           >
-            <ChevronRight size={16} />
+            {y}
           </button>
-        </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function DayPicker({
+  windowSize,
+  anchor,
+  onPick,
+}: {
+  windowSize: string;
+  anchor: string | null;
+  onPick: (iso: string) => void;
+}) {
+  const initial = resolveDate(anchor);
+  const [viewDate, setViewDate] = useState(startOfMonth(initial));
+  const monthStart = startOfMonth(viewDate);
+  const monthEnd = endOfMonth(viewDate);
+  const gridStart = startOfWeek(monthStart, WEEK_OPTS);
+  const gridEnd = endOfWeek(monthEnd, WEEK_OPTS);
+  const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
+
+  const selectedDate = anchor ? parseISO(anchor) : null;
+
+  const handlePick = (day: Date) => {
+    let snap: Date;
+    if (windowSize === "day") snap = day;
+    else snap = startOfWeek(day, WEEK_OPTS); // week + fortnight snap to Monday
+    onPick(format(snap, "yyyy-MM-dd"));
+  };
+
+  return (
+    <div>
+      <div className="mb-sm flex items-center justify-between">
         <button
           type="button"
-          onClick={closeTimeframePopup}
-          className="p-xs rounded text-gray-400 hover:bg-gray-100"
+          onClick={() => setViewDate(subMonths(viewDate, 1))}
+          className="p-xs rounded hover:bg-gray-100"
+          aria-label="Previous month"
         >
-          <X size={16} />
+          <ChevronLeft size={16} />
         </button>
-      </div>
-
-      {/* Mini calendar */}
-      <div className="p-sm">
-        <div className="mb-xs gap-xs grid grid-cols-7">
-          {DAY_LABELS.map((d) => (
-            <div key={d} className="text-body text-center text-gray-400">
-              {d}
-            </div>
-          ))}
-        </div>
-        <div className="gap-xs grid grid-cols-7">
-          {gridDays.map((day) => {
-            const inMonth = isSameMonth(day, viewDate);
-            const isSelected = isSameDay(day, calendarDate);
-            return (
-              <button
-                key={day.toISOString()}
-                type="button"
-                onClick={() => {
-                  closeTimeframePopup();
-                }}
-                className="h-lg text-body flex items-center justify-center rounded transition-colors hover:bg-blue-50"
-                style={{
-                  color: inMonth ? "var(--brand-10)" : "var(--neutral-30)",
-                  backgroundColor: isSelected ? "var(--strabb-secondary)" : undefined,
-                  ...(isSelected ? { color: "var(--surface-60)" } : {}),
-                }}
-              >
-                {day.getDate()}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Custom range */}
-      <div className="px-sm py-base border-t" style={{ borderColor: "var(--border)" }}>
-        <p className="mb-xs text-body font-medium text-gray-500">Custom Range</p>
-        <div className="gap-base flex items-center">
-          <input
-            type="date"
-            value={localStart}
-            onChange={(e) => setLocalStart(e.target.value)}
-            className="px-base py-xs text-body flex-1 rounded border"
-          />
-          <span className="text-body text-gray-400">to</span>
-          <input
-            type="date"
-            value={localEnd}
-            onChange={(e) => setLocalEnd(e.target.value)}
-            className="px-base py-xs text-body flex-1 rounded border"
-          />
-        </div>
+        <span className="text-body font-semibold">{format(viewDate, "MMMM yyyy")}</span>
         <button
           type="button"
-          onClick={handleApplyCustom}
-          className="mt-base py-xs text-body w-full rounded-lg text-white"
-          style={{ backgroundColor: "var(--strabb-secondary)" }}
+          onClick={() => setViewDate(addMonths(viewDate, 1))}
+          className="p-xs rounded hover:bg-gray-100"
+          aria-label="Next month"
         >
-          Apply
+          <ChevronRight size={16} />
         </button>
       </div>
+      <div className="mb-xs gap-xs grid grid-cols-7">
+        {DAY_LABELS.map((d) => (
+          <div key={d} className="text-body text-center text-gray-400">
+            {d}
+          </div>
+        ))}
+      </div>
+      <div className="gap-xs grid grid-cols-7">
+        {gridDays.map((day) => {
+          const inMonth = isSameMonth(day, viewDate);
+          const isSelected = selectedDate ? isSameDay(day, selectedDate) : false;
+          return (
+            <button
+              key={day.toISOString()}
+              type="button"
+              onClick={() => handlePick(day)}
+              className="h-lg text-body flex items-center justify-center rounded transition-colors hover:bg-blue-50"
+              style={{
+                color: inMonth ? "var(--brand-10)" : "var(--neutral-30)",
+                backgroundColor: isSelected ? "var(--strabb-secondary)" : undefined,
+                ...(isSelected ? { color: "var(--surface-60)" } : {}),
+              }}
+            >
+              {day.getDate()}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function CustomRangeForm({
+  initial,
+  onApply,
+}: {
+  initial: { start: string; end: string } | null;
+  onApply: (start: string, end: string) => void;
+}) {
+  const [start, setStart] = useState(initial?.start ?? "");
+  const [end, setEnd] = useState(initial?.end ?? "");
+  const today = format(new Date(), "yyyy-MM-dd");
+  const sevenAgo = format(addDays(new Date(), -7), "yyyy-MM-dd");
+
+  return (
+    <div>
+      <div className="gap-base flex items-center">
+        <input
+          type="date"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+          className="px-base py-xs text-body flex-1 rounded border"
+          style={{ borderColor: "var(--border)" }}
+        />
+        <span className="text-body text-gray-400">to</span>
+        <input
+          type="date"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+          className="px-base py-xs text-body flex-1 rounded border"
+          style={{ borderColor: "var(--border)" }}
+        />
+      </div>
+      <button
+        type="button"
+        onClick={() => {
+          if (start && end) onApply(start, end);
+          else onApply(sevenAgo, today);
+        }}
+        className="mt-base py-xs text-body w-full rounded-lg text-white"
+        style={{ backgroundColor: "var(--strabb-secondary)" }}
+      >
+        Apply
+      </button>
     </div>
   );
 }
