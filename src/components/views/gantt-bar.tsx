@@ -7,6 +7,7 @@ interface GanttBarProps {
   startCol: number;
   spanCols: number;
   cellWidth: number;
+  rowHeight: number;
   onClick: () => void;
 }
 
@@ -17,6 +18,7 @@ export function GanttBar({
   startCol,
   spanCols,
   cellWidth,
+  rowHeight,
   onClick,
 }: GanttBarProps) {
   return (
@@ -28,13 +30,13 @@ export function GanttBar({
       style={{
         left: startCol * cellWidth,
         width: spanCols * cellWidth - 5,
-        height: 34,
+        height: rowHeight,
         top: 0,
         backgroundColor: color,
         color: textColor ?? "var(--surface-60)",
         borderRadius: 3,
         padding: "0 5px",
-        lineHeight: "34px",
+        lineHeight: `${rowHeight}px`,
       }}
     >
       {label}

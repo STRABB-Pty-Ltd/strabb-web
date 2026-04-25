@@ -21,6 +21,9 @@ export interface GanttViewProps<T> {
 
 const LABEL_WIDTH = 144;
 const MIN_CELL_WIDTH = 34;
+// Listing-row height. Doubled from 34 → 68 so the gantt rail reads at a
+// more comfortable density. Header height is unaffected.
+const ROW_HEIGHT = 68;
 
 export function GanttView<T>({
   rows,
@@ -67,7 +70,7 @@ export function GanttView<T>({
         const rowItems = items.filter((item) => getRowId(item) === row.id);
 
         return (
-          <div key={row.id} className="flex" style={{ minHeight: 34 }}>
+          <div key={row.id} className="flex" style={{ minHeight: ROW_HEIGHT }}>
             {/* Row label */}
             <div
               className="gap-base px-base text-body flex shrink-0 items-center border-r border-b bg-white"
@@ -97,7 +100,7 @@ export function GanttView<T>({
                   className="shrink-0 border-r"
                   style={{
                     width: cellWidth,
-                    height: 34,
+                    height: ROW_HEIGHT,
                     borderColor: "var(--border)",
                     backgroundColor: isToday(day) ? "var(--neutral-30)" : undefined,
                   }}
@@ -124,6 +127,7 @@ export function GanttView<T>({
                     startCol={startCol}
                     spanCols={spanCols}
                     cellWidth={cellWidth}
+                    rowHeight={ROW_HEIGHT}
                     onClick={() => onItemClick(item)}
                   />
                 );
