@@ -96,6 +96,6 @@ describe("MaintenancePage", () => {
   it("loading state hides the list", () => {
     maintenanceMock.mockReturnValue({ data: undefined, isLoading: true });
     render(<MaintenancePage />);
-    expect(screen.getByText(/loading maintenance/i)).toBeInTheDocument();
+    expect(screen.getByText(/loading tickets/i)).toBeInTheDocument();
   });
 });

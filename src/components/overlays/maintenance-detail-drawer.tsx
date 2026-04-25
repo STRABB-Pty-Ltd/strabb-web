@@ -110,7 +110,7 @@ export function MaintenanceDetailDrawer() {
       {
         onSuccess: () => {
           setEditing(false);
-          addToast({ type: "success", message: "Maintenance request updated" });
+          addToast({ type: "success", message: "Ticket updated" });
         },
         onError: surfaceError,
       },
@@ -121,7 +121,7 @@ export function MaintenanceDetailDrawer() {
     if (!maintenance) return;
     deleteMaintenance.mutate(maintenance.id, {
       onSuccess: () => {
-        addToast({ type: "success", message: "Maintenance request deleted" });
+        addToast({ type: "success", message: "Ticket deleted" });
         closeDrillDownPanel();
       },
       onError: surfaceError,
@@ -143,13 +143,11 @@ export function MaintenanceDetailDrawer() {
     <DrillDownPanel
       open={open}
       onClose={closeDrillDownPanel}
-      title="Maintenance request"
+      title="Ticket"
       accentColor={statusColors[maintenance?.status ?? "reported"] ?? "var(--strabb-secondary)"}
     >
-      {isLoading && <p className="text-body text-gray-400">Loading request…</p>}
-      {!isLoading && !maintenance && (
-        <p className="text-body text-gray-500">Maintenance request not found.</p>
-      )}
+      {isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
+      {!isLoading && !maintenance && <p className="text-body text-gray-500">Ticket not found.</p>}
       {maintenance && (
         <div className="space-y-md">
           <div>

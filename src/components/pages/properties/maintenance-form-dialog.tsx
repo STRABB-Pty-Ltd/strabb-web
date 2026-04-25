@@ -65,7 +65,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
         cost: data.cost ?? null,
         notes: data.notes ?? null,
       });
-      addToast({ type: "success", message: "Maintenance request created" });
+      addToast({ type: "success", message: "Ticket created" });
       setOpen(false);
       reset();
     } catch (err) {
@@ -74,7 +74,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
           ? err.message
           : err instanceof Error
             ? err.message
-            : "Failed to create maintenance request";
+            : "Failed to create ticket";
       addToast({ type: "error", message });
     }
   }
@@ -90,7 +90,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
       <DialogTrigger>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>New maintenance request</DialogTitle>
+          <DialogTitle>New ticket</DialogTitle>
           <DialogDescription>
             Log an issue against a property — assign a priority and (optionally) schedule it.
           </DialogDescription>
@@ -165,7 +165,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating…" : "Create request"}
+              {isSubmitting ? "Creating…" : "Create ticket"}
             </Button>
           </DialogFooter>
         </form>

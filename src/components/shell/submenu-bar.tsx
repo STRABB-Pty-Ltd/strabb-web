@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
 import { useAppStore } from "@/stores/app-store";
@@ -39,6 +40,7 @@ export function SubmenuBar() {
   }[currentPage];
 
   const isChipActive = (chip: SubmenuChip): boolean => {
+    if (chip.behavior === "nav") return false;
     if (chip.behavior === "toggle" && currentPage === "dashboard" && chip.id === "compare") {
       return dashboardCompare;
     }
@@ -90,6 +92,9 @@ export function SubmenuBar() {
       case "more-dropdown":
         setMoreOpen((prev) => !prev);
         break;
+      case "nav":
+        // Handled via <Link> render branch below
+        break;
     }
   };
 
@@ -104,6 +109,24 @@ export function SubmenuBar() {
       {chips.map((chip) => {
         const active = isChipActive(chip);
         const isMore = chip.behavior === "more-dropdown";
+        const isNav = chip.behavior === "nav";
+
+        const chipClass =
+          "gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
+        const chipStyle = {
+          width: 95,
+          borderRadius: 5,
+          backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+          color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+        };
+
+        if (isNav && chip.href) {
+          return (
+            <Link key={chip.id} href={chip.href} className={chipClass} style={chipStyle}>
+              {chip.label}
+            </Link>
+          );
+        }
 
         return (
           <div key={chip.id} className="relative" ref={isMore ? moreRef : undefined}>
@@ -117,13 +140,8 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-              style={{
-                width: 95,
-                borderRadius: 5,
-                backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
-              }}
+              className={chipClass}
+              style={chipStyle}
             >
               {chip.label}
               {isMore && <ChevronDown size={13} />}

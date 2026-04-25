@@ -56,7 +56,6 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   selectedListings.forEach((id) => params.append("listing_id", id));
 
   const statusMap: Record<string, string> = {
-    tickets: "pending",
     confirmed: "confirmed",
     pending: "pending",
     archived: "completed",

@@ -41,14 +41,14 @@ export default function MaintenancePage() {
   return (
     <div className="p-md space-y-md">
       <PageHeader
-        title="Maintenance"
-        description="Track property maintenance requests across all your listings."
+        title="Tickets"
+        description="Track maintenance tickets across all your properties."
         actions={
           <MaintenanceFormDialog
             trigger={
               <Button>
                 <Plus className="size-sm mr-xs" />
-                New request
+                New ticket
               </Button>
             }
           />
@@ -80,7 +80,7 @@ export default function MaintenancePage() {
       </div>
 
       {isLoading ? (
-        <p className="text-body text-gray-400">Loading maintenance requests…</p>
+        <p className="text-body text-gray-400">Loading tickets…</p>
       ) : (
         <>
           <MaintenanceListView items={items} propertyNames={propertyNames} />
