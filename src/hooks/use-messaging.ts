@@ -9,7 +9,7 @@ import {
   useMessageThreadAPI,
   useSendMessageAPI,
   useUpdateConversationStatusAPI,
-  useConvertToMaintenanceAPI,
+  useConvertToTicketAPI,
 } from "@/lib/api-hooks/messaging-api";
 import type { Message, MessageStatus } from "@/types/message";
 
@@ -51,7 +51,7 @@ export function useMessageActions() {
   const [localUpdates, setLocalUpdates] = useState<Record<string, Partial<Message>>>({});
   const sendMessageMutation = useSendMessageAPI();
   const updateStatusMutation = useUpdateConversationStatusAPI();
-  const convertMutation = useConvertToMaintenanceAPI();
+  const convertMutation = useConvertToTicketAPI();
 
   const markAsRead = useCallback(
     (id: string) => {
@@ -102,7 +102,7 @@ export function useMessageActions() {
     [sendMessageMutation],
   );
 
-  const convertToMaintenance = useCallback(
+  const convertToTicket = useCallback(
     (conversationId: string) => {
       if (!USE_MOCK) {
         convertMutation.mutate(conversationId);
@@ -116,7 +116,7 @@ export function useMessageActions() {
     toggleFlag,
     archive,
     sendReply,
-    convertToMaintenance,
+    convertToTicket,
     localUpdates,
   };
 }

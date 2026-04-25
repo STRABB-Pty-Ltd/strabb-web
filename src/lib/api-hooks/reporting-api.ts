@@ -13,7 +13,7 @@ interface RawFinancial {
   listingName: string;
   revenue: number;
   cleaningCost: number;
-  maintenanceCost: number;
+  ticketCost: number;
   suppliesCost: number;
   platformFees: number;
   netIncome: number;
@@ -49,7 +49,7 @@ const channelColors: Record<string, string> = {
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
   const totalExpenses = rows.reduce(
-    (s, r) => s + r.cleaningCost + r.maintenanceCost + r.suppliesCost + r.platformFees,
+    (s, r) => s + r.cleaningCost + r.ticketCost + r.suppliesCost + r.platformFees,
     0,
   );
   const totalNet = rows.reduce((s, r) => s + r.netIncome, 0);

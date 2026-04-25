@@ -173,7 +173,7 @@ describe("Financial factory", () => {
     expect(financial.listingId).toBeDefined();
     expect(typeof financial.revenue).toBe("number");
     expect(typeof financial.cleaningCost).toBe("number");
-    expect(typeof financial.maintenanceCost).toBe("number");
+    expect(typeof financial.ticketCost).toBe("number");
     expect(typeof financial.suppliesCost).toBe("number");
     expect(typeof financial.platformFees).toBe("number");
     expect(typeof financial.occupancyRate).toBe("number");

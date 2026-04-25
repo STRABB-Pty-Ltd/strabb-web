@@ -71,7 +71,7 @@ function computeKPIs(financials: Financial[], selectedListings: string[]): Repor
       : 0;
 
   const totalExpenses = current.reduce(
-    (s, f) => s + f.cleaningCost + f.maintenanceCost + f.suppliesCost + f.platformFees,
+    (s, f) => s + f.cleaningCost + f.ticketCost + f.suppliesCost + f.platformFees,
     0,
   );
 
@@ -145,12 +145,12 @@ function computeChartData(financials: Financial[], selectedListings: string[]): 
   }));
 
   const totalCleaning = latestData.reduce((s, f) => s + f.cleaningCost, 0);
-  const totalMaintenance = latestData.reduce((s, f) => s + f.maintenanceCost, 0);
+  const totalTickets = latestData.reduce((s, f) => s + f.ticketCost, 0);
   const totalSupplies = latestData.reduce((s, f) => s + f.suppliesCost, 0);
   const totalFees = latestData.reduce((s, f) => s + f.platformFees, 0);
   const expenses = [
     { category: "Cleaning", amount: totalCleaning },
-    { category: "Maintenance", amount: totalMaintenance },
+    { category: "Tickets", amount: totalTickets },
     { category: "Supplies", amount: totalSupplies },
     { category: "Platform Fees", amount: totalFees },
   ];

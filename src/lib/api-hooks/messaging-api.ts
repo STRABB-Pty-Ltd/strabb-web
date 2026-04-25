@@ -149,11 +149,11 @@ export function useUpdateConversationPriorityAPI() {
   });
 }
 
-export function useConvertToMaintenanceAPI() {
+export function useConvertToTicketAPI() {
   const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (conversationId: string) =>
-      apiClient.post(`/conversations/${conversationId}/convert-to-maintenance`, {}),
+      apiClient.post(`/conversations/${conversationId}/convert-to-ticket`, {}),
   });
 }

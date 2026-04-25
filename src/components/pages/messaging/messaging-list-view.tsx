@@ -23,7 +23,7 @@ interface MessagingListViewProps {
 export function MessagingListView({ messages }: MessagingListViewProps) {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const setSelectedMessage = useAppStore((s) => s.setSelectedMessage);
-  const { markAsRead, toggleFlag, archive, sendReply, convertToMaintenance } = useMessageActions();
+  const { markAsRead, toggleFlag, archive, sendReply, convertToTicket } = useMessageActions();
 
   const selectedMsg = messages.find((m) => m.id === selectedMessage) ?? null;
   const { data: rawThread } = useMessageThread(selectedMessage);
@@ -108,7 +108,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
             }}
             onFollowUp={() => toggleFlag(selectedMsg.id)}
             onPriority={() => toggleFlag(selectedMsg.id)}
-            onConvertMaintenance={() => convertToMaintenance(selectedMsg.id)}
+            onConvertTicket={() => convertToTicket(selectedMsg.id)}
           />
         )}
       </div>
