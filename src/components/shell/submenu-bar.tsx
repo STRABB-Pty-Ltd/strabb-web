@@ -105,6 +105,10 @@ export function SubmenuBar() {
       style={{
         backgroundColor: "var(--surface-submenu)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
+        // Match a chip's natural height (py-base × 2 + text-body line-height)
+        // so the absolute-centred chips don't extend above the row's bounding
+        // box and skew the separator line above this row.
+        minHeight: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
       }}
     >
       {/* Left: timeframe stepper (only renders on timeframeable pages) */}
