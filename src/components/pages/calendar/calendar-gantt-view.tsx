@@ -3,7 +3,7 @@
 import { GanttView } from "@/components/views/gantt-view";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useListings } from "@/hooks/use-listings";
-import { timeframeToDateRange } from "@/lib/timeframe-utils";
+import { ganttDateRange } from "@/lib/timeframe-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
@@ -29,6 +29,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const submenu = useAppStore((s) => s.calendar.submenu);
   const windowSize = useAppStore((s) => s.calendar.windowSize);
   const anchor = useAppStore((s) => s.calendar.anchor);
+  const customRange = useAppStore((s) => s.customRange);
   const isOverview = submenu.length === 0 || submenu.includes("overview");
   const { data: listingsData } = useListings();
   const allListings = (listingsData?.data ?? []) as unknown as Listing[];
@@ -43,7 +44,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
     label: l.name,
   }));
 
-  const range = timeframeToDateRange(windowSize, anchor);
+  const range = ganttDateRange(windowSize, anchor, customRange);
   const dateRange = {
     start: new Date(range.startDate),
     end: new Date(range.endDate),

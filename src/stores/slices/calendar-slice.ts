@@ -22,7 +22,7 @@ export const createCalendarSlice: StateCreator<CalendarSlice, [], [], CalendarSl
 ) => ({
   calendar: {
     view: "gantt",
-    windowSize: "month",
+    windowSize: "fortnight",
     anchor: null,
     submenu: ["overview"],
     moreOpen: false,

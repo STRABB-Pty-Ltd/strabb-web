@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { formatPeriodLabel, stepAnchor, timeframeToDateRange } from "./timeframe-utils";
+import {
+  formatPeriodLabel,
+  ganttDateRange,
+  stepAnchor,
+  timeframeToDateRange,
+} from "./timeframe-utils";
 
 // Wed 15 April 2026, 12:00 local — used to anchor "current" tests
 const FROZEN_NOW = new Date(2026, 3, 15, 12, 0, 0);
@@ -121,6 +126,51 @@ describe("stepAnchor", () => {
 
   it("custom does not step", () => {
     expect(stepAnchor("custom", null, -1)).toBeNull();
+  });
+});
+
+describe("ganttDateRange", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FROZEN_NOW);
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("anchor=null + fortnight → today-2 to today+11", () => {
+    expect(ganttDateRange("fortnight", null)).toEqual({
+      startDate: "2026-04-13",
+      endDate: "2026-04-26",
+    });
+  });
+
+  it("anchor=null + week → today-2 to today+4", () => {
+    expect(ganttDateRange("week", null)).toEqual({
+      startDate: "2026-04-13",
+      endDate: "2026-04-19",
+    });
+  });
+
+  it("anchor=null + month → today-2 plus ~30 days", () => {
+    expect(ganttDateRange("month", null)).toEqual({
+      startDate: "2026-04-13",
+      endDate: "2026-05-12",
+    });
+  });
+
+  it("anchor set → falls back to standard period range", () => {
+    expect(ganttDateRange("month", "2026-01-01")).toEqual({
+      startDate: "2026-01-01",
+      endDate: "2026-01-31",
+    });
+  });
+
+  it("custom + range → uses range directly", () => {
+    expect(ganttDateRange("custom", null, { start: "2026-02-10", end: "2026-03-20" })).toEqual({
+      startDate: "2026-02-10",
+      endDate: "2026-03-20",
+    });
   });
 });
 

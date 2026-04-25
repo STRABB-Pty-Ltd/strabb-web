@@ -51,10 +51,15 @@ export const useAppStore = create<AppState>()((...a) => {
     ...createSettingsSlice(...a),
     ...createOverlaySlice(...a),
 
-    // Cross-cutting: set view for a viewable page
+    // Cross-cutting: set view for a viewable page. Switching to gantt on
+    // calendar/cleaning auto-defaults the windowSize to fortnight — gantt is
+    // most useful at a fortnight zoom and the user can override via the chip.
     setView: (page: ViewablePage, view: string) => {
       const pageState = { ...get()[page] };
       (pageState as Record<string, unknown>).view = view;
+      if (view === "gantt" && (page === "calendar" || page === "cleaning")) {
+        (pageState as Record<string, unknown>).windowSize = "fortnight";
+      }
       set({ [page]: pageState } as Partial<AppState>);
     },
 
