@@ -1,9 +1,17 @@
 "use client";
 
+import { addHours } from "date-fns";
 import { useMemo } from "react";
 
-import { mockBookingList, mockListingList, mockTicketsList, mockVacancyList } from "./index";
+import {
+  mockBookingList,
+  mockCleaningTaskList,
+  mockListingList,
+  mockTicketsList,
+  mockVacancyList,
+} from "./index";
 import type { Booking } from "@/types/booking";
+import type { CleaningTask } from "@/types/cleaning-task";
 import type { Ticket } from "@/types/ticket";
 import type { Vacancy } from "@/types/vacancy";
 
@@ -11,7 +19,16 @@ const listingNamesById: Record<string, string> = Object.fromEntries(
   mockListingList.map((l) => [l.id, l.name]),
 );
 
-export type CalendarEventType = "booking" | "vacancy" | "ticket";
+export type CalendarEventType = "booking" | "vacancy" | "ticket" | "cleaning";
+
+const cleaningTypeLabels: Record<string, string> = {
+  turnover: "Turnover",
+  checkout: "Checkout clean",
+  checkin: "Check-in prep",
+  deep_clean: "Deep clean",
+  mid_stay: "Mid-stay",
+  inspection: "Inspection",
+};
 
 export interface CalendarEvent {
   id: string;
@@ -65,6 +82,23 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
   };
 }
 
+function cleaningToEvent(t: CleaningTask): CalendarEvent {
+  const start = new Date(t.scheduledTime);
+  const end = addHours(start, Math.max(1, t.estimatedHours));
+  const label = cleaningTypeLabels[t.type] ?? t.type;
+  return {
+    id: t.id,
+    type: "cleaning",
+    listingId: t.listingId,
+    listingName: t.listingName,
+    label: t.assigneeName ? `${label} — ${t.assigneeName}` : label,
+    start: start.toISOString(),
+    end: end.toISOString(),
+    color: "var(--status-success)",
+    status: t.status,
+  };
+}
+
 function ticketToEvent(t: Ticket): CalendarEvent | null {
   if (!t.listingId) return null;
   const listingName = listingNamesById[t.listingId] ?? t.listingId;
@@ -87,6 +121,7 @@ function computeEvents(
   bookings: Booking[],
   vacancies: Vacancy[],
   tickets: Ticket[],
+  cleanings: CleaningTask[],
   selectedListings: string[],
   submenuFilters: string[],
 ): CalendarEvent[] {
@@ -99,6 +134,13 @@ function computeEvents(
       ? bookings.filter((b) => selectedListings.includes(b.listingId))
       : bookings;
     events.push(...filtered.filter((b) => b.status !== "cancelled").map(bookingToEvent));
+  }
+
+  if (showAll || submenuFilters.includes("cleaning")) {
+    const filtered = filterByListing
+      ? cleanings.filter((c) => selectedListings.includes(c.listingId))
+      : cleanings;
+    events.push(...filtered.filter((c) => c.status !== "cancelled").map(cleaningToEvent));
   }
 
   if (submenuFilters.includes("vacancy")) {
@@ -129,6 +171,7 @@ export function useCalendarEventsMock(selectedListings: string[], submenuFilters
         mockBookingList,
         mockVacancyList,
         mockTicketsList,
+        mockCleaningTaskList,
         selectedListings,
         submenuFilters,
       ),

@@ -15,12 +15,17 @@ export interface GanttViewProps<T> {
   getTextColor?: (item: T) => string;
   getLabel: (item: T) => string;
   /**
-   * Optional per-item flags. When set, the bar is inset on its first/last day
-   * cell — start day shows only the right 25% (afternoon check-in), end day
-   * shows only the left 25% (morning checkout). Back-to-back same-day
-   * turnovers naturally leave the middle 50% as the cleaning gap.
+   * Optional per-item insets, expressed as fractions of cellWidth.
+   * - insetStart: where the bar starts within its first day (0 = full day,
+   *   0.75 = right quarter for afternoon check-in, 0.25 = mid-morning for a
+   *   turnover cleaning).
+   * - insetEnd: where the bar ends within its last day (1 = full day,
+   *   0.25 = left quarter for morning checkout, 0.75 = mid-afternoon for a
+   *   turnover cleaning).
+   * Back-to-back same-day turnovers leave the middle 50% as the cleaning gap;
+   * a turnover cleaning event then fills that 25–75 % slot.
    */
-  getPartialDay?: (item: T) => { atStart?: boolean; atEnd?: boolean };
+  getPartialDay?: (item: T) => { insetStart?: number; insetEnd?: number };
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
@@ -128,17 +133,22 @@ export function GanttView<T>({
                 if (visibleEnd < 0 || visibleStart > visibleEnd) return null;
 
                 const partial = getPartialDay?.(item);
-                // Insets only apply to the visible end of the bar — when the
-                // booking extends past the viewport the bar continues to the
-                // edge instead of being chopped at 25%/75%.
-                const insetStart = !startClipped && partial?.atStart ? 0.75 : 0;
-                const insetEnd = !endClipped && partial?.atEnd ? 0.25 : 1;
+                // Insets only apply when the bar's edge is actually visible —
+                // when the item extends past the viewport the bar continues
+                // to the edge instead of being chopped.
+                const insetStart = startClipped ? 0 : (partial?.insetStart ?? 0);
+                const insetEnd = endClipped ? 1 : (partial?.insetEnd ?? 1);
 
                 const leftPx = startClipped ? 0 : (visibleStart + insetStart) * cellWidth;
                 const rightPx = endClipped
                   ? totalDays * cellWidth
                   : (visibleEnd + insetEnd) * cellWidth;
-                const widthPx = rightPx - leftPx - 5;
+                // 5px adjacency gap only when the bar ends on a full-day right
+                // edge (so neighbouring full-day bars don't touch). Partial-day
+                // ends are already separated by their fractional inset, and
+                // clipped bars sit flush with the viewport.
+                const adjacencyGap = !endClipped && insetEnd === 1 ? 5 : 0;
+                const widthPx = rightPx - leftPx - adjacencyGap;
                 if (widthPx <= 0) return null;
 
                 return (
