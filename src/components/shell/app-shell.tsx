@@ -50,8 +50,11 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative flex h-screen overflow-hidden">
-      {/* Persistent logo overlay — pinned to top-left of the sidebar column */}
-      <div className="absolute top-0 left-0 z-30">
+      {/* Persistent logo overlay — pinned to top-left of the sidebar column.
+          pointer-events-none so the bottom of the logo (which overflows
+          --logo-area-height into the listings header by design) doesn't
+          intercept clicks meant for the sidebar's heading row underneath. */}
+      <div className="pointer-events-none absolute top-0 left-0 z-30">
         <LogoSection />
       </div>
       <ContextualSidebar />

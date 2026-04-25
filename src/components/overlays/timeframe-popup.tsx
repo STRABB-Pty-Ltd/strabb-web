@@ -119,7 +119,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="p-xs rounded text-gray-400 hover:bg-gray-100"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
             aria-label="Close"
           >
             <X size={16} />
@@ -212,7 +212,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="p-xs rounded hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -221,7 +221,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="p-xs rounded hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -268,7 +268,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="p-xs rounded hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -277,7 +277,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="p-xs rounded hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -367,7 +367,7 @@ function DayPicker({
         <button
           type="button"
           onClick={() => setViewDate(subMonths(viewDate, 1))}
-          className="p-xs rounded hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous month"
         >
           <ChevronLeft size={16} />
@@ -376,7 +376,7 @@ function DayPicker({
         <button
           type="button"
           onClick={() => setViewDate(addMonths(viewDate, 1))}
-          className="p-xs rounded hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next month"
         >
           <ChevronRight size={16} />

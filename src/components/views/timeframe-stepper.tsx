@@ -49,7 +49,7 @@ export function TimeframeStepper() {
         <button
           type="button"
           onClick={() => handleStep(-1)}
-          className="p-xs rounded-sm hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm hover:bg-gray-100"
           aria-label="Previous period"
         >
           <ChevronLeft size={18} />
@@ -58,7 +58,7 @@ export function TimeframeStepper() {
       <button
         type="button"
         onClick={() => openTimeframePopup()}
-        className="text-body px-xs py-xs rounded-sm font-semibold hover:bg-gray-100"
+        className="text-body px-base inline-flex min-h-[44px] items-center rounded-sm font-semibold hover:bg-gray-100"
       >
         {label}
       </button>
@@ -66,7 +66,7 @@ export function TimeframeStepper() {
         <button
           type="button"
           onClick={() => handleStep(1)}
-          className="p-xs rounded-sm hover:bg-gray-100"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm hover:bg-gray-100"
           aria-label="Next period"
         >
           <ChevronRight size={18} />
