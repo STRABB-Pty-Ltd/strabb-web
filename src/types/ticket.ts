@@ -1,19 +1,14 @@
-export type MaintenancePriority = "low" | "medium" | "high" | "urgent";
+export type TicketPriority = "low" | "medium" | "high" | "urgent";
 
-export type MaintenanceStatus =
-  | "reported"
-  | "scheduled"
-  | "in_progress"
-  | "completed"
-  | "cancelled";
+export type TicketStatus = "reported" | "scheduled" | "in_progress" | "completed" | "cancelled";
 
-export interface Maintenance {
+export interface Ticket {
   id: string;
   propertyId: string;
   listingId: string | null;
   description: string;
-  priority: MaintenancePriority;
-  status: MaintenanceStatus;
+  priority: TicketPriority;
+  status: TicketStatus;
   dateReported: string;
   dateScheduled: string | null;
   dateCompleted: string | null;
@@ -23,8 +18,8 @@ export interface Maintenance {
   updatedAt: string;
 }
 
-export interface MaintenanceListResponse {
-  data: Maintenance[];
+export interface TicketListResponse {
+  data: Ticket[];
   meta: {
     total: number;
     page: number;
@@ -33,14 +28,14 @@ export interface MaintenanceListResponse {
   };
 }
 
-export const MAINTENANCE_PRIORITY_OPTIONS: { value: MaintenancePriority; label: string }[] = [
+export const TICKET_PRIORITY_OPTIONS: { value: TicketPriority; label: string }[] = [
   { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },
   { value: "high", label: "High" },
   { value: "urgent", label: "Urgent" },
 ];
 
-export const MAINTENANCE_STATUS_OPTIONS: { value: MaintenanceStatus; label: string }[] = [
+export const TICKET_STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
   { value: "reported", label: "Reported" },
   { value: "scheduled", label: "Scheduled" },
   { value: "in_progress", label: "In progress" },

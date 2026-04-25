@@ -8,7 +8,7 @@ import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import type { PageId } from "@/stores/types";
 
 import { CleaningDetailDrawer } from "@/components/overlays/cleaning-detail-drawer";
-import { MaintenanceDetailDrawer } from "@/components/overlays/maintenance-detail-drawer";
+import { TicketDetailDrawer } from "@/components/overlays/ticket-detail-drawer";
 import { ToastContainer } from "@/components/overlays/toast-container";
 
 import { Canvas } from "./canvas";
@@ -103,7 +103,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       </div>
       {helpOpen && <KeyboardHelpModal onClose={() => setHelpOpen(false)} />}
       <CleaningDetailDrawer />
-      <MaintenanceDetailDrawer />
+      <TicketDetailDrawer />
       <ToastContainer />
     </div>
   );

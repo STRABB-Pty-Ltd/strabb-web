@@ -57,14 +57,14 @@ export function useCalendarEventsAPI(
   const isOverview = submenuFilters.length === 0 || submenuFilters.includes("overview");
   if (isOverview) {
     // Show everything except vacancy unless explicitly selected
-    ["booking", "cleaning", "maintenance"].forEach((t) => params.append("types", t));
+    ["booking", "cleaning", "ticket"].forEach((t) => params.append("types", t));
   } else {
     // Map submenu chip IDs (plural) to API entity types (singular)
     const chipToType: Record<string, string> = {
       bookings: "booking",
       cleaning: "cleaning",
       vacancy: "vacancy",
-      maintenance: "maintenance",
+      ticket: "ticket",
     };
     submenuFilters.forEach((t) => {
       const mapped = chipToType[t] ?? t;

@@ -2,16 +2,16 @@
 
 import { useMemo } from "react";
 
-import { mockBookingList, mockListingList, mockMaintenanceList, mockVacancyList } from "./index";
+import { mockBookingList, mockListingList, mockTicketsList, mockVacancyList } from "./index";
 import type { Booking } from "@/types/booking";
-import type { Maintenance } from "@/types/maintenance";
+import type { Ticket } from "@/types/ticket";
 import type { Vacancy } from "@/types/vacancy";
 
 const listingNamesById: Record<string, string> = Object.fromEntries(
   mockListingList.map((l) => [l.id, l.name]),
 );
 
-export type CalendarEventType = "booking" | "vacancy" | "maintenance";
+export type CalendarEventType = "booking" | "vacancy" | "ticket";
 
 export interface CalendarEvent {
   id: string;
@@ -65,28 +65,28 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
   };
 }
 
-function maintenanceToEvent(m: Maintenance): CalendarEvent | null {
-  if (!m.listingId) return null;
-  const listingName = listingNamesById[m.listingId] ?? m.listingId;
-  const start = m.dateScheduled ?? m.dateReported;
-  const end = m.dateScheduled ?? m.dateReported;
+function ticketToEvent(t: Ticket): CalendarEvent | null {
+  if (!t.listingId) return null;
+  const listingName = listingNamesById[t.listingId] ?? t.listingId;
+  const start = t.dateScheduled ?? t.dateReported;
+  const end = t.dateScheduled ?? t.dateReported;
   return {
-    id: m.id,
-    type: "maintenance",
-    listingId: m.listingId,
+    id: t.id,
+    type: "ticket",
+    listingId: t.listingId,
     listingName,
-    label: `${m.description} — ${listingName}`,
+    label: `${t.description} — ${listingName}`,
     start,
     end,
     color: "var(--status-danger)",
-    status: m.status,
+    status: t.status,
   };
 }
 
 function computeEvents(
   bookings: Booking[],
   vacancies: Vacancy[],
-  maintenance: Maintenance[],
+  tickets: Ticket[],
   selectedListings: string[],
   submenuFilters: string[],
 ): CalendarEvent[] {
@@ -108,13 +108,13 @@ function computeEvents(
     events.push(...filtered.map(vacancyToEvent));
   }
 
-  if (showAll || submenuFilters.includes("maintenance")) {
+  if (showAll || submenuFilters.includes("ticket")) {
     const filtered = filterByListing
-      ? maintenance.filter((m) => m.listingId && selectedListings.includes(m.listingId))
-      : maintenance;
+      ? tickets.filter((t) => t.listingId && selectedListings.includes(t.listingId))
+      : tickets;
     const mapped = filtered
-      .filter((m) => m.status !== "cancelled")
-      .map(maintenanceToEvent)
+      .filter((t) => t.status !== "cancelled")
+      .map(ticketToEvent)
       .filter((e): e is CalendarEvent => e !== null);
     events.push(...mapped);
   }
@@ -128,7 +128,7 @@ export function useCalendarEventsMock(selectedListings: string[], submenuFilters
       computeEvents(
         mockBookingList,
         mockVacancyList,
-        mockMaintenanceList,
+        mockTicketsList,
         selectedListings,
         submenuFilters,
       ),

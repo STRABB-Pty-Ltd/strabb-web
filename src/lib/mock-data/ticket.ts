@@ -1,4 +1,4 @@
-import type { Maintenance } from "@/types/maintenance";
+import type { Ticket } from "@/types/ticket";
 import { REFERENCE_NOW } from "./reference-date";
 
 const day = (offset: number) => {
@@ -9,8 +9,8 @@ const day = (offset: number) => {
 
 const NOW = new Date(REFERENCE_NOW).toISOString();
 
-const defaults: Maintenance = {
-  id: "mnt-001",
+const defaults: Ticket = {
+  id: "tkt-001",
   propertyId: "prp-001",
   listingId: "lst-006",
   description: "Broken shower head in main bathroom",
@@ -25,14 +25,14 @@ const defaults: Maintenance = {
   updatedAt: NOW,
 };
 
-export function createMaintenance(overrides?: Partial<Maintenance>): Maintenance {
+export function createTicket(overrides?: Partial<Ticket>): Ticket {
   return { ...defaults, ...overrides };
 }
 
-export const mockMaintenanceList: Maintenance[] = [
-  createMaintenance(),
-  createMaintenance({
-    id: "mnt-002",
+export const mockTicketsList: Ticket[] = [
+  createTicket(),
+  createTicket({
+    id: "tkt-002",
     propertyId: "prp-002",
     listingId: "lst-004",
     description: "Dishwasher not draining properly",
@@ -42,8 +42,8 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: day(2),
     notes: "Plumber booked for Tuesday",
   }),
-  createMaintenance({
-    id: "mnt-003",
+  createTicket({
+    id: "tkt-003",
     propertyId: "prp-003",
     listingId: "lst-002",
     description: "Air conditioning unit making loud noise",
@@ -53,8 +53,8 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: day(-1),
     notes: "HVAC tech on site",
   }),
-  createMaintenance({
-    id: "mnt-004",
+  createTicket({
+    id: "tkt-004",
     propertyId: "prp-004",
     listingId: "lst-005",
     description: "Replace smoke detector batteries",
@@ -66,8 +66,8 @@ export const mockMaintenanceList: Maintenance[] = [
     cost: "45.00",
     notes: null,
   }),
-  createMaintenance({
-    id: "mnt-005",
+  createTicket({
+    id: "tkt-005",
     propertyId: "prp-005",
     listingId: "lst-007",
     description: "Squeaky bedroom door",
@@ -77,8 +77,8 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: null,
     notes: "Fixed with WD-40 during cleaning",
   }),
-  createMaintenance({
-    id: "mnt-006",
+  createTicket({
+    id: "tkt-006",
     propertyId: "prp-002",
     listingId: "lst-003",
     description: "Kitchen tap dripping",
@@ -88,8 +88,8 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: null,
     notes: null,
   }),
-  createMaintenance({
-    id: "mnt-007",
+  createTicket({
+    id: "tkt-007",
     propertyId: "prp-002",
     listingId: "lst-004",
     description: "Pool fence panel loose",
@@ -99,8 +99,8 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: day(1),
     notes: "Compliance issue — must be fixed before next guest",
   }),
-  createMaintenance({
-    id: "mnt-008",
+  createTicket({
+    id: "tkt-008",
     propertyId: "prp-001",
     listingId: "lst-006",
     description: "Repaint hallway wall — scuff marks",

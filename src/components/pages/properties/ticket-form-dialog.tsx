@@ -18,20 +18,20 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormWithSchema } from "@/hooks/use-form-with-schema";
 import { useProperties } from "@/hooks/use-properties";
-import { useCreateMaintenanceAPI } from "@/lib/api-hooks/maintenance-api";
 import { ApiError } from "@/lib/api-client";
-import { maintenanceCreateSchema, type MaintenanceCreateFormData } from "@/lib/schemas/maintenance";
+import { useCreateTicketAPI } from "@/lib/api-hooks/tickets-api";
+import { ticketCreateSchema, type TicketCreateFormData } from "@/lib/schemas/ticket";
 import { useAppStore } from "@/stores/app-store";
-import { MAINTENANCE_PRIORITY_OPTIONS } from "@/types/maintenance";
+import { TICKET_PRIORITY_OPTIONS } from "@/types/ticket";
 
-interface MaintenanceFormDialogProps {
+interface TicketFormDialogProps {
   trigger: React.ReactElement;
 }
 
-export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
+export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
   const [open, setOpen] = useState(false);
   const addToast = useAppStore((s) => s.addToast);
-  const createMaintenance = useCreateMaintenanceAPI();
+  const createTicket = useCreateTicketAPI();
   const { data: propertiesData } = useProperties();
 
   const propertyOptions = (propertiesData?.data ?? []).map((p) => ({
@@ -44,7 +44,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useFormWithSchema(maintenanceCreateSchema, {
+  } = useFormWithSchema(ticketCreateSchema, {
     propertyId: "",
     listingId: "",
     description: "",
@@ -54,9 +54,9 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
     notes: "",
   });
 
-  async function onSubmit(data: MaintenanceCreateFormData) {
+  async function onSubmit(data: TicketCreateFormData) {
     try {
-      await createMaintenance.mutateAsync({
+      await createTicket.mutateAsync({
         propertyId: data.propertyId,
         listingId: data.listingId ?? null,
         description: data.description,
@@ -128,7 +128,7 @@ export function MaintenanceFormDialog({ trigger }: MaintenanceFormDialogProps) {
               <Label htmlFor="m-priority">Priority *</Label>
               <Select
                 id="m-priority"
-                options={[...MAINTENANCE_PRIORITY_OPTIONS]}
+                options={[...TICKET_PRIORITY_OPTIONS]}
                 {...register("priority")}
               />
               {errors.priority && (

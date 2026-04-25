@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
-import type { Maintenance, MaintenanceListResponse } from "@/types/maintenance";
+import type { Ticket, TicketListResponse } from "@/types/ticket";
 import type { Vacancy } from "@/types/vacancy";
 
-export interface MaintenanceFilters {
+export interface TicketFilters {
   propertyId?: string;
   listingId?: string;
   status?: string;
@@ -18,7 +18,7 @@ export interface MaintenanceFilters {
   pageSize?: number;
 }
 
-export function useMaintenanceAPI(filters?: MaintenanceFilters) {
+export function useTicketsAPI(filters?: TicketFilters) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const params = new URLSearchParams();
@@ -31,66 +31,64 @@ export function useMaintenanceAPI(filters?: MaintenanceFilters) {
   params.set("page", String(filters?.page ?? 1));
   params.set("page_size", String(filters?.pageSize ?? 20));
 
-  return useQuery<MaintenanceListResponse>({
-    queryKey: ["maintenance", JSON.stringify(filters ?? {})],
+  return useQuery<TicketListResponse>({
+    queryKey: ["tickets", JSON.stringify(filters ?? {})],
     queryFn: async () => {
-      const response = await apiClient.get<MaintenanceListResponse>(
-        `/maintenance?${params.toString()}`,
-      );
+      const response = await apiClient.get<TicketListResponse>(`/tickets?${params.toString()}`);
       return response;
     },
     enabled: !USE_MOCK && isReady,
   });
 }
 
-export function useMaintenance(id: string | null) {
+export function useTicket(id: string | null) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
 
-  return useQuery<Maintenance | null>({
-    queryKey: ["maintenance", "detail", id],
+  return useQuery<Ticket | null>({
+    queryKey: ["tickets", "detail", id],
     queryFn: async () => {
       if (!id) return null;
-      const response = await apiClient.get<{ data: Maintenance }>(`/maintenance/${id}`);
+      const response = await apiClient.get<{ data: Ticket }>(`/tickets/${id}`);
       return response.data;
     },
     enabled: !USE_MOCK && isReady && !!id,
   });
 }
 
-export function useCreateMaintenanceAPI() {
+export function useCreateTicketAPI() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: Partial<Maintenance>) => apiClient.post("/maintenance", data),
+    mutationFn: (data: Partial<Ticket>) => apiClient.post("/tickets", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
     },
   });
 }
 
-export function useUpdateMaintenanceAPI() {
+export function useUpdateTicketAPI() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Maintenance> }) =>
-      apiClient.put(`/maintenance/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<Ticket> }) =>
+      apiClient.put(`/tickets/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
     },
   });
 }
 
-export function useDeleteMaintenanceAPI() {
+export function useDeleteTicketAPI() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => apiClient.delete(`/maintenance/${id}`),
+    mutationFn: (id: string) => apiClient.delete(`/tickets/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
     },
   });
 }

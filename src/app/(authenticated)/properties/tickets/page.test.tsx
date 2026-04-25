@@ -2,16 +2,16 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Maintenance } from "@/types/maintenance";
+import type { Ticket } from "@/types/ticket";
 
-const { maintenanceMock, propertiesMock, openDrillDownPanelMock } = vi.hoisted(() => ({
-  maintenanceMock: vi.fn(),
+const { ticketsMock, propertiesMock, openDrillDownPanelMock } = vi.hoisted(() => ({
+  ticketsMock: vi.fn(),
   propertiesMock: vi.fn(),
   openDrillDownPanelMock: vi.fn(),
 }));
 
-vi.mock("@/lib/api-hooks/maintenance-api", () => ({
-  useMaintenanceAPI: (...args: unknown[]) => maintenanceMock(...args),
+vi.mock("@/lib/api-hooks/tickets-api", () => ({
+  useTicketsAPI: (...args: unknown[]) => ticketsMock(...args),
 }));
 
 vi.mock("@/hooks/use-properties", () => ({
@@ -26,16 +26,16 @@ vi.mock("@/stores/app-store", () => ({
     }),
 }));
 
-vi.mock("@/components/pages/properties/maintenance-form-dialog", () => ({
-  MaintenanceFormDialog: ({ trigger }: { trigger: React.ReactNode }) => (
+vi.mock("@/components/pages/properties/ticket-form-dialog", () => ({
+  TicketFormDialog: ({ trigger }: { trigger: React.ReactNode }) => (
     <div data-testid="form-dialog">{trigger}</div>
   ),
 }));
 
-import MaintenancePage from "./page";
+import TicketsPage from "./page";
 
-const item: Maintenance = {
-  id: "maint-1",
+const item: Ticket = {
+  id: "tkt-1",
   propertyId: "prop-1",
   listingId: null,
   description: "Leaking tap in main bathroom",
@@ -50,16 +50,16 @@ const item: Maintenance = {
   updatedAt: "2026-04-25T00:00:00Z",
 };
 
-describe("MaintenancePage", () => {
+describe("TicketsPage", () => {
   beforeEach(() => {
-    maintenanceMock.mockReset();
+    ticketsMock.mockReset();
     propertiesMock.mockReset();
     openDrillDownPanelMock.mockReset();
 
     propertiesMock.mockReturnValue({
       data: { data: [{ id: "prop-1", name: "Beach House" }] },
     });
-    maintenanceMock.mockReturnValue({
+    ticketsMock.mockReturnValue({
       data: {
         data: [item],
         meta: { total: 1, page: 1, pageSize: 20, totalPages: 1 },
@@ -68,8 +68,8 @@ describe("MaintenancePage", () => {
     });
   });
 
-  it("renders maintenance requests with property names resolved", () => {
-    render(<MaintenancePage />);
+  it("renders tickets with property names resolved", () => {
+    render(<TicketsPage />);
 
     // "Beach House" appears in the property filter and the row — confirm both surface
     expect(screen.getAllByText("Beach House").length).toBeGreaterThanOrEqual(1);
@@ -77,25 +77,25 @@ describe("MaintenancePage", () => {
   });
 
   it("status filter change refetches with status filter applied", async () => {
-    render(<MaintenancePage />);
+    render(<TicketsPage />);
 
     const statusSelect = screen.getByRole("combobox", { name: /status/i });
     await userEvent.selectOptions(statusSelect, "reported");
 
-    const lastCall = maintenanceMock.mock.calls.at(-1)?.[0];
+    const lastCall = ticketsMock.mock.calls.at(-1)?.[0];
     expect(lastCall).toEqual(expect.objectContaining({ status: "reported", page: 1 }));
   });
 
-  it("clicking a row opens the drill-down panel for that maintenance request", async () => {
-    render(<MaintenancePage />);
+  it("clicking a row opens the drill-down panel for that ticket", async () => {
+    render(<TicketsPage />);
 
     await userEvent.click(screen.getByText(/leaking tap/i));
-    expect(openDrillDownPanelMock).toHaveBeenCalledWith("maintenance", item.id);
+    expect(openDrillDownPanelMock).toHaveBeenCalledWith("ticket", item.id);
   });
 
   it("loading state hides the list", () => {
-    maintenanceMock.mockReturnValue({ data: undefined, isLoading: true });
-    render(<MaintenancePage />);
+    ticketsMock.mockReturnValue({ data: undefined, isLoading: true });
+    render(<TicketsPage />);
     expect(screen.getByText(/loading tickets/i)).toBeInTheDocument();
   });
 });

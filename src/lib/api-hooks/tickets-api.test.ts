@@ -23,12 +23,12 @@ vi.mock("@/hooks/use-api-client", () => ({
 vi.mock("@/lib/mock-data", () => ({ USE_MOCK: false }));
 
 import {
-  useCreateMaintenanceAPI,
-  useDeleteMaintenanceAPI,
-  useMaintenance,
-  useMaintenanceAPI,
-  useUpdateMaintenanceAPI,
-} from "./maintenance-api";
+  useCreateTicketAPI,
+  useDeleteTicketAPI,
+  useTicket,
+  useTicketsAPI,
+  useUpdateTicketAPI,
+} from "./tickets-api";
 
 function withProvider(): (props: { children: ReactNode }) => ReactNode {
   const client = new QueryClient({
@@ -40,7 +40,7 @@ function withProvider(): (props: { children: ReactNode }) => ReactNode {
   return Wrapper;
 }
 
-describe("maintenance-api hooks", () => {
+describe("tickets-api hooks", () => {
   beforeEach(() => {
     getMock.mockReset();
     postMock.mockReset();
@@ -48,19 +48,19 @@ describe("maintenance-api hooks", () => {
     deleteMock.mockReset();
   });
 
-  it("useMaintenanceAPI fetches with default pagination", async () => {
+  it("useTicketsAPI fetches with default pagination", async () => {
     getMock.mockResolvedValue({
       data: [],
       meta: { total: 0, page: 1, pageSize: 20, totalPages: 1 },
     });
 
-    const { result } = renderHook(() => useMaintenanceAPI(), { wrapper: withProvider() });
+    const { result } = renderHook(() => useTicketsAPI(), { wrapper: withProvider() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(getMock).toHaveBeenCalledWith("/maintenance?page=1&page_size=20");
+    expect(getMock).toHaveBeenCalledWith("/tickets?page=1&page_size=20");
   });
 
-  it("useMaintenanceAPI applies status, priority, and date filters", async () => {
+  it("useTicketsAPI applies status, priority, and date filters", async () => {
     getMock.mockResolvedValue({
       data: [],
       meta: { total: 0, page: 1, pageSize: 20, totalPages: 1 },
@@ -68,7 +68,7 @@ describe("maintenance-api hooks", () => {
 
     const { result } = renderHook(
       () =>
-        useMaintenanceAPI({
+        useTicketsAPI({
           status: "reported",
           priority: "high",
           dateFrom: "2026-04-01",
@@ -80,13 +80,13 @@ describe("maintenance-api hooks", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(getMock).toHaveBeenCalledWith(
-      "/maintenance?status=reported&priority=high&date_from=2026-04-01&date_to=2026-04-30&page=2&page_size=20",
+      "/tickets?status=reported&priority=high&date_from=2026-04-01&date_to=2026-04-30&page=2&page_size=20",
     );
   });
 
-  it("useMaintenance(id) fetches detail and unwraps envelope", async () => {
-    const maintenance = {
-      id: "maint-1",
+  it("useTicket(id) fetches detail and unwraps envelope", async () => {
+    const ticket = {
+      id: "tkt-1",
       propertyId: "prop-1",
       listingId: null,
       description: "Leaking tap",
@@ -100,17 +100,17 @@ describe("maintenance-api hooks", () => {
       createdAt: "2026-04-25T00:00:00Z",
       updatedAt: "2026-04-25T00:00:00Z",
     };
-    getMock.mockResolvedValue({ data: maintenance });
+    getMock.mockResolvedValue({ data: ticket });
 
-    const { result } = renderHook(() => useMaintenance("maint-1"), { wrapper: withProvider() });
+    const { result } = renderHook(() => useTicket("tkt-1"), { wrapper: withProvider() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(getMock).toHaveBeenCalledWith("/maintenance/maint-1");
-    expect(result.current.data).toEqual(maintenance);
+    expect(getMock).toHaveBeenCalledWith("/tickets/tkt-1");
+    expect(result.current.data).toEqual(ticket);
   });
 
-  it("useMaintenance(null) is disabled and never fetches", () => {
-    const { result } = renderHook(() => useMaintenance(null), { wrapper: withProvider() });
+  it("useTicket(null) is disabled and never fetches", () => {
+    const { result } = renderHook(() => useTicket(null), { wrapper: withProvider() });
     expect(result.current.fetchStatus).toBe("idle");
     expect(getMock).not.toHaveBeenCalled();
   });
@@ -120,16 +120,16 @@ describe("maintenance-api hooks", () => {
     putMock.mockResolvedValue({ data: { id: "edited" } });
     deleteMock.mockResolvedValue(undefined);
 
-    const create = renderHook(() => useCreateMaintenanceAPI(), { wrapper: withProvider() });
+    const create = renderHook(() => useCreateTicketAPI(), { wrapper: withProvider() });
     await create.result.current.mutateAsync({ description: "x" });
-    expect(postMock).toHaveBeenCalledWith("/maintenance", { description: "x" });
+    expect(postMock).toHaveBeenCalledWith("/tickets", { description: "x" });
 
-    const update = renderHook(() => useUpdateMaintenanceAPI(), { wrapper: withProvider() });
+    const update = renderHook(() => useUpdateTicketAPI(), { wrapper: withProvider() });
     await update.result.current.mutateAsync({ id: "abc", data: { description: "y" } });
-    expect(putMock).toHaveBeenCalledWith("/maintenance/abc", { description: "y" });
+    expect(putMock).toHaveBeenCalledWith("/tickets/abc", { description: "y" });
 
-    const del = renderHook(() => useDeleteMaintenanceAPI(), { wrapper: withProvider() });
+    const del = renderHook(() => useDeleteTicketAPI(), { wrapper: withProvider() });
     await del.result.current.mutateAsync("abc");
-    expect(deleteMock).toHaveBeenCalledWith("/maintenance/abc");
+    expect(deleteMock).toHaveBeenCalledWith("/tickets/abc");
   });
 });

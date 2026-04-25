@@ -10,7 +10,7 @@ import type { Listing } from "@/types/listing";
 const typeColors: Record<string, string> = {
   booking: "var(--neutral-30)",
   cleaning: "var(--status-success)",
-  maintenance: "var(--status-danger)",
+  ticket: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
 };
 

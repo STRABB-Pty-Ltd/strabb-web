@@ -3,30 +3,27 @@
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { MaintenanceFormDialog } from "@/components/pages/properties/maintenance-form-dialog";
-import { MaintenanceListView } from "@/components/pages/properties/maintenance-list-view";
+import { TicketFormDialog } from "@/components/pages/properties/ticket-form-dialog";
+import { TicketsListView } from "@/components/pages/properties/tickets-list-view";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { useProperties } from "@/hooks/use-properties";
-import { type MaintenanceFilters, useMaintenanceAPI } from "@/lib/api-hooks/maintenance-api";
-import { MAINTENANCE_PRIORITY_OPTIONS, MAINTENANCE_STATUS_OPTIONS } from "@/types/maintenance";
+import { type TicketFilters, useTicketsAPI } from "@/lib/api-hooks/tickets-api";
+import { TICKET_PRIORITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@/types/ticket";
 
 const PAGE_SIZE = 20;
 
-export default function MaintenancePage() {
-  const [filters, setFilters] = useState<MaintenanceFilters>({
+export default function TicketsPage() {
+  const [filters, setFilters] = useState<TicketFilters>({
     page: 1,
     pageSize: PAGE_SIZE,
   });
 
-  const updateFilter = <K extends keyof MaintenanceFilters>(
-    key: K,
-    value: MaintenanceFilters[K],
-  ) => {
+  const updateFilter = <K extends keyof TicketFilters>(key: K, value: TicketFilters[K]) => {
     setFilters((f) => ({ ...f, [key]: value, page: 1 }));
   };
 
-  const { data, isLoading } = useMaintenanceAPI(filters);
+  const { data, isLoading } = useTicketsAPI(filters);
   const { data: propertiesData } = useProperties();
 
   const propertyNames = useMemo(() => {
@@ -42,9 +39,9 @@ export default function MaintenancePage() {
     <div className="p-md space-y-md">
       <PageHeader
         title="Tickets"
-        description="Track maintenance tickets across all your properties."
+        description="Track tickets across all your properties."
         actions={
-          <MaintenanceFormDialog
+          <TicketFormDialog
             trigger={
               <Button>
                 <Plus className="size-sm mr-xs" />
@@ -59,13 +56,13 @@ export default function MaintenancePage() {
         <FilterSelect
           label="Status"
           value={filters.status ?? ""}
-          options={[{ value: "", label: "All statuses" }, ...MAINTENANCE_STATUS_OPTIONS]}
+          options={[{ value: "", label: "All statuses" }, ...TICKET_STATUS_OPTIONS]}
           onChange={(v) => updateFilter("status", v || undefined)}
         />
         <FilterSelect
           label="Priority"
           value={filters.priority ?? ""}
-          options={[{ value: "", label: "All priorities" }, ...MAINTENANCE_PRIORITY_OPTIONS]}
+          options={[{ value: "", label: "All priorities" }, ...TICKET_PRIORITY_OPTIONS]}
           onChange={(v) => updateFilter("priority", v || undefined)}
         />
         <FilterSelect
@@ -83,7 +80,7 @@ export default function MaintenancePage() {
         <p className="text-body text-gray-400">Loading tickets…</p>
       ) : (
         <>
-          <MaintenanceListView items={items} propertyNames={propertyNames} />
+          <TicketsListView items={items} propertyNames={propertyNames} />
           {meta && meta.totalPages > 1 && (
             <Pagination
               page={filters.page ?? 1}

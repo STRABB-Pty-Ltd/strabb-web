@@ -2,19 +2,19 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { Maintenance } from "@/types/maintenance";
+import type { Ticket } from "@/types/ticket";
 
 const {
   addToastMock,
   closeDrillDownPanelMock,
-  maintenanceMock,
+  ticketMock,
   propertiesMock,
   updateMutate,
   deleteMutate,
 } = vi.hoisted(() => ({
   addToastMock: vi.fn(),
   closeDrillDownPanelMock: vi.fn(),
-  maintenanceMock: vi.fn(),
+  ticketMock: vi.fn(),
   propertiesMock: vi.fn(),
   updateMutate: vi.fn(),
   deleteMutate: vi.fn(),
@@ -30,20 +30,20 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: (selector: (s: typeof storeState) => unknown) => selector(storeState),
 }));
 
-vi.mock("@/lib/api-hooks/maintenance-api", () => ({
-  useMaintenance: () => maintenanceMock(),
-  useUpdateMaintenanceAPI: () => ({ mutate: updateMutate, isPending: false }),
-  useDeleteMaintenanceAPI: () => ({ mutate: deleteMutate, isPending: false }),
+vi.mock("@/lib/api-hooks/tickets-api", () => ({
+  useTicket: () => ticketMock(),
+  useUpdateTicketAPI: () => ({ mutate: updateMutate, isPending: false }),
+  useDeleteTicketAPI: () => ({ mutate: deleteMutate, isPending: false }),
 }));
 
 vi.mock("@/hooks/use-properties", () => ({
   useProperties: () => propertiesMock(),
 }));
 
-import { MaintenanceDetailDrawer } from "./maintenance-detail-drawer";
+import { TicketDetailDrawer } from "./ticket-detail-drawer";
 
-const baseRequest: Maintenance = {
-  id: "maint-1",
+const baseTicket: Ticket = {
+  id: "tkt-1",
   propertyId: "prop-1",
   listingId: null,
   description: "Leaking tap",
@@ -58,11 +58,11 @@ const baseRequest: Maintenance = {
   updatedAt: "2026-04-25T00:00:00Z",
 };
 
-describe("MaintenanceDetailDrawer", () => {
+describe("TicketDetailDrawer", () => {
   beforeEach(() => {
     addToastMock.mockReset();
     closeDrillDownPanelMock.mockReset();
-    maintenanceMock.mockReset();
+    ticketMock.mockReset();
     propertiesMock.mockReset();
     updateMutate.mockReset();
     deleteMutate.mockReset();
@@ -73,33 +73,33 @@ describe("MaintenanceDetailDrawer", () => {
     storeState.drillDownPanel = null;
   });
 
-  it("renders nothing when drill-down is not maintenance", () => {
+  it("renders nothing when drill-down is not ticket", () => {
     storeState.drillDownPanel = { open: true, type: "cleaning", itemId: "x" };
-    maintenanceMock.mockReturnValue({ data: null, isLoading: false });
-    const { container } = render(<MaintenanceDetailDrawer />);
+    ticketMock.mockReturnValue({ data: null, isLoading: false });
+    const { container } = render(<TicketDetailDrawer />);
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders maintenance detail with property name resolved", () => {
-    storeState.drillDownPanel = { open: true, type: "maintenance", itemId: baseRequest.id };
-    maintenanceMock.mockReturnValue({ data: baseRequest, isLoading: false });
-    render(<MaintenanceDetailDrawer />);
+  it("renders ticket detail with property name resolved", () => {
+    storeState.drillDownPanel = { open: true, type: "ticket", itemId: baseTicket.id };
+    ticketMock.mockReturnValue({ data: baseTicket, isLoading: false });
+    render(<TicketDetailDrawer />);
 
     expect(screen.getByText("Beach House")).toBeInTheDocument();
     expect(screen.getByText("Leaking tap")).toBeInTheDocument();
   });
 
   it("Edit toggles edit mode and Save fires update mutation", async () => {
-    storeState.drillDownPanel = { open: true, type: "maintenance", itemId: baseRequest.id };
-    maintenanceMock.mockReturnValue({ data: baseRequest, isLoading: false });
-    render(<MaintenanceDetailDrawer />);
+    storeState.drillDownPanel = { open: true, type: "ticket", itemId: baseTicket.id };
+    ticketMock.mockReturnValue({ data: baseTicket, isLoading: false });
+    render(<TicketDetailDrawer />);
 
     await userEvent.click(screen.getByRole("button", { name: /^edit$/i }));
     await userEvent.click(screen.getByRole("button", { name: /^save$/i }));
 
     expect(updateMutate).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: baseRequest.id,
+        id: baseTicket.id,
         data: expect.objectContaining({ description: "Leaking tap", priority: "high" }),
       }),
       expect.any(Object),
@@ -107,14 +107,14 @@ describe("MaintenanceDetailDrawer", () => {
   });
 
   it("Delete requires confirmation then calls delete mutation", async () => {
-    storeState.drillDownPanel = { open: true, type: "maintenance", itemId: baseRequest.id };
-    maintenanceMock.mockReturnValue({ data: baseRequest, isLoading: false });
-    render(<MaintenanceDetailDrawer />);
+    storeState.drillDownPanel = { open: true, type: "ticket", itemId: baseTicket.id };
+    ticketMock.mockReturnValue({ data: baseTicket, isLoading: false });
+    render(<TicketDetailDrawer />);
 
     await userEvent.click(screen.getByRole("button", { name: /^delete$/i }));
     expect(deleteMutate).not.toHaveBeenCalled();
 
     await userEvent.click(screen.getByRole("button", { name: /yes, delete/i }));
-    expect(deleteMutate).toHaveBeenCalledWith(baseRequest.id, expect.any(Object));
+    expect(deleteMutate).toHaveBeenCalledWith(baseTicket.id, expect.any(Object));
   });
 });

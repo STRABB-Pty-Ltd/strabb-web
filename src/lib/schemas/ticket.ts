@@ -1,23 +1,20 @@
 import { z } from "zod";
 
 import {
-  MAINTENANCE_PRIORITY_OPTIONS,
-  MAINTENANCE_STATUS_OPTIONS,
-  type MaintenancePriority,
-  type MaintenanceStatus,
-} from "@/types/maintenance";
+  TICKET_PRIORITY_OPTIONS,
+  TICKET_STATUS_OPTIONS,
+  type TicketPriority,
+  type TicketStatus,
+} from "@/types/ticket";
 
-const priorityValues = MAINTENANCE_PRIORITY_OPTIONS.map((o) => o.value) as [
-  MaintenancePriority,
-  ...MaintenancePriority[],
+const priorityValues = TICKET_PRIORITY_OPTIONS.map((o) => o.value) as [
+  TicketPriority,
+  ...TicketPriority[],
 ];
 
-const statusValues = MAINTENANCE_STATUS_OPTIONS.map((o) => o.value) as [
-  MaintenanceStatus,
-  ...MaintenanceStatus[],
-];
+const statusValues = TICKET_STATUS_OPTIONS.map((o) => o.value) as [TicketStatus, ...TicketStatus[]];
 
-export const maintenanceCreateSchema = z.object({
+export const ticketCreateSchema = z.object({
   propertyId: z.string().uuid("Select a property"),
   listingId: z
     .string()
@@ -46,12 +43,12 @@ export const maintenanceCreateSchema = z.object({
     .transform((v) => (v ? v : undefined)),
 });
 
-export type MaintenanceCreateFormData = z.infer<typeof maintenanceCreateSchema>;
+export type TicketCreateFormData = z.infer<typeof ticketCreateSchema>;
 
-export const maintenanceUpdateSchema = maintenanceCreateSchema
+export const ticketUpdateSchema = ticketCreateSchema
   .extend({
     status: z.enum(statusValues).optional(),
   })
   .partial();
 
-export type MaintenanceUpdateFormData = z.infer<typeof maintenanceUpdateSchema>;
+export type TicketUpdateFormData = z.infer<typeof ticketUpdateSchema>;

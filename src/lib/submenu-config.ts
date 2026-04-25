@@ -27,7 +27,7 @@ export const submenuConfigs: Record<Exclude<PageId, "settings">, SubmenuChip[]> 
     { id: "bookings", label: "Bookings", behavior: "multi" },
     { id: "cleaning", label: "Cleaning", behavior: "multi" },
     { id: "vacancy", label: "Vacancy", behavior: "multi" },
-    { id: "maintenance", label: "Tickets", behavior: "multi" },
+    { id: "ticket", label: "Tickets", behavior: "multi" },
   ],
   messaging: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
