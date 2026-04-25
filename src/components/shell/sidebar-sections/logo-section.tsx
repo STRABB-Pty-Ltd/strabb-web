@@ -11,6 +11,11 @@ export function LogoSection() {
         paddingRight: "var(--space-md)",
       }}
     >
+      {/* Logo renders at full sidebar width minus 21px padding either side; its
+          natural 2.5:1 aspect means it's taller than the sidebar's reserved
+          spacer (var(--logo-area-height)) — that's intentional, the overflow
+          falls into ListingFilterTree's padding-top so the spacer/canvas
+          baseline alignment is preserved. */}
       <Image
         src="/logo-strabb.png"
         alt="STRABB"
@@ -18,8 +23,6 @@ export function LogoSection() {
         height={600}
         priority
         style={{
-          // Fit width of sidebar minus 21px padding either side; height scales
-          // with the 2.5:1 intrinsic aspect ratio.
           width: "calc(var(--sidebar-width) - 2 * var(--space-md))",
           height: "auto",
         }}
