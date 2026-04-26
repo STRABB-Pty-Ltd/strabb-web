@@ -105,6 +105,18 @@ export function TimeframePopup() {
     return () => window.removeEventListener("resize", handler);
   }, [tfPopup.open, closeTimeframePopup]);
 
+  // Return focus to the trigger when the popup closes, so keyboard users
+  // don't lose their place in the tab order.
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (tfPopup.open) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [tfPopup.open]);
+
   if (!tfPopup.open || !isTimeframePage(currentPage)) return null;
 
   const writeAnchor = (next: string) => {
