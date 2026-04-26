@@ -96,6 +96,15 @@ export function TimeframePopup() {
     }
   }, [tfPopup.open, handleKeyDown]);
 
+  // Anchor rect is captured at click time; if the user resizes the window the
+  // saved coords go stale, so close rather than render in the wrong place.
+  useEffect(() => {
+    if (!tfPopup.open) return;
+    const handler = () => closeTimeframePopup();
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, [tfPopup.open, closeTimeframePopup]);
+
   if (!tfPopup.open || !isTimeframePage(currentPage)) return null;
 
   const writeAnchor = (next: string) => {
@@ -103,15 +112,32 @@ export function TimeframePopup() {
     closeTimeframePopup();
   };
 
+  // Position relative to the trigger element when an anchor was captured;
+  // fall back to the legacy fixed spot below the rail for any caller that
+  // doesn't pass one. Right-edge clamping keeps the popup on-screen when the
+  // trigger sits near the viewport edge.
+  const POPUP_WIDTH = 377;
+  const VIEWPORT_MARGIN = 8;
+  const positionStyle: { top: number | string; left: number | string } = tfPopup.anchor
+    ? (() => {
+        const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920;
+        const maxLeft = viewportWidth - POPUP_WIDTH - VIEWPORT_MARGIN;
+        return {
+          top: tfPopup.anchor.bottom + VIEWPORT_MARGIN,
+          left: Math.max(VIEWPORT_MARGIN, Math.min(tfPopup.anchor.left, maxLeft)),
+        };
+      })()
+    : { top: 144, left: "calc(var(--sidebar-width) + 8px)" };
+
   return (
     <>
       <div className="fixed inset-0 z-[140]" onClick={closeTimeframePopup} />
       <div
         className="fixed z-[150] rounded-xl border bg-white shadow-xl"
         style={{
-          top: 144,
-          left: `calc(var(--sidebar-width) + 8px)`,
-          width: 377,
+          top: positionStyle.top,
+          left: positionStyle.left,
+          width: POPUP_WIDTH,
           borderColor: "var(--border)",
         }}
         onMouseDown={cancelAutoConfirm}

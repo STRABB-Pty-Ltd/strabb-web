@@ -9,9 +9,9 @@ const { closeMock, setAnchorMock, setCustomRangeMock } = vi.hoisted(() => ({
 }));
 
 const storeState = {
-  tfPopup: { open: true, anchor: "sidebar", autoSelect: false } as {
+  tfPopup: { open: true, anchor: null, autoSelect: false } as {
     open: boolean;
-    anchor: "sidebar";
+    anchor: null;
     autoSelect: boolean;
   },
   closeTimeframePopup: closeMock,
@@ -46,7 +46,7 @@ describe("TimeframePopup", () => {
     closeMock.mockReset();
     setAnchorMock.mockReset();
     setCustomRangeMock.mockReset();
-    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: false };
+    storeState.tfPopup = { open: true, anchor: null, autoSelect: false };
     storeState.currentPage = "dashboard";
     storeState.dashboard = { windowSize: "month", anchor: null };
     storeState.customRange = null;
@@ -56,20 +56,20 @@ describe("TimeframePopup", () => {
   });
 
   it("renders nothing when closed", () => {
-    storeState.tfPopup = { open: false, anchor: "sidebar", autoSelect: false };
+    storeState.tfPopup = { open: false, anchor: null, autoSelect: false };
     const { container } = render(<TimeframePopup />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it("autoSelect=true renders the progress bar", () => {
-    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: true };
+    storeState.tfPopup = { open: true, anchor: null, autoSelect: true };
     storeState.dashboard = { windowSize: "month", anchor: null };
     render(<TimeframePopup />);
     expect(screen.getByLabelText(/auto-confirming current period/i)).toBeInTheDocument();
   });
 
   it("autoSelect=false hides the progress bar", () => {
-    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: false };
+    storeState.tfPopup = { open: true, anchor: null, autoSelect: false };
     storeState.dashboard = { windowSize: "month", anchor: null };
     render(<TimeframePopup />);
     expect(screen.queryByLabelText(/auto-confirming/i)).not.toBeInTheDocument();
@@ -78,7 +78,7 @@ describe("TimeframePopup", () => {
   it("autoSelect timer auto-closes after 7 seconds", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 3, 15));
-    storeState.tfPopup = { open: true, anchor: "sidebar", autoSelect: true };
+    storeState.tfPopup = { open: true, anchor: null, autoSelect: true };
     storeState.dashboard = { windowSize: "month", anchor: null };
     render(<TimeframePopup />);
 

@@ -57,7 +57,17 @@ export function TimeframeStepper() {
       )}
       <button
         type="button"
-        onClick={() => openTimeframePopup()}
+        onClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          openTimeframePopup({
+            anchor: {
+              top: rect.top,
+              left: rect.left,
+              bottom: rect.bottom,
+              right: rect.right,
+            },
+          });
+        }}
         className="text-body px-base inline-flex min-h-[44px] items-center rounded-sm font-semibold hover:bg-gray-100"
       >
         {label}
