@@ -106,7 +106,10 @@ export function GanttView<T>({
 
             {/* Grid area */}
             <div className="relative flex border-b" style={{ borderColor: "var(--border)" }}>
-              {/* Day cells */}
+              {/* Day cells. No today-cell fill — it's the same neutral-30 as
+                  the booking bars and made partial-day check-in slivers
+                  indistinguishable from the cell behind them. Today is
+                  signalled by the header highlight + the dashed line below. */}
               {days.map((day) => (
                 <div
                   key={day.toISOString()}
@@ -115,7 +118,6 @@ export function GanttView<T>({
                     width: cellWidth,
                     height: ROW_HEIGHT,
                     borderColor: "var(--border)",
-                    backgroundColor: isToday(day) ? "var(--neutral-30)" : undefined,
                   }}
                 />
               ))}
@@ -138,27 +140,6 @@ export function GanttView<T>({
                 // to the edge instead of being chopped.
                 const insetStart = startClipped ? 0 : (partial?.insetStart ?? 0);
                 const insetEnd = endClipped ? 1 : (partial?.insetEnd ?? 1);
-
-                // TEMP DEBUG — remove once Fraser positioning is solved
-                if (typeof window !== "undefined" && getLabel(item).includes("Fraser")) {
-                  // eslint-disable-next-line no-console
-                  console.log("[GanttView debug]", {
-                    label: getLabel(item),
-                    itemType: (item as { type?: string }).type,
-                    itemStartIso: range.start.toISOString(),
-                    itemEndIso: range.end.toISOString(),
-                    rangeStartIso: rangeStart.toISOString(),
-                    rawStart,
-                    rawEnd,
-                    startClipped,
-                    endClipped,
-                    visibleStart,
-                    visibleEnd,
-                    partial,
-                    insetStart,
-                    insetEnd,
-                  });
-                }
 
                 const leftPx = startClipped ? 0 : (visibleStart + insetStart) * cellWidth;
                 const rightPx = endClipped
