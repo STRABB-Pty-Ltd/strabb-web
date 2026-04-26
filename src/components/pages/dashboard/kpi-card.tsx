@@ -61,6 +61,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
           <Icon size={21} style={{ color: "var(--icon-color)" }} />
         </div>
         <p
+          title={kpi.label}
           className="text-subheading min-w-0 flex-1 truncate font-medium"
           style={{ color: "var(--brand-10)" }}
         >
