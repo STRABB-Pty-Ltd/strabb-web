@@ -64,7 +64,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           className="pointer-events-none absolute z-20"
           style={{
             left: "calc(var(--sidebar-width) + 4px)",
-            top: "var(--space-xl)",
+            top: "var(--canvas-top)",
             bottom: "var(--space-xl)",
             width: "2px",
             backgroundColor: "var(--neutral-30)",
@@ -76,20 +76,20 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         <div
           className="relative flex shrink-0 flex-col"
           style={{
-            paddingTop: "var(--space-md)",
+            paddingTop: "var(--space-sm)",
             paddingBottom: "var(--space-sm)",
             gap: 0,
           }}
         >
           <TopNav />
-          {/* Separator between top nav and submenu — 2px high, sits in a
-              flex-stretched track of var(--space-md) so it's exactly centred
-              regardless of TopNav's rendered height. Hidden on settings. */}
+          {/* Separator between top nav and submenu — 2px line in a 12px track
+              so it has 5px breathing room on each side. Hidden on settings;
+              that branch keeps the same 12px gap for vertical rhythm parity. */}
           {currentPage !== "settings" ? (
             <div
               aria-hidden="true"
               className="pointer-events-none flex shrink-0 items-center justify-center"
-              style={{ height: "var(--space-md)" }}
+              style={{ height: 12 }}
             >
               <div
                 style={{
@@ -101,10 +101,20 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
               />
             </div>
           ) : (
-            <div style={{ height: "var(--space-md)" }} />
+            <div style={{ height: 12 }} />
           )}
           <SubmenuBar />
         </div>
+        {/* Horizontal rail/canvas separator — 2px, runs full width of the
+            flex column (i.e. from the sidebar's right edge across to the page
+            right). Pairs with the vertical sidebar separator (which now
+            starts at --canvas-top) to form an L-frame around the canvas.
+            relative + zIndex so it paints above adjacent debug outlines. */}
+        <div
+          aria-hidden="true"
+          className="relative shrink-0"
+          style={{ height: 2, backgroundColor: "var(--neutral-30)", zIndex: 25 }}
+        />
         <ErrorBoundary>
           <Suspense fallback={<PageLoading />}>
             <Canvas>{children}</Canvas>

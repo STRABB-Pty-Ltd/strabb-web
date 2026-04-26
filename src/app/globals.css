@@ -76,7 +76,7 @@
   /* Layout dimensions — all on Fibonacci ladder (5/8/13/21/34/55/89/144/233/377/610) */
   --topnav-height: 55px;
   --submenu-height: 55px;
-  --sidebar-width: 19.1vw;
+  --sidebar-width: 16vw;
   --drilldown-width: 377px;
   --thread-width: 610px;
 
@@ -87,6 +87,16 @@
      (44, lifted from chip-natural 37 by the 44pt min hit area on the
      timeframe stepper chevrons) + paddingBottom (13) on the canvas side. */
   --logo-area-height: 84px;
+
+  /* Y-coord of the canvas top edge, measured from the rail composition:
+     paddingTop (sm 13) + TopNav chip-height (37) + separator track (12)
+     + SubmenuBar chip-height (37) + paddingBottom (sm 13)
+     + horizontal rail/canvas separator (2px) = 114px.
+     Tracks token changes via calc so it stays accurate. Used by the
+     vertical sidebar separator to start exactly at the canvas top. */
+  --canvas-top: calc(
+    2 * var(--space-sm) + 2 * (2 * var(--space-base) + var(--text-body) * 1.615) + 14px
+  );
 
   /* Spacing scale — golden-ratio / Fibonacci ladder */
   --space-xs: 5px;
