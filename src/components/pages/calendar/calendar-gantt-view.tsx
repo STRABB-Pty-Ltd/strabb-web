@@ -7,15 +7,17 @@ import { ganttDateRange } from "@/lib/timeframe-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
+// Bookings get their channel-specific colour (already on item.color from
+// the API mapper) so the rail reads the way the messaging page does:
+// Airbnb red, Booking.com navy, Vrbo, direct, etc. Other event types keep
+// their semantic colour.
 const typeColors: Record<string, string> = {
-  booking: "var(--neutral-30)",
   cleaning: "var(--status-success)",
   ticket: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
 };
 
 const typeTextColors: Record<string, string> = {
-  booking: "var(--brand-10)",
   vacancy: "var(--brand-10)",
 };
 
