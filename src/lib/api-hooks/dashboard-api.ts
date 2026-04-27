@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { addDays, format, startOfDay } from "date-fns";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
@@ -178,13 +179,26 @@ const statusColors: Record<string, string> = {
 };
 
 function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
+  // Backend doesn't return a per-day mini-calendar; derive one from the
+  // upcoming-bookings list by counting check-ins per day for the next 7 days.
+  // Approximate (only counts check-ins, not bookings already in progress)
+  // until the API exposes a dedicated booking-density endpoint.
+  const today = startOfDay(new Date());
+  const upcoming = raw.upcomingBookings ?? [];
+  const miniCalendar = Array.from({ length: 7 }, (_, i) => {
+    const day = addDays(today, i);
+    const dayStr = format(day, "yyyy-MM-dd");
+    const bookings = upcoming.filter((b) => b.checkIn.split("T")[0] === dayStr).length;
+    return { date: dayStr, bookings };
+  });
+
   return {
-    miniCalendar: [],
+    miniCalendar,
     revenueSparkline: (raw.revenueTrend ?? []).map((r) => ({
       label: r.month,
       revenue: r.amount,
     })),
-    upcomingBookings: (raw.upcomingBookings ?? []).map((b) => ({
+    upcomingBookings: upcoming.map((b) => ({
       id: b.id,
       guest: b.guestName,
       listing: b.listingName,
