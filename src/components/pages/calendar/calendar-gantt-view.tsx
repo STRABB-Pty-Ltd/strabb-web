@@ -1,5 +1,7 @@
 "use client";
 
+import { BrushCleaning } from "lucide-react";
+
 import { GanttView } from "@/components/views/gantt-view";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useListings } from "@/hooks/use-listings";
@@ -70,7 +72,13 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       })}
       getColor={(item) => typeColors[item.type] ?? item.color}
       getTextColor={(item) => typeTextColors[item.type] ?? "var(--surface-60)"}
-      getLabel={(item) => item.label}
+      // Cleaning bars: replace the word "Turnover" with the broom icon below.
+      // Strip the "Turnover" / "Turnover - " prefix so only the assignee
+      // name (or nothing) remains as text alongside the icon.
+      getLabel={(item) =>
+        item.type === "cleaning" ? item.label.replace(/^Turnover\s*-?\s*/i, "") : item.label
+      }
+      getIcon={(item) => (item.type === "cleaning" ? <BrushCleaning size={13} /> : undefined)}
       // Bookings: 75–100 % of check-in day → middle days → 0–25 % of checkout
       // day, leaving the middle 50 % of any turnover day open.
       // Cleaning turnovers fill that gap (25–75 % of their day).

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 interface GanttBarProps {
   label: string;
   color: string;
@@ -8,6 +10,10 @@ interface GanttBarProps {
    *  gantt to flag a booking's channel (Airbnb / Booking.com / Vrbo / direct)
    *  the same way the messaging cards do. */
   accentColor?: string;
+  /** Optional icon rendered before the label (shrink-0 so it won't compress
+   *  when the bar is narrow). Used by the calendar gantt to swap the word
+   *  "Turnover" for a broom icon on cleaning bars. */
+  icon?: ReactNode;
   leftPx: number;
   widthPx: number;
   rowHeight: number;
@@ -19,6 +25,7 @@ export function GanttBar({
   color,
   textColor,
   accentColor,
+  icon,
   leftPx,
   widthPx,
   rowHeight,
@@ -28,7 +35,7 @@ export function GanttBar({
     <button
       type="button"
       onClick={onClick}
-      className="text-body absolute flex items-center justify-center overflow-hidden rounded-sm text-center break-words"
+      className="text-body gap-xs absolute flex items-center justify-center overflow-hidden rounded-sm text-center break-words"
       title={label}
       style={{
         left: leftPx,
@@ -43,7 +50,8 @@ export function GanttBar({
         lineHeight: 1.25,
       }}
     >
-      {label}
+      {icon && <span className="shrink-0 leading-none">{icon}</span>}
+      {label && <span>{label}</span>}
     </button>
   );
 }

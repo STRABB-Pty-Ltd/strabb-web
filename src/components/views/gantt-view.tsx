@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, type ReactNode } from "react";
 import { differenceInDays, eachDayOfInterval, isToday, startOfDay } from "date-fns";
 
 import { GanttBar } from "./gantt-bar";
@@ -29,6 +29,8 @@ export interface GanttViewProps<T> {
   /** Optional 4px left-edge accent stripe. Used by the calendar gantt to flag
    *  a booking's channel without changing the bar's fill colour. */
   getAccentColor?: (item: T) => string | undefined;
+  /** Optional icon rendered before the label. */
+  getIcon?: (item: T) => ReactNode | undefined;
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
@@ -50,6 +52,7 @@ export function GanttView<T>({
   getLabel,
   getPartialDay,
   getAccentColor,
+  getIcon,
   dateRange,
   onItemClick,
   todayLineColor = "var(--status-danger)",
@@ -164,6 +167,7 @@ export function GanttView<T>({
                     color={getColor(item)}
                     textColor={getTextColor?.(item)}
                     accentColor={getAccentColor?.(item)}
+                    icon={getIcon?.(item)}
                     leftPx={leftPx}
                     widthPx={widthPx}
                     rowHeight={ROW_HEIGHT}
