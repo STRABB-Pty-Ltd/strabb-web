@@ -26,6 +26,9 @@ export interface GanttViewProps<T> {
    * a turnover cleaning event then fills that 25–75 % slot.
    */
   getPartialDay?: (item: T) => { insetStart?: number; insetEnd?: number };
+  /** Optional 4px left-edge accent stripe. Used by the calendar gantt to flag
+   *  a booking's channel without changing the bar's fill colour. */
+  getAccentColor?: (item: T) => string | undefined;
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
@@ -46,6 +49,7 @@ export function GanttView<T>({
   getTextColor,
   getLabel,
   getPartialDay,
+  getAccentColor,
   dateRange,
   onItemClick,
   todayLineColor = "var(--status-danger)",
@@ -159,6 +163,7 @@ export function GanttView<T>({
                     label={getLabel(item)}
                     color={getColor(item)}
                     textColor={getTextColor?.(item)}
+                    accentColor={getAccentColor?.(item)}
                     leftPx={leftPx}
                     widthPx={widthPx}
                     rowHeight={ROW_HEIGHT}

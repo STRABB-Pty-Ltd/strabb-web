@@ -13,15 +13,15 @@ const windowSizeToMode: Record<string, "month" | "week" | "day" | "fortnight"> =
   fortnight: "fortnight",
 };
 
-// Bookings render with their channel-specific colour (item.color); other
-// event types keep their semantic colour.
 const typeColors: Record<string, string> = {
+  booking: "var(--neutral-30)",
   cleaning: "var(--status-success)",
   ticket: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
 };
 
 const typeTextColors: Record<string, string> = {
+  booking: "var(--brand-10)",
   vacancy: "var(--brand-10)",
 };
 

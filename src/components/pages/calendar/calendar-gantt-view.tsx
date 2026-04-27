@@ -7,18 +7,25 @@ import { ganttDateRange } from "@/lib/timeframe-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
-// Bookings get their channel-specific colour (already on item.color from
-// the API mapper) so the rail reads the way the messaging page does:
-// Airbnb red, Booking.com navy, Vrbo, direct, etc. Other event types keep
-// their semantic colour.
 const typeColors: Record<string, string> = {
+  booking: "var(--neutral-30)",
   cleaning: "var(--status-success)",
   ticket: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
 };
 
 const typeTextColors: Record<string, string> = {
+  booking: "var(--brand-10)",
   vacancy: "var(--brand-10)",
+};
+
+// Channel accent stripe colours for booking bars. Same palette and meaning
+// as the messaging page's left-border on each message card.
+const channelColors: Record<string, string> = {
+  airbnb: "var(--channel-airbnb)",
+  booking_com: "var(--channel-booking)",
+  vrbo: "var(--channel-vrbo)",
+  direct: "var(--channel-direct)",
 };
 
 interface CalendarGanttViewProps {
@@ -73,6 +80,11 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
         if (item.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.75 };
         return {};
       }}
+      getAccentColor={(item) =>
+        item.type === "booking"
+          ? (channelColors[item.channel ?? "direct"] ?? "var(--channel-direct)")
+          : undefined
+      }
       dateRange={dateRange}
       onItemClick={(item) => openDrillDownPanel(item.type, item.id)}
     />
