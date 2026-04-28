@@ -37,11 +37,9 @@ interface CalendarGanttViewProps {
 export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const selectedListings = useAppStore((s) => s.selectedListings);
-  const submenu = useAppStore((s) => s.calendar.submenu);
   const windowSize = useAppStore((s) => s.calendar.windowSize);
   const anchor = useAppStore((s) => s.calendar.anchor);
   const customRange = useAppStore((s) => s.customRange);
-  const isOverview = submenu.length === 0 || submenu.includes("overview");
   const { data: listingsData } = useListings();
   const allListings = (listingsData?.data ?? []) as unknown as Listing[];
 

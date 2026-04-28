@@ -32,9 +32,7 @@ interface CalendarMonthViewProps {
 export function CalendarMonthView({ events }: CalendarMonthViewProps) {
   const windowSize = useAppStore((s) => s.calendar.windowSize);
   const anchor = useAppStore((s) => s.calendar.anchor);
-  const submenu = useAppStore((s) => s.calendar.submenu);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
-  const isOverview = submenu.length === 0 || submenu.includes("overview");
 
   const mode = windowSizeToMode[windowSize] ?? "month";
   const currentDate = anchor ? parseISO(anchor) : new Date();
