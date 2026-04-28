@@ -16,6 +16,8 @@ interface DayCellEvent {
   insetStart?: number;
   insetEnd?: number;
   showLabel?: boolean;
+  labelMaxWidth?: string;
+  clampLeftEdge?: boolean;
   onClick: () => void;
 }
 
@@ -92,6 +94,8 @@ export function CalendarDayCell({
                 insetStart={ev.insetStart}
                 insetEnd={ev.insetEnd}
                 showLabel={ev.showLabel}
+                labelMaxWidth={ev.labelMaxWidth}
+                clampLeftEdge={ev.clampLeftEdge}
                 onClick={ev.onClick}
               />
             ))}

@@ -33,6 +33,12 @@ export interface CalendarGridProps<T> {
    *  insets, so a turnover day's outgoing booking, cleaning, and incoming
    *  booking can share one track. */
   getEventInset?: (event: T) => { insetStart: number; insetEnd: number };
+  /** Returns true for events that should occupy the top track rows. Tracks
+   *  containing any primary event keep their lower indices; tracks holding
+   *  only secondary events (e.g. lonely cleanings or tickets) get pushed
+   *  beneath the booking rows so cells read as "bookings on top, ancillary
+   *  events below" instead of cleanings hogging row 0. */
+  isPrimaryEvent?: (event: T) => boolean;
   getEventLabel: (event: T) => string;
   onEventClick: (event: T) => void;
   maxEventsPerCell?: number;
@@ -50,11 +56,13 @@ export function CalendarGrid<T>({
   getEventAccentColor,
   getEventIcon,
   getEventInset,
+  isPrimaryEvent,
   getEventLabel,
   onEventClick,
   maxEventsPerCell = 3,
 }: CalendarGridProps<T>) {
   const insetFor = (ev: T) => getEventInset?.(ev) ?? { insetStart: 0, insetEnd: 0 };
+  const isPrimary = (ev: T) => isPrimaryEvent?.(ev) ?? true;
   const getDays = (): Date[] => {
     switch (mode) {
       case "month": {
@@ -105,7 +113,7 @@ export function CalendarGrid<T>({
     });
     effective.sort((a, b) => a.startMs - b.startMs || a.endMs - b.endMs);
     const trackEnds: number[] = [];
-    const result = new Map<T, number>();
+    const greedy = new Map<T, number>();
     for (const { ev, startMs, endMs } of effective) {
       // <= so a chip that ends exactly when the next one begins (e.g. 06:00
       // turnover boundary) is allowed to share the same track.
@@ -116,7 +124,31 @@ export function CalendarGrid<T>({
       } else {
         trackEnds[assigned] = endMs;
       }
-      result.set(ev, assigned);
+      greedy.set(ev, assigned);
+    }
+
+    // Second pass: pull tracks that contain any primary event (bookings) to
+    // the front, leaving tracks with only secondary events (lonely cleanings,
+    // tickets) on the back so they don't hog row 0 when they're not part of
+    // a turnover handshake with a booking on the same track.
+    const trackHasPrimary = new Map<number, boolean>();
+    for (const [ev, trackIdx] of greedy) {
+      if (isPrimary(ev)) trackHasPrimary.set(trackIdx, true);
+      else if (!trackHasPrimary.has(trackIdx)) trackHasPrimary.set(trackIdx, false);
+    }
+    const primaryTracks: number[] = [];
+    const secondaryTracks: number[] = [];
+    for (const [trackIdx, hasPrimary] of [...trackHasPrimary].sort((a, b) => a[0] - b[0])) {
+      (hasPrimary ? primaryTracks : secondaryTracks).push(trackIdx);
+    }
+    const remap = new Map<number, number>();
+    primaryTracks.forEach((oldIdx, newIdx) => remap.set(oldIdx, newIdx));
+    secondaryTracks.forEach((oldIdx, newIdx) =>
+      remap.set(oldIdx, primaryTracks.length + newIdx),
+    );
+    const result = new Map<T, number>();
+    for (const [ev, oldIdx] of greedy) {
+      result.set(ev, remap.get(oldIdx) ?? oldIdx);
     }
     return result;
   };
@@ -125,8 +157,13 @@ export function CalendarGrid<T>({
   // assignments. Map week index → (event → track index). Also record how many
   // tracks each week needs so cells in a week share the same slot count and
   // every chip stays at the same vertical position across the days it spans.
+  // weekLabelDay records which day-in-week each event should carry its label
+  // on; weekNextOnTrack lets a labeled chip cap its label width to the next
+  // chip on the same track so the ellipsis lands at a sensible boundary.
   const weekTracks: Array<Map<T, number>> = [];
   const weekSlotCounts: number[] = [];
+  const weekLabelDay: Array<Map<T, number>> = [];
+  const weekNextOnTrack: Array<Map<T, T | undefined>> = [];
   if (mode !== "day") {
     for (let i = 0; i < gridDays.length; i += 7) {
       const weekDays = gridDays.slice(i, i + 7);
@@ -145,6 +182,57 @@ export function CalendarGrid<T>({
         if (trackIdx > maxTrack) maxTrack = trackIdx;
       }
       weekSlotCounts.push(Math.min(maxTrack + 1, maxEventsPerCell));
+
+      const labelDay = new Map<T, number>();
+      for (const ev of eventsInWeek) {
+        const range = getEventDate(ev);
+        const inset = insetFor(ev);
+        const evStartMs = startOfDay(range.start).getTime();
+        const evEndMs = startOfDay(range.end).getTime();
+        let firstDay = -1;
+        let widest = -1;
+        for (let d = 0; d < weekDays.length; d++) {
+          const dMs = startOfDay(weekDays[d]).getTime();
+          if (dMs < evStartMs || dMs > evEndMs) continue;
+          if (firstDay === -1) firstDay = d;
+          const isStart = dMs === evStartMs;
+          const isEnd = dMs === evEndMs;
+          const width = 1 - (isStart ? inset.insetStart : 0) - (isEnd ? inset.insetEnd : 0);
+          if (width > widest) widest = width;
+        }
+        // Anchor the label to the FIRST day the event touches in this week
+        // (the bar's leftmost visible edge). The label then overflows right
+        // across the rest of the bar via the chip's overflow:visible. Skip
+        // the label entirely when the event's only day in this week is a
+        // 25 % partial — a lonely check-in/check-out doesn't get words.
+        if (firstDay >= 0 && widest > 0.25) labelDay.set(ev, firstDay);
+      }
+      weekLabelDay.push(labelDay);
+
+      // Build per-track ordered event lists so we can find the next chip on
+      // the same track for each event — used to cap a labeled chip's text
+      // overflow at the next chip's left edge.
+      const trackToEvents = new Map<number, T[]>();
+      for (const [ev, trackIdx] of trackMap.entries()) {
+        if (!trackToEvents.has(trackIdx)) trackToEvents.set(trackIdx, []);
+        trackToEvents.get(trackIdx)!.push(ev);
+      }
+      for (const list of trackToEvents.values()) {
+        list.sort((a, b) => {
+          const sa =
+            startOfDay(getEventDate(a).start).getTime() + insetFor(a).insetStart * DAY_MS;
+          const sb =
+            startOfDay(getEventDate(b).start).getTime() + insetFor(b).insetStart * DAY_MS;
+          return sa - sb;
+        });
+      }
+      const nextOnTrack = new Map<T, T | undefined>();
+      for (const list of trackToEvents.values()) {
+        for (let j = 0; j < list.length; j++) {
+          nextOnTrack.set(list[j], list[j + 1]);
+        }
+      }
+      weekNextOnTrack.push(nextOnTrack);
     }
   }
 
@@ -207,8 +295,10 @@ export function CalendarGrid<T>({
           const weekIdx = Math.floor(idx / 7);
           const trackMap = weekTracks[weekIdx];
           const slotCount = weekSlotCounts[weekIdx] ?? 0;
+          const labelDay = weekLabelDay[weekIdx];
+          const nextOnTrack = weekNextOnTrack[weekIdx];
           const dayEvents = getEventsForDay(day);
-
+          const dayIdxInWeek = idx % 7;
           const weekDays = gridDays.slice(weekIdx * 7, weekIdx * 7 + 7);
           const weekStartMs = startOfDay(weekDays[0]).getTime();
           const dayMs = startOfDay(day).getTime();
@@ -224,6 +314,8 @@ export function CalendarGrid<T>({
             insetStart?: number;
             insetEnd?: number;
             showLabel?: boolean;
+            labelMaxWidth?: string;
+            clampLeftEdge?: boolean;
             onClick: () => void;
           };
           const tracks: Slot[][] = Array.from({ length: slotCount }, () => []);
@@ -232,23 +324,71 @@ export function CalendarGrid<T>({
             const trackIdx = trackMap?.get(ev) ?? 0;
             const range = getEventDate(ev);
             const inset = insetFor(ev);
-            // Mark this cell as the label-bearing cell when it's the
-            // event's first appearance inside the current week. Multi-week
-            // events get one label per week segment; the chip then lets
-            // the text overflow rightward across the rest of the segment.
-            const eventStartMs = startOfDay(range.start).getTime();
-            const firstInWeekMs = Math.max(eventStartMs, weekStartMs);
+            const isStart = isSameDay(day, range.start);
+            const isEnd = isSameDay(day, range.end);
+            const showLabel = labelDay?.get(ev) === dayIdxInWeek;
+
+            // Cap a labeled chip's text overflow to the smaller of:
+            //   1. cells remaining of the bar in this week
+            //   2. cells until the next chip on the same track
+            // Expressed as a percent of the chip's own width so it's
+            // applied directly as max-width on the label span.
+            let labelMaxWidth: string | undefined;
+            if (showLabel) {
+              const chipWidth =
+                1 - (isStart ? inset.insetStart : 0) - (isEnd ? inset.insetEnd : 0);
+              const labelStartCells = dayIdxInWeek + (isStart ? inset.insetStart : 0);
+
+              // Bar end inside this week (capped at week's last day + 1).
+              const evStartMs = startOfDay(range.start).getTime();
+              const evEndMs = startOfDay(range.end).getTime();
+              const lastDayMs = startOfDay(weekDays[6]).getTime();
+              let lastInWeekIdx = 6;
+              let lastIsEnd = false;
+              if (evEndMs <= lastDayMs) {
+                lastInWeekIdx = Math.round((evEndMs - weekStartMs) / DAY_MS);
+                lastIsEnd = true;
+              }
+              const barEndCells = lastInWeekIdx + 1 - (lastIsEnd ? inset.insetEnd : 0);
+              let availableCells = barEndCells - labelStartCells;
+
+              const next = nextOnTrack?.get(ev);
+              if (next) {
+                const nextRange = getEventDate(next);
+                const nextInset = insetFor(next);
+                const nextStartMs = startOfDay(nextRange.start).getTime();
+                const nextDayIdx = Math.max(
+                  0,
+                  Math.round((nextStartMs - weekStartMs) / DAY_MS),
+                );
+                const nextStartCells = nextDayIdx + nextInset.insetStart;
+                availableCells = Math.min(
+                  availableCells,
+                  Math.max(0, nextStartCells - labelStartCells),
+                );
+              }
+
+              if (chipWidth > 0 && availableCells > 0) {
+                const ratio = availableCells / chipWidth;
+                labelMaxWidth = `calc(${ratio * 100}% - var(--space-xs))`;
+              }
+              // suppress evStartMs / evEndMs unused-var lint when narrowed
+              void evStartMs;
+            }
+
             const slot: Slot = {
               label: getEventLabel(ev),
               color: getEventColor(ev),
               textColor: getEventTextColor?.(ev),
               accentColor: getEventAccentColor?.(ev),
               icon: getEventIcon?.(ev),
-              isEventStart: isSameDay(day, range.start),
-              isEventEnd: isSameDay(day, range.end),
+              isEventStart: isStart,
+              isEventEnd: isEnd,
               insetStart: inset.insetStart,
               insetEnd: inset.insetEnd,
-              showLabel: dayMs === firstInWeekMs,
+              showLabel,
+              labelMaxWidth,
+              clampLeftEdge: dayIdxInWeek === 0,
               onClick: () => onEventClick(ev),
             };
             if (trackIdx < slotCount) {
