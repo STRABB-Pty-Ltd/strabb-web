@@ -79,7 +79,10 @@ export function CalendarEventChip({
     ? insetEnd > 0
       ? `calc(${insetEnd * 100}% + ${GAP_HALF})`
       : "0"
-    : "calc(-1 * var(--space-xs) - 1px)";
+    : // -5 px padding + -2 px border so the chip's right edge reaches
+      // the cell's outer-right line and paints over the 2 px cell border,
+      // letting adjacent days' chips fuse into a continuous bar.
+      "calc(-1 * var(--space-xs) - 2px)";
 
   return (
     <button
@@ -88,7 +91,7 @@ export function CalendarEventChip({
         e.stopPropagation();
         onClick();
       }}
-      className={`py-xs gap-xs text-body absolute flex items-center text-left ${cornerClasses}`}
+      className={`gap-xs text-body absolute flex items-center text-left ${cornerClasses}`}
       style={{
         backgroundColor: color,
         color: textColor ?? "var(--surface-60)",
@@ -102,6 +105,11 @@ export function CalendarEventChip({
         // padding back so its label doesn't kiss the chip's left bg edge.
         paddingLeft: isEventStart || clampLeftEdge ? "var(--space-xs)" : 0,
         paddingRight: isEventEnd ? "var(--space-xs)" : 0,
+        // Tight vertical padding so 5+ rows of cells fit a typical canvas
+        // without scrolling — the body line-height already provides
+        // breathing space around the text.
+        paddingTop: 1,
+        paddingBottom: 1,
         left: startEdge,
         right: endEdge,
         top: 0,

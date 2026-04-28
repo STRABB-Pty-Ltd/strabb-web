@@ -34,13 +34,20 @@ interface CalendarDayCellProps {
    *  (i.e. their assigned track index is beyond the cap). */
   overflowCount?: number;
   compact?: boolean;
+  /** Suppress the right border (cell is the rightmost in its row, so the
+   *  border would land on the calendar's outer edge). */
+  isLastColumn?: boolean;
+  /** Suppress the bottom border (cell is in the last row, so the border
+   *  would land on the calendar's outer edge). */
+  isLastRow?: boolean;
 }
 
-// Chip height = body font (13px) × line-height (1.615) + 2 × xs padding (5px)
-// = ~31px. Hardcoded because the track rows house absolute-positioned chips
-// whose top:0 / bottom:0 stretches require an explicit parent height — calc
-// against tokens silently collapses to 0 when one of the vars is unitless.
-const TRACK_ROW_HEIGHT = "31px";
+// Chip height = body font (13px) × line-height (1.615) ≈ 21 px + 2 × 1 px
+// vertical padding ≈ 23 px. Tight on purpose so 5+ rows of cells fit a typical
+// canvas without scrolling. Hardcoded because the track rows house absolute-
+// positioned chips whose top:0 / bottom:0 stretches require an explicit
+// parent height — calc against unitless tokens silently collapses to 0.
+const TRACK_ROW_HEIGHT = "23px";
 
 export function CalendarDayCell({
   date,
@@ -48,22 +55,39 @@ export function CalendarDayCell({
   isCurrentMonth,
   overflowCount = 0,
   compact = false,
+  isLastColumn = false,
+  isLastRow = false,
 }: CalendarDayCellProps) {
   const today = isToday(date);
 
   return (
     <div
-      className="flex flex-col border-r border-b"
+      className="flex flex-col"
       style={{
-        minHeight: compact ? 55 : 89,
-        borderColor: "var(--border)",
-        backgroundColor: today ? "var(--neutral-30)" : "var(--surface-60)",
+        backgroundColor: "var(--surface-60)",
         opacity: isCurrentMonth ? 1 : 0.4,
-        padding: "var(--space-xs)",
+        // Tight top + bottom so the date number and +N more line don't
+        // burn vertical space; horizontal padding stays at the xs token
+        // so chips' negative-margin extensions still hit the right edge.
+        paddingTop: 2,
+        paddingRight: "var(--space-xs)",
+        paddingBottom: 2,
+        paddingLeft: "var(--space-xs)",
+        borderRight: isLastColumn ? undefined : "2px solid var(--neutral-30)",
+        borderBottom: isLastRow ? undefined : "2px solid var(--neutral-30)",
+        // Today gets a 3 px brand outline on all four sides — including
+        // the outer edges (breaking the no-outside-border rule). Drawn
+        // inside the cell via outline-offset so it doesn't shift layout,
+        // and lifted with position/z-index so it paints above the grey
+        // grid lines and any chips extending in from neighbouring cells.
+        outline: today ? "3px solid var(--brand-10)" : undefined,
+        outlineOffset: today ? "-3px" : undefined,
+        position: today ? "relative" : undefined,
+        zIndex: today ? 100 : undefined,
       }}
     >
       <span
-        className="mb-xs text-body font-medium"
+        className="text-body font-medium"
         style={{
           color: today
             ? "var(--strabb-secondary)"
@@ -71,6 +95,8 @@ export function CalendarDayCell({
               ? "var(--brand-10)"
               : "var(--brand-10)",
           fontWeight: today ? 700 : 500,
+          // Tight margin between date and first track row.
+          marginBottom: 2,
         }}
       >
         {date.getDate()}
@@ -102,7 +128,9 @@ export function CalendarDayCell({
           </div>
         ))}
         {overflowCount > 0 && (
-          <span className="mt-xs text-body text-gray-400">+{overflowCount} more</span>
+          <span className="text-body text-gray-400" style={{ marginTop: 2 }}>
+            +{overflowCount} more
+          </span>
         )}
       </div>
     </div>

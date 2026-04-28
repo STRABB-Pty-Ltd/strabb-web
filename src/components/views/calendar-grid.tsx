@@ -272,20 +272,30 @@ export function CalendarGrid<T>({
     );
   }
 
+  const rowCount = Math.ceil(gridDays.length / 7);
+  const rowMinPx = mode === "fortnight" ? 55 : 89;
+
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <div
-        className="grid border-t border-l"
+        className="grid flex-1"
         style={{
           gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-          borderColor: "var(--border)",
+          // Header row sized to its content; data rows share the remaining
+          // height equally (with a sensible per-row minimum) so the
+          // calendar fits the canvas without scrolling on typical
+          // viewports while still being usable when the canvas is short.
+          gridTemplateRows: `auto repeat(${rowCount}, minmax(${rowMinPx}px, 1fr))`,
         }}
       >
-        {DAY_LABELS.map((d) => (
+        {DAY_LABELS.map((d, i) => (
           <div
             key={d}
-            className="py-xs text-body border-r border-b bg-gray-50 text-center font-medium text-gray-500"
-            style={{ borderColor: "var(--border)" }}
+            className="py-xs text-body bg-gray-50 text-center font-medium text-gray-500"
+            style={{
+              borderRight: i === DAY_LABELS.length - 1 ? undefined : "2px solid var(--neutral-30)",
+              borderBottom: "2px solid var(--neutral-30)",
+            }}
           >
             {d}
           </div>
@@ -398,6 +408,7 @@ export function CalendarGrid<T>({
             }
           }
 
+          const lastRowIdx = Math.floor((gridDays.length - 1) / 7);
           return (
             <CalendarDayCell
               key={day.toISOString()}
@@ -406,6 +417,8 @@ export function CalendarGrid<T>({
               isCurrentMonth={mode !== "month" || isSameMonth(day, currentDate)}
               overflowCount={overflowCount}
               compact={mode === "fortnight"}
+              isLastColumn={dayIdxInWeek === 6}
+              isLastRow={weekIdx === lastRowIdx}
             />
           );
         })}
