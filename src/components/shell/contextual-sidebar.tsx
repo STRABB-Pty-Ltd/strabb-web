@@ -52,9 +52,9 @@ export function ContextualSidebar() {
       <div className="shrink-0" style={{ height: "var(--logo-area-height)" }} aria-hidden="true" />
 
       {showSettingsNav(currentPage) && <SettingsNavSection />}
-      {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
       {showListingFilter(currentPage) && <ListingFilterTree />}
       {showTimeframe(currentPage) && <TimeframeSelector page={currentPage} />}
+      {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
       {showChannelFilter(currentPage) && <ChannelFilter />}
 
       {showShoppingList(currentPage) && (

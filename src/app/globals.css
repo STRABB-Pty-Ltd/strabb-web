@@ -81,12 +81,12 @@
   --thread-width: 610px;
 
   /* Logo overlay box (and the matching sidebar spacer below it). Sized so the
-     first sidebar listing button aligns with the canvas top: spacer (84) +
-     ListingFilterTree padding-top (13) + heading row (31) + mb-base (8) = 136,
-     which equals paddingTop (21) + TopNav (37) + separator (21) + SubmenuBar
-     (44, lifted from chip-natural 37 by the 44pt min hit area on the
-     timeframe stepper chevrons) + paddingBottom (13) on the canvas side. */
-  --logo-area-height: 84px;
+     top of the first clickable sidebar button on every page aligns with the
+     top of the first KPI card in the canvas. Equation:
+       spacer + section.padding-top  =  canvas-top + canvas.padding-top
+       spacer + var(--space-sm)      =  var(--canvas-top) + (var(--space-md) - 2px)
+     Solving for spacer keeps this alignment stable across token changes. */
+  --logo-area-height: calc(var(--canvas-top) + var(--space-md) - 2px - var(--space-sm));
 
   /* Y-coord of the canvas top edge, measured from the rail composition:
      paddingTop (sm 13) + TopNav chip-height (37) + separator track (12)
