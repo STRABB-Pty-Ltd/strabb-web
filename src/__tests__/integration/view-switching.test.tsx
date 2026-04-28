@@ -61,13 +61,8 @@ describe("View switching integration", () => {
       expect(useAppStore.getState().cleaning.view).toBe("list");
     });
 
-    it("switching to gantt view works", () => {
-      useAppStore.getState().setView("cleaning", "gantt");
-      expect(useAppStore.getState().cleaning.view).toBe("gantt");
-    });
-
     it("switching back to kanban view works", () => {
-      useAppStore.getState().setView("cleaning", "gantt");
+      useAppStore.getState().setView("cleaning", "list");
       useAppStore.getState().setView("cleaning", "kanban");
       expect(useAppStore.getState().cleaning.view).toBe("kanban");
     });

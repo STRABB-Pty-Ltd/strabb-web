@@ -4,7 +4,6 @@ import { Monitor } from "lucide-react";
 
 import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
 import { CleaningCalendarView } from "@/components/pages/cleaning/cleaning-calendar-view";
-import { CleaningGanttView } from "@/components/pages/cleaning/cleaning-gantt-view";
 import { CleaningKanbanView } from "@/components/pages/cleaning/cleaning-kanban-view";
 import { CleaningListView } from "@/components/pages/cleaning/cleaning-list-view";
 import { useCleaningTasks } from "@/hooks/use-cleaning";
@@ -32,13 +31,12 @@ export default function CleaningPage() {
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />
-          Switch to desktop for Gantt/Calendar view
+          Switch to desktop for Calendar view
         </div>
       )}
       {effectiveView === "kanban" && <CleaningKanbanView tasks={tasks ?? []} />}
       {effectiveView === "calendar" && <CleaningCalendarView tasks={tasks ?? []} />}
       {effectiveView === "list" && <CleaningListView tasks={tasks ?? []} />}
-      {effectiveView === "gantt" && <CleaningGanttView tasks={tasks ?? []} />}
 
       <ShoppingListPopup />
     </div>

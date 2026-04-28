@@ -99,14 +99,34 @@ describe("AppStore", () => {
 
   describe("cross-cutting: views", () => {
     it("setView updates the correct page view", () => {
-      useAppStore.getState().setView("cleaning", "gantt");
-      expect(useAppStore.getState().cleaning.view).toBe("gantt");
+      useAppStore.getState().setView("cleaning", "list");
+      expect(useAppStore.getState().cleaning.view).toBe("list");
 
       useAppStore.getState().setView("calendar", "list");
       expect(useAppStore.getState().calendar.view).toBe("list");
 
       useAppStore.getState().setView("messaging", "list");
       expect(useAppStore.getState().messaging.view).toBe("list");
+    });
+
+    it("setView re-anchors windowSize to the view's configured default", () => {
+      // Calendar/Gantt → fortnight
+      useAppStore.getState().setTimeframe("calendar", "day");
+      useAppStore.getState().setView("calendar", "gantt");
+      expect(useAppStore.getState().calendar.windowSize).toBe("fortnight");
+
+      // Calendar/Calendar → month
+      useAppStore.getState().setView("calendar", "calendar");
+      expect(useAppStore.getState().calendar.windowSize).toBe("month");
+
+      // Cleaning/Calendar → month
+      useAppStore.getState().setTimeframe("cleaning", "week");
+      useAppStore.getState().setView("cleaning", "calendar");
+      expect(useAppStore.getState().cleaning.windowSize).toBe("month");
+
+      // Views without a configured default preserve current windowSize
+      useAppStore.getState().setView("calendar", "list");
+      expect(useAppStore.getState().calendar.windowSize).toBe("month");
     });
   });
 
@@ -202,11 +222,6 @@ describe("AppStore", () => {
       expect(useAppStore.getState().cleaning.shoppingDrawerOpen).toBe(true);
       useAppStore.getState().toggleShoppingDrawer();
       expect(useAppStore.getState().cleaning.shoppingDrawerOpen).toBe(false);
-    });
-
-    it("setGanttZoom updates ganttZoom", () => {
-      useAppStore.getState().setGanttZoom("day");
-      expect(useAppStore.getState().cleaning.ganttZoom).toBe("day");
     });
 
     it("toggleBoughtItem adds and removes items", () => {

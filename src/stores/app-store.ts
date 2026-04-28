@@ -19,6 +19,13 @@ type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
 // Pages that support submenu chips
 type SubmenuPage = "dashboard" | "calendar" | "messaging" | "cleaning" | "reporting";
 
+// Default windowSize applied when switching to (page, view). Views absent
+// from this map preserve whatever windowSize the page was already on.
+const viewDefaultWindowSize: Record<string, Record<string, string>> = {
+  calendar: { gantt: "fortnight", calendar: "month" },
+  cleaning: { calendar: "month" },
+};
+
 export interface CrossCuttingActions {
   setView: (page: ViewablePage, view: string) => void;
   setTimeframe: (page: TimeframePage, windowSize: string, anchor?: string | null) => void;
@@ -51,14 +58,18 @@ export const useAppStore = create<AppState>()((...a) => {
     ...createSettingsSlice(...a),
     ...createOverlaySlice(...a),
 
-    // Cross-cutting: set view for a viewable page. Switching to gantt on
-    // calendar/cleaning auto-defaults the windowSize to fortnight — gantt is
-    // most useful at a fortnight zoom and the user can override via the chip.
+    // Cross-cutting: set view for a viewable page. Switching to a view that
+    // has a configured default timeframe re-anchors the page's windowSize so
+    // each view opens at the zoom level it's most useful at; views without an
+    // entry preserve the user's current windowSize choice. Anchor resets to
+    // null so the page snaps back to "current period" on the new window.
     setView: (page: ViewablePage, view: string) => {
       const pageState = { ...get()[page] };
       (pageState as Record<string, unknown>).view = view;
-      if (view === "gantt" && (page === "calendar" || page === "cleaning")) {
-        (pageState as Record<string, unknown>).windowSize = "fortnight";
+      const defaultWindow = viewDefaultWindowSize[page]?.[view];
+      if (defaultWindow) {
+        (pageState as Record<string, unknown>).windowSize = defaultWindow;
+        (pageState as Record<string, unknown>).anchor = null;
       }
       set({ [page]: pageState } as Partial<AppState>);
     },
