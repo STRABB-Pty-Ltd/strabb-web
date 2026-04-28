@@ -1,10 +1,11 @@
 "use client";
 
-import { addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
+import { addDays } from "date-fns";
 
 import { GanttView } from "@/components/views/gantt-view";
 import type { CleaningTask } from "@/types/cleaning-task";
 import { useListings } from "@/hooks/use-listings";
+import { ganttDateRange } from "@/lib/timeframe-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
@@ -31,7 +32,9 @@ interface CleaningGanttViewProps {
 }
 
 export function CleaningGanttView({ tasks }: CleaningGanttViewProps) {
-  const ganttZoom = useAppStore((s) => s.cleaning.ganttZoom);
+  const windowSize = useAppStore((s) => s.cleaning.windowSize);
+  const anchor = useAppStore((s) => s.cleaning.anchor);
+  const customRange = useAppStore((s) => s.customRange);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const { data: listingsData } = useListings();
@@ -47,20 +50,11 @@ export function CleaningGanttView({ tasks }: CleaningGanttViewProps) {
     label: l.name,
   }));
 
-  const now = new Date();
-  const dateRange = (() => {
-    switch (ganttZoom) {
-      case "day":
-        return { start: now, end: addDays(now, 1) };
-      case "week":
-        return {
-          start: startOfWeek(now, { weekStartsOn: 1 }),
-          end: endOfWeek(now, { weekStartsOn: 1 }),
-        };
-      case "month":
-        return { start: startOfMonth(now), end: endOfMonth(now) };
-    }
-  })();
+  const range = ganttDateRange(windowSize, anchor, customRange);
+  const dateRange = {
+    start: new Date(range.startDate),
+    end: new Date(range.endDate),
+  };
 
   return (
     <GanttView<CleaningTask>

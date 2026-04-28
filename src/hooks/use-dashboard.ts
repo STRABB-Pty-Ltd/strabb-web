@@ -14,11 +14,15 @@ import {
 
 export type { KPIData, AlertItem, PreviewData } from "@/lib/mock-data/dashboard-hooks";
 
-export function useDashboardKPIs(timeframe: string, selectedListings: string[]) {
+export function useDashboardKPIs(
+  windowSize: string,
+  anchor: string | null,
+  selectedListings: string[],
+) {
   // Both hooks are always called (Rules of Hooks), but API hooks use enabled: !USE_MOCK
   // so they become no-ops in mock mode, and mock hooks short-circuit when USE_MOCK is false
-  const mockResult = useDashboardKPIsMock(timeframe, selectedListings);
-  const apiResult = useDashboardKPIsAPI(timeframe, selectedListings);
+  const mockResult = useDashboardKPIsMock(windowSize, anchor, selectedListings);
+  const apiResult = useDashboardKPIsAPI(windowSize, anchor, selectedListings);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };
@@ -46,9 +50,13 @@ export function useDashboardAlerts(selectedListings: string[]) {
   };
 }
 
-export function useDashboardPreview(selectedListings: string[], timeframe: string) {
-  const mockResult = useDashboardPreviewMock(selectedListings, timeframe);
-  const apiResult = useDashboardPreviewAPI(selectedListings, timeframe);
+export function useDashboardPreview(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
+  const mockResult = useDashboardPreviewMock(selectedListings, windowSize, anchor);
+  const apiResult = useDashboardPreviewAPI(selectedListings, windowSize, anchor);
 
   if (USE_MOCK) {
     return { data: mockResult, isLoading: false, error: null };

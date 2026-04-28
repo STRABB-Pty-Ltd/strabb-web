@@ -1,4 +1,4 @@
-import type { Maintenance } from "@/types/maintenance";
+import type { Ticket } from "@/types/ticket";
 import { REFERENCE_NOW } from "./reference-date";
 
 const day = (offset: number) => {
@@ -7,30 +7,34 @@ const day = (offset: number) => {
   return d.toISOString().split("T")[0];
 };
 
-const defaults: Maintenance = {
-  id: "mnt-001",
+const NOW = new Date(REFERENCE_NOW).toISOString();
+
+const defaults: Ticket = {
+  id: "tkt-001",
+  propertyId: "prp-001",
   listingId: "lst-006",
-  listingName: "Newtown Terrace",
   description: "Broken shower head in main bathroom",
   priority: "high",
   status: "reported",
   dateReported: day(-2),
   dateScheduled: null,
+  dateCompleted: null,
+  cost: null,
   notes: "Discovered during turnover clean",
+  createdAt: NOW,
+  updatedAt: NOW,
 };
 
-export function createMaintenance(overrides?: Partial<Maintenance>): Maintenance {
+export function createTicket(overrides?: Partial<Ticket>): Ticket {
   return { ...defaults, ...overrides };
 }
 
-export const mockMaintenanceList: Maintenance[] = [
-  // reported
-  createMaintenance(),
-  // scheduled
-  createMaintenance({
-    id: "mnt-002",
+export const mockTicketsList: Ticket[] = [
+  createTicket(),
+  createTicket({
+    id: "tkt-002",
+    propertyId: "prp-002",
     listingId: "lst-004",
-    listingName: "Manly Surf Lodge",
     description: "Dishwasher not draining properly",
     priority: "medium",
     status: "scheduled",
@@ -38,11 +42,10 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: day(2),
     notes: "Plumber booked for Tuesday",
   }),
-  // in_progress
-  createMaintenance({
-    id: "mnt-003",
+  createTicket({
+    id: "tkt-003",
+    propertyId: "prp-003",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
     description: "Air conditioning unit making loud noise",
     priority: "urgent",
     status: "in_progress",
@@ -50,23 +53,23 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: day(-1),
     notes: "HVAC tech on site",
   }),
-  // completed
-  createMaintenance({
-    id: "mnt-004",
+  createTicket({
+    id: "tkt-004",
+    propertyId: "prp-004",
     listingId: "lst-005",
-    listingName: "Coogee Bay Studio",
     description: "Replace smoke detector batteries",
     priority: "high",
     status: "completed",
     dateReported: day(-10),
     dateScheduled: day(-8),
+    dateCompleted: day(-7),
+    cost: "45.00",
     notes: null,
   }),
-  // cancelled
-  createMaintenance({
-    id: "mnt-005",
+  createTicket({
+    id: "tkt-005",
+    propertyId: "prp-005",
     listingId: "lst-007",
-    listingName: "Surry Hills Loft",
     description: "Squeaky bedroom door",
     priority: "low",
     status: "cancelled",
@@ -74,11 +77,10 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: null,
     notes: "Fixed with WD-40 during cleaning",
   }),
-  // reported
-  createMaintenance({
-    id: "mnt-006",
+  createTicket({
+    id: "tkt-006",
+    propertyId: "prp-002",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
     description: "Kitchen tap dripping",
     priority: "medium",
     status: "reported",
@@ -86,11 +88,10 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: null,
     notes: null,
   }),
-  // scheduled
-  createMaintenance({
-    id: "mnt-007",
+  createTicket({
+    id: "tkt-007",
+    propertyId: "prp-002",
     listingId: "lst-004",
-    listingName: "Manly Surf Lodge",
     description: "Pool fence panel loose",
     priority: "urgent",
     status: "scheduled",
@@ -98,11 +99,10 @@ export const mockMaintenanceList: Maintenance[] = [
     dateScheduled: day(1),
     notes: "Compliance issue — must be fixed before next guest",
   }),
-  // in_progress
-  createMaintenance({
-    id: "mnt-008",
+  createTicket({
+    id: "tkt-008",
+    propertyId: "prp-001",
     listingId: "lst-006",
-    listingName: "Newtown Terrace",
     description: "Repaint hallway wall — scuff marks",
     priority: "low",
     status: "in_progress",

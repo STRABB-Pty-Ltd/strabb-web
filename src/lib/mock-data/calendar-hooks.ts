@@ -1,13 +1,31 @@
 "use client";
 
+import { addHours } from "date-fns";
 import { useMemo } from "react";
 
-import { mockBookingList, mockMaintenanceList, mockVacancyList } from "./index";
+import {
+  mockBookingList,
+  mockCleaningTaskList,
+  mockListingList,
+  mockTicketsList,
+  mockVacancyList,
+} from "./index";
 import type { Booking } from "@/types/booking";
-import type { Maintenance } from "@/types/maintenance";
+import type { CleaningTask } from "@/types/cleaning-task";
+import type { Ticket } from "@/types/ticket";
 import type { Vacancy } from "@/types/vacancy";
 
-export type CalendarEventType = "booking" | "vacancy" | "maintenance";
+const listingNamesById: Record<string, string> = Object.fromEntries(
+  mockListingList.map((l) => [l.id, l.name]),
+);
+
+export type CalendarEventType = "booking" | "vacancy" | "ticket" | "cleaning";
+
+// Cleaning task types that get rendered on the calendar gantt as a turnover-
+// style middle-50% bar. checkout and checkin cleanings are folded into the
+// same "turnover" presentation since they all sit in the gap between guests.
+// Mid-stay / deep-clean / inspection cleanings stay on the Cleaning page only.
+const TURNOVER_LIKE_TYPES: ReadonlySet<string> = new Set(["turnover", "checkout", "checkin"]);
 
 export interface CalendarEvent {
   id: string;
@@ -61,26 +79,46 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
   };
 }
 
-function maintenanceToEvent(m: Maintenance): CalendarEvent {
-  const start = m.dateScheduled ?? m.dateReported;
-  const end = m.dateScheduled ?? m.dateReported;
+function cleaningToEvent(t: CleaningTask): CalendarEvent | null {
+  if (!TURNOVER_LIKE_TYPES.has(t.type)) return null;
+  const start = new Date(t.scheduledTime);
+  const end = addHours(start, Math.max(1, t.estimatedHours));
   return {
-    id: m.id,
-    type: "maintenance",
-    listingId: m.listingId,
-    listingName: m.listingName,
-    label: `${m.description} — ${m.listingName}`,
+    id: t.id,
+    type: "cleaning",
+    listingId: t.listingId,
+    listingName: t.listingName,
+    label: t.assigneeName ? `Turnover — ${t.assigneeName}` : "Turnover",
+    start: start.toISOString(),
+    end: end.toISOString(),
+    color: "var(--status-success)",
+    status: t.status,
+  };
+}
+
+function ticketToEvent(t: Ticket): CalendarEvent | null {
+  if (!t.listingId) return null;
+  const listingName = listingNamesById[t.listingId] ?? t.listingId;
+  const start = t.dateScheduled ?? t.dateReported;
+  const end = t.dateScheduled ?? t.dateReported;
+  return {
+    id: t.id,
+    type: "ticket",
+    listingId: t.listingId,
+    listingName,
+    label: `${t.description} — ${listingName}`,
     start,
     end,
     color: "var(--status-danger)",
-    status: m.status,
+    status: t.status,
   };
 }
 
 function computeEvents(
   bookings: Booking[],
   vacancies: Vacancy[],
-  maintenance: Maintenance[],
+  tickets: Ticket[],
+  cleanings: CleaningTask[],
   selectedListings: string[],
   submenuFilters: string[],
 ): CalendarEvent[] {
@@ -95,6 +133,18 @@ function computeEvents(
     events.push(...filtered.filter((b) => b.status !== "cancelled").map(bookingToEvent));
   }
 
+  if (showAll || submenuFilters.includes("cleaning")) {
+    const filtered = filterByListing
+      ? cleanings.filter((c) => selectedListings.includes(c.listingId))
+      : cleanings;
+    events.push(
+      ...filtered
+        .filter((c) => c.status !== "cancelled")
+        .map(cleaningToEvent)
+        .filter((e): e is CalendarEvent => e !== null),
+    );
+  }
+
   if (submenuFilters.includes("vacancy")) {
     const filtered = filterByListing
       ? vacancies.filter((v) => selectedListings.includes(v.listingId))
@@ -102,11 +152,15 @@ function computeEvents(
     events.push(...filtered.map(vacancyToEvent));
   }
 
-  if (showAll || submenuFilters.includes("maintenance")) {
+  if (showAll || submenuFilters.includes("ticket")) {
     const filtered = filterByListing
-      ? maintenance.filter((m) => selectedListings.includes(m.listingId))
-      : maintenance;
-    events.push(...filtered.filter((m) => m.status !== "cancelled").map(maintenanceToEvent));
+      ? tickets.filter((t) => t.listingId && selectedListings.includes(t.listingId))
+      : tickets;
+    const mapped = filtered
+      .filter((t) => t.status !== "cancelled")
+      .map(ticketToEvent)
+      .filter((e): e is CalendarEvent => e !== null);
+    events.push(...mapped);
   }
 
   return events;
@@ -118,7 +172,8 @@ export function useCalendarEventsMock(selectedListings: string[], submenuFilters
       computeEvents(
         mockBookingList,
         mockVacancyList,
-        mockMaintenanceList,
+        mockTicketsList,
+        mockCleaningTaskList,
         selectedListings,
         submenuFilters,
       ),

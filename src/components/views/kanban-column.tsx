@@ -5,7 +5,7 @@ interface KanbanColumnProps {
   children: React.ReactNode;
 }
 
-export function KanbanColumn({ id, label, count, children }: KanbanColumnProps) {
+export function KanbanColumn({ label, count, children }: KanbanColumnProps) {
   return (
     <div
       className="flex min-w-0 flex-1 flex-col rounded-lg"

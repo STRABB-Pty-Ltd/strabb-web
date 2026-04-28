@@ -277,11 +277,15 @@ function computePreview(
   return { miniCalendar, revenueSparkline, upcomingBookings, taskSummary };
 }
 
-export function useDashboardKPIsMock(timeframe: string, selectedListings: string[]) {
+export function useDashboardKPIsMock(
+  windowSize: string,
+  anchor: string | null,
+  selectedListings: string[],
+) {
   return useMemo(
     () => computeKPIs(mockBookingList, mockCleaningTaskList, mockFinancialList, selectedListings),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [timeframe, selectedListings],
+    [windowSize, anchor, selectedListings],
   );
 }
 
@@ -292,11 +296,15 @@ export function useDashboardAlertsMock(selectedListings: string[]) {
   );
 }
 
-export function useDashboardPreviewMock(selectedListings: string[], timeframe: string) {
+export function useDashboardPreviewMock(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   return useMemo(
     () =>
       computePreview(mockBookingList, mockCleaningTaskList, mockFinancialList, selectedListings),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedListings, timeframe],
+    [selectedListings, windowSize, anchor],
   );
 }

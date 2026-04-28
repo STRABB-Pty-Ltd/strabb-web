@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient } from "./use-api-client";
 import { useAuthenticatedQuery } from "./use-authenticated-query";
@@ -42,6 +42,20 @@ export function useBookingSummary() {
       select: (raw) => keysToCamel<BookingSummaryResponse>(raw),
     },
   );
+}
+
+export function useBooking(id: string | null) {
+  const apiClient = useApiClient();
+
+  return useQuery<BookingResponse | null>({
+    queryKey: [...BOOKINGS_KEY, "detail", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const response = await apiClient.get<{ data: BookingResponse }>(`/bookings/${id}`);
+      return response.data;
+    },
+    enabled: !!id,
+  });
 }
 
 export function useUpdateBookingNotes() {

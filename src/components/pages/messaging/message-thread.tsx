@@ -19,7 +19,7 @@ interface MessageThreadProps {
   onResolve: () => void;
   onFollowUp: () => void;
   onPriority: () => void;
-  onConvertMaintenance: () => void;
+  onConvertTicket: () => void;
 }
 
 export function MessageThread({
@@ -29,7 +29,7 @@ export function MessageThread({
   onResolve,
   onFollowUp,
   onPriority,
-  onConvertMaintenance,
+  onConvertTicket,
 }: MessageThreadProps) {
   const [compose, setCompose] = useState("");
 
@@ -115,10 +115,10 @@ export function MessageThread({
         </button>
         <button
           type="button"
-          onClick={onConvertMaintenance}
+          onClick={onConvertTicket}
           className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
-          Maintenance
+          Ticket
         </button>
       </div>
 

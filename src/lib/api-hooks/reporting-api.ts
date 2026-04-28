@@ -13,7 +13,7 @@ interface RawFinancial {
   listingName: string;
   revenue: number;
   cleaningCost: number;
-  maintenanceCost: number;
+  ticketCost: number;
   suppliesCost: number;
   platformFees: number;
   netIncome: number;
@@ -49,7 +49,7 @@ const channelColors: Record<string, string> = {
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
   const totalExpenses = rows.reduce(
-    (s, r) => s + r.cleaningCost + r.maintenanceCost + r.suppliesCost + r.platformFees,
+    (s, r) => s + r.cleaningCost + r.ticketCost + r.suppliesCost + r.platformFees,
     0,
   );
   const totalNet = rows.reduce((s, r) => s + r.netIncome, 0);
@@ -77,10 +77,14 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   ];
 }
 
-export function useReportingKPIsAPI(selectedListings: string[], timeframe?: string) {
+export function useReportingKPIsAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
@@ -98,10 +102,14 @@ export function useReportingKPIsAPI(selectedListings: string[], timeframe?: stri
   });
 }
 
-export function useReportingChartDataAPI(selectedListings: string[], timeframe?: string) {
+export function useReportingChartDataAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe ?? "this_month");
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);

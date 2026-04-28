@@ -9,16 +9,22 @@ import { KPIGrid } from "@/components/pages/dashboard/kpi-grid";
 import { PreviewGrid } from "@/components/pages/dashboard/preview-grid";
 
 export default function DashboardPage() {
-  const timeframe = useAppStore((s) => s.dashboard.timeframe);
+  const windowSize = useAppStore((s) => s.dashboard.windowSize);
+  const anchor = useAppStore((s) => s.dashboard.anchor);
   const submenu = useAppStore((s) => s.dashboard.submenu);
   const compare = useAppStore((s) => s.dashboard.compare);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
-  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(timeframe, selectedListings);
+  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
+    windowSize,
+    anchor,
+    selectedListings,
+  );
   const { data: alerts } = useDashboardAlerts(selectedListings);
   const { data: preview, isLoading: previewLoading } = useDashboardPreview(
     selectedListings,
-    timeframe,
+    windowSize,
+    anchor,
   );
 
   const isCompare = compare || submenu.includes("compare");

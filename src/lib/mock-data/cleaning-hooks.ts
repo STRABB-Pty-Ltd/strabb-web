@@ -15,7 +15,6 @@ export function useCleaningTasksMock(submenuFilters: string[], selectedListings:
     const showAll = submenuFilters.length === 0 || submenuFilters.includes("overview");
     if (!showAll) {
       const statusMap: Record<string, string> = {
-        tickets: "pending",
         confirmed: "confirmed",
         pending: "pending",
         archived: "completed",

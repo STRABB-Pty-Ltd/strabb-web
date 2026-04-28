@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { CalendarClock, ChevronDown } from "lucide-react";
+import Link from "next/link";
 
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -39,6 +41,7 @@ export function SubmenuBar() {
   }[currentPage];
 
   const isChipActive = (chip: SubmenuChip): boolean => {
+    if (chip.behavior === "nav") return false;
     if (chip.behavior === "toggle" && currentPage === "dashboard" && chip.id === "compare") {
       return dashboardCompare;
     }
@@ -90,24 +93,99 @@ export function SubmenuBar() {
       case "more-dropdown":
         setMoreOpen((prev) => !prev);
         break;
+      case "nav":
+        // Handled via <Link> render branch below
+        break;
     }
   };
 
   return (
     <div
-      className="gap-xs flex shrink-0 items-center justify-center overflow-x-auto"
+      className="relative flex shrink-0 items-center"
       style={{
         backgroundColor: "var(--surface-submenu)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
+        // Match a chip's natural height (py-base × 2 + text-body line-height)
+        // so the absolute-centred chips don't extend above the row's bounding
+        // box and skew the separator line above this row.
+        minHeight: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
       }}
     >
-      {chips.map((chip) => {
-        const active = isChipActive(chip);
-        const isMore = chip.behavior === "more-dropdown";
+      {/* Left: page-specific widget (timeframe stepper, scheduled-messages link, …) */}
+      <div className="px-md flex shrink-0 items-center">
+        {currentPage === "messaging" ? (
+          <Link
+            href="/messaging/scheduled"
+            className="gap-xs px-xs py-xs text-body inline-flex items-center rounded-sm font-semibold hover:bg-gray-100"
+          >
+            <CalendarClock size={16} />
+            Scheduled messages
+          </Link>
+        ) : (
+          <TimeframeStepper />
+        )}
+      </div>
 
-        return (
-          <div key={chip.id} className="relative" ref={isMore ? moreRef : undefined}>
+      {/* Centered chip group, mirrors TopNav's optical-centre pattern */}
+      <div
+        className="gap-xs absolute top-1/2 flex items-center"
+        style={{
+          left: "calc(50% - var(--sidebar-width) / 4)",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        {chips.map((chip) => {
+          const active = isChipActive(chip);
+          const isMore = chip.behavior === "more-dropdown";
+          const isNav = chip.behavior === "nav";
+
+          const chipClass =
+            "gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
+          const chipStyle = {
+            width: 95,
+            borderRadius: 5,
+            backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+            color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          };
+
+          if (isNav && chip.href) {
+            return (
+              <Link key={chip.id} href={chip.href} className={chipClass} style={chipStyle}>
+                {chip.label}
+              </Link>
+            );
+          }
+
+          // The More dropdown needs a positioned wrapper so the menu can
+          // anchor under it. Other chips render directly as flex children
+          // — same structure as TopNav so the parent's gap applies cleanly.
+          if (isMore) {
+            return (
+              <div key={chip.id} className="relative" ref={moreRef}>
+                <button
+                  type="button"
+                  onClick={() => handleChipClick(chip)}
+                  className={chipClass}
+                  style={chipStyle}
+                >
+                  {chip.label}
+                  <ChevronDown size={13} />
+                </button>
+                {moreOpen && (
+                  <div
+                    className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
+                    style={{ minWidth: 144 }}
+                  >
+                    <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          return (
             <button
+              key={chip.id}
               type="button"
               onClick={() => handleChipClick(chip)}
               aria-pressed={
@@ -117,29 +195,16 @@ export function SubmenuBar() {
                   ? active
                   : undefined
               }
-              className="gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-              style={{
-                width: 95,
-                borderRadius: 5,
-                backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
-              }}
+              className={chipClass}
+              style={chipStyle}
             >
               {chip.label}
-              {isMore && <ChevronDown size={13} />}
             </button>
+          );
+        })}
+      </div>
 
-            {isMore && moreOpen && (
-              <div
-                className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
-                style={{ minWidth: 144 }}
-              >
-                <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
-              </div>
-            )}
-          </div>
-        );
-      })}
+      <div className="flex-1" />
     </div>
   );
 }

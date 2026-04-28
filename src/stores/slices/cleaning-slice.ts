@@ -2,7 +2,8 @@ import type { StateCreator } from "zustand";
 
 export interface CleaningPageState {
   view: "kanban" | "calendar" | "list" | "gantt";
-  timeframe: string;
+  windowSize: string;
+  anchor: string | null;
   submenu: string[];
   moreOpen: boolean;
   listSort: string;
@@ -25,7 +26,8 @@ export const createCleaningSlice: StateCreator<CleaningSlice, [], [], CleaningSl
 ) => ({
   cleaning: {
     view: "kanban",
-    timeframe: "this_week",
+    windowSize: "week",
+    anchor: null,
     submenu: ["overview"],
     moreOpen: false,
     listSort: "date_asc",

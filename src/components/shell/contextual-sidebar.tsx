@@ -35,12 +35,21 @@ export function ContextualSidebar() {
       aria-label="Sidebar"
       className="no-scrollbar relative z-10 flex h-full shrink-0 flex-col overflow-y-auto"
       style={{
-        width: "var(--sidebar-width)",
+        // 4px wider than the content track (--sidebar-width) so the right
+        // edge of the aside sits flush with the grey separator at
+        // calc(var(--sidebar-width) + 4px). 6px paddingRight then pushes
+        // the inner content's right edge in by 6, giving a 19px gap
+        // (13 tree-padding + 6 aside-padding) between sidebar buttons and
+        // the separator. Contents' left positions are unaffected.
+        width: "calc(var(--sidebar-width) + 4px)",
+        paddingRight: "6px",
         backgroundColor: "var(--surface-sidebar)",
       }}
     >
-      {/* Spacer reserves topnav row for the absolute logo overlay in app-shell */}
-      <div className="shrink-0" style={{ height: "var(--topnav-height)" }} aria-hidden="true" />
+      {/* Spacer reserves room for the absolute logo overlay in app-shell.
+          Sized so the first listing button top aligns with the canvas top
+          across the divider — see --logo-area-height in globals.css. */}
+      <div className="shrink-0" style={{ height: "var(--logo-area-height)" }} aria-hidden="true" />
 
       {showSettingsNav(currentPage) && <SettingsNavSection />}
       {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}

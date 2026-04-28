@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { addDays, format, startOfDay } from "date-fns";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
@@ -117,17 +118,21 @@ function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
   return alerts;
 }
 
-export function useDashboardKPIsAPI(timeframe: string, selectedListings: string[]) {
+export function useDashboardKPIsAPI(
+  windowSize: string,
+  anchor: string | null,
+  selectedListings: string[],
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
   return useQuery<KPIData[]>({
-    queryKey: ["dashboard-kpis", timeframe, ...selectedListings],
+    queryKey: ["dashboard-kpis", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawKPIResponse }>(
         `/dashboard/kpis?${params.toString()}`,
@@ -174,13 +179,26 @@ const statusColors: Record<string, string> = {
 };
 
 function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
+  // Backend doesn't return a per-day mini-calendar; derive one from the
+  // upcoming-bookings list by counting check-ins per day for the next 7 days.
+  // Approximate (only counts check-ins, not bookings already in progress)
+  // until the API exposes a dedicated booking-density endpoint.
+  const today = startOfDay(new Date());
+  const upcoming = raw.upcomingBookings ?? [];
+  const miniCalendar = Array.from({ length: 7 }, (_, i) => {
+    const day = addDays(today, i);
+    const dayStr = format(day, "yyyy-MM-dd");
+    const bookings = upcoming.filter((b) => b.checkIn.split("T")[0] === dayStr).length;
+    return { date: dayStr, bookings };
+  });
+
   return {
-    miniCalendar: [],
+    miniCalendar,
     revenueSparkline: (raw.revenueTrend ?? []).map((r) => ({
       label: r.month,
       revenue: r.amount,
     })),
-    upcomingBookings: (raw.upcomingBookings ?? []).map((b) => ({
+    upcomingBookings: upcoming.map((b) => ({
       id: b.id,
       guest: b.guestName,
       listing: b.listingName,
@@ -195,17 +213,21 @@ function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
   };
 }
 
-export function useDashboardPreviewAPI(selectedListings: string[], timeframe: string) {
+export function useDashboardPreviewAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
   return useQuery<PreviewData>({
-    queryKey: ["dashboard-preview", timeframe, ...selectedListings],
+    queryKey: ["dashboard-preview", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawPreviewResponse }>(
         `/dashboard/preview?${params.toString()}`,
@@ -216,17 +238,21 @@ export function useDashboardPreviewAPI(selectedListings: string[], timeframe: st
   });
 }
 
-export function useDashboardCompareAPI(selectedListings: string[], timeframe: string) {
+export function useDashboardCompareAPI(
+  selectedListings: string[],
+  windowSize: string,
+  anchor: string | null,
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(timeframe);
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
   return useQuery({
-    queryKey: ["dashboard-compare", timeframe, ...selectedListings],
+    queryKey: ["dashboard-compare", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: unknown }>(
         `/dashboard/compare?${params.toString()}`,

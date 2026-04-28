@@ -1,17 +1,25 @@
 "use client";
 
+import { format } from "date-fns";
 import {
   AlertTriangleIcon,
   CheckCircleIcon,
   CloudOffIcon,
   MailXIcon,
+  RefreshCw,
   SparklesIcon,
 } from "lucide-react";
 import Link from "next/link";
 
+import { type Column, DataTable } from "@/components/ui/data-table";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { PageHeader } from "@/components/ui/page-header";
-import { useSystemHealth } from "@/hooks/use-admin";
+import { useFailedMessages, useSyncErrors, useSystemHealth } from "@/hooks/use-admin";
+import { useResendMessage } from "@/hooks/use-messages";
+import { ApiError } from "@/lib/api-client";
+import type { SyncLogResponse } from "@/lib/schemas/admin";
+import type { ScheduledMessageResponse } from "@/lib/schemas/message";
+import { useAppStore } from "@/stores/app-store";
 
 function HealthCard({
   label,
@@ -87,7 +95,7 @@ export default function AdminPage() {
               label="Sync Errors"
               count={data.syncErrors}
               icon={CloudOffIcon}
-              href="/sync/logs"
+              href="/settings/sync-logs"
             />
             <HealthCard
               label="Listings Errored"
@@ -105,7 +113,7 @@ export default function AdminPage() {
               label="Messages Failed"
               count={data.messagesFailed}
               icon={MailXIcon}
-              href="/automations/messages"
+              href="/messaging/scheduled"
             />
             <HealthCard
               label="Notification Failures"
@@ -115,6 +123,164 @@ export default function AdminPage() {
           </div>
         </>
       )}
+
+      <SyncErrorsSection />
+      <FailedMessagesSection />
     </div>
+  );
+}
+
+function SyncErrorsSection() {
+  const { data, isLoading } = useSyncErrors();
+  const errors = data?.data ?? [];
+
+  const columns: Column<SyncLogResponse>[] = [
+    {
+      key: "listingId",
+      header: "Listing",
+      render: (_v, row) => (
+        <span className="font-data text-body">{row.listingId.slice(0, 8)}…</span>
+      ),
+    },
+    {
+      key: "startedAt",
+      header: "Started",
+      render: (_v, row) => (
+        <span className="font-data text-body">
+          {format(new Date(row.startedAt), "d MMM yyyy, HH:mm")}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (_v, row) => (
+        <span className="text-body font-medium" style={{ color: "var(--status-danger)" }}>
+          {row.status}
+        </span>
+      ),
+    },
+    {
+      key: "bookingsCreated",
+      header: "Bookings",
+      render: (_v, row) => (
+        <span className="font-data text-body">
+          {row.bookingsCreated}+/{row.bookingsUpdated}~/{row.bookingsUnchanged}=
+        </span>
+      ),
+    },
+    {
+      key: "errorMessage",
+      header: "Error",
+      render: (_v, row) => (
+        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "—"}</span>
+      ),
+    },
+  ];
+
+  return (
+    <section className="space-y-sm">
+      <h2 className="text-subheading font-semibold">Recent sync errors</h2>
+      {isLoading ? (
+        <p className="text-body text-gray-400">Loading…</p>
+      ) : (
+        <DataTable<SyncLogResponse>
+          columns={columns}
+          data={errors}
+          emptyMessage="No recent sync errors."
+        />
+      )}
+    </section>
+  );
+}
+
+function FailedMessagesSection() {
+  const { data, isLoading } = useFailedMessages();
+  const messages = data?.data ?? [];
+  const addToast = useAppStore((s) => s.addToast);
+  const resendMessage = useResendMessage();
+
+  const handleResend = (id: string) => {
+    resendMessage.mutate(id, {
+      onSuccess: (resp) =>
+        addToast({
+          type: resp.sent ? "success" : "warning",
+          message: resp.sent ? "Message resent" : "Resend attempted but not delivered",
+        }),
+      onError: (err: unknown) => {
+        const message =
+          err instanceof ApiError
+            ? err.message
+            : err instanceof Error
+              ? err.message
+              : "Failed to resend";
+        addToast({ type: "error", message });
+      },
+    });
+  };
+
+  const columns: Column<ScheduledMessageResponse>[] = [
+    {
+      key: "recipientEmail",
+      header: "Recipient",
+      render: (_v, row) => <span className="text-body text-gray-800">{row.recipientEmail}</span>,
+    },
+    {
+      key: "templateName",
+      header: "Template",
+      render: (_v, row) => <span className="text-body text-gray-600">{row.templateName}</span>,
+    },
+    {
+      key: "scheduledFor",
+      header: "Scheduled",
+      render: (_v, row) => (
+        <span className="font-data text-body">
+          {format(new Date(row.scheduledFor), "d MMM yyyy, HH:mm")}
+        </span>
+      ),
+    },
+    {
+      key: "retryCount",
+      header: "Retries",
+      render: (_v, row) => <span className="font-data text-body">{row.retryCount}</span>,
+    },
+    {
+      key: "errorMessage",
+      header: "Error",
+      render: (_v, row) => (
+        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "—"}</span>
+      ),
+    },
+    {
+      key: "id",
+      header: "Actions",
+      render: (_v, row) => (
+        <button
+          type="button"
+          onClick={() => handleResend(row.id)}
+          disabled={resendMessage.isPending}
+          className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-lg border font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <RefreshCw size={12} />
+          Resend
+        </button>
+      ),
+    },
+  ];
+
+  return (
+    <section className="space-y-sm">
+      <h2 className="text-subheading font-semibold">Failed messages</h2>
+      {isLoading ? (
+        <p className="text-body text-gray-400">Loading…</p>
+      ) : (
+        <DataTable<ScheduledMessageResponse>
+          columns={columns}
+          data={messages}
+          emptyMessage="No failed messages."
+        />
+      )}
+    </section>
   );
 }

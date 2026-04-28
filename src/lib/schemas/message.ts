@@ -27,15 +27,40 @@ export interface ScheduledMessageResponse {
   updatedAt: string;
 }
 
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface ScheduledMessageListResponse {
   data: ScheduledMessageResponse[];
-  meta: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
+  meta: PaginationMeta;
 }
+
+export interface MessageLogResponse {
+  id: string;
+  scheduledMessageId: string;
+  event: string;
+  details: string | null;
+  providerResponse: string | null;
+  createdAt: string;
+}
+
+export interface MessageLogListResponse {
+  data: MessageLogResponse[];
+  meta: PaginationMeta;
+}
+
+export const SCHEDULED_MESSAGE_STATUS_OPTIONS = [
+  { value: "pending", label: "Pending" },
+  { value: "sent", label: "Sent" },
+  { value: "failed", label: "Failed" },
+  { value: "cancelled", label: "Cancelled" },
+] as const;
+
+export type ScheduledMessageStatus = (typeof SCHEDULED_MESSAGE_STATUS_OPTIONS)[number]["value"];
 
 export const TRIGGER_TYPE_OPTIONS = [
   { value: "on_confirmation", label: "On booking confirmation" },

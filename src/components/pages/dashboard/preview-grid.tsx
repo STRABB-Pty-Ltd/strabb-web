@@ -1,6 +1,6 @@
 "use client";
 
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -67,6 +67,18 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
   );
 }
 
+function formatBarLabel(rawLabel: string): string {
+  // Backend gives "YYYY-MM" for monthly buckets. Append a day so date-fns
+  // can parse it, then render the abbreviated month name (e.g. "Apr").
+  // If the label is already a full date, parse it directly.
+  const iso = rawLabel.length === 7 ? `${rawLabel}-01` : rawLabel;
+  try {
+    return format(parseISO(iso), "MMM");
+  } catch {
+    return rawLabel;
+  }
+}
+
 function RevenueSparkline({ data }: { data: PreviewData["revenueSparkline"] }) {
   const max = Math.max(...data.map((d) => d.revenue), 1);
   return (
@@ -83,7 +95,7 @@ function RevenueSparkline({ data }: { data: PreviewData["revenueSparkline"] }) {
               }}
             />
             <span className="text-body" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
-              {d.label.slice(5)}
+              {formatBarLabel(d.label)}
             </span>
           </div>
         ))}

@@ -5,10 +5,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApiClient } from "./use-api-client";
 import { useAuthenticatedQuery } from "./use-authenticated-query";
 import { keysToCamel, keysToSnake } from "@/lib/case-utils";
-import type { MessageTemplateResponse, ScheduledMessageListResponse } from "@/lib/schemas/message";
+import type {
+  MessageLogListResponse,
+  MessageTemplateResponse,
+  ScheduledMessageListResponse,
+} from "@/lib/schemas/message";
 
 const TEMPLATES_KEY = ["message-templates"];
 const MESSAGES_KEY = ["scheduled-messages"];
+const LOGS_KEY = ["message-logs"];
 
 export function useMessageTemplates() {
   return useAuthenticatedQuery<MessageTemplateResponse[]>(TEMPLATES_KEY, "/messages/templates", {
@@ -70,14 +75,40 @@ export function useSeedDefaults() {
   });
 }
 
-export function useScheduledMessages(bookingId?: string) {
+export interface ScheduledMessagesFilter {
+  status?: string;
+  bookingId?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export function useScheduledMessages(filter: ScheduledMessagesFilter | string = {}) {
+  const normalised: ScheduledMessagesFilter =
+    typeof filter === "string" ? { bookingId: filter } : filter;
+  const { status, bookingId, page = 1, pageSize = 20 } = normalised;
+
   const params = new URLSearchParams();
+  if (status) params.set("status", status);
   if (bookingId) params.set("booking_id", bookingId);
+  params.set("page", String(page));
+  params.set("page_size", String(pageSize));
 
   return useAuthenticatedQuery<ScheduledMessageListResponse>(
-    [...MESSAGES_KEY, bookingId ?? "all"],
+    [...MESSAGES_KEY, status ?? "any", bookingId ?? "all", String(page), String(pageSize)],
     `/messages/scheduled?${params.toString()}`,
     { select: (raw) => keysToCamel<ScheduledMessageListResponse>(raw) },
+  );
+}
+
+export function useMessageLogs(page = 1, pageSize = 20) {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("page_size", String(pageSize));
+
+  return useAuthenticatedQuery<MessageLogListResponse>(
+    [...LOGS_KEY, String(page), String(pageSize)],
+    `/messages/logs?${params.toString()}`,
+    { select: (raw) => keysToCamel<MessageLogListResponse>(raw) },
   );
 }
 

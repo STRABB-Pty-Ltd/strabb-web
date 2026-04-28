@@ -5,7 +5,7 @@ export interface Financial {
   listingName: string;
   revenue: number;
   cleaningCost: number;
-  maintenanceCost: number;
+  ticketCost: number;
   suppliesCost: number;
   platformFees: number;
   occupancyRate: number;

@@ -7,4 +7,4 @@ export { createCleaningTask, mockCleaningTaskList } from "./cleaning-tasks";
 export { createFinancial, mockFinancialList } from "./financials";
 export { createShoppingItem, mockShoppingItemList } from "./shopping-items";
 export { createVacancy, mockVacancyList } from "./vacancies";
-export { createMaintenance, mockMaintenanceList } from "./maintenance";
+export { createTicket, mockTicketsList } from "./ticket";

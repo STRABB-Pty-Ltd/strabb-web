@@ -13,7 +13,14 @@ export function useBillingStatus() {
   return useAuthenticatedQuery<BillingStatusResponse>(
     [...BILLING_KEY, "status"],
     "/billing/status",
-    { select: (raw) => keysToCamel<BillingStatusResponse>(raw) },
+    {
+      // Backend wraps in {data: ...}; unwrap before camel-casing so consumers
+      // can read e.g. .hasActiveSubscription directly off the query data.
+      select: (raw) => {
+        const envelope = raw as unknown as { data: BillingStatusResponse };
+        return keysToCamel<BillingStatusResponse>(envelope.data);
+      },
+    },
   );
 }
 

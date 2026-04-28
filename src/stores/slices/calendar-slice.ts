@@ -2,7 +2,8 @@ import type { StateCreator } from "zustand";
 
 export interface CalendarPageState {
   view: "gantt" | "calendar" | "list";
-  timeframe: string;
+  windowSize: string;
+  anchor: string | null;
   submenu: string[];
   moreOpen: boolean;
   listSort: string;
@@ -21,7 +22,8 @@ export const createCalendarSlice: StateCreator<CalendarSlice, [], [], CalendarSl
 ) => ({
   calendar: {
     view: "gantt",
-    timeframe: "this_month",
+    windowSize: "fortnight",
+    anchor: null,
     submenu: ["overview"],
     moreOpen: false,
     listSort: "date_asc",

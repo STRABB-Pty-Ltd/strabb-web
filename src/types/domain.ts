@@ -5,4 +5,4 @@ export type { CleaningTask, CleaningPriority, CleaningStatus, CleaningType } fro
 export type { Financial } from "./financial";
 export type { ShoppingItem, ShoppingItemPriority, ShoppingItemStatus } from "./shopping-item";
 export type { Vacancy } from "./vacancy";
-export type { Maintenance, MaintenancePriority, MaintenanceStatus } from "./maintenance";
+export type { Ticket, TicketPriority, TicketStatus } from "./ticket";

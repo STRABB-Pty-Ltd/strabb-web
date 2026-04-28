@@ -5,17 +5,17 @@ import {
   createCleaningTask,
   createFinancial,
   createListing,
-  createMaintenance,
   createMessage,
   createShoppingItem,
+  createTicket,
   createVacancy,
   mockBookingList,
   mockCleaningTaskList,
   mockFinancialList,
   mockListingList,
-  mockMaintenanceList,
   mockMessageList,
   mockShoppingItemList,
+  mockTicketsList,
   mockVacancyList,
 } from "../index";
 
@@ -173,7 +173,7 @@ describe("Financial factory", () => {
     expect(financial.listingId).toBeDefined();
     expect(typeof financial.revenue).toBe("number");
     expect(typeof financial.cleaningCost).toBe("number");
-    expect(typeof financial.maintenanceCost).toBe("number");
+    expect(typeof financial.ticketCost).toBe("number");
     expect(typeof financial.suppliesCost).toBe("number");
     expect(typeof financial.platformFees).toBe("number");
     expect(typeof financial.occupancyRate).toBe("number");
@@ -239,28 +239,28 @@ describe("Vacancy factory", () => {
   });
 });
 
-describe("Maintenance factory", () => {
+describe("Ticket factory", () => {
   it("returns an object with all required fields", () => {
-    const maintenance = createMaintenance();
-    expect(maintenance.id).toBeDefined();
-    expect(maintenance.listingId).toBeDefined();
-    expect(maintenance.description).toBeDefined();
-    expect(maintenance.priority).toBeDefined();
-    expect(maintenance.status).toBeDefined();
-    expect(maintenance.dateReported).toBeDefined();
+    const ticket = createTicket();
+    expect(ticket.id).toBeDefined();
+    expect(ticket.listingId).toBeDefined();
+    expect(ticket.description).toBeDefined();
+    expect(ticket.priority).toBeDefined();
+    expect(ticket.status).toBeDefined();
+    expect(ticket.dateReported).toBeDefined();
   });
 
   it("merges overrides correctly", () => {
-    const maintenance = createMaintenance({
+    const ticket = createTicket({
       description: "Test issue",
       priority: "low",
     });
-    expect(maintenance.description).toBe("Test issue");
-    expect(maintenance.priority).toBe("low");
-    expect(maintenance.id).toBe("mnt-001");
+    expect(ticket.description).toBe("Test issue");
+    expect(ticket.priority).toBe("low");
+    expect(ticket.id).toBe("tkt-001");
   });
 
-  it("mockMaintenanceList has at least 5 entries", () => {
-    expect(mockMaintenanceList.length).toBeGreaterThanOrEqual(5);
+  it("mockTicketsList has at least 5 entries", () => {
+    expect(mockTicketsList.length).toBeGreaterThanOrEqual(5);
   });
 });

@@ -3,7 +3,8 @@ import type { StateCreator } from "zustand";
 import type { DrillDownState } from "../types";
 
 export interface DashboardPageState {
-  timeframe: string;
+  windowSize: string;
+  anchor: string | null;
   submenu: string[];
   compare: boolean;
   moreOpen: boolean;
@@ -22,7 +23,8 @@ export const createDashboardSlice: StateCreator<DashboardSlice, [], [], Dashboar
   get,
 ) => ({
   dashboard: {
-    timeframe: "this_month",
+    windowSize: "month",
+    anchor: null,
     submenu: ["overview"],
     compare: false,
     moreOpen: false,

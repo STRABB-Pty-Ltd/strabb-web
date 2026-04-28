@@ -8,14 +8,20 @@ import { useAppStore } from "@/stores/app-store";
 
 export default function ReportingPage() {
   const submenu = useAppStore((s) => s.reporting.submenu);
-  const timeframe = useAppStore((s) => s.reporting.timeframe);
+  const windowSize = useAppStore((s) => s.reporting.windowSize);
+  const anchor = useAppStore((s) => s.reporting.anchor);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const savedReportsOpen = useAppStore((s) => s.reporting.savedReportsOpen);
 
-  const { data: kpis, isLoading: kpisLoading } = useReportingKPIs(selectedListings, timeframe);
+  const { data: kpis, isLoading: kpisLoading } = useReportingKPIs(
+    selectedListings,
+    windowSize,
+    anchor,
+  );
   const { data: chartData, isLoading: chartsLoading } = useReportingChartData(
     selectedListings,
-    timeframe,
+    windowSize,
+    anchor,
   );
 
   if (kpisLoading || chartsLoading) {
