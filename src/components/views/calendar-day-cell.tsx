@@ -1,6 +1,7 @@
 "use client";
 
 import { isToday } from "date-fns";
+import type { ReactNode } from "react";
 
 import { CalendarEventChip } from "./calendar-event-chip";
 
@@ -8,27 +9,34 @@ interface DayCellEvent {
   label: string;
   color: string;
   textColor?: string;
+  accentColor?: string;
+  icon?: ReactNode;
+  isEventStart?: boolean;
+  isEventEnd?: boolean;
   onClick: () => void;
 }
 
 interface CalendarDayCellProps {
   date: Date;
-  events: DayCellEvent[];
+  /** Visible track slots in row order. A null entry renders an invisible
+   *  placeholder that occupies the same vertical space as a chip — this
+   *  keeps a multi-day event on the same row across every cell it spans. */
+  tracks: Array<DayCellEvent | null>;
   isCurrentMonth: boolean;
-  maxEvents?: number;
+  /** Number of events in this cell that didn't fit in the visible tracks
+   *  (i.e. their assigned track index is beyond the cap). */
+  overflowCount?: number;
   compact?: boolean;
 }
 
 export function CalendarDayCell({
   date,
-  events,
+  tracks,
   isCurrentMonth,
-  maxEvents = 3,
+  overflowCount = 0,
   compact = false,
 }: CalendarDayCellProps) {
   const today = isToday(date);
-  const visibleEvents = events.slice(0, maxEvents);
-  const overflow = events.length - maxEvents;
 
   return (
     <div
@@ -55,16 +63,32 @@ export function CalendarDayCell({
         {date.getDate()}
       </span>
       <div className="gap-xs flex flex-col">
-        {visibleEvents.map((ev, i) => (
-          <CalendarEventChip
-            key={i}
-            label={ev.label}
-            color={ev.color}
-            textColor={ev.textColor}
-            onClick={ev.onClick}
-          />
-        ))}
-        {overflow > 0 && <span className="mt-xs text-body text-gray-400">+{overflow} more</span>}
+        {tracks.map((slot, i) =>
+          slot ? (
+            <CalendarEventChip
+              key={i}
+              label={slot.label}
+              color={slot.color}
+              textColor={slot.textColor}
+              accentColor={slot.accentColor}
+              icon={slot.icon}
+              isEventStart={slot.isEventStart}
+              isEventEnd={slot.isEventEnd}
+              onClick={slot.onClick}
+            />
+          ) : (
+            <div
+              key={i}
+              aria-hidden="true"
+              className="px-xs py-xs text-body invisible"
+            >
+              &nbsp;
+            </div>
+          ),
+        )}
+        {overflowCount > 0 && (
+          <span className="mt-xs text-body text-gray-400">+{overflowCount} more</span>
+        )}
       </div>
     </div>
   );
