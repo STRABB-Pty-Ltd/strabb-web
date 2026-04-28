@@ -13,21 +13,32 @@ interface DayCellEvent {
   icon?: ReactNode;
   isEventStart?: boolean;
   isEventEnd?: boolean;
+  insetStart?: number;
+  insetEnd?: number;
+  showLabel?: boolean;
   onClick: () => void;
 }
 
 interface CalendarDayCellProps {
   date: Date;
-  /** Visible track slots in row order. A null entry renders an invisible
-   *  placeholder that occupies the same vertical space as a chip — this
-   *  keeps a multi-day event on the same row across every cell it spans. */
-  tracks: Array<DayCellEvent | null>;
+  /** Visible track rows. Each row is the array of events on that track for
+   *  this day — usually one item, but a turnover day can have three on the
+   *  same track (booking-out + cleaning + booking-in) thanks to fractional
+   *  cell insets. Empty arrays render as a placeholder track row, keeping a
+   *  multi-day event on the same row across every cell it spans. */
+  tracks: Array<DayCellEvent[]>;
   isCurrentMonth: boolean;
   /** Number of events in this cell that didn't fit in the visible tracks
    *  (i.e. their assigned track index is beyond the cap). */
   overflowCount?: number;
   compact?: boolean;
 }
+
+// Chip height = body font (13px) × line-height (1.615) + 2 × xs padding (5px)
+// = ~31px. Hardcoded because the track rows house absolute-positioned chips
+// whose top:0 / bottom:0 stretches require an explicit parent height — calc
+// against tokens silently collapses to 0 when one of the vars is unitless.
+const TRACK_ROW_HEIGHT = "31px";
 
 export function CalendarDayCell({
   date,
@@ -63,29 +74,29 @@ export function CalendarDayCell({
         {date.getDate()}
       </span>
       <div className="gap-xs flex flex-col">
-        {tracks.map((slot, i) =>
-          slot ? (
-            <CalendarEventChip
-              key={i}
-              label={slot.label}
-              color={slot.color}
-              textColor={slot.textColor}
-              accentColor={slot.accentColor}
-              icon={slot.icon}
-              isEventStart={slot.isEventStart}
-              isEventEnd={slot.isEventEnd}
-              onClick={slot.onClick}
-            />
-          ) : (
-            <div
-              key={i}
-              aria-hidden="true"
-              className="px-xs py-xs text-body invisible"
-            >
-              &nbsp;
-            </div>
-          ),
-        )}
+        {tracks.map((trackEvents, i) => (
+          <div
+            key={i}
+            style={{ position: "relative", width: "100%", height: TRACK_ROW_HEIGHT }}
+          >
+            {trackEvents.map((ev, j) => (
+              <CalendarEventChip
+                key={j}
+                label={ev.label}
+                color={ev.color}
+                textColor={ev.textColor}
+                accentColor={ev.accentColor}
+                icon={ev.icon}
+                isEventStart={ev.isEventStart}
+                isEventEnd={ev.isEventEnd}
+                insetStart={ev.insetStart}
+                insetEnd={ev.insetEnd}
+                showLabel={ev.showLabel}
+                onClick={ev.onClick}
+              />
+            ))}
+          </div>
+        ))}
         {overflowCount > 0 && (
           <span className="mt-xs text-body text-gray-400">+{overflowCount} more</span>
         )}

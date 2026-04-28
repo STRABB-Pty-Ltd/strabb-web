@@ -81,6 +81,14 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
           : undefined
       }
       getEventIcon={(ev) => (ev.type === "cleaning" ? <BrushCleaning size={11} /> : undefined)}
+      getEventInset={(ev) => {
+        // Match the calendar gantt's getPartialDay so a booking sits at
+        // 75–100 % of its check-in cell and 0–25 % of its check-out cell,
+        // with a turnover cleaning filling the 25–75 % gap on the same row.
+        if (ev.type === "booking") return { insetStart: 0.75, insetEnd: 0.75 };
+        if (ev.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.25 };
+        return { insetStart: 0, insetEnd: 0 };
+      }}
       getEventLabel={(ev) => {
         if (ev.type === "cleaning") {
           return format(new Date(ev.start), "h:mma");

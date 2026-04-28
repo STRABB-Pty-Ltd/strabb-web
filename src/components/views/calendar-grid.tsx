@@ -7,12 +7,15 @@ import {
   endOfWeek,
   isSameDay,
   isSameMonth,
+  startOfDay,
   startOfMonth,
   startOfWeek,
 } from "date-fns";
 import type { ReactNode } from "react";
 
 import { CalendarDayCell } from "./calendar-day-cell";
+
+const DAY_MS = 86_400_000;
 
 export interface CalendarGridProps<T> {
   mode: "month" | "week" | "day" | "fortnight";
@@ -23,6 +26,13 @@ export interface CalendarGridProps<T> {
   getEventTextColor?: (event: T) => string;
   getEventAccentColor?: (event: T) => string | undefined;
   getEventIcon?: (event: T) => ReactNode | undefined;
+  /** Per-event fractional cell insets used by the calendar grid to mirror
+   *  the gantt's getPartialDay: bookings sit at 75–100% of the check-in cell
+   *  and 0–25% of the check-out cell, cleanings fill 25–75% of their day.
+   *  Both the chip placement and the track-assignment overlap test use these
+   *  insets, so a turnover day's outgoing booking, cleaning, and incoming
+   *  booking can share one track. */
+  getEventInset?: (event: T) => { insetStart: number; insetEnd: number };
   getEventLabel: (event: T) => string;
   onEventClick: (event: T) => void;
   maxEventsPerCell?: number;
@@ -39,10 +49,12 @@ export function CalendarGrid<T>({
   getEventTextColor,
   getEventAccentColor,
   getEventIcon,
+  getEventInset,
   getEventLabel,
   onEventClick,
   maxEventsPerCell = 3,
 }: CalendarGridProps<T>) {
+  const insetFor = (ev: T) => getEventInset?.(ev) ?? { insetStart: 0, insetEnd: 0 };
   const getDays = (): Date[] => {
     switch (mode) {
       case "month": {
@@ -76,24 +88,28 @@ export function CalendarGrid<T>({
       );
     });
 
-  // Greedy track assignment: sort events by start, then place each one on the
-  // lowest-numbered track whose previous event has already finished. Used per
-  // week so a multi-day booking keeps the same vertical row in every cell it
-  // spans (Tue track 1 → Wed track 1, not Wed track 0 because Tue's track-0
-  // event ended).
+  // Greedy track assignment using inset-adjusted ranges so a turnover day's
+  // outgoing booking (ending at 25% of the day), cleaning (25–75%), and
+  // incoming booking (starting at 75%) end up on the same track instead of
+  // three stacked rows. Sort by effective start and place each event on the
+  // lowest-numbered track whose previous event has already finished.
   const assignTracks = (eventsInRange: T[]): Map<T, number> => {
-    const sorted = eventsInRange.slice().sort((a, b) => {
-      const ra = getEventDate(a);
-      const rb = getEventDate(b);
-      return ra.start.getTime() - rb.start.getTime() || ra.end.getTime() - rb.end.getTime();
+    const effective = eventsInRange.map((ev) => {
+      const range = getEventDate(ev);
+      const inset = insetFor(ev);
+      return {
+        ev,
+        startMs: startOfDay(range.start).getTime() + inset.insetStart * DAY_MS,
+        endMs: startOfDay(range.end).getTime() + (1 - inset.insetEnd) * DAY_MS,
+      };
     });
+    effective.sort((a, b) => a.startMs - b.startMs || a.endMs - b.endMs);
     const trackEnds: number[] = [];
     const result = new Map<T, number>();
-    for (const ev of sorted) {
-      const range = getEventDate(ev);
-      const startMs = range.start.getTime();
-      const endMs = range.end.getTime();
-      let assigned = trackEnds.findIndex((endTime) => endTime < startMs);
+    for (const { ev, startMs, endMs } of effective) {
+      // <= so a chip that ends exactly when the next one begins (e.g. 06:00
+      // turnover boundary) is allowed to share the same track.
+      let assigned = trackEnds.findIndex((endTime) => endTime <= startMs);
       if (assigned === -1) {
         assigned = trackEnds.length;
         trackEnds.push(endMs);
@@ -193,7 +209,11 @@ export function CalendarGrid<T>({
           const slotCount = weekSlotCounts[weekIdx] ?? 0;
           const dayEvents = getEventsForDay(day);
 
-          const tracks: Array<{
+          const weekDays = gridDays.slice(weekIdx * 7, weekIdx * 7 + 7);
+          const weekStartMs = startOfDay(weekDays[0]).getTime();
+          const dayMs = startOfDay(day).getTime();
+
+          type Slot = {
             label: string;
             color: string;
             textColor?: string;
@@ -201,13 +221,24 @@ export function CalendarGrid<T>({
             icon?: ReactNode;
             isEventStart?: boolean;
             isEventEnd?: boolean;
+            insetStart?: number;
+            insetEnd?: number;
+            showLabel?: boolean;
             onClick: () => void;
-          } | null> = new Array(slotCount).fill(null);
+          };
+          const tracks: Slot[][] = Array.from({ length: slotCount }, () => []);
           let overflowCount = 0;
           for (const ev of dayEvents) {
             const trackIdx = trackMap?.get(ev) ?? 0;
             const range = getEventDate(ev);
-            const slot = {
+            const inset = insetFor(ev);
+            // Mark this cell as the label-bearing cell when it's the
+            // event's first appearance inside the current week. Multi-week
+            // events get one label per week segment; the chip then lets
+            // the text overflow rightward across the rest of the segment.
+            const eventStartMs = startOfDay(range.start).getTime();
+            const firstInWeekMs = Math.max(eventStartMs, weekStartMs);
+            const slot: Slot = {
               label: getEventLabel(ev),
               color: getEventColor(ev),
               textColor: getEventTextColor?.(ev),
@@ -215,10 +246,13 @@ export function CalendarGrid<T>({
               icon: getEventIcon?.(ev),
               isEventStart: isSameDay(day, range.start),
               isEventEnd: isSameDay(day, range.end),
+              insetStart: inset.insetStart,
+              insetEnd: inset.insetEnd,
+              showLabel: dayMs === firstInWeekMs,
               onClick: () => onEventClick(ev),
             };
             if (trackIdx < slotCount) {
-              tracks[trackIdx] = slot;
+              tracks[trackIdx].push(slot);
             } else {
               overflowCount += 1;
             }
