@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { FaviconSwitcher } from "@/components/favicon-switcher";
 import { Providers } from "@/components/providers";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,12 @@ const interData = Inter({
 export const metadata: Metadata = {
   title: "STRABB",
   description: "Short-term rental booking aggregation and automation",
+  icons: {
+    icon: [
+      { url: "/favicon-light.png", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon-dark.png", media: "(prefers-color-scheme: dark)" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <FaviconSwitcher />
+          {children}
+        </Providers>
       </body>
     </html>
   );
