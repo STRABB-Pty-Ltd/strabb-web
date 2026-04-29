@@ -101,10 +101,7 @@ export function CalendarDayCell({
       </span>
       <div className="gap-xs flex flex-col">
         {tracks.map((trackEvents, i) => (
-          <div
-            key={i}
-            style={{ position: "relative", width: "100%", height: TRACK_ROW_HEIGHT }}
-          >
+          <div key={i} style={{ position: "relative", width: "100%", height: TRACK_ROW_HEIGHT }}>
             {trackEvents.map((ev, j) => (
               <CalendarEventChip
                 key={j}

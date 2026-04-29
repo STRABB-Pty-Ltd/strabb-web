@@ -61,10 +61,7 @@ export function CalendarEventChip({
   clampLeftEdge = false,
   onClick,
 }: CalendarEventChipProps) {
-  const cornerClasses = [
-    isEventStart ? "rounded-l-lg" : "",
-    isEventEnd ? "rounded-r-lg" : "",
-  ]
+  const cornerClasses = [isEventStart ? "rounded-l-lg" : "", isEventEnd ? "rounded-r-lg" : ""]
     .filter(Boolean)
     .join(" ");
 

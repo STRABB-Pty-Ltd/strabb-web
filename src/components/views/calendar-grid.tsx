@@ -143,9 +143,7 @@ export function CalendarGrid<T>({
     }
     const remap = new Map<number, number>();
     primaryTracks.forEach((oldIdx, newIdx) => remap.set(oldIdx, newIdx));
-    secondaryTracks.forEach((oldIdx, newIdx) =>
-      remap.set(oldIdx, primaryTracks.length + newIdx),
-    );
+    secondaryTracks.forEach((oldIdx, newIdx) => remap.set(oldIdx, primaryTracks.length + newIdx));
     const result = new Map<T, number>();
     for (const [ev, oldIdx] of greedy) {
       result.set(ev, remap.get(oldIdx) ?? oldIdx);
@@ -219,10 +217,8 @@ export function CalendarGrid<T>({
       }
       for (const list of trackToEvents.values()) {
         list.sort((a, b) => {
-          const sa =
-            startOfDay(getEventDate(a).start).getTime() + insetFor(a).insetStart * DAY_MS;
-          const sb =
-            startOfDay(getEventDate(b).start).getTime() + insetFor(b).insetStart * DAY_MS;
+          const sa = startOfDay(getEventDate(a).start).getTime() + insetFor(a).insetStart * DAY_MS;
+          const sb = startOfDay(getEventDate(b).start).getTime() + insetFor(b).insetStart * DAY_MS;
           return sa - sb;
         });
       }
@@ -344,8 +340,7 @@ export function CalendarGrid<T>({
             // applied directly as max-width on the label span.
             let labelMaxWidth: string | undefined;
             if (showLabel) {
-              const chipWidth =
-                1 - (isStart ? inset.insetStart : 0) - (isEnd ? inset.insetEnd : 0);
+              const chipWidth = 1 - (isStart ? inset.insetStart : 0) - (isEnd ? inset.insetEnd : 0);
               const labelStartCells = dayIdxInWeek + (isStart ? inset.insetStart : 0);
 
               // Bar end inside this week (capped at week's last day + 1).
@@ -366,10 +361,7 @@ export function CalendarGrid<T>({
                 const nextRange = getEventDate(next);
                 const nextInset = insetFor(next);
                 const nextStartMs = startOfDay(nextRange.start).getTime();
-                const nextDayIdx = Math.max(
-                  0,
-                  Math.round((nextStartMs - weekStartMs) / DAY_MS),
-                );
+                const nextDayIdx = Math.max(0, Math.round((nextStartMs - weekStartMs) / DAY_MS));
                 const nextStartCells = nextDayIdx + nextInset.insetStart;
                 availableCells = Math.min(
                   availableCells,
