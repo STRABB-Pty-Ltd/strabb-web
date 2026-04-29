@@ -25,7 +25,6 @@ const viewOptions: Record<string, ViewOption[]> = {
     { id: "kanban", label: "Kanban", icon: Columns3 },
     { id: "calendar", label: "Calendar", icon: CalendarDays },
     { id: "list", label: "List", icon: List },
-    { id: "gantt", label: "Gantt", icon: GanttChart },
   ],
 };
 

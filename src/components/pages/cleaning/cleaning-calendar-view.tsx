@@ -1,6 +1,7 @@
 "use client";
 
-import { parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { BrushCleaning } from "lucide-react";
 
 import { CalendarGrid } from "@/components/views/calendar-grid";
 import type { CleaningTask } from "@/types/cleaning-task";
@@ -13,15 +14,6 @@ const statusColors: Record<string, string> = {
   completed: "var(--status-completed)",
   issues: "var(--status-issues)",
   cancelled: "var(--status-cancelled)",
-};
-
-const typeLabels: Record<string, string> = {
-  checkout: "Checkout",
-  checkin: "Check-in",
-  deep_clean: "Deep Clean",
-  mid_stay: "Mid-Stay",
-  inspection: "Inspection",
-  turnover: "Turnover",
 };
 
 const windowSizeToMode: Record<string, "month" | "week" | "day" | "fortnight"> = {
@@ -53,7 +45,8 @@ export function CleaningCalendarView({ tasks }: CleaningCalendarViewProps) {
         return { start: d, end: d };
       }}
       getEventColor={(task) => statusColors[task.status] ?? "var(--brand-10)"}
-      getEventLabel={(task) => `${task.listingName} — ${typeLabels[task.type] ?? task.type}`}
+      getEventIcon={() => <BrushCleaning size={11} />}
+      getEventLabel={(task) => format(new Date(task.scheduledTime), "h:mma")}
       onEventClick={(task) => openDrillDownPanel("cleaning", task.id)}
     />
   );

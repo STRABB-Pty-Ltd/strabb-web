@@ -75,7 +75,13 @@ export function useCalendarEventsAPI(
   if (endDate) params.set("end_date", endDate);
 
   return useQuery<CalendarEvent[]>({
-    queryKey: ["calendar-events", ...selectedListings, ...submenuFilters],
+    queryKey: [
+      "calendar-events",
+      ...selectedListings,
+      ...submenuFilters,
+      startDate ?? "",
+      endDate ?? "",
+    ],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawCalendarEvent[] }>(
         `/calendar/events?${params.toString()}`,

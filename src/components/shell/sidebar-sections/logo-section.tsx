@@ -22,6 +22,19 @@ export function LogoSection() {
         width={1500}
         height={600}
         priority
+        className="block dark:hidden"
+        style={{
+          width: "calc(var(--sidebar-width) - 2 * var(--space-md))",
+          height: "auto",
+        }}
+      />
+      <Image
+        src="/logo-strabb-dark.png"
+        alt="STRABB"
+        width={1500}
+        height={600}
+        priority
+        className="hidden dark:block"
         style={{
           width: "calc(var(--sidebar-width) - 2 * var(--space-md))",
           height: "auto",

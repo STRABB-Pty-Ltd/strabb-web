@@ -1,13 +1,12 @@
 import type { StateCreator } from "zustand";
 
 export interface CleaningPageState {
-  view: "kanban" | "calendar" | "list" | "gantt";
+  view: "kanban" | "calendar" | "list";
   windowSize: string;
   anchor: string | null;
   submenu: string[];
   moreOpen: boolean;
   listSort: string;
-  ganttZoom: "day" | "week" | "month";
   shoppingDrawerOpen: boolean;
   boughtItems: string[];
 }
@@ -15,7 +14,6 @@ export interface CleaningPageState {
 export interface CleaningSlice {
   cleaning: CleaningPageState;
   setCleaningListSort: (sort: string) => void;
-  setGanttZoom: (zoom: "day" | "week" | "month") => void;
   toggleShoppingDrawer: () => void;
   toggleBoughtItem: (id: string) => void;
 }
@@ -31,12 +29,10 @@ export const createCleaningSlice: StateCreator<CleaningSlice, [], [], CleaningSl
     submenu: ["overview"],
     moreOpen: false,
     listSort: "date_asc",
-    ganttZoom: "week",
     shoppingDrawerOpen: false,
     boughtItems: [],
   },
   setCleaningListSort: (sort) => set({ cleaning: { ...get().cleaning, listSort: sort } }),
-  setGanttZoom: (zoom) => set({ cleaning: { ...get().cleaning, ganttZoom: zoom } }),
   toggleShoppingDrawer: () =>
     set({
       cleaning: {

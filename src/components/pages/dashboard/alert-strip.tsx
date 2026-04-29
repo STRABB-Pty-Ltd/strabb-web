@@ -37,7 +37,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
   if (visible.length === 0) return null;
 
   return (
-    <div className="gap-sm pb-xs flex overflow-x-auto">
+    <div className="gap-sm flex overflow-x-auto">
       {visible.map((alert) => {
         const Icon = typeIcon[alert.type] ?? AlertTriangle;
         const bg = severityBg[alert.severity] ?? "var(--neutral-30)";

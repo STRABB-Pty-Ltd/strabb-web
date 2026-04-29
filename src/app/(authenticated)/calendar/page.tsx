@@ -34,7 +34,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div>
+    <div className="flex h-full flex-col overflow-hidden">
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
           <Monitor size={16} />
