@@ -33,7 +33,6 @@ interface CalendarDayCellProps {
   /** Number of events in this cell that didn't fit in the visible tracks
    *  (i.e. their assigned track index is beyond the cap). */
   overflowCount?: number;
-  compact?: boolean;
   /** Suppress the right border (cell is the rightmost in its row, so the
    *  border would land on the calendar's outer edge). */
   isLastColumn?: boolean;
@@ -54,7 +53,6 @@ export function CalendarDayCell({
   tracks,
   isCurrentMonth,
   overflowCount = 0,
-  compact = false,
   isLastColumn = false,
   isLastRow = false,
 }: CalendarDayCellProps) {

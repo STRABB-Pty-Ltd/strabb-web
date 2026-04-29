@@ -311,7 +311,6 @@ export function CalendarGrid<T>({
           const dayIdxInWeek = idx % 7;
           const weekDays = gridDays.slice(weekIdx * 7, weekIdx * 7 + 7);
           const weekStartMs = startOfDay(weekDays[0]).getTime();
-          const dayMs = startOfDay(day).getTime();
 
           type Slot = {
             label: string;
@@ -416,7 +415,6 @@ export function CalendarGrid<T>({
               tracks={tracks}
               isCurrentMonth={mode !== "month" || isSameMonth(day, currentDate)}
               overflowCount={overflowCount}
-              compact={mode === "fortnight"}
               isLastColumn={dayIdxInWeek === 6}
               isLastRow={weekIdx === lastRowIdx}
             />
