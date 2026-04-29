@@ -38,10 +38,19 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-md">
-      <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
-
+    <div className="space-y-sm">
       {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}
+
+      {alerts && alerts.length > 0 && (
+        <div className="flex items-center">
+          <div
+            className="w-full"
+            style={{ height: "2px", backgroundColor: "var(--neutral-30)" }}
+          />
+        </div>
+      )}
+
+      <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
 
       {isCompare && <ComparePanel current={kpis} comparison={kpis} />}
 

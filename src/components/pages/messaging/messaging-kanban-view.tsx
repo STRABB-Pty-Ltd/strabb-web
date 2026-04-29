@@ -18,7 +18,6 @@ const statusColumns = [
   { id: "unread", label: "Unread" },
   { id: "flagged", label: "Flagged" },
   { id: "read", label: "Read" },
-  { id: "archived", label: "Archived" },
 ];
 
 interface MessagingKanbanViewProps {

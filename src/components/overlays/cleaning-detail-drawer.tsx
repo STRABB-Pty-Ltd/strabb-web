@@ -15,13 +15,10 @@ import { useAppStore } from "@/stores/app-store";
 
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
-  scheduled: "var(--status-confirmed)",
   confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
-  notified: "var(--status-confirmed)",
   completed: "var(--status-completed)",
-  failed: "var(--status-danger)",
-  issues: "var(--status-issues)",
+  ticket: "var(--status-issues)",
   cancelled: "var(--status-cancelled)",
 };
 

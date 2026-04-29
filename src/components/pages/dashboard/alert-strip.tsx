@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Clock, MessageSquare, RefreshCw, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { AlertTriangle, CalendarClock, MessageSquare, RefreshCw, Wrench, X } from "lucide-react";
 
 import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
@@ -19,9 +20,9 @@ const severityAccent: Record<string, string> = {
 };
 
 const typeIcon: Record<string, React.ElementType> = {
-  conflict: AlertTriangle,
-  overdue: Clock,
   message: MessageSquare,
+  unscheduled: CalendarClock,
+  ticket: Wrench,
   sync: RefreshCw,
 };
 
@@ -31,13 +32,33 @@ interface AlertStripProps {
 
 export function AlertStrip({ alerts }: AlertStripProps) {
   const [dismissed, setDismissed] = useState<string[]>([]);
-  const setDrillDown = useAppStore((s) => s.setDrillDown);
+  const setSubmenu = useAppStore((s) => s.setSubmenu);
+  const router = useRouter();
+
+  const handleView = (alert: AlertItem) => {
+    switch (alert.type) {
+      case "message":
+        setSubmenu("messaging", ["unread"]);
+        router.push("/messaging");
+        return;
+      case "unscheduled":
+        setSubmenu("cleaning", ["pending"]);
+        router.push("/cleaning");
+        return;
+      case "ticket":
+        router.push("/cleaning/tickets");
+        return;
+      case "sync":
+        router.push("/settings/admin");
+        return;
+    }
+  };
 
   const visible = alerts.filter((a) => !dismissed.includes(a.id));
   if (visible.length === 0) return null;
 
   return (
-    <div className="gap-sm flex overflow-x-auto">
+    <div className="gap-sm grid grid-cols-12">
       {visible.map((alert) => {
         const Icon = typeIcon[alert.type] ?? AlertTriangle;
         const bg = severityBg[alert.severity] ?? "var(--neutral-30)";
@@ -45,7 +66,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
         return (
           <div
             key={alert.id}
-            className="gap-sm px-md py-sm flex shrink-0 items-center rounded-lg"
+            className="gap-sm px-md py-sm col-span-3 flex items-center rounded-lg"
             style={{ backgroundColor: bg }}
           >
             <Icon size={16} style={{ color: accent }} />
@@ -54,14 +75,8 @@ export function AlertStrip({ alerts }: AlertStripProps) {
             </span>
             <button
               type="button"
-              onClick={() =>
-                setDrillDown({
-                  type: alert.type,
-                  itemId: alert.id,
-                  label: alert.description,
-                })
-              }
-              className="text-body font-semibold whitespace-nowrap"
+              onClick={() => handleView(alert)}
+              className="text-body cursor-pointer font-semibold whitespace-nowrap"
               style={{ color: accent }}
             >
               View

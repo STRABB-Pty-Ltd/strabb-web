@@ -7,7 +7,7 @@ import { useAppStore } from "@/stores/app-store";
 import { CleaningTaskCard } from "./cleaning-task-card";
 
 const statusColumns = [
-  { id: "issues", label: "Tickets" },
+  { id: "ticket", label: "Tickets" },
   { id: "confirmed", label: "Confirmed" },
   { id: "pending", label: "Pending" },
   { id: "completed", label: "Completed" },

@@ -50,7 +50,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="p-md rounded-lg text-left transition-shadow hover:shadow-md"
+      className="p-sm rounded-lg text-left transition-shadow hover:shadow-md"
       style={{ backgroundColor: "var(--surface-card)" }}
     >
       <div className="mb-sm gap-base flex items-center">

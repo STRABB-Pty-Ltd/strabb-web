@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
@@ -65,6 +66,8 @@ function mapThreadMessage(raw: RawThreadMessage): ThreadMessage {
   };
 }
 
+const STATUS_FILTERS = ["unread", "flagged", "read", "archived"] as const;
+
 export function useMessagesAPI(
   channels: string[],
   submenuFilters: string[],
@@ -74,14 +77,13 @@ export function useMessagesAPI(
   const isReady = useAuthReady();
   const params = new URLSearchParams();
   channels.forEach((ch) => params.append("channel", ch));
-  const statusFilter = submenuFilters.find((f) =>
-    ["unread", "flagged", "read", "archived"].includes(f),
-  );
-  if (statusFilter) params.set("status", statusFilter);
   selectedListings.forEach((id) => params.append("listing_id", id));
 
-  return useQuery<Message[]>({
-    queryKey: ["conversations", ...channels, ...submenuFilters, ...selectedListings],
+  // Backend only accepts one status; status filtering happens client-side so
+  // the messaging submenu's multi-select (Unread + Flagged + Read) behaves as
+  // an OR filter and switching filters does not refetch.
+  const query = useQuery<Message[]>({
+    queryKey: ["conversations", ...channels, ...selectedListings],
     queryFn: async () => {
       const response = await apiClient.get<{ data: RawConversation[] }>(
         `/conversations?${params.toString()}`,
@@ -90,6 +92,20 @@ export function useMessagesAPI(
     },
     enabled: !USE_MOCK && isReady,
   });
+
+  const filtered = useMemo(() => {
+    if (!query.data) return query.data;
+    if (submenuFilters.length === 0 || submenuFilters.includes("overview")) {
+      return query.data;
+    }
+    const active = submenuFilters.filter((f) =>
+      (STATUS_FILTERS as readonly string[]).includes(f),
+    );
+    if (active.length === 0) return query.data;
+    return query.data.filter((m) => active.includes(m.status));
+  }, [query.data, submenuFilters]);
+
+  return { ...query, data: filtered };
 }
 
 export function useMessageThreadAPI(messageId: string | null) {

@@ -32,10 +32,12 @@ interface RawKPIResponse extends RawKPIMetrics {
 }
 
 interface RawAlertResponse {
-  overdueTasks: number;
-  blockedTasks: number;
   unreadMessages: number;
-  highPriority: number;
+  unscheduledCleans?: number;
+  urgentTickets?: number;
+  syncErrors?: number;
+  overdueTasks?: number;
+  highPriority?: number;
 }
 
 function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
@@ -49,11 +51,11 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
       type: "currency",
     },
     {
-      label: "Total Bookings",
-      value: raw.totalBookings,
-      icon: "calendar",
-      trend: t?.totalBookings,
-      type: "number",
+      label: "Net Income",
+      value: raw.netIncome,
+      icon: "trending-up",
+      trend: t?.netIncome,
+      type: "currency",
     },
     {
       label: "Avg Occupancy",
@@ -69,53 +71,46 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
       trend: t?.avgNightlyRate,
       type: "currency",
     },
-    {
-      label: "Net Income",
-      value: raw.netIncome,
-      icon: "trending-up",
-      trend: t?.netIncome,
-      type: "currency",
-    },
-    {
-      label: "Expenses",
-      value: raw.expenses,
-      icon: "receipt",
-      trend: t?.expenses,
-      type: "currency",
-    },
   ];
 }
 
 function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
-  const alerts: AlertItem[] = [];
-  if (raw.unreadMessages > 0) {
-    alerts.push({
+  // TODO: backend should return unscheduledCleans, urgentTickets, syncErrors directly.
+  // overdueTasks and highPriority kept as fallbacks until backend updated.
+  const unscheduled = raw.unscheduledCleans ?? raw.overdueTasks ?? 0;
+  const urgent = raw.urgentTickets ?? raw.highPriority ?? 0;
+  const sync = raw.syncErrors ?? 0;
+
+  return [
+    {
       id: "alert-messages",
       type: "message",
       severity: "blue",
-      description: `${raw.unreadMessages} unread message${raw.unreadMessages > 1 ? "s" : ""} requiring attention`,
+      description: `${raw.unreadMessages} unread message${raw.unreadMessages === 1 ? "" : "s"}`,
       count: raw.unreadMessages,
-    });
-  }
-  if (raw.overdueTasks > 0) {
-    alerts.push({
-      id: "alert-overdue",
-      type: "overdue",
+    },
+    {
+      id: "alert-unscheduled",
+      type: "unscheduled",
       severity: "amber",
-      description: `${raw.overdueTasks} cleaning task${raw.overdueTasks > 1 ? "s" : ""} overdue`,
-      count: raw.overdueTasks,
-    });
-  }
-  if (raw.highPriority > 0) {
-    alerts.push({
-      id: "alert-priority",
-      type: "conflict",
+      description: `${unscheduled} clean${unscheduled === 1 ? "" : "s"} need scheduling`,
+      count: unscheduled,
+    },
+    {
+      id: "alert-tickets",
+      type: "ticket",
       severity: "red",
-      description: `${raw.highPriority} high priority item${raw.highPriority > 1 ? "s" : ""}`,
-      count: raw.highPriority,
-    });
-  }
-  return alerts;
+      description: `${urgent} urgent ticket${urgent === 1 ? "" : "s"}`,
+      count: urgent,
+    },
+    {
+      id: "alert-sync",
+      type: "sync",
+      severity: "red",
+      description: `${sync} sync error${sync === 1 ? "" : "s"}`,
+      count: sync,
+    },
+  ];
 }
 
 export function useDashboardKPIsAPI(

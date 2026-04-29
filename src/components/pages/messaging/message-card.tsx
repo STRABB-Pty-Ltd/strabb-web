@@ -34,24 +34,19 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
     <button type="button" onClick={onClick} className="w-full text-left">
       <div className="space-y-xs">
-        <div className="gap-base flex items-center">
-          <span className="text-body truncate font-medium text-gray-800">{message.guestName}</span>
-          {message.priority !== "low" && (
-            <span
-              className="h-base w-base shrink-0 rounded-full"
-              style={{ backgroundColor: priorityDot[message.priority] }}
-            />
-          )}
-        </div>
-
-        <div className="gap-xs flex items-center">
-          <span
-            className="h-base w-base shrink-0 rounded-full"
-            style={{
-              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
-            }}
-          />
-          <span className="text-body truncate text-gray-500">{message.listingName}</span>
+        <div className="gap-base flex items-center justify-between">
+          <div className="gap-base flex min-w-0 items-center">
+            <span className="text-body truncate font-medium text-gray-800">
+              {message.guestName}
+            </span>
+            {message.priority !== "low" && (
+              <span
+                className="h-base w-base shrink-0 rounded-full"
+                style={{ backgroundColor: priorityDot[message.priority] }}
+              />
+            )}
+          </div>
+          <span className="text-body shrink-0 truncate text-gray-500">{message.listingName}</span>
         </div>
 
         <div className="gap-base flex items-center">

@@ -10,7 +10,7 @@ const hours = (offset: number) => {
 const defaults: CleaningTask = {
   id: "ct-001",
   listingId: "lst-002",
-  listingName: "Bondi Beach Apartment — Unit A",
+  listingName: "Bondi Beach Apartment - Unit A",
   listingColor: "var(--brand-10)",
   bookingId: "bk-001",
   assigneeName: "Maria Santos",
@@ -24,6 +24,7 @@ const defaults: CleaningTask = {
   type: "turnover",
   estimatedHours: 2.5,
   notes: null,
+  linkedTicketId: null,
 };
 
 export function createCleaningTask(overrides?: Partial<CleaningTask>): CleaningTask {
@@ -100,10 +101,10 @@ export const mockCleaningTaskList: CleaningTask[] = [
     checklistTotal: 8,
     checklistDone: 8,
   }),
-  // issues
+  // ticket - clean spawned a linked ticket (broken shower)
   createCleaningTask({
     id: "ct-005",
-    status: "issues",
+    status: "ticket",
     listingId: "lst-006",
     listingName: "Newtown Terrace",
     listingColor: "var(--brand-10)",
@@ -116,7 +117,8 @@ export const mockCleaningTaskList: CleaningTask[] = [
     estimatedHours: 3,
     checklistTotal: 14,
     checklistDone: 10,
-    notes: "Broken shower head — needs maintenance before next guest",
+    notes: "Broken shower head, needs maintenance before next guest",
+    linkedTicketId: "tkt-001",
   }),
   // cancelled
   createCleaningTask({

@@ -14,7 +14,7 @@ export function KPIGrid({ kpis, compareKpis }: KPIGridProps) {
   const setDrillDown = useAppStore((s) => s.setDrillDown);
 
   return (
-    <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {kpis.map((kpi, i) => {
         const compareVal = compareKpis?.[i]?.value ?? null;
         return (

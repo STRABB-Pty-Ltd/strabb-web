@@ -3,7 +3,7 @@ export type CleaningStatus =
   | "confirmed"
   | "in_progress"
   | "completed"
-  | "issues"
+  | "ticket"
   | "cancelled";
 
 export type CleaningPriority = "low" | "medium" | "high" | "urgent";
@@ -33,4 +33,5 @@ export interface CleaningTask {
   type: CleaningType;
   estimatedHours: number;
   notes: string | null;
+  linkedTicketId: string | null;
 }

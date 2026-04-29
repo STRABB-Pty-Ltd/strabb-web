@@ -33,7 +33,7 @@ const cleaningStatusColors: Record<string, string> = {
   confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
-  issues: "var(--status-issues)",
+  ticket: "var(--status-issues)",
   cancelled: "var(--status-cancelled)",
 };
 

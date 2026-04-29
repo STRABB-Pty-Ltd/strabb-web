@@ -16,9 +16,7 @@ interface MessageThreadProps {
   message: Message;
   thread: ThreadMessage[];
   onSendReply: (conversationId: string, content: string) => void;
-  onResolve: () => void;
-  onFollowUp: () => void;
-  onPriority: () => void;
+  onFlag: () => void;
   onConvertTicket: () => void;
 }
 
@@ -26,9 +24,7 @@ export function MessageThread({
   message,
   thread,
   onSendReply,
-  onResolve,
-  onFollowUp,
-  onPriority,
+  onFlag,
   onConvertTicket,
 }: MessageThreadProps) {
   const [compose, setCompose] = useState("");
@@ -94,31 +90,17 @@ export function MessageThread({
       >
         <button
           type="button"
-          onClick={onResolve}
+          onClick={onFlag}
           className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
-          Resolved
-        </button>
-        <button
-          type="button"
-          onClick={onFollowUp}
-          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
-        >
-          Follow Up
-        </button>
-        <button
-          type="button"
-          onClick={onPriority}
-          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
-        >
-          Priority
+          Flag
         </button>
         <button
           type="button"
           onClick={onConvertTicket}
           className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
         >
-          Ticket
+          Create Ticket
         </button>
       </div>
 

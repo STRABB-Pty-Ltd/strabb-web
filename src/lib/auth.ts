@@ -43,12 +43,22 @@ async function fetchCurrentUser(accessToken: string): Promise<CurrentUser> {
   };
 }
 
+const IS_DEV_SESSION = process.env.NODE_ENV === "development";
+
+if (IS_DEV_SESSION) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[auth] DEV-ONLY: session.maxAge bumped to 30 days. Production uses 1 day.",
+  );
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/login",
   },
   session: {
     strategy: "jwt",
+    maxAge: IS_DEV_SESSION ? 30 * 24 * 60 * 60 : 24 * 60 * 60,
   },
   providers: [
     Credentials({

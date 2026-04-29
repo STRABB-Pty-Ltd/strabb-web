@@ -12,7 +12,7 @@ const statusColors: Record<string, string> = {
   confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
-  issues: "var(--status-issues)",
+  ticket: "var(--status-issues)",
   cancelled: "var(--status-cancelled)",
 };
 
@@ -86,7 +86,7 @@ const columns: ColumnDef<CleaningTask>[] = [
           backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
         }}
       >
-        {t.status === "issues" ? "ticket" : t.status.replace("_", " ")}
+        {t.status.replace("_", " ")}
       </span>
     ),
   },
