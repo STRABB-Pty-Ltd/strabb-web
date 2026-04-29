@@ -157,7 +157,7 @@ function computeEvents(
       ? tickets.filter((t) => t.listingId && selectedListings.includes(t.listingId))
       : tickets;
     const mapped = filtered
-      .filter((t) => t.status !== "cancelled")
+      .filter((t) => t.status !== "completed")
       .map(ticketToEvent)
       .filter((e): e is CalendarEvent => e !== null);
     events.push(...mapped);

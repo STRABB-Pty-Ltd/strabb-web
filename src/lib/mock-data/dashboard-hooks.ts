@@ -176,7 +176,7 @@ function computeAlerts(
   const urgentTickets = filteredTickets.filter(
     (t) =>
       (t.priority === "urgent" || t.priority === "high") &&
-      (t.status === "reported" || t.status === "scheduled" || t.status === "in_progress"),
+      (t.status === "pending" || t.status === "confirmed"),
   );
   alerts.push({
     id: "alert-tickets",

@@ -4,7 +4,31 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
-import type { Ticket, TicketListResponse } from "@/types/ticket";
+import type { Ticket, TicketListResponse, TicketStatus } from "@/types/ticket";
+
+// Backend still serves the legacy ticket status enum; collapse it into the
+// frontend's pending/confirmed/completed model on read. Remove this once the
+// backend migrates.
+function normalizeStatus(raw: string | null | undefined): TicketStatus {
+  switch (raw) {
+    case "pending":
+    case "reported":
+      return "pending";
+    case "confirmed":
+    case "scheduled":
+    case "in_progress":
+      return "confirmed";
+    case "completed":
+    case "cancelled":
+      return "completed";
+    default:
+      return "pending";
+  }
+}
+
+function normalizeTicket(t: Ticket): Ticket {
+  return { ...t, status: normalizeStatus(t.status) };
+}
 
 export interface TicketFilters {
   propertyId?: string;
@@ -34,7 +58,7 @@ export function useTicketsAPI(filters?: TicketFilters) {
     queryKey: ["tickets", JSON.stringify(filters ?? {})],
     queryFn: async () => {
       const response = await apiClient.get<TicketListResponse>(`/tickets?${params.toString()}`);
-      return response;
+      return { ...response, data: response.data.map(normalizeTicket) };
     },
     enabled: !USE_MOCK && isReady,
   });
@@ -49,7 +73,7 @@ export function useTicket(id: string | null) {
     queryFn: async () => {
       if (!id) return null;
       const response = await apiClient.get<{ data: Ticket }>(`/tickets/${id}`);
-      return response.data;
+      return normalizeTicket(response.data);
     },
     enabled: !USE_MOCK && isReady && !!id,
   });

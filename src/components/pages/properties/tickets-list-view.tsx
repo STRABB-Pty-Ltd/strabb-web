@@ -8,11 +8,9 @@ import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
 
 const statusColors: Record<string, string> = {
-  reported: "var(--status-pending)",
-  scheduled: "var(--status-confirmed)",
-  in_progress: "var(--status-in-progress)",
+  pending: "var(--status-pending)",
+  confirmed: "var(--status-confirmed)",
   completed: "var(--status-completed)",
-  cancelled: "var(--status-cancelled)",
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
