@@ -1,9 +1,10 @@
 "use client";
 
-import { format } from "date-fns";
 import { useMemo } from "react";
 
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
+import { DEFAULT_TIMEZONE } from "@/hooks/use-property-timezone";
+import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
 
@@ -23,9 +24,14 @@ const priorityColors: Record<string, { bg: string; text: string }> = {
 interface TicketsListViewProps {
   items: Ticket[];
   propertyNames?: Record<string, string>;
+  propertyTimezones?: Record<string, string>;
 }
 
-export function TicketsListView({ items, propertyNames = {} }: TicketsListViewProps) {
+export function TicketsListView({
+  items,
+  propertyNames = {},
+  propertyTimezones = {},
+}: TicketsListViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
 
   const columns: ColumnDef<Ticket>[] = useMemo(
@@ -83,32 +89,38 @@ export function TicketsListView({ items, propertyNames = {} }: TicketsListViewPr
         label: "Reported",
         width: "140px",
         sortable: false,
-        render: (t) => (
-          <span className="font-data text-body">
-            {format(new Date(t.dateReported), "d MMM yyyy")}
-          </span>
-        ),
+        render: (t) => {
+          const tz = propertyTimezones[t.propertyId] ?? DEFAULT_TIMEZONE;
+          return (
+            <span className="font-data text-body">
+              {formatInPropertyTimezone(t.dateReported, tz, "d MMM yyyy")}
+            </span>
+          );
+        },
       },
       {
         key: "scheduled",
         label: "Scheduled",
         width: "140px",
         sortable: false,
-        render: (t) => (
-          <span className="font-data text-body">
-            {t.dateScheduled ? format(new Date(t.dateScheduled), "d MMM yyyy") : "—"}
-          </span>
-        ),
+        render: (t) => {
+          const tz = propertyTimezones[t.propertyId] ?? DEFAULT_TIMEZONE;
+          return (
+            <span className="font-data text-body">
+              {t.dateScheduled ? formatInPropertyTimezone(t.dateScheduled, tz, "d MMM yyyy") : "-"}
+            </span>
+          );
+        },
       },
       {
         key: "cost",
         label: "Cost",
         width: "100px",
         sortable: false,
-        render: (t) => <span className="font-data text-body">{t.cost ? `$${t.cost}` : "—"}</span>,
+        render: (t) => <span className="font-data text-body">{t.cost ? `$${t.cost}` : "-"}</span>,
       },
     ],
-    [propertyNames],
+    [propertyNames, propertyTimezones],
   );
 
   return (

@@ -57,7 +57,7 @@ describe("TicketsPage", () => {
     openDrillDownPanelMock.mockReset();
 
     propertiesMock.mockReturnValue({
-      data: { data: [{ id: "prop-1", name: "Beach House" }] },
+      data: { data: [{ id: "prop-1", name: "Beach House", timezone: "Australia/Sydney" }] },
     });
     ticketsMock.mockReturnValue({
       data: {

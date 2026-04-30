@@ -1,12 +1,13 @@
 "use client";
 
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useProperties } from "@/hooks/use-properties";
+import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
 import { useDeleteTicketAPI, useTicket, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
+import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { useAppStore } from "@/stores/app-store";
 import {
   TICKET_PRIORITY_OPTIONS,
@@ -22,9 +23,9 @@ const statusColors: Record<string, string> = {
   completed: "var(--status-completed)",
 };
 
-function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
-  return format(new Date(iso), "d MMM yyyy, HH:mm");
+function fmtDate(iso: string | null, tz: string): string {
+  if (!iso) return "-";
+  return formatInPropertyTimezone(iso, tz, "d MMM yyyy, HH:mm");
 }
 
 function toIsoLocalInput(iso: string | null): string {
@@ -44,6 +45,7 @@ export function TicketDetailDrawer() {
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: ticket, isLoading } = useTicket(itemId);
+  const tz = usePropertyTimezone(ticket?.propertyId);
   const { data: propertiesData } = useProperties();
   const updateTicket = useUpdateTicketAPI();
   const deleteTicket = useDeleteTicketAPI();
@@ -200,7 +202,7 @@ export function TicketDetailDrawer() {
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-gray-500">Reported</p>
-              <p className="font-data text-body">{fmtDate(ticket.dateReported)}</p>
+              <p className="font-data text-body">{fmtDate(ticket.dateReported, tz)}</p>
             </div>
             <div>
               <p className="text-body text-gray-500">Scheduled</p>
@@ -213,7 +215,7 @@ export function TicketDetailDrawer() {
                   style={{ borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">{fmtDate(ticket.dateScheduled)}</p>
+                <p className="font-data text-body">{fmtDate(ticket.dateScheduled, tz)}</p>
               )}
             </div>
           </div>
@@ -246,12 +248,12 @@ export function TicketDetailDrawer() {
                   style={{ borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">{ticket.cost ? `$${ticket.cost}` : "—"}</p>
+                <p className="font-data text-body">{ticket.cost ? `$${ticket.cost}` : "-"}</p>
               )}
             </div>
             <div>
               <p className="text-body text-gray-500">Completed</p>
-              <p className="font-data text-body">{fmtDate(ticket.dateCompleted)}</p>
+              <p className="font-data text-body">{fmtDate(ticket.dateCompleted, tz)}</p>
             </div>
           </div>
 

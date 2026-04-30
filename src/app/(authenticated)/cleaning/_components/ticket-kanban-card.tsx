@@ -1,8 +1,9 @@
 "use client";
 
-import { format } from "date-fns";
 import { Wrench } from "lucide-react";
 
+import { usePropertyTimezone } from "@/hooks/use-property-timezone";
+import { formatInPropertyTimezone } from "@/lib/date-utils";
 import type { Ticket } from "@/types/ticket";
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
@@ -25,6 +26,7 @@ interface TicketKanbanCardProps {
 }
 
 export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanbanCardProps) {
+  const tz = usePropertyTimezone(ticket.propertyId);
   const priority = priorityColors[ticket.priority] ?? priorityColors.low;
 
   return (
@@ -55,7 +57,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
         </div>
 
         <div className="text-body text-gray-500">
-          Reported {format(new Date(ticket.dateReported), "d MMM")}
+          Reported {formatInPropertyTimezone(ticket.dateReported, tz, "d MMM")}
         </div>
       </div>
     </button>

@@ -1,8 +1,9 @@
 "use client";
 
-import { format } from "date-fns";
 import { Clock, User } from "lucide-react";
 
+import { useTimezoneForListing } from "@/hooks/use-property-timezone";
+import { formatInPropertyTimezone } from "@/lib/date-utils";
 import type { CleaningTask } from "@/types/cleaning-task";
 
 const typeLabels: Record<string, string> = {
@@ -27,6 +28,7 @@ interface CleaningTaskCardProps {
 }
 
 export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
+  const tz = useTimezoneForListing(task.listingId);
   const priority = priorityColors[task.priority] ?? priorityColors.low;
 
   return (
@@ -54,7 +56,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
 
         <div className="gap-xs text-body flex items-center text-gray-500">
           <Clock size={10} />
-          <span>{format(new Date(task.scheduledTime), "d MMM, HH:mm")}</span>
+          <span>{formatInPropertyTimezone(task.scheduledTime, tz, "d MMM, HH:mm")}</span>
         </div>
 
         {task.assigneeName && (

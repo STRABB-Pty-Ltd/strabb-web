@@ -27,6 +27,10 @@ vi.mock("@/hooks/use-bookings", () => ({
   useDismissConflict: () => ({ mutate: dismissConflictMock, isPending: false }),
 }));
 
+vi.mock("@/hooks/use-property-timezone", () => ({
+  useTimezoneForListing: () => "Australia/Sydney",
+}));
+
 import { BookingDetailDrawer } from "./booking-detail-drawer";
 
 const baseBooking: BookingResponse = {

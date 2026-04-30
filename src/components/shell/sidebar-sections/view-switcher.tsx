@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Columns3, GanttChart, List, type LucideIcon } from "lucide-react";
+import { CalendarDays, GanttChart, List, type LucideIcon } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -11,18 +11,11 @@ interface ViewOption {
   icon: LucideIcon;
 }
 
+// Only the calendar page exposes a manual view picker. Messaging and cleaning
+// derive their view from the active submenu chip (see submenu-bar.tsx).
 const viewOptions: Record<string, ViewOption[]> = {
   calendar: [
     { id: "gantt", label: "Gantt", icon: GanttChart },
-    { id: "calendar", label: "Calendar", icon: CalendarDays },
-    { id: "list", label: "List", icon: List },
-  ],
-  messaging: [
-    { id: "kanban", label: "Kanban", icon: Columns3 },
-    { id: "list", label: "List", icon: List },
-  ],
-  cleaning: [
-    { id: "kanban", label: "Kanban", icon: Columns3 },
     { id: "calendar", label: "Calendar", icon: CalendarDays },
     { id: "list", label: "List", icon: List },
   ],
@@ -31,18 +24,11 @@ const viewOptions: Record<string, ViewOption[]> = {
 export function ViewSwitcher({ page }: { page: PageId }) {
   const setView = useAppStore((s) => s.setView);
   const calendarView = useAppStore((s) => s.calendar.view);
-  const messagingView = useAppStore((s) => s.messaging.view);
-  const cleaningView = useAppStore((s) => s.cleaning.view);
 
   const options = viewOptions[page];
   if (!options) return null;
 
-  const viewByPage: Record<string, string> = {
-    calendar: calendarView,
-    messaging: messagingView,
-    cleaning: cleaningView,
-  };
-  const currentView = viewByPage[page] ?? "";
+  const currentView = page === "calendar" ? calendarView : "";
 
   return (
     <div style={{ padding: "var(--space-sm)" }}>

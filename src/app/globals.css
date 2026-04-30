@@ -217,9 +217,9 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
 
-  /* STRABB semantic tokens — exposed as Tailwind utilities so components can */
+  /* STRABB semantic tokens, exposed as Tailwind utilities so components can */
   /* write bg-status-pending instead of style={{ backgroundColor: "var(--status-pending)" }}. */
-  /* Pure aliases — the underlying --xxx vars above remain the single source of truth. */
+  /* Pure aliases: the underlying --xxx vars above remain the single source of truth. */
   --color-status-success: var(--status-success);
   --color-status-danger: var(--status-danger);
   --color-status-pending: var(--status-pending);

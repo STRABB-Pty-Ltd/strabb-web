@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
@@ -10,7 +9,9 @@ import {
   useResendNotification,
   useUpdateCleaningTask,
 } from "@/hooks/use-cleaning-tasks";
+import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
+import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { useAppStore } from "@/stores/app-store";
 
 const statusColors: Record<string, string> = {
@@ -43,6 +44,7 @@ export function CleaningDetailDrawer() {
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: task, isLoading } = useCleaningTask(itemId);
+  const tz = usePropertyTimezone(task?.propertyId);
 
   const updateTask = useUpdateCleaningTask();
   const completeTask = useCompleteCleaningTask();
@@ -124,7 +126,7 @@ export function CleaningDetailDrawer() {
           <div>
             <p className="text-body text-gray-500">Scheduled</p>
             <p className="text-body font-medium text-gray-800">
-              {format(new Date(task.scheduledDate), "d MMM yyyy, HH:mm")}
+              {formatInPropertyTimezone(task.scheduledDate, tz, "d MMM yyyy, HH:mm")}
             </p>
           </div>
 

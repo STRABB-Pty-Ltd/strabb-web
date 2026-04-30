@@ -40,6 +40,10 @@ vi.mock("@/hooks/use-properties", () => ({
   useProperties: () => propertiesMock(),
 }));
 
+vi.mock("@/hooks/use-property-timezone", () => ({
+  usePropertyTimezone: () => "Australia/Sydney",
+}));
+
 import { TicketDetailDrawer } from "./ticket-detail-drawer";
 
 const baseTicket: Ticket = {

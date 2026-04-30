@@ -32,6 +32,12 @@ export default function TicketsPage() {
     return names;
   }, [propertiesData]);
 
+  const propertyTimezones = useMemo(() => {
+    const tz: Record<string, string> = {};
+    for (const p of propertiesData?.data ?? []) tz[p.id] = p.timezone;
+    return tz;
+  }, [propertiesData]);
+
   const items = data?.data ?? [];
   const meta = data?.meta;
 
@@ -80,7 +86,11 @@ export default function TicketsPage() {
         <p className="text-body text-gray-400">Loading tickets…</p>
       ) : (
         <>
-          <TicketsListView items={items} propertyNames={propertyNames} />
+          <TicketsListView
+            items={items}
+            propertyNames={propertyNames}
+            propertyTimezones={propertyTimezones}
+          />
           {meta && meta.totalPages > 1 && (
             <Pagination
               page={filters.page ?? 1}

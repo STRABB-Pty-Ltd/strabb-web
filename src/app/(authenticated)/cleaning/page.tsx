@@ -1,22 +1,34 @@
 "use client";
 
-import { Monitor } from "lucide-react";
+import { useMemo } from "react";
 
 import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
-import { CleaningCalendarView } from "./_components/cleaning-calendar-view";
 import { CleaningKanbanView } from "./_components/cleaning-kanban-view";
 import { CleaningListView } from "./_components/cleaning-list-view";
 import { useCleaningTasks } from "@/hooks/use-cleaning";
-import { useMobileViewOverride } from "@/hooks/use-responsive-view";
+import { useListings } from "@/hooks/use-listings";
+import { useProperties } from "@/hooks/use-properties";
 import { useAppStore } from "@/stores/app-store";
 
 export default function CleaningPage() {
   const view = useAppStore((s) => s.cleaning.view);
   const submenu = useAppStore((s) => s.cleaning.submenu);
   const selectedListings = useAppStore((s) => s.selectedListings);
-  const { effectiveView, showMobileBanner } = useMobileViewOverride(view);
 
   const { data: tasks, isLoading } = useCleaningTasks(submenu, selectedListings);
+  const { data: listingsData } = useListings();
+  const { data: propertiesData } = useProperties();
+
+  const listingTimezones = useMemo(() => {
+    const tz: Record<string, string> = {};
+    const propertyTzMap: Record<string, string> = {};
+    for (const p of propertiesData?.data ?? []) propertyTzMap[p.id] = p.timezone;
+    for (const l of listingsData?.data ?? []) {
+      const propTz = propertyTzMap[l.propertyId];
+      if (propTz) tz[l.id] = propTz;
+    }
+    return tz;
+  }, [propertiesData, listingsData]);
 
   if (isLoading) {
     return (
@@ -28,15 +40,10 @@ export default function CleaningPage() {
 
   return (
     <div>
-      {showMobileBanner && (
-        <div className="mb-sm gap-base px-sm py-base text-body flex items-center rounded-lg bg-blue-50 text-blue-700">
-          <Monitor size={16} />
-          Switch to desktop for Calendar view
-        </div>
+      {view === "kanban" && <CleaningKanbanView tasks={tasks ?? []} />}
+      {view === "list" && (
+        <CleaningListView tasks={tasks ?? []} listingTimezones={listingTimezones} />
       )}
-      {effectiveView === "kanban" && <CleaningKanbanView tasks={tasks ?? []} />}
-      {effectiveView === "calendar" && <CleaningCalendarView tasks={tasks ?? []} />}
-      {effectiveView === "list" && <CleaningListView tasks={tasks ?? []} />}
 
       <ShoppingListPopup />
     </div>
