@@ -44,6 +44,9 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
   const columns = useMemo(() => {
     const taskItems: KanbanItem[] = tasks.map((t) => ({ kind: "task", data: t }));
     const ticketItems: KanbanItem[] = tickets.map((t) => ({ kind: "ticket", data: t }));
+    // Overview kanban shows operator workload only: Tickets, Confirmed,
+    // Pending. Completed tasks aren't actionable - they live in the list
+    // view if someone needs to find them.
     return [
       { id: "ticket", label: "Tickets", items: ticketItems },
       {
@@ -55,11 +58,6 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
         id: "pending",
         label: "Pending",
         items: taskItems.filter((i) => i.kind === "task" && i.data.status === "pending"),
-      },
-      {
-        id: "completed",
-        label: "Completed",
-        items: taskItems.filter((i) => i.kind === "task" && i.data.status === "completed"),
       },
     ];
   }, [tasks, tickets]);

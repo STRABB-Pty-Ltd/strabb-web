@@ -32,7 +32,7 @@ interface MessageCardProps {
 
 export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
-    <button type="button" onClick={onClick} className="w-full text-left">
+    <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-base flex items-center justify-between">
           <div className="gap-base flex min-w-0 items-center">

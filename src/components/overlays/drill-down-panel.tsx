@@ -60,6 +60,7 @@ export function DrillDownPanel({
             type="button"
             onClick={onClose}
             className="p-xs rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            data-no-elevate
           >
             <X size={18} />
           </button>

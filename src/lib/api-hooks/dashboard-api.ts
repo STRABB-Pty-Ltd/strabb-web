@@ -165,14 +165,6 @@ export interface RawPreviewResponse {
   channelBreakdown: { channel: string; count: number; revenue: number }[];
 }
 
-const statusColors: Record<string, string> = {
-  pending: "var(--status-pending)",
-  confirmed: "var(--status-confirmed)",
-  inProgress: "var(--status-in-progress)",
-  completed: "var(--status-completed)",
-  issues: "var(--status-issues)",
-};
-
 export function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
   return {
     miniCalendar: raw.miniCalendar ?? [],
@@ -187,11 +179,7 @@ export function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
       checkIn: b.checkIn,
       channel: b.channel,
     })),
-    taskSummary: Object.entries(raw.cleaningStatus ?? {}).map(([status, count]) => ({
-      status,
-      count,
-      color: statusColors[status] ?? "var(--brand-10)",
-    })),
+    cleansAndTickets: [],
   };
 }
 

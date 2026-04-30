@@ -79,32 +79,13 @@ describe("rawPreviewToPreviewData", () => {
     });
   });
 
-  describe("taskSummary", () => {
-    it("maps status counts and assigns colors from the status palette", () => {
-      const result = rawPreviewToPreviewData(
-        emptyRaw({ cleaningStatus: { pending: 3, completed: 5 } }),
-      );
-      expect(result.taskSummary).toEqual([
-        { status: "pending", count: 3, color: "var(--status-pending)" },
-        { status: "completed", count: 5, color: "var(--status-completed)" },
-      ]);
-    });
-
-    it("falls back to brand color for unknown statuses", () => {
-      const result = rawPreviewToPreviewData(
-        emptyRaw({ cleaningStatus: { weird_status: 1 } }),
-      );
-      expect(result.taskSummary[0]?.color).toBe("var(--brand-10)");
-    });
-  });
-
   describe("missing fields", () => {
     it("treats missing arrays/maps as empty", () => {
       const result = rawPreviewToPreviewData({} as RawPreviewResponse);
       expect(result.miniCalendar).toEqual([]);
       expect(result.revenueSparkline).toEqual([]);
       expect(result.upcomingBookings).toEqual([]);
-      expect(result.taskSummary).toEqual([]);
+      expect(result.cleansAndTickets).toEqual([]);
     });
   });
 });

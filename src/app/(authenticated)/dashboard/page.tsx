@@ -54,7 +54,7 @@ export default function DashboardPage() {
 
       {isCompare && <ComparePanel current={kpis} comparison={kpis} />}
 
-      <PreviewGrid data={preview} />
+      <PreviewGrid data={preview} windowSize={windowSize} />
     </div>
   );
 }

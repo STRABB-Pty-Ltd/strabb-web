@@ -82,6 +82,7 @@ export function ShoppingListPopup() {
                 type="button"
                 onClick={closeShoppingListPopup}
                 className="p-xs rounded text-gray-400 hover:bg-gray-100"
+                data-no-elevate
               >
                 <X size={18} />
               </button>

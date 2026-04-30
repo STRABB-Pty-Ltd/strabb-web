@@ -2,7 +2,13 @@
 
 import { useMemo } from "react";
 
-import { mockBookingList, mockCleaningTaskList, mockFinancialList, mockMessageList } from "./index";
+import {
+  mockBookingList,
+  mockCleaningTaskList,
+  mockFinancialList,
+  mockListingList,
+  mockMessageList,
+} from "./index";
 import { mockTicketsList } from "./ticket";
 import { REFERENCE_NOW } from "./reference-date";
 import type { Booking } from "@/types/booking";
@@ -37,7 +43,12 @@ export interface PreviewData {
     checkIn: string;
     channel: string;
   }[];
-  taskSummary: { status: string; count: number; color: string }[];
+  cleansAndTickets: {
+    id: string;
+    kind: "clean" | "ticket";
+    listing: string;
+    date: string;
+  }[];
 }
 
 function computeKPIs(
@@ -200,6 +211,7 @@ function computeAlerts(
 function computePreview(
   bookings: Booking[],
   tasks: CleaningTask[],
+  tickets: Ticket[],
   financials: Financial[],
   selectedListings: string[],
 ): PreviewData {
@@ -245,23 +257,43 @@ function computePreview(
       channel: b.channel,
     }));
 
-  const statusCounts: Record<string, { count: number; color: string }> = {
-    pending: { count: 0, color: "var(--status-pending)" },
-    confirmed: { count: 0, color: "var(--status-confirmed)" },
-    in_progress: { count: 0, color: "var(--status-in-progress)" },
-    completed: { count: 0, color: "var(--status-completed)" },
-    ticket: { count: 0, color: "var(--status-issues)" },
-  };
-  for (const t of filteredTasks) {
-    if (statusCounts[t.status]) statusCounts[t.status].count++;
-  }
-  const taskSummary = Object.entries(statusCounts).map(([status, { count, color }]) => ({
-    status,
-    count,
-    color,
-  }));
+  const filteredTickets =
+    selectedListings.length > 0
+      ? tickets.filter((t) => t.listingId !== null && selectedListings.includes(t.listingId))
+      : tickets;
 
-  return { miniCalendar, revenueSparkline, upcomingBookings, taskSummary };
+  const listingNameById = new Map(mockListingList.map((l) => [l.id, l.name]));
+
+  type CleansAndTickets = PreviewData["cleansAndTickets"][number];
+
+  const upcomingCleans: CleansAndTickets[] = filteredTasks
+    .filter(
+      (t) =>
+        new Date(t.scheduledTime) >= now &&
+        t.status !== "completed" &&
+        t.status !== "cancelled",
+    )
+    .map((t) => ({
+      id: t.id,
+      kind: "clean" as const,
+      listing: t.listingName,
+      date: t.scheduledTime,
+    }));
+
+  const upcomingTickets: CleansAndTickets[] = filteredTickets
+    .filter((t) => t.status !== "completed")
+    .map((t) => {
+      const ref = t.dateScheduled ?? t.dateReported;
+      const listing = (t.listingId && listingNameById.get(t.listingId)) ?? "";
+      return { id: t.id, kind: "ticket" as const, listing, date: ref };
+    })
+    .filter((t) => new Date(t.date) >= now);
+
+  const cleansAndTickets = [...upcomingCleans, ...upcomingTickets]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5);
+
+  return { miniCalendar, revenueSparkline, upcomingBookings, cleansAndTickets };
 }
 
 export function useDashboardKPIsMock(
@@ -290,7 +322,13 @@ export function useDashboardPreviewMock(
 ) {
   return useMemo(
     () =>
-      computePreview(mockBookingList, mockCleaningTaskList, mockFinancialList, selectedListings),
+      computePreview(
+        mockBookingList,
+        mockCleaningTaskList,
+        mockTicketsList,
+        mockFinancialList,
+        selectedListings,
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedListings, windowSize, anchor],
   );

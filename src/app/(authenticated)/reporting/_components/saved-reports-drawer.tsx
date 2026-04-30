@@ -83,6 +83,7 @@ export function SavedReportsDrawer() {
                   onClick={() => loadReport(report.id)}
                   className="px-base py-xs text-body rounded-sm font-medium"
                   style={{ color: "var(--strabb-secondary)" }}
+                  data-no-elevate
                 >
                   Load
                 </button>
@@ -90,6 +91,7 @@ export function SavedReportsDrawer() {
                   type="button"
                   onClick={() => deleteReport(report.id)}
                   className="p-xs rounded-sm text-gray-400 hover:text-red-500"
+                  data-no-elevate
                 >
                   <Trash2 size={12} />
                 </button>

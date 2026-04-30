@@ -272,9 +272,9 @@ export function CalendarGrid<T>({
   const rowMinPx = mode === "fortnight" ? 55 : 89;
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div
-        className="grid flex-1"
+        className="grid min-h-0 flex-1"
         style={{
           gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
           // Header row sized to its content; data rows share the remaining
@@ -324,7 +324,7 @@ export function CalendarGrid<T>({
             onClick: () => void;
           };
           const tracks: Slot[][] = Array.from({ length: slotCount }, () => []);
-          let overflowCount = 0;
+          const overflowEvents: { label: string; color: string; onClick: () => void }[] = [];
           for (const ev of dayEvents) {
             const trackIdx = trackMap?.get(ev) ?? 0;
             const range = getEventDate(ev);
@@ -395,7 +395,11 @@ export function CalendarGrid<T>({
             if (trackIdx < slotCount) {
               tracks[trackIdx].push(slot);
             } else {
-              overflowCount += 1;
+              overflowEvents.push({
+                label: getEventLabel(ev),
+                color: getEventColor(ev),
+                onClick: () => onEventClick(ev),
+              });
             }
           }
 
@@ -406,7 +410,7 @@ export function CalendarGrid<T>({
               date={day}
               tracks={tracks}
               isCurrentMonth={mode !== "month" || isSameMonth(day, currentDate)}
-              overflowCount={overflowCount}
+              overflowEvents={overflowEvents}
               isLastColumn={dayIdxInWeek === 6}
               isLastRow={weekIdx === lastRowIdx}
             />

@@ -66,11 +66,11 @@ export function AlertStrip({ alerts }: AlertStripProps) {
         return (
           <div
             key={alert.id}
-            className="gap-sm px-md py-sm col-span-3 flex items-center rounded-lg"
+            className="gap-sm px-md py-sm col-span-3 flex items-center rounded-lg transition-shadow hover:shadow-md"
             style={{ backgroundColor: bg }}
           >
             <Icon size={16} style={{ color: accent }} />
-            <span className="text-body" style={{ color: "var(--brand-10)" }}>
+            <span className="text-body flex-1" style={{ color: "var(--brand-10)" }}>
               {alert.description}
             </span>
             <button
@@ -78,6 +78,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               onClick={() => handleView(alert)}
               className="text-body cursor-pointer font-semibold whitespace-nowrap"
               style={{ color: accent }}
+              data-no-elevate
             >
               View
             </button>
@@ -85,6 +86,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               type="button"
               onClick={() => setDismissed((d) => [...d, alert.id])}
               style={{ color: "var(--brand-10)", opacity: 0.6 }}
+              data-no-elevate
             >
               <X size={14} />
             </button>

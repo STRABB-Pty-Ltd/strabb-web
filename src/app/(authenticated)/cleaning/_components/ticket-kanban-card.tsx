@@ -30,7 +30,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
   const priority = priorityColors[ticket.priority] ?? priorityColors.low;
 
   return (
-    <button type="button" onClick={onClick} className="w-full text-left">
+    <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-xs flex items-center">
           <Wrench size={12} className="shrink-0 text-gray-500" />

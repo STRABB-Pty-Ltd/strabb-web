@@ -404,6 +404,21 @@
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
+  /* Elevate-on-hover for all enabled buttons + button-styled anchors -
+     matches the KPI card pattern on the dashboard. Uses :where() so any
+     per-component override wins. Opt out per-element with [data-no-elevate]
+     for inner icon buttons or inline text links where the shadow would
+     visually clash (e.g. tiny X close buttons inside a chip/header). */
+  button:where(:not(:disabled):not([aria-disabled="true"]):not([data-no-elevate])),
+  a:where(:not([aria-disabled="true"]):not([data-no-elevate])) {
+    transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  button:where(:not(:disabled):not([aria-disabled="true"]):not([data-no-elevate])):hover,
+  a:where(:not([aria-disabled="true"]):not([data-no-elevate])):hover {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
 }
 
 .font-data {

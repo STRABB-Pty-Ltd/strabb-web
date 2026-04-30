@@ -17,10 +17,10 @@ export default function LoginPage() {
         </CardContent>
       </Card>
       <div className="text-muted-foreground gap-sm text-body flex">
-        <Link href="/privacy" className="hover:underline">
+        <Link href="/privacy" className="hover:underline" data-no-elevate>
           Privacy Policy
         </Link>
-        <Link href="/terms" className="hover:underline">
+        <Link href="/terms" className="hover:underline" data-no-elevate>
           Terms of Service
         </Link>
       </div>

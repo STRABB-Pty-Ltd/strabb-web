@@ -131,6 +131,7 @@ export function ListingFilterTree() {
                   type="button"
                   onClick={() => toggleGroup(group.id)}
                   className="p-xs shrink-0"
+                  data-no-elevate
                 >
                   {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                 </button>
@@ -140,6 +141,7 @@ export function ListingFilterTree() {
                   onClick={() => deleteCustomGroup(group.id)}
                   className="p-xs"
                   style={{ color: "var(--status-issues)" }}
+                  data-no-elevate
                 >
                   <X size={13} />
                 </button>

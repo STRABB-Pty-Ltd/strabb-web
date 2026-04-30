@@ -164,6 +164,7 @@ export function TimeframePopup() {
             onClick={closeTimeframePopup}
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
             aria-label="Close"
+            data-no-elevate
           >
             <X size={16} />
           </button>

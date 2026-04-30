@@ -32,7 +32,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
   const priority = priorityColors[task.priority] ?? priorityColors.low;
 
   return (
-    <button type="button" onClick={onClick} className="w-full text-left">
+    <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-base flex items-center">
           <span
