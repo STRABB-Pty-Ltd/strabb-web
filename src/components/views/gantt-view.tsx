@@ -36,7 +36,6 @@ export interface GanttViewProps<T> {
   todayLineColor?: string;
 }
 
-const LABEL_WIDTH = 144;
 const MIN_CELL_WIDTH = 34;
 // Listing-row height. Doubled from 34 → 68 so the gantt rail reads at a
 // more comfortable density. Header height is unaffected.
@@ -70,8 +69,7 @@ export function GanttView<T>({
     if (!el) return;
 
     const observer = new ResizeObserver(([entry]) => {
-      const available = entry.contentRect.width - LABEL_WIDTH;
-      const computed = Math.max(MIN_CELL_WIDTH, Math.floor(available / totalDays));
+      const computed = Math.max(MIN_CELL_WIDTH, Math.floor(entry.contentRect.width / totalDays));
       setCellWidth(computed);
     });
     observer.observe(el);
@@ -91,26 +89,6 @@ export function GanttView<T>({
 
         return (
           <div key={row.id} className="mb-xs flex" style={{ minHeight: ROW_HEIGHT }}>
-            {/* Row label */}
-            <div
-              className="gap-base px-base text-body flex shrink-0 items-center border-r border-b bg-white"
-              style={{
-                width: LABEL_WIDTH,
-                position: "sticky",
-                left: 0,
-                zIndex: 5,
-                borderColor: "var(--border)",
-              }}
-            >
-              {row.color && (
-                <span
-                  className="h-base w-base shrink-0 rounded-full"
-                  style={{ backgroundColor: row.color }}
-                />
-              )}
-              <span className="truncate">{row.label}</span>
-            </div>
-
             {/* Grid area */}
             <div className="relative flex border-b" style={{ borderColor: "var(--border)" }}>
               {/* Day cells. No today-cell fill - it's the same neutral-30 as

@@ -12,8 +12,6 @@ export function GanttHeader({ dateRange, cellWidth }: GanttHeaderProps) {
 
   return (
     <div className="flex" style={{ position: "sticky", top: 0, zIndex: 10 }}>
-      {/* Spacer for label column */}
-      <div className="shrink-0 bg-white" style={{ width: 144 }} />
       {/* Day headers */}
       <div className="flex">
         {days.map((day) => (

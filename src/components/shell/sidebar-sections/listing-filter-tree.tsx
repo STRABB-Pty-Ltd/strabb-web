@@ -99,41 +99,14 @@ export function ListingFilterTree() {
       </div>
 
       <div className="gap-xs flex flex-col">
-        {/* Parent listings with children */}
+        {/* Parent listings with children. Children are always visible (no
+            collapse). Indentation differentiates them visually. */}
         {parents.map((parent) => {
           const children = allListings.filter((l) => l.parentId === parent.id);
-          const isExpanded = expandedGroups[parent.id] ?? true;
-          const parentChecked = selectedListings.includes(parent.id);
           return (
             <div key={parent.id} className="gap-xs flex flex-col">
-              <div
-                className="flex items-center rounded-lg"
-                style={{
-                  backgroundColor: parentChecked
-                    ? "var(--btn-active-bg)"
-                    : "var(--btn-inactive-bg)",
-                  color: parentChecked ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(parent.id)}
-                  className="py-base flex shrink-0 items-center justify-center"
-                  style={{ width: "var(--space-lg)" }}
-                  aria-label={isExpanded ? "Collapse" : "Expand"}
-                >
-                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleListing(parent.id)}
-                  aria-pressed={parentChecked}
-                  className="pr-sm py-base flex flex-1 cursor-pointer items-center text-left"
-                >
-                  <span className="text-body truncate font-medium">{parent.name}</span>
-                </button>
-              </div>
-              {isExpanded && children.map((child) => renderListingRow(child, true))}
+              {renderListingRow(parent)}
+              {children.map((child) => renderListingRow(child, true))}
             </div>
           );
         })}
