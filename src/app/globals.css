@@ -217,6 +217,51 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
 
+  /* STRABB semantic tokens — exposed as Tailwind utilities so components can */
+  /* write bg-status-pending instead of style={{ backgroundColor: "var(--status-pending)" }}. */
+  /* Pure aliases — the underlying --xxx vars above remain the single source of truth. */
+  --color-status-success: var(--status-success);
+  --color-status-danger: var(--status-danger);
+  --color-status-pending: var(--status-pending);
+  --color-status-confirmed: var(--status-confirmed);
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-completed: var(--status-completed);
+  --color-status-issues: var(--status-issues);
+  --color-status-cancelled: var(--status-cancelled);
+
+  --color-booking-checked-out: var(--booking-checked-out);
+  --color-booking-checked-in: var(--booking-checked-in);
+  --color-booking-confirmed: var(--booking-confirmed);
+  --color-booking-pending: var(--booking-pending);
+  --color-booking-cancelled: var(--booking-cancelled);
+
+  --color-channel-airbnb: var(--channel-airbnb);
+  --color-channel-booking: var(--channel-booking);
+  --color-channel-vrbo: var(--channel-vrbo);
+  --color-channel-direct: var(--channel-direct);
+
+  --color-surface-page: var(--surface-page);
+  --color-surface-card: var(--surface-card);
+  --color-surface-sidebar: var(--surface-sidebar);
+  --color-surface-submenu: var(--surface-submenu);
+  --color-surface-topnav: var(--surface-topnav);
+
+  --color-strabb-primary: var(--strabb-primary);
+  --color-strabb-secondary: var(--strabb-secondary);
+  --color-strabb-accent: var(--strabb-accent);
+
+  --color-btn-active-bg: var(--btn-active-bg);
+  --color-btn-active-text: var(--btn-active-text);
+  --color-btn-inactive-bg: var(--btn-inactive-bg);
+  --color-btn-inactive-text: var(--btn-inactive-text);
+
+  --color-icon-bg: var(--icon-bg);
+  --color-icon-color: var(--icon-color);
+
+  --color-chart-bar: var(--chart-bar);
+  --color-chart-bar-hover: var(--chart-bar-hover);
+  --color-chart-grid: var(--chart-grid);
+
   /* Remap Tailwind default colors to 60/30/10 palette so hardcoded utility */
   /* classes (bg-white, bg-gray-*, text-gray-*, etc.) inherit dark-mode overrides */
   --color-white: var(--surface-60);
