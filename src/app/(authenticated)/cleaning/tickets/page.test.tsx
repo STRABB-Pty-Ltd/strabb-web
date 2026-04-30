@@ -26,7 +26,7 @@ vi.mock("@/stores/app-store", () => ({
     }),
 }));
 
-vi.mock("@/components/pages/properties/ticket-form-dialog", () => ({
+vi.mock("@/components/pages/cleaning/tickets/ticket-form-dialog", () => ({
   TicketFormDialog: ({ trigger }: { trigger: React.ReactNode }) => (
     <div data-testid="form-dialog">{trigger}</div>
   ),
