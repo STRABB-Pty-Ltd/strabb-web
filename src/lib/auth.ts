@@ -46,7 +46,6 @@ async function fetchCurrentUser(accessToken: string): Promise<CurrentUser> {
 const IS_DEV_SESSION = process.env.NODE_ENV === "development";
 
 if (IS_DEV_SESSION) {
-  // eslint-disable-next-line no-console
   console.warn(
     "[auth] DEV-ONLY: session.maxAge bumped to 30 days. Production uses 1 day.",
   );
