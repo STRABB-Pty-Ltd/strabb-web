@@ -1,6 +1,6 @@
 "use client";
 
-import { KPICard } from "@/components/pages/dashboard/kpi-card";
+import { KPICard } from "@/components/charts/kpi-card";
 import type { KPIData } from "@/hooks/use-dashboard";
 import type { ReportingKPI } from "@/hooks/use-reporting";
 import { useAppStore } from "@/stores/app-store";

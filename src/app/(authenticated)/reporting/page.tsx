@@ -1,8 +1,8 @@
 "use client";
 
-import { ReportingChartGrid } from "@/components/pages/reporting/reporting-chart-grid";
-import { ReportingKPIRow } from "@/components/pages/reporting/reporting-kpi-row";
-import { SavedReportsDrawer } from "@/components/pages/reporting/saved-reports-drawer";
+import { ReportingChartGrid } from "./_components/reporting-chart-grid";
+import { ReportingKPIRow } from "./_components/reporting-kpi-row";
+import { SavedReportsDrawer } from "./_components/saved-reports-drawer";
 import { useReportingChartData, useReportingKPIs } from "@/hooks/use-reporting";
 import { useAppStore } from "@/stores/app-store";
 

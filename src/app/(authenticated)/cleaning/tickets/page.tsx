@@ -3,8 +3,8 @@
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { TicketFormDialog } from "@/components/pages/cleaning/tickets/ticket-form-dialog";
-import { TicketsListView } from "@/components/pages/cleaning/tickets/tickets-list-view";
+import { TicketFormDialog } from "./_components/ticket-form-dialog";
+import { TicketsListView } from "./_components/tickets-list-view";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { useProperties } from "@/hooks/use-properties";

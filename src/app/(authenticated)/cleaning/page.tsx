@@ -3,9 +3,9 @@
 import { Monitor } from "lucide-react";
 
 import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
-import { CleaningCalendarView } from "@/components/pages/cleaning/cleaning-calendar-view";
-import { CleaningKanbanView } from "@/components/pages/cleaning/cleaning-kanban-view";
-import { CleaningListView } from "@/components/pages/cleaning/cleaning-list-view";
+import { CleaningCalendarView } from "./_components/cleaning-calendar-view";
+import { CleaningKanbanView } from "./_components/cleaning-kanban-view";
+import { CleaningListView } from "./_components/cleaning-list-view";
 import { useCleaningTasks } from "@/hooks/use-cleaning";
 import { useMobileViewOverride } from "@/hooks/use-responsive-view";
 import { useAppStore } from "@/stores/app-store";

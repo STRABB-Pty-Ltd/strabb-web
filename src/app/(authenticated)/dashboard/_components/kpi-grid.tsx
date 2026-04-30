@@ -3,7 +3,7 @@
 import type { KPIData } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
-import { KPICard } from "./kpi-card";
+import { KPICard } from "@/components/charts/kpi-card";
 
 interface KPIGridProps {
   kpis: KPIData[];

@@ -6,9 +6,9 @@ import { useCalendarEvents } from "@/hooks/use-calendar";
 import { useMobileViewOverride } from "@/hooks/use-responsive-view";
 import { useAppStore } from "@/stores/app-store";
 
-import { CalendarGanttView } from "@/components/pages/calendar/calendar-gantt-view";
-import { CalendarListView } from "@/components/pages/calendar/calendar-list-view";
-import { CalendarMonthView } from "@/components/pages/calendar/calendar-month-view";
+import { CalendarGanttView } from "./_components/calendar-gantt-view";
+import { CalendarListView } from "./_components/calendar-list-view";
+import { CalendarMonthView } from "./_components/calendar-month-view";
 
 export default function CalendarPage() {
   const view = useAppStore((s) => s.calendar.view);

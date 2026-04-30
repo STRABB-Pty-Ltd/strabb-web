@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
-import { MessagingKanbanView } from "@/components/pages/messaging/messaging-kanban-view";
-import { MessagingListView } from "@/components/pages/messaging/messaging-list-view";
+import { MessagingKanbanView } from "./_components/messaging-kanban-view";
+import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
 import { useAppStore } from "@/stores/app-store";
 

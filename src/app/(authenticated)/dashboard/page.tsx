@@ -3,10 +3,10 @@
 import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
-import { AlertStrip } from "@/components/pages/dashboard/alert-strip";
-import { ComparePanel } from "@/components/pages/dashboard/compare-panel";
-import { KPIGrid } from "@/components/pages/dashboard/kpi-grid";
-import { PreviewGrid } from "@/components/pages/dashboard/preview-grid";
+import { AlertStrip } from "./_components/alert-strip";
+import { ComparePanel } from "./_components/compare-panel";
+import { KPIGrid } from "./_components/kpi-grid";
+import { PreviewGrid } from "./_components/preview-grid";
 
 export default function DashboardPage() {
   const windowSize = useAppStore((s) => s.dashboard.windowSize);
