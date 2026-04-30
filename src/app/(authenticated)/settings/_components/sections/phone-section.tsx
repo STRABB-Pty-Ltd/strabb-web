@@ -35,7 +35,7 @@ export function PhoneSection() {
     if (err instanceof ApiError && err.status === 429) {
       addToast({
         type: "error",
-        message: "Too many attempts — try again in a few minutes.",
+        message: "Too many attempts - try again in a few minutes.",
       });
       return;
     }
@@ -307,7 +307,7 @@ export function PhoneSection() {
               }}
             >
               <ShieldAlert size={14} />
-              Daily cap reached — SMS sending paused until tomorrow.
+              Daily cap reached - SMS sending paused until tomorrow.
             </div>
           )}
         </div>

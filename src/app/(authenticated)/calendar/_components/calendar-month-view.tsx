@@ -89,7 +89,7 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
         if (ev.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.25 };
         return { insetStart: 0, insetEnd: 0 };
       }}
-      // Bookings are the spine of the calendar — they get the top tracks.
+      // Bookings are the spine of the calendar - they get the top tracks.
       // Cleanings and tickets sit beneath unless they share a track with a
       // booking (turnover handshake).
       isPrimaryEvent={(ev) => ev.type === "booking"}

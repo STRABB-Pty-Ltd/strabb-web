@@ -17,7 +17,7 @@ import {
 import { useAppStore } from "@/stores/app-store";
 
 function formatDate(value: string | null): string {
-  if (!value) return "—";
+  if (!value) return "-";
   return format(new Date(value), "d MMM yyyy");
 }
 

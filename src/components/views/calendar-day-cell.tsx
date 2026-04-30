@@ -24,7 +24,7 @@ interface DayCellEvent {
 interface CalendarDayCellProps {
   date: Date;
   /** Visible track rows. Each row is the array of events on that track for
-   *  this day — usually one item, but a turnover day can have three on the
+   *  this day - usually one item, but a turnover day can have three on the
    *  same track (booking-out + cleaning + booking-in) thanks to fractional
    *  cell insets. Empty arrays render as a placeholder track row, keeping a
    *  multi-day event on the same row across every cell it spans. */
@@ -45,7 +45,7 @@ interface CalendarDayCellProps {
 // vertical padding ≈ 23 px. Tight on purpose so 5+ rows of cells fit a typical
 // canvas without scrolling. Hardcoded because the track rows house absolute-
 // positioned chips whose top:0 / bottom:0 stretches require an explicit
-// parent height — calc against unitless tokens silently collapses to 0.
+// parent height - calc against unitless tokens silently collapses to 0.
 const TRACK_ROW_HEIGHT = "23px";
 
 export function CalendarDayCell({
@@ -73,7 +73,7 @@ export function CalendarDayCell({
         paddingLeft: "var(--space-xs)",
         borderRight: isLastColumn ? undefined : "2px solid var(--neutral-30)",
         borderBottom: isLastRow ? undefined : "2px solid var(--neutral-30)",
-        // Today gets a 3 px brand outline on all four sides — including
+        // Today gets a 3 px brand outline on all four sides - including
         // the outer edges (breaking the no-outside-border rule). Drawn
         // inside the cell via outline-offset so it doesn't shift layout,
         // and lifted with position/z-index so it paints above the grey

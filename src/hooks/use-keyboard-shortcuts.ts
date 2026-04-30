@@ -48,7 +48,7 @@ export function useKeyboardShortcuts() {
     function handleKeyDown(e: KeyboardEvent) {
       if (isInputFocused()) return;
 
-      // Escape — close topmost overlay
+      // Escape - close topmost overlay
       if (e.key === "Escape") {
         if (helpOpen) {
           setHelpOpen(false);
@@ -77,13 +77,13 @@ export function useKeyboardShortcuts() {
         return;
       }
 
-      // ? — help modal
+      // ? - help modal
       if (e.key === "?") {
         setHelpOpen((prev) => !prev);
         return;
       }
 
-      // 1-5 — page shortcuts
+      // 1-5 - page shortcuts
       const shortcut = pageShortcuts[e.key];
       if (shortcut) {
         setCurrentPage(shortcut.page);

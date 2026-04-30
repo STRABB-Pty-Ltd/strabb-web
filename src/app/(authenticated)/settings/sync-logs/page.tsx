@@ -32,7 +32,7 @@ export default function SyncLogsPage() {
       onSuccess: (result) => {
         addToast({
           type: "success",
-          message: `Sync complete — ${result.listingsSynced} listings, ${result.bookingsCreated} new bookings, ${result.conflictsDetected} conflicts.`,
+          message: `Sync complete - ${result.listingsSynced} listings, ${result.bookingsCreated} new bookings, ${result.conflictsDetected} conflicts.`,
         });
       },
       onError: (err: unknown) => {
@@ -92,7 +92,7 @@ export default function SyncLogsPage() {
       header: "Completed",
       render: (_v, row) => (
         <span className="font-data text-body text-gray-500">
-          {row.completedAt ? format(new Date(row.completedAt), "HH:mm:ss") : "—"}
+          {row.completedAt ? format(new Date(row.completedAt), "HH:mm:ss") : "-"}
         </span>
       ),
     },
@@ -100,7 +100,7 @@ export default function SyncLogsPage() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "—"}</span>
+        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "-"}</span>
       ),
     },
   ];

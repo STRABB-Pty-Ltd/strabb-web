@@ -37,7 +37,7 @@ export const mockCleaningTaskList: CleaningTask[] = [
     id: "ct-001",
     status: "pending",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     listingColor: "var(--brand-10)",
     bookingId: "bk-003",
     assigneeName: null,
@@ -54,7 +54,7 @@ export const mockCleaningTaskList: CleaningTask[] = [
     id: "ct-002",
     status: "confirmed",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     listingColor: "var(--brand-10)",
     bookingId: "bk-001",
     assigneeName: "Maria Santos",
@@ -125,7 +125,7 @@ export const mockCleaningTaskList: CleaningTask[] = [
     id: "ct-006",
     status: "cancelled",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     listingColor: "var(--brand-10)",
     bookingId: "bk-012",
     assigneeName: "Maria Santos",
@@ -138,7 +138,7 @@ export const mockCleaningTaskList: CleaningTask[] = [
     checklistDone: 0,
     notes: "Booking cancelled by host",
   }),
-  // pending — inspection
+  // pending - inspection
   createCleaningTask({
     id: "ct-007",
     status: "pending",
@@ -155,7 +155,7 @@ export const mockCleaningTaskList: CleaningTask[] = [
     checklistTotal: 5,
     checklistDone: 0,
   }),
-  // confirmed — mid_stay
+  // confirmed - mid_stay
   createCleaningTask({
     id: "ct-008",
     status: "confirmed",

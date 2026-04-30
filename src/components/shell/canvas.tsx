@@ -9,7 +9,7 @@ export function Canvas({ children }: { children: React.ReactNode }) {
       // the canvas content equals the visual gap from the sidebar separator
       // to the canvas content (which is px-md − 2px because the vertical
       // separator overlaps the canvas's left-padding by 2px). Both gaps
-      // track --space-md together — change the token, both update.
+      // track --space-md together - change the token, both update.
       style={{ paddingTop: "calc(var(--space-md) - 2px)" }}
     >
       {children}

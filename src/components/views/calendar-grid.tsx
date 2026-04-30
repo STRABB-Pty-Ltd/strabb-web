@@ -202,13 +202,13 @@ export function CalendarGrid<T>({
         // (the bar's leftmost visible edge). The label then overflows right
         // across the rest of the bar via the chip's overflow:visible. Skip
         // the label entirely when the event's only day in this week is a
-        // 25 % partial — a lonely check-in/check-out doesn't get words.
+        // 25 % partial - a lonely check-in/check-out doesn't get words.
         if (firstDay >= 0 && widest > 0.25) labelDay.set(ev, firstDay);
       }
       weekLabelDay.push(labelDay);
 
       // Build per-track ordered event lists so we can find the next chip on
-      // the same track for each event — used to cap a labeled chip's text
+      // the same track for each event - used to cap a labeled chip's text
       // overflow at the next chip's left edge.
       const trackToEvents = new Map<number, T[]>();
       for (const [ev, trackIdx] of trackMap.entries()) {

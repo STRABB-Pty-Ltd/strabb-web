@@ -71,7 +71,7 @@ describe("TicketsPage", () => {
   it("renders tickets with property names resolved", () => {
     render(<TicketsPage />);
 
-    // "Beach House" appears in the property filter and the row — confirm both surface
+    // "Beach House" appears in the property filter and the row - confirm both surface
     expect(screen.getAllByText("Beach House").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/leaking tap/i)).toBeInTheDocument();
   });

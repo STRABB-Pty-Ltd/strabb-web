@@ -5,7 +5,7 @@ interface CalendarEventChipProps {
   color: string;
   textColor?: string;
   /** Optional coloured stripe used to flag a booking's channel. Renders only
-   *  on the side that's an event boundary — left when isEventStart, right
+   *  on the side that's an event boundary - left when isEventStart, right
    *  when isEventEnd. Mid-event days get no stripe so the chip reads as a
    *  continuous bar across cells. */
   accentColor?: string;
@@ -16,7 +16,7 @@ interface CalendarEventChipProps {
   /** Whether this cell is the event's last day. */
   isEventEnd?: boolean;
   /** Fraction (0..1) of the cell to leave empty before the chip on the
-   *  event's start day — mirrors the calendar gantt's getPartialDay insets. */
+   *  event's start day - mirrors the calendar gantt's getPartialDay insets. */
   insetStart?: number;
   /** Fraction (0..1) of the cell to leave empty after the chip on the
    *  event's end day. */
@@ -42,7 +42,7 @@ interface CalendarEventChipProps {
 
 // Half of the 3px gap between unconjoined chips. Added to each inset edge so
 // e.g. a booking ending at 25% and a cleaning starting at 25% leave 3px of
-// air between them — applied only when an inset is non-zero, so a regular
+// air between them - applied only when an inset is non-zero, so a regular
 // full-day chip sits flush to the cell content edge.
 const GAP_HALF = "1.5px";
 
@@ -103,7 +103,7 @@ export function CalendarEventChip({
         paddingLeft: isEventStart || clampLeftEdge ? "var(--space-xs)" : 0,
         paddingRight: isEventEnd ? "var(--space-xs)" : 0,
         // Tight vertical padding so 5+ rows of cells fit a typical canvas
-        // without scrolling — the body line-height already provides
+        // without scrolling - the body line-height already provides
         // breathing space around the text.
         paddingTop: 1,
         paddingBottom: 1,
@@ -112,7 +112,7 @@ export function CalendarEventChip({
         top: 0,
         bottom: 0,
         // Labeled chips ride above their neighbours and let their text
-        // overflow rightward across the rest of the bar — the label is
+        // overflow rightward across the rest of the bar - the label is
         // anchored to the chip's own left edge (the bar's start) and
         // simply paints over the colour blocks of the trailing days.
         overflow: showLabel ? "visible" : "hidden",

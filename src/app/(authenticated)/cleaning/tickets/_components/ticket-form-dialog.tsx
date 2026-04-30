@@ -92,7 +92,7 @@ export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
         <DialogHeader>
           <DialogTitle>New ticket</DialogTitle>
           <DialogDescription>
-            Log an issue against a property — assign a priority and (optionally) schedule it.
+            Log an issue against a property - assign a priority and (optionally) schedule it.
           </DialogDescription>
         </DialogHeader>
 

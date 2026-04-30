@@ -24,7 +24,7 @@ export default function TermsPage() {
         <p>
           STRABB imports booking data via iCal feeds provided by you. Booking data is eventually
           consistent and may not reflect real-time changes on source platforms. STRABB detects but
-          does not prevent booking conflicts — resolution must be done on the source platform.
+          does not prevent booking conflicts - resolution must be done on the source platform.
         </p>
 
         <h2 className="text-subheading font-semibold">4. Billing</h2>

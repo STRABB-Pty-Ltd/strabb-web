@@ -4,7 +4,7 @@ import { useApiClient } from "./use-api-client";
 
 /**
  * Fire-and-forget analytics event tracking.
- * Failures are silently ignored — analytics should never break UX.
+ * Failures are silently ignored - analytics should never break UX.
  */
 export function useTrackEvent() {
   const apiClient = useApiClient();

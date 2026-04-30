@@ -48,7 +48,7 @@ export function ContextualSidebar() {
     >
       {/* Spacer reserves room for the absolute logo overlay in app-shell.
           Sized so the first listing button top aligns with the canvas top
-          across the divider — see --logo-area-height in globals.css. */}
+          across the divider - see --logo-area-height in globals.css. */}
       <div className="shrink-0" style={{ height: "var(--logo-area-height)" }} aria-hidden="true" />
 
       {showSettingsNav(currentPage) && <SettingsNavSection />}

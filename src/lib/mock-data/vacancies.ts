@@ -10,7 +10,7 @@ const day = (offset: number) => {
 const defaults: Vacancy = {
   id: "vac-001",
   listingId: "lst-002",
-  listingName: "Bondi Beach Apartment — Unit A",
+  listingName: "Bondi Beach Apartment - Unit A",
   startDate: day(2),
   endDate: day(5),
   gapDays: 3,
@@ -25,7 +25,7 @@ export const mockVacancyList: Vacancy[] = [
   createVacancy({
     id: "vac-002",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     startDate: day(10),
     endDate: day(15),
     gapDays: 5,
@@ -65,7 +65,7 @@ export const mockVacancyList: Vacancy[] = [
   createVacancy({
     id: "vac-007",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     startDate: day(25),
     endDate: day(30),
     gapDays: 5,

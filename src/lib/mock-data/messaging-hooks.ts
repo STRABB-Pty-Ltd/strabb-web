@@ -31,7 +31,7 @@ function getThreadContent(index: number, msg: Message, isGuest: boolean): string
     const guestMessages = [
       "Thanks for getting back to me!",
       "That sounds great, looking forward to it.",
-      "One more thing — is there parking available?",
+      "One more thing - is there parking available?",
       "Perfect, see you then!",
       "Could you also let me know about check-in instructions?",
     ];

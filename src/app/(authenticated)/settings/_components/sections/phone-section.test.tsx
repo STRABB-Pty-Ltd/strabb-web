@@ -108,7 +108,7 @@ describe("PhoneSection", () => {
     await userEvent.click(screen.getByRole("button", { name: /send code/i }));
 
     expect(requestMock).not.toHaveBeenCalled();
-    expect(screen.getByText(/at least 8/i)).toBeInTheDocument();
+    expect(screen.getByText(/E\.164 format/i)).toBeInTheDocument();
   });
 
   it("calls request mutation with valid phone", async () => {

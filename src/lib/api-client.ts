@@ -47,7 +47,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         message = errorBody.detail;
       }
     } catch {
-      // Response body wasn't JSON — use default message
+      // Response body wasn't JSON - use default message
     }
 
     throw new ApiError(response.status, message, code);

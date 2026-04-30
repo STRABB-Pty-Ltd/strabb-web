@@ -113,7 +113,7 @@ export function GanttView<T>({
 
             {/* Grid area */}
             <div className="relative flex border-b" style={{ borderColor: "var(--border)" }}>
-              {/* Day cells. No today-cell fill — it's the same neutral-30 as
+              {/* Day cells. No today-cell fill - it's the same neutral-30 as
                   the booking bars and made partial-day check-in slivers
                   indistinguishable from the cell behind them. Today is
                   signalled by the header highlight + the dashed line below. */}
@@ -142,7 +142,7 @@ export function GanttView<T>({
                 if (visibleEnd < 0 || visibleStart > visibleEnd) return null;
 
                 const partial = getPartialDay?.(item);
-                // Insets only apply when the bar's edge is actually visible —
+                // Insets only apply when the bar's edge is actually visible -
                 // when the item extends past the viewport the bar continues
                 // to the edge instead of being chopped.
                 const insetStart = startClipped ? 0 : (partial?.insetStart ?? 0);

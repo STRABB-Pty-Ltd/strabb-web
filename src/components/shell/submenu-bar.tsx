@@ -53,7 +53,7 @@ export function SubmenuBar() {
     if (chip.behavior === "nav") {
       return chip.href ? pathname === chip.href || pathname.startsWith(chip.href + "/") : false;
     }
-    // When the user is on a nav-chip sub-route, no submenu chip is active —
+    // When the user is on a nav-chip sub-route, no submenu chip is active -
     // the nav chip owns the highlight, including over Overview.
     if (onNavSubRoute) return false;
     if (chip.behavior === "toggle" && currentPage === "dashboard" && chip.id === "compare") {
@@ -195,7 +195,7 @@ export function SubmenuBar() {
 
           // The More dropdown needs a positioned wrapper so the menu can
           // anchor under it. Other chips render directly as flex children
-          // — same structure as TopNav so the parent's gap applies cleanly.
+          // - same structure as TopNav so the parent's gap applies cleanly.
           if (isMore) {
             return (
               <div key={chip.id} className="relative" ref={moreRef}>

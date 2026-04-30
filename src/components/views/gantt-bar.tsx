@@ -6,7 +6,7 @@ interface GanttBarProps {
   label: string;
   color: string;
   textColor?: string;
-  /** Optional 4px coloured stripe down the left edge — used by the calendar
+  /** Optional 4px coloured stripe down the left edge - used by the calendar
    *  gantt to flag a booking's channel (Airbnb / Booking.com / Vrbo / direct)
    *  the same way the messaging cards do. */
   accentColor?: string;

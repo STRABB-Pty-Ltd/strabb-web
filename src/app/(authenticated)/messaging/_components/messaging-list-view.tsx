@@ -34,7 +34,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
       className="flex rounded-lg border"
       style={{ borderColor: "var(--border)", height: "calc(100vh - 144px)" }}
     >
-      {/* Left pane — message list */}
+      {/* Left pane - message list */}
       <div
         className="gap-base p-base flex shrink-0 flex-col overflow-y-auto rounded-l-lg border-r"
         style={{
@@ -92,7 +92,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
         })}
       </div>
 
-      {/* Right pane — thread */}
+      {/* Right pane - thread */}
       <div className="flex-1">
         {!selectedMsg ? (
           <div className="flex h-full items-center justify-center">

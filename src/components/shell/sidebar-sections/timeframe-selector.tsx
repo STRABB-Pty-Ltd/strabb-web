@@ -35,7 +35,7 @@ const timeframeOptions: Record<string, TimeframeOption[]> = {
   ],
 };
 
-// Cleaning's "Today" chip maps to windowSize "day" — keep the friendlier label.
+// Cleaning's "Today" chip maps to windowSize "day" - keep the friendlier label.
 const chipIdToWindowSize: Record<string, string> = {
   today: "day",
 };

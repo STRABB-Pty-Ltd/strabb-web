@@ -50,7 +50,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative flex h-screen overflow-hidden">
-      {/* Persistent logo overlay — pinned to top-left of the sidebar column.
+      {/* Persistent logo overlay - pinned to top-left of the sidebar column.
           pointer-events-none so the bottom of the logo (which overflows
           --logo-area-height into the listings header by design) doesn't
           intercept clicks meant for the sidebar's heading row underneath. */}
@@ -82,7 +82,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           }}
         >
           <TopNav />
-          {/* Separator between top nav and submenu — 2px line in a 12px track
+          {/* Separator between top nav and submenu - 2px line in a 12px track
               so it has 5px breathing room on each side. Hidden on settings;
               that branch keeps the same 12px gap for vertical rhythm parity. */}
           {currentPage !== "settings" ? (
@@ -105,7 +105,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           )}
           <SubmenuBar />
         </div>
-        {/* Horizontal rail/canvas separator — 2px, runs full width of the
+        {/* Horizontal rail/canvas separator - 2px, runs full width of the
             flex column (i.e. from the sidebar's right edge across to the page
             right). Pairs with the vertical sidebar separator (which now
             starts at --canvas-top) to form an L-frame around the canvas.

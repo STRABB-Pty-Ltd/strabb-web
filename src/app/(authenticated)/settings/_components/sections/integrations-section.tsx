@@ -51,7 +51,7 @@ export function IntegrationsSection() {
   const handleConnect = (name: string) => {
     addToast({
       type: "info",
-      message: `${name} connection — feature coming soon`,
+      message: `${name} connection - feature coming soon`,
     });
   };
 
