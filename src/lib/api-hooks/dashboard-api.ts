@@ -152,7 +152,7 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
   });
 }
 
-interface RawPreviewResponse {
+export interface RawPreviewResponse {
   revenueTrend: { month: string; amount: number }[];
   upcomingBookings: {
     id: string;
@@ -173,7 +173,7 @@ const statusColors: Record<string, string> = {
   issues: "var(--status-issues)",
 };
 
-function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
+export function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
   // Backend doesn't return a per-day mini-calendar; derive one from the
   // upcoming-bookings list by counting check-ins per day for the next 7 days.
   // Approximate (only counts check-ins, not bookings already in progress)
