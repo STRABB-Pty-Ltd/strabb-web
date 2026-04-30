@@ -180,10 +180,15 @@ function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
   // until the API exposes a dedicated booking-density endpoint.
   const today = startOfDay(new Date());
   const upcoming = raw.upcomingBookings ?? [];
+  // Compare in local time on both sides: parse checkIn ISO into a Date (which
+  // converts to browser-local) before extracting the day, so a booking checking
+  // in tonight after midnight local doesn't get bucketed into yesterday.
   const miniCalendar = Array.from({ length: 7 }, (_, i) => {
     const day = addDays(today, i);
     const dayStr = format(day, "yyyy-MM-dd");
-    const bookings = upcoming.filter((b) => b.checkIn.split("T")[0] === dayStr).length;
+    const bookings = upcoming.filter(
+      (b) => format(new Date(b.checkIn), "yyyy-MM-dd") === dayStr,
+    ).length;
     return { date: dayStr, bookings };
   });
 
