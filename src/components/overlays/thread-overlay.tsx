@@ -58,8 +58,9 @@ export function ThreadOverlay({
     <>
       {/* Scrim */}
       <div
-        className="fixed inset-0 z-[170] bg-black/30"
+        className="fixed inset-0 z-[170]"
         style={{
+          backgroundColor: "var(--scrim)",
           animation: !open ? `fadeOut ${EXIT_MS}ms ease forwards` : `fadeIn ${EXIT_MS}ms ease`,
         }}
       />
@@ -84,7 +85,7 @@ export function ThreadOverlay({
               <h2 className="text-body font-semibold text-gray-800">{data.guestName}</h2>
               <p className="text-body text-gray-500">{data.listingName}</p>
               <p className="text-body text-gray-400">
-                {data.checkIn} &ndash; {data.checkOut}
+                {data.checkIn} - {data.checkOut}
               </p>
             </div>
             <div className="gap-base flex items-center">
@@ -117,8 +118,10 @@ export function ThreadOverlay({
                 className="px-sm py-base max-w-[80%]"
                 style={{
                   backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
-                  color: msg.isGuest ? "var(--brand-10)" : "white",
-                  borderRadius: msg.isGuest ? "8px 8px 8px 0" : "8px 8px 0 8px",
+                  color: msg.isGuest ? "var(--brand-10)" : "var(--text-on-color)",
+                  borderRadius: msg.isGuest
+                    ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
+                    : "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)",
                 }}
               >
                 <p className="text-body font-medium opacity-70">{msg.senderName}</p>

@@ -48,7 +48,7 @@ export function MessageThread({
             </p>
           </div>
           <span
-            className="px-base py-xs text-body rounded-sm font-medium text-white dark:text-[var(--brand-10)]"
+            className="px-base py-xs text-body rounded-sm font-medium text-[var(--text-on-color)]"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
@@ -66,8 +66,10 @@ export function MessageThread({
               className="px-sm py-base max-w-[80%]"
               style={{
                 backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
-                color: msg.isGuest ? "var(--brand-10)" : "white",
-                borderRadius: msg.isGuest ? "8px 8px 8px 0" : "8px 8px 0 8px",
+                color: msg.isGuest ? "var(--brand-10)" : "var(--text-on-color)",
+                borderRadius: msg.isGuest
+                  ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
+                  : "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)",
               }}
             >
               <p className="text-body font-medium opacity-70">{msg.senderName}</p>

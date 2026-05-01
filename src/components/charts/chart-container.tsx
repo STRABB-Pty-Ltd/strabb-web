@@ -20,6 +20,7 @@ export function ChartContainer({
   error = null,
   empty = false,
   children,
+  // 377 sits on the Fibonacci ladder (--space-Fib-377 territory)
   minHeight = 377,
 }: ChartContainerProps) {
   if (loading) {

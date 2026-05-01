@@ -38,6 +38,50 @@
   --semantic-destructive: var(--status-danger);
   --semantic-in-progress: var(--brand-10);
 
+  /* Status warning + tinted backgrounds. Used by trial banners, connect
+     pills, integration success notes - anywhere we want a coloured panel
+     bg without committing the whole surface to the bright accent colour. */
+  --status-warning: #ca8a04;
+  --status-success-tint: rgba(21, 128, 61, 0.1);
+  --status-warning-tint: rgba(202, 138, 4, 0.1);
+  --status-danger-tint: rgba(185, 28, 28, 0.08);
+
+  /* Always-light text for use on top of non-flipping coloured backgrounds
+     (success green, danger red, channel pills). text-white can't be used
+     because surface-60 inverts in dark mode and renders dark on those
+     still-coloured surfaces. This token stays light in both themes. */
+  --text-on-color: var(--surface-60);
+
+  /* Modal/drawer scrim. Fixed black overlay regardless of theme - black IS
+     remapped to brand-10 via @theme inline, so `bg-black/30` would become
+     a warm-white wash in dark mode. Use this instead. */
+  --scrim: rgba(0, 0, 0, 0.4);
+
+  /* Shadow scale. Hand-rolled rgba so dark mode can tune them stronger. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+  /* Channel-accent stripe width. Used by booking bars, message cards,
+     billing banner. Off-Fibonacci (4px) but design-locked. */
+  --stripe-width: 4px;
+
+  /* Hairline separator and minimum touch-target. Off-Fibonacci but
+     design/a11y-locked: 2px is the visual hairline used between sections,
+     and 44px is the WCAG-recommended minimum tap area. */
+  --hairline: 2px;
+  --touch-target-min: 44px;
+
+  /* Top-nav and submenu pill button width. 95px is design-locked off-ladder. */
+  --btn-pill-width: 95px;
+
+  /* Aliases for legacy ghost-token references that found their way into
+     billing + scheduled-messaging. Resolve to existing palette so no
+     style breaks if a stray reference remains. */
+  --neutral-20: var(--neutral-30);
+  --neutral-50: var(--brand-10);
+  --neutral-90: var(--brand-10);
+
   /* Cleaning + ticket status colors. Same mapping for both - cleans and
      tickets share the unified status set, so a "pending" reads the same
      across the app. confirmed = neutral foreground (work acknowledged but
@@ -145,6 +189,20 @@
   --status-danger: #f87171;
   --chart-grid: rgba(250, 249, 245, 0.12);
 
+  /* Tints get retuned for dark mode so they read against the dark surface. */
+  --status-warning: #fbbf24;
+  --status-success-tint: rgba(5, 150, 105, 0.18);
+  --status-warning-tint: rgba(251, 191, 36, 0.16);
+  --status-danger-tint: rgba(248, 113, 113, 0.14);
+
+  /* Always-light text - in dark mode brand-10 IS the warm off-white. */
+  --text-on-color: var(--brand-10);
+
+  /* Shadows pop harder against the dark surface. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
+
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
   --foreground: var(--brand-10);
@@ -226,12 +284,18 @@
   /* Pure aliases: the underlying --xxx vars above remain the single source of truth. */
   --color-status-success: var(--status-success);
   --color-status-danger: var(--status-danger);
+  --color-status-warning: var(--status-warning);
   --color-status-pending: var(--status-pending);
   --color-status-confirmed: var(--status-confirmed);
   --color-status-in-progress: var(--status-in-progress);
   --color-status-completed: var(--status-completed);
   --color-status-issues: var(--status-issues);
   --color-status-cancelled: var(--status-cancelled);
+  --color-status-success-tint: var(--status-success-tint);
+  --color-status-warning-tint: var(--status-warning-tint);
+  --color-status-danger-tint: var(--status-danger-tint);
+  --color-text-on-color: var(--text-on-color);
+  --color-scrim: var(--scrim);
 
   --color-booking-checked-out: var(--booking-checked-out);
   --color-booking-checked-in: var(--booking-checked-in);
@@ -363,6 +427,9 @@
   --color-yellow-500: var(--brand-10);
   --color-yellow-600: var(--brand-10);
   --color-yellow-700: var(--brand-10);
+  --color-yellow-800: var(--brand-10);
+  --color-yellow-900: var(--brand-10);
+  --color-yellow-950: var(--brand-10);
   --color-amber-50: var(--neutral-30);
   --color-amber-100: var(--neutral-30);
   --color-amber-200: var(--neutral-30);

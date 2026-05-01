@@ -50,8 +50,8 @@ export function SharePopup() {
   return (
     <>
       <div
-        className="fixed inset-0 z-[180] bg-black/30"
-        style={{ animation: scrimAnim }}
+        className="fixed inset-0 z-[180]"
+        style={{ backgroundColor: "var(--scrim)", animation: scrimAnim }}
         onClick={closeSharePopup}
       />
       <div className="fixed inset-0 z-[185] flex items-center justify-center">

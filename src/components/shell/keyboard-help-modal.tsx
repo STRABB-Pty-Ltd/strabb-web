@@ -32,8 +32,8 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      style={{ animation: scrimAnim }}
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ backgroundColor: "var(--scrim)", animation: scrimAnim }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"

@@ -11,17 +11,23 @@ export function PageLoading() {
           backgroundColor: "var(--strabb-primary)",
         }}
       >
-        <div className="animate-pulse rounded bg-white/20" style={{ height: 21, width: 89 }} />
+        <div
+          className="animate-pulse rounded-md bg-white/20"
+          style={{ height: "var(--space-md)", width: 89 }} // 89 = Fibonacci, no project token
+        />
         <div className="gap-xs flex flex-1 justify-center">
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
               className="animate-pulse rounded-lg bg-white/10"
-              style={{ height: 34, width: 89 }}
+              style={{ height: "var(--space-lg)", width: 89 }}
             />
           ))}
         </div>
-        <div className="animate-pulse rounded-lg bg-white/10" style={{ height: 34, width: 89 }} />
+        <div
+          className="animate-pulse rounded-lg bg-white/10"
+          style={{ height: "var(--space-lg)", width: 89 }}
+        />
       </div>
 
       {/* Skeleton submenu bar */}
@@ -30,7 +36,7 @@ export function PageLoading() {
           <div
             key={i}
             className="animate-pulse rounded-full bg-gray-100"
-            style={{ height: 34, width: 89 }}
+            style={{ height: "var(--space-lg)", width: 89 }}
           />
         ))}
       </div>
@@ -43,23 +49,26 @@ export function PageLoading() {
           style={{ width: "var(--sidebar-width)" }}
         >
           <div className="space-y-md">
-            <div className="animate-pulse rounded bg-gray-100" style={{ height: 13, width: 89 }} />
+            <div
+              className="animate-pulse rounded-md bg-gray-100"
+              style={{ height: "var(--space-sm)", width: 89 }}
+            />
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded bg-gray-50"
-                style={{ height: 34, width: "100%" }}
+                className="animate-pulse rounded-md bg-gray-50"
+                style={{ height: "var(--space-lg)", width: "100%" }}
               />
             ))}
             <div
-              className="mt-md animate-pulse rounded bg-gray-100"
-              style={{ height: 13, width: 89 }}
+              className="mt-md animate-pulse rounded-md bg-gray-100"
+              style={{ height: "var(--space-sm)", width: 89 }}
             />
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded bg-gray-50"
-                style={{ height: 21, width: "100%" }}
+                className="animate-pulse rounded-md bg-gray-50"
+                style={{ height: "var(--space-md)", width: "100%" }}
               />
             ))}
           </div>
@@ -68,7 +77,10 @@ export function PageLoading() {
         {/* Skeleton content */}
         <div className="p-lg flex-1">
           <div className="space-y-lg">
-            <div className="animate-pulse rounded bg-gray-100" style={{ height: 21, width: 144 }} />
+            <div
+              className="animate-pulse rounded-md bg-gray-100"
+              style={{ height: "var(--space-md)", width: 144 }} // 144 = Fibonacci, no project token
+            />
             <div className="gap-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="h-[89px] animate-pulse rounded-lg bg-gray-50" />

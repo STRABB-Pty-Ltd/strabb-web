@@ -9,25 +9,27 @@ const TRIAL_WARNING_THRESHOLD_DAYS = 3;
 
 type Tone = "neutral" | "warning" | "danger" | "cta";
 
+// Tone -> token map. Tints + accents are theme-tuned in globals.css.
 const toneStyles: Record<Tone, { bg: string; text: string; border: string }> = {
   neutral: {
-    bg: "var(--neutral-20)",
-    text: "var(--neutral-90)",
+    bg: "var(--neutral-30)",
+    text: "var(--brand-10)",
     border: "var(--border)",
   },
   warning: {
-    bg: "rgb(254 252 232)",
-    text: "rgb(133 77 14)",
-    border: "rgb(253 224 71)",
+    bg: "var(--status-warning-tint)",
+    text: "var(--status-warning)",
+    border: "var(--status-warning)",
   },
   danger: {
-    bg: "rgb(254 226 226)",
-    text: "rgb(153 27 27)",
-    border: "rgb(252 165 165)",
+    bg: "var(--status-danger-tint)",
+    text: "var(--status-danger)",
+    border: "var(--status-danger)",
   },
   cta: {
+    // Filled brand pill: always-light text on coloured bg.
     bg: "var(--strabb-secondary)",
-    text: "white",
+    text: "var(--text-on-color)",
     border: "var(--strabb-secondary)",
   },
 };

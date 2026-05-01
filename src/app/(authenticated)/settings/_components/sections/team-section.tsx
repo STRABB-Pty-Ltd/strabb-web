@@ -154,6 +154,9 @@ export function TeamSection() {
         </div>
       )}
 
+      {/* Column widths w-[233px] and w-[89px] are arbitrary values on the Fibonacci ladder
+          (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
+          tracking-wide on the header row: known design exception, no project letter-spacing token. */}
       <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <div className="text-body flex border-b bg-gray-50 font-semibold tracking-wide text-gray-500 uppercase">
           <div className="px-sm py-sm flex-1">Name</div>

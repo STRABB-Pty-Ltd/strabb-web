@@ -84,7 +84,7 @@ export function ChannelsSection() {
             className="px-sm py-sm rounded-lg border"
             style={{
               borderColor: "var(--border)",
-              borderLeftWidth: 4,
+              borderLeftWidth: "var(--stripe-width)",
               borderLeftColor: ch.color,
             }}
           >

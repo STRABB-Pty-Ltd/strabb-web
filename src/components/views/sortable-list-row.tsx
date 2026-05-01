@@ -16,7 +16,7 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
       onClick={onClick}
       className="flex w-full text-left transition-colors hover:bg-blue-50/50"
       style={{
-        height: 55,
+        height: "var(--space-xl)",
         backgroundColor: index % 2 === 0 ? "var(--surface-60)" : "var(--neutral-30)",
       }}
     >

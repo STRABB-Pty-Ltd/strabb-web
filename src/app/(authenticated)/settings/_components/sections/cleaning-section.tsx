@@ -27,6 +27,7 @@ export function CleaningSection() {
           <label className="mb-xs text-body block font-medium text-gray-700">
             Default Duration (hours)
           </label>
+          {/* w-[144px] is on the Fibonacci ladder (5/8/13/21/34/55/89/144/...), kept as an arbitrary value. */}
           <input
             type="number"
             value={defaultDuration}
@@ -56,6 +57,7 @@ export function CleaningSection() {
               backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
             }}
           >
+            {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
             <span
               className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
               style={{ left: autoAssign ? 18 : 2 }}

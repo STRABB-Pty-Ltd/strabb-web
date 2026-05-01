@@ -60,7 +60,10 @@ export function DrillDownPanel({
         }}
       >
         {/* Accent bar */}
-        <div className="shrink-0" style={{ height: 8, backgroundColor: accentColor }} />
+        <div
+          className="shrink-0"
+          style={{ height: "var(--space-base)", backgroundColor: accentColor }}
+        />
 
         {/* Header */}
         <div

@@ -26,7 +26,7 @@ export function SortableListHeader<T>({
   return (
     <div
       className="flex border-b bg-gray-50"
-      style={{ borderColor: "var(--border)", minHeight: 34 }}
+      style={{ borderColor: "var(--border)", minHeight: "var(--space-lg)" }}
     >
       {columns.map((col) => {
         const isSortable = col.sortable !== false;

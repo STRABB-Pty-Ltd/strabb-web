@@ -68,7 +68,7 @@ export default function ScheduledMessagesPage() {
               className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors"
               style={{
                 borderColor: active ? "var(--strabb-secondary)" : "transparent",
-                color: active ? "var(--strabb-secondary)" : "var(--neutral-50)",
+                color: active ? "var(--strabb-secondary)" : "var(--brand-10)",
               }}
             >
               {t.label}
@@ -146,7 +146,7 @@ function ScheduledTab({
       header: "Status",
       render: (_v, m) => (
         <span
-          className="px-base py-xs text-body rounded-full font-medium text-white dark:text-[var(--brand-10)]"
+          className="px-base py-xs text-body rounded-full font-medium text-[var(--text-on-color)]"
           style={{ backgroundColor: statusColors[m.status] ?? "var(--brand-10)" }}
         >
           {m.status}
@@ -255,16 +255,19 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
                 ) : (
                   <ChevronRight size={14} className="shrink-0" />
                 )}
-                <span className="font-medium text-gray-800" style={{ minWidth: 140 }}>
+                <span className="font-medium text-gray-800" style={{ minWidth: 144 }}>
                   {log.event}
                 </span>
-                <span className="font-data text-gray-500" style={{ minWidth: 160 }}>
+                <span className="font-data text-gray-500" style={{ minWidth: 144 }}>
                   {format(new Date(log.createdAt), "d MMM yyyy, HH:mm:ss")}
                 </span>
                 <span className="flex-1 truncate text-gray-500">{log.details ?? ""}</span>
               </button>
               {isOpen && (
-                <div className="px-sm pb-base space-y-xs" style={{ paddingLeft: 36 }}>
+                <div
+                  className="px-sm pb-base space-y-xs"
+                  style={{ paddingLeft: "var(--space-lg)" }}
+                >
                   {log.details && (
                     <div>
                       <p className="text-body font-semibold text-gray-700">Details</p>

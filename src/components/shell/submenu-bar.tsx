@@ -172,8 +172,8 @@ export function SubmenuBar() {
           const chipClass =
             "gap-xs px-sm py-base text-body inline-flex shrink-0 cursor-pointer items-center justify-center border-0 font-medium whitespace-nowrap outline-none transition-all hover:opacity-80 active:scale-95 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
           const chipStyle = {
-            width: 95,
-            borderRadius: 5,
+            width: "var(--btn-pill-width)",
+            borderRadius: "var(--radius-md)",
             backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
             color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
           };
@@ -211,7 +211,7 @@ export function SubmenuBar() {
                 {moreOpen && (
                   <div
                     className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
-                    style={{ minWidth: 144 }}
+                    style={{ minWidth: 144 }} // = --space-xl + --space-xl + --space-lg (Fibonacci 144)
                   >
                     <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
                   </div>

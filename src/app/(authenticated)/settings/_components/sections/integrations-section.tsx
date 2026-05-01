@@ -96,7 +96,7 @@ export function IntegrationsSection() {
                 <span
                   className="px-base py-xs text-body rounded-full font-medium"
                   style={{
-                    backgroundColor: "rgba(22, 163, 74, 0.1)",
+                    backgroundColor: "var(--status-success-tint)",
                     color: "var(--status-success)",
                   }}
                 >

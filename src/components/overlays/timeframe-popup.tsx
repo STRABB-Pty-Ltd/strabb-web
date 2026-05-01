@@ -133,6 +133,9 @@ export function TimeframePopup() {
   // fall back to the legacy fixed spot below the rail for any caller that
   // doesn't pass one. Right-edge clamping keeps the popup on-screen when the
   // trigger sits near the viewport edge.
+  // POPUP_WIDTH mirrors --drilldown-width; VIEWPORT_MARGIN mirrors --space-base.
+  // Kept as JS literals because reading CSS vars in layout math via getComputedStyle
+  // is awkward (and the values are design-locked anyway).
   const POPUP_WIDTH = 377;
   const VIEWPORT_MARGIN = 8;
   const positionStyle: { top: number | string; left: number | string } = tfPopup.anchor
@@ -170,7 +173,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
+            className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
             aria-label="Close"
             data-no-elevate
           >
@@ -256,7 +259,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -265,7 +268,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -312,7 +315,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -321,7 +324,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -407,7 +410,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(subMonths(viewDate, 1))}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous month"
         >
           <ChevronLeft size={16} />
@@ -416,7 +419,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(addMonths(viewDate, 1))}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next month"
         >
           <ChevronRight size={16} />

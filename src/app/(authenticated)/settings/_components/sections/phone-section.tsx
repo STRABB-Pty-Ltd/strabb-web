@@ -139,7 +139,10 @@ export function PhoneSection() {
         <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
           <div className="gap-sm flex items-start justify-between">
             <div className="gap-sm flex items-start">
-              <CheckCircle2 size={20} style={{ color: "var(--semantic-success)", marginTop: 2 }} />
+              <CheckCircle2
+                size={20}
+                style={{ color: "var(--semantic-success)", marginTop: "var(--hairline)" }}
+              />
               <div>
                 <p className="text-body font-medium text-gray-800">{status?.phoneNumber}</p>
                 <p className="text-body text-gray-500">
@@ -201,6 +204,8 @@ export function PhoneSection() {
                 setOtpError(null);
               }}
               placeholder="123456"
+              // tracking-widest: known design exception - no project letter-spacing token,
+              // OTP inputs need wide tracking for readability.
               className="px-sm py-base text-body font-data w-full rounded-lg border tracking-widest"
               style={{ borderColor: otpError ? "var(--status-danger)" : "var(--border)" }}
             />
@@ -235,6 +240,8 @@ export function PhoneSection() {
       {showEntry && (
         <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
           <div className="gap-xs flex items-start">
+            {/* marginTop: 10 is a sub-token value with no equivalent in the spacing scale.
+                Could round to 13 (--space-sm) if visually acceptable. Left as-is to preserve icon alignment. */}
             <Phone size={18} style={{ color: "var(--strabb-secondary)", marginTop: 10 }} />
             <div className="space-y-xs flex-1">
               <label className="text-body block font-medium text-gray-700" htmlFor="phone-input">
@@ -302,7 +309,7 @@ export function PhoneSection() {
             <div
               className="mt-sm gap-xs p-xs text-body flex items-center rounded-md"
               style={{
-                backgroundColor: "rgba(220, 38, 38, 0.08)",
+                backgroundColor: "var(--status-danger-tint)",
                 color: "var(--status-danger)",
               }}
             >

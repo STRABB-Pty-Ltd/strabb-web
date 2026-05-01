@@ -270,6 +270,10 @@ export function CalendarGrid<T>({
   }
 
   const rowCount = Math.ceil(gridDays.length / 7);
+  // 55 = --space-xl (Fibonacci), 89 = next Fibonacci step. Numeric form because
+  // these flow into a `minmax(${n}px, 1fr)` template which can't reference CSS
+  // custom properties without a calc() at runtime - cheaper to keep the
+  // mapping in a comment than to indirect through getComputedStyle.
   const rowMinPx = mode === "fortnight" ? 55 : 89;
 
   return (

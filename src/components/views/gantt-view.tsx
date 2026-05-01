@@ -41,13 +41,17 @@ export interface GanttViewProps<T> {
   todayLineColor?: string;
 }
 
+// = --space-lg (34px). Numeric form because it flows into pixel-math for
+// cellWidth, ResizeObserver values, and absolute positioning offsets.
 const MIN_CELL_WIDTH = 34;
 // Listing-row height. Doubled from 34 -> 68 so the gantt rail reads at a
 // more comfortable density. Header height is unaffected.
+// = 2 * --space-lg.
 const ROW_HEIGHT = 68;
 // Vertical gap between rows; matches the mb-xs (var(--space-xs)) class on
 // each row container. Multi-row spanning bars need this so their height
 // covers the gap as well as the row strips.
+// = --space-xs (5px).
 const ROW_GAP = 5;
 
 export function GanttView<T>({
@@ -144,6 +148,7 @@ export function GanttView<T>({
                 // edge (so neighbouring full-day bars don't touch). Partial-day
                 // ends are already separated by their fractional inset, and
                 // clipped bars sit flush with the viewport.
+                // 5 = --space-xs.
                 const adjacencyGap = !endClipped && insetEnd === 1 ? 5 : 0;
                 const widthPx = rightPx - leftPx - adjacencyGap;
                 if (widthPx <= 0) return null;

@@ -4,6 +4,12 @@ import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts"
 
 import { ChartContainer } from "./chart-container";
 
+// Recharts forwards numeric font sizes to internal SVG <text> elements and uses
+// getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
+// these props. Mirror the token here as a plain number to keep the link
+// documented while staying compatible.
+const FONT_SIZE = 13; // mirrors var(--text-body)
+
 interface RevenueTrendData {
   label: string;
   revenue: number;
@@ -33,11 +39,11 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-        <XAxis dataKey="label" tick={{ fontSize: 13, fill: "var(--brand-10)" }} />
-        <YAxis tick={{ fontSize: 13, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
+        <XAxis dataKey="label" tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }} />
+        <YAxis tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 13 }}
+          contentStyle={{ fontSize: FONT_SIZE }}
         />
         <Area
           type="monotone"

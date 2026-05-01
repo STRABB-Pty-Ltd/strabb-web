@@ -4,6 +4,12 @@ import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
 import { ChartContainer } from "./chart-container";
 
+// Recharts forwards numeric font sizes to internal SVG <text> elements and uses
+// getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
+// these props. Mirror the token here as a plain number to keep the link
+// documented while staying compatible.
+const FONT_SIZE = 13; // mirrors var(--text-body)
+
 interface ExpenseData {
   category: string;
   amount: number;
@@ -38,6 +44,7 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
           nameKey="category"
           cx="50%"
           cy="50%"
+          // 55 = --space-xl, 89 is on the Fibonacci ladder
           innerRadius={55}
           outerRadius={89}
           paddingAngle={2}
@@ -47,7 +54,10 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip formatter={(value) => formatAUD(Number(value))} contentStyle={{ fontSize: 13 }} />
+        <Tooltip
+          formatter={(value) => formatAUD(Number(value))}
+          contentStyle={{ fontSize: FONT_SIZE }}
+        />
         <Legend
           verticalAlign="bottom"
           iconType="circle"

@@ -104,7 +104,10 @@ export function BookingDetailDrawer() {
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
                 className="mt-base px-sm py-base text-body rounded-lg border font-medium text-red-800 disabled:opacity-60"
-                style={{ borderColor: "rgb(252 165 165)", backgroundColor: "white" }}
+                style={{
+                  borderColor: "var(--status-danger)",
+                  backgroundColor: "var(--surface-60)",
+                }}
               >
                 {dismissConflict.isPending ? "Dismissing…" : "Dismiss conflict"}
               </button>

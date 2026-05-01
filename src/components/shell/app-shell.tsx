@@ -75,7 +75,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             left: "calc(var(--sidebar-width) + 4px)",
             top: "var(--canvas-top)",
             bottom: "var(--space-xl)",
-            width: "2px",
+            width: "var(--hairline)",
             backgroundColor: "var(--neutral-30)",
           }}
         />
@@ -98,19 +98,19 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             <div
               aria-hidden="true"
               className="pointer-events-none flex shrink-0 items-center justify-center"
-              style={{ height: 12 }}
+              style={{ height: 12 }} // 12px track = --space-sm minus the 2px hairline that paints inside
             >
               <div
                 style={{
-                  width: 385,
-                  height: 2,
+                  width: 385, // design-locked magic value; not on the Fibonacci ladder
+                  height: "var(--hairline)",
                   marginLeft: "calc(0px - var(--sidebar-width) / 2)",
                   backgroundColor: "var(--neutral-30)",
                 }}
               />
             </div>
           ) : (
-            <div style={{ height: 12 }} />
+            <div style={{ height: 12 }} /> // 12px track = --space-sm minus the 2px hairline that paints inside
           )}
           <SubmenuBar />
         </div>
@@ -122,7 +122,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         <div
           aria-hidden="true"
           className="relative shrink-0"
-          style={{ height: 2, backgroundColor: "var(--neutral-30)", zIndex: 25 }}
+          style={{ height: "var(--hairline)", backgroundColor: "var(--neutral-30)", zIndex: 25 }}
         />
         <ErrorBoundary>
           <Suspense fallback={<PageLoading />}>

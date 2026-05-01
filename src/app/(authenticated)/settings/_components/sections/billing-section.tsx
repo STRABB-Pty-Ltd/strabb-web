@@ -113,8 +113,8 @@ export function BillingSection() {
             <span
               className="px-sm py-xs text-body rounded-full font-medium"
               style={{
-                backgroundColor: daysLeft <= 3 ? "rgb(254 252 232)" : "var(--neutral-20)",
-                color: daysLeft <= 3 ? "rgb(133 77 14)" : "var(--neutral-90)",
+                backgroundColor: daysLeft <= 3 ? "var(--status-warning-tint)" : "var(--neutral-30)",
+                color: daysLeft <= 3 ? "var(--status-warning)" : "var(--brand-10)",
               }}
             >
               {daysLeft === 0

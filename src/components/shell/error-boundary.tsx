@@ -40,7 +40,7 @@ export class ErrorBoundary extends React.Component<
               An unexpected error occurred. Try reloading this section.
             </p>
             {process.env.NODE_ENV === "development" && this.state.error && (
-              <details className="mb-md p-sm text-body rounded border text-left">
+              <details className="mb-md p-sm text-body rounded-md border text-left">
                 <summary className="cursor-pointer font-medium">Error details</summary>
                 <pre className="mt-base overflow-auto whitespace-pre-wrap text-red-600">
                   {this.state.error.message}

@@ -79,6 +79,7 @@ export function NotificationsSection() {
                 backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
               }}
             >
+              {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
               <span
                 className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
                 style={{

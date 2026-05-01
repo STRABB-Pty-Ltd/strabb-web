@@ -4,6 +4,12 @@ import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recha
 
 import { ChartContainer } from "./chart-container";
 
+// Recharts forwards numeric font sizes to internal SVG <text> elements and uses
+// getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
+// these props. Mirror the token here as a plain number to keep the link
+// documented while staying compatible.
+const FONT_SIZE = 13; // mirrors var(--text-body)
+
 interface ChannelData {
   channel: string;
   revenue: number;
@@ -30,23 +36,28 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           type="number"
-          tick={{ fontSize: 13, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
           tickFormatter={formatAUD}
         />
         <YAxis
           dataKey="channel"
           type="category"
-          tick={{ fontSize: 13, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          // 89 is on the Fibonacci ladder
           width={89}
         />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 13 }}
+          contentStyle={{ fontSize: FONT_SIZE }}
         />
         <Bar
           dataKey="revenue"
           radius={[0, 3, 3, 0]}
-          label={{ position: "right", fontSize: 13, formatter: (v) => formatAUD(Number(v)) }}
+          label={{
+            position: "right",
+            fontSize: FONT_SIZE,
+            formatter: (v) => formatAUD(Number(v)),
+          }}
         >
           {data.map((entry, i) => (
             <Cell key={i} fill={entry.color} />

@@ -4,6 +4,12 @@ import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recha
 
 import { ChartContainer } from "./chart-container";
 
+// Recharts forwards numeric font sizes to internal SVG <text> elements and uses
+// getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
+// these props. Mirror the token here as a plain number to keep the link
+// documented while staying compatible.
+const FONT_SIZE = 13; // mirrors var(--text-body)
+
 interface RevenueByListingData {
   listing: string;
   revenue: number;
@@ -31,16 +37,17 @@ export function RevenueByListingChart({ data, loading }: RevenueByListingChartPr
         <CartesianGrid strokeDasharray="3 3" stroke="var(--neutral-30)" />
         <XAxis
           dataKey="listing"
-          tick={{ fontSize: 13 }}
+          tick={{ fontSize: FONT_SIZE }}
           interval={0}
           angle={-20}
           textAnchor="end"
+          // 55 = --space-xl
           height={55}
         />
-        <YAxis tick={{ fontSize: 13 }} tickFormatter={formatAUD} />
+        <YAxis tick={{ fontSize: FONT_SIZE }} tickFormatter={formatAUD} />
         <Tooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: 13 }}
+          contentStyle={{ fontSize: FONT_SIZE }}
         />
         <Bar dataKey="revenue" radius={[3, 3, 0, 0]}>
           {sorted.map((entry, i) => (
