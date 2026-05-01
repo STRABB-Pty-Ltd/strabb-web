@@ -16,6 +16,15 @@ const typeColors: Record<string, string> = {
   vacancy: "var(--neutral-30)",
 };
 
+// Cleaning chips read their status, mirroring calendar-month-view + cleaning list.
+const cleaningStatusColors: Record<string, string> = {
+  pending: "var(--status-pending)",
+  confirmed: "var(--status-confirmed)",
+  in_progress: "var(--status-in-progress)",
+  completed: "var(--status-completed)",
+  cancelled: "var(--status-cancelled)",
+};
+
 const typeTextColors: Record<string, string> = {
   booking: "var(--brand-10)",
   vacancy: "var(--brand-10)",
@@ -149,7 +158,12 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
         start: new Date(item.start),
         end: new Date(item.end),
       })}
-      getColor={(item) => typeColors[item.type] ?? item.color}
+      getColor={(item) => {
+        if (item.type === "cleaning") {
+          return cleaningStatusColors[item.status ?? ""] ?? "var(--status-success)";
+        }
+        return typeColors[item.type] ?? item.color;
+      }}
       getTextColor={(item) => typeTextColors[item.type] ?? "var(--surface-60)"}
       // Cleaning bars: replace the word "Turnover" with the broom icon below.
       // Strip the "Turnover" / "Turnover - " prefix so only the assignee

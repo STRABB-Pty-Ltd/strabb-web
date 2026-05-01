@@ -1,6 +1,6 @@
 export type TicketPriority = "low" | "medium" | "high" | "urgent";
 
-export type TicketStatus = "reported" | "scheduled" | "in_progress" | "completed" | "cancelled";
+export type TicketStatus = "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
 
 export interface Ticket {
   id: string;
@@ -36,8 +36,8 @@ export const TICKET_PRIORITY_OPTIONS: { value: TicketPriority; label: string }[]
 ];
 
 export const TICKET_STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
-  { value: "reported", label: "Reported" },
-  { value: "scheduled", label: "Scheduled" },
+  { value: "pending", label: "Pending" },
+  { value: "confirmed", label: "Confirmed" },
   { value: "in_progress", label: "In Progress" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },

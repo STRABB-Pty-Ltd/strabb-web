@@ -11,7 +11,9 @@ import type { Ticket } from "@/types/ticket";
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
   confirmed: "var(--status-confirmed)",
+  in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
+  cancelled: "var(--status-cancelled)",
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {

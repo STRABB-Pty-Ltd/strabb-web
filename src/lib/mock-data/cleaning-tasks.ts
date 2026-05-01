@@ -101,10 +101,10 @@ export const mockCleaningTaskList: CleaningTask[] = [
     checklistTotal: 8,
     checklistDone: 8,
   }),
-  // ticket - clean spawned a linked ticket (broken shower)
+  // in_progress - clean partially done; spawned a linked ticket (broken shower)
   createCleaningTask({
     id: "ct-005",
-    status: "ticket",
+    status: "in_progress",
     listingId: "lst-006",
     listingName: "Newtown Terrace",
     listingColor: "var(--brand-10)",

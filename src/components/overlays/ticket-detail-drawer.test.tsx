@@ -52,7 +52,7 @@ const baseTicket: Ticket = {
   listingId: null,
   description: "Leaking tap",
   priority: "high",
-  status: "reported",
+  status: "pending",
   dateReported: "2026-04-25T00:00:00Z",
   dateScheduled: null,
   dateCompleted: null,

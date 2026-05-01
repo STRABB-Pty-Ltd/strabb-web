@@ -154,13 +154,12 @@ describe("CleaningTask factory", () => {
     expect(mockCleaningTaskList.length).toBeGreaterThanOrEqual(5);
   });
 
-  it("covers all 6 cleaning statuses", () => {
+  it("covers all 5 cleaning statuses", () => {
     const statuses = new Set(mockCleaningTaskList.map((t) => t.status));
     expect(statuses).toContain("pending");
     expect(statuses).toContain("confirmed");
     expect(statuses).toContain("in_progress");
     expect(statuses).toContain("completed");
-    expect(statuses).toContain("ticket");
     expect(statuses).toContain("cancelled");
   });
 });
