@@ -98,9 +98,7 @@ export function useMessagesAPI(
     if (submenuFilters.length === 0 || submenuFilters.includes("overview")) {
       return query.data;
     }
-    const active = submenuFilters.filter((f) =>
-      (STATUS_FILTERS as readonly string[]).includes(f),
-    );
+    const active = submenuFilters.filter((f) => (STATUS_FILTERS as readonly string[]).includes(f));
     if (active.length === 0) return query.data;
     return query.data.filter((m) => active.includes(m.status));
   }, [query.data, submenuFilters]);

@@ -46,9 +46,7 @@ async function fetchCurrentUser(accessToken: string): Promise<CurrentUser> {
 const IS_DEV_SESSION = process.env.NODE_ENV === "development";
 
 if (IS_DEV_SESSION) {
-  console.warn(
-    "[auth] DEV-ONLY: session.maxAge bumped to 30 days. Production uses 1 day.",
-  );
+  console.warn("[auth] DEV-ONLY: session.maxAge bumped to 30 days. Production uses 1 day.");
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

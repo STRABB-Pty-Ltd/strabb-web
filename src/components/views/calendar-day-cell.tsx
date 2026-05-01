@@ -164,7 +164,7 @@ export function CalendarDayCell({
             </button>
             {overflowOpen && (
               <div
-                className="rounded-lg p-sm gap-xs flex flex-col"
+                className="p-sm gap-xs flex flex-col rounded-lg"
                 style={{
                   position: "absolute",
                   top: "calc(100% + 4px)",

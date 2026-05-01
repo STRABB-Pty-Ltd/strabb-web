@@ -17,10 +17,7 @@ export interface SmsUsageSummaryResponse {
 export const phoneNumberSchema = z
   .string()
   .trim()
-  .regex(
-    /^\+\d{8,15}$/,
-    "Phone must be E.164 format starting with + (e.g. +61412345678)",
-  );
+  .regex(/^\+\d{8,15}$/, "Phone must be E.164 format starting with + (e.g. +61412345678)");
 
 export const otpCodeSchema = z
   .string()

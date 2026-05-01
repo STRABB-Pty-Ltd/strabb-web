@@ -66,9 +66,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   }
 
   const visible =
-    selectedListings.length > 0
-      ? allListings.filter((l) => expandedIds.has(l.id))
-      : allListings;
+    selectedListings.length > 0 ? allListings.filter((l) => expandedIds.has(l.id)) : allListings;
 
   // Order children + standalones in a stable display sequence. Each visible
   // parent's children are kept contiguous so a parent booking can render as

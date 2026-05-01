@@ -43,10 +43,7 @@ export default function DashboardPage() {
 
       {alerts && alerts.length > 0 && (
         <div className="flex items-center">
-          <div
-            className="w-full"
-            style={{ height: "2px", backgroundColor: "var(--neutral-30)" }}
-          />
+          <div className="w-full" style={{ height: "2px", backgroundColor: "var(--neutral-30)" }} />
         </div>
       )}
 

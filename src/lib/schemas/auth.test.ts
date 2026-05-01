@@ -47,9 +47,7 @@ describe("loginSchema", () => {
     const result = loginSchema.safeParse({ email: "user@example.com" });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const passwordIssue = result.error.issues.find(
-        (i) => i.path[0] === "password",
-      );
+      const passwordIssue = result.error.issues.find((i) => i.path[0] === "password");
       expect(passwordIssue).toBeDefined();
     }
   });
@@ -61,9 +59,7 @@ describe("loginSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const passwordIssue = result.error.issues.find(
-        (i) => i.path[0] === "password",
-      );
+      const passwordIssue = result.error.issues.find((i) => i.path[0] === "password");
       expect(passwordIssue?.message).toBe("Password is required");
     }
   });

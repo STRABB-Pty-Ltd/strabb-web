@@ -14,9 +14,7 @@ import { useAppStore } from "@/stores/app-store";
 import { CleaningTaskCard } from "./cleaning-task-card";
 import { TicketKanbanCard } from "./ticket-kanban-card";
 
-type KanbanItem =
-  | { kind: "task"; data: CleaningTask }
-  | { kind: "ticket"; data: Ticket };
+type KanbanItem = { kind: "task"; data: CleaningTask } | { kind: "ticket"; data: Ticket };
 
 interface CleaningKanbanViewProps {
   tasks: CleaningTask[];
@@ -80,9 +78,7 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
         )
       }
       getItemId={(item) => item.data.id}
-      getBorderColor={(item) =>
-        item.kind === "task" ? item.data.listingColor : "var(--brand-10)"
-      }
+      getBorderColor={(item) => (item.kind === "task" ? item.data.listingColor : "var(--brand-10)")}
     />
   );
 }

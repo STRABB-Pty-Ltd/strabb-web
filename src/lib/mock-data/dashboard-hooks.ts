@@ -51,10 +51,7 @@ export interface PreviewData {
   }[];
 }
 
-function computeKPIs(
-  financials: Financial[],
-  selectedListings: string[],
-): KPIData[] {
+function computeKPIs(financials: Financial[], selectedListings: string[]): KPIData[] {
   const filteredFinancials =
     selectedListings.length > 0
       ? financials.filter((f) => selectedListings.includes(f.listingId))
@@ -73,16 +70,11 @@ function computeKPIs(
     prevRevenue > 0 ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 1000) / 10 : 0;
 
   const sumExpenses = (rows: Financial[]) =>
-    rows.reduce(
-      (s, f) => s + f.cleaningCost + f.ticketCost + f.suppliesCost + f.platformFees,
-      0,
-    );
+    rows.reduce((s, f) => s + f.cleaningCost + f.ticketCost + f.suppliesCost + f.platformFees, 0);
   const netIncome = totalRevenue - sumExpenses(currentFinancials);
   const prevNetIncome = prevRevenue - sumExpenses(prevFinancials);
   const netIncomeTrend =
-    prevNetIncome > 0
-      ? Math.round(((netIncome - prevNetIncome) / prevNetIncome) * 1000) / 10
-      : 0;
+    prevNetIncome > 0 ? Math.round(((netIncome - prevNetIncome) / prevNetIncome) * 1000) / 10 : 0;
 
   const avgOccupancy =
     currentFinancials.length > 0
@@ -270,9 +262,7 @@ function computePreview(
   const upcomingCleans: CleansAndTickets[] = filteredTasks
     .filter(
       (t) =>
-        new Date(t.scheduledTime) >= now &&
-        t.status !== "completed" &&
-        t.status !== "cancelled",
+        new Date(t.scheduledTime) >= now && t.status !== "completed" && t.status !== "cancelled",
     )
     .map((t) => ({
       id: t.id,
