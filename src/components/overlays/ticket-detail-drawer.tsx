@@ -43,7 +43,7 @@ export function TicketDetailDrawer() {
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
   const addToast = useAppStore((s) => s.addToast);
 
-  const open = drillDownPanel?.open && drillDownPanel.type === "ticket";
+  const open = !!drillDownPanel?.open && drillDownPanel.type === "ticket";
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: ticket, isLoading } = useTicket(itemId);
@@ -73,8 +73,6 @@ export function TicketDetailDrawer() {
       setConfirmDelete(false);
     }
   }, [ticket?.id, ticket]);
-
-  if (!open) return null;
 
   const propertyName = ticket
     ? ((propertiesData?.data ?? []).find((p) => p.id === ticket.propertyId)?.name ??
@@ -144,8 +142,10 @@ export function TicketDetailDrawer() {
       title="Ticket"
       accentColor={statusColors[ticket?.status ?? "pending"] ?? "var(--strabb-secondary)"}
     >
-      {isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
-      {!isLoading && !ticket && <p className="text-body text-gray-500">Ticket not found.</p>}
+      {open && isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
+      {open && !isLoading && !ticket && (
+        <p className="text-body text-gray-500">Ticket not found.</p>
+      )}
       {ticket && (
         <div className="space-y-md">
           <div>

@@ -39,7 +39,7 @@ export function CleaningDetailDrawer() {
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
   const addToast = useAppStore((s) => s.addToast);
 
-  const open = drillDownPanel?.open && drillDownPanel.type === "cleaning";
+  const open = !!drillDownPanel?.open && drillDownPanel.type === "cleaning";
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: task, isLoading } = useCleaningTask(itemId);
@@ -64,8 +64,6 @@ export function CleaningDetailDrawer() {
       setEditing(false);
     }
   }, [task?.id, task]);
-
-  if (!open) return null;
 
   const showError = toastError(addToast);
 
@@ -118,8 +116,10 @@ export function CleaningDetailDrawer() {
       title="Cleaning task"
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {isLoading && <p className="text-body text-gray-400">Loading task…</p>}
-      {!isLoading && !task && <p className="text-body text-gray-500">Task not found.</p>}
+      {open && isLoading && <p className="text-body text-gray-400">Loading task…</p>}
+      {open && !isLoading && !task && (
+        <p className="text-body text-gray-500">Task not found.</p>
+      )}
       {task && (
         <div className="space-y-md">
           <div>

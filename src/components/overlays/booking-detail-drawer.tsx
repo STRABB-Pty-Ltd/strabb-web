@@ -32,7 +32,7 @@ export function BookingDetailDrawer() {
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
   const addToast = useAppStore((s) => s.addToast);
 
-  const open = drillDownPanel?.open && drillDownPanel.type === "booking";
+  const open = !!drillDownPanel?.open && drillDownPanel.type === "booking";
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: booking, isLoading } = useBooking(itemId);
@@ -45,8 +45,6 @@ export function BookingDetailDrawer() {
   useEffect(() => {
     if (booking) setNotes(booking.notes ?? "");
   }, [booking?.id, booking]);
-
-  if (!open) return null;
 
   const showError = toastError(addToast);
   const isConflicted = booking?.conflictStatus === "conflicted";
@@ -81,8 +79,10 @@ export function BookingDetailDrawer() {
       title="Booking"
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {isLoading && <p className="text-body text-gray-400">Loading booking…</p>}
-      {!isLoading && !booking && <p className="text-body text-gray-500">Booking not found.</p>}
+      {open && isLoading && <p className="text-body text-gray-400">Loading booking…</p>}
+      {open && !isLoading && !booking && (
+        <p className="text-body text-gray-500">Booking not found.</p>
+      )}
       {booking && (
         <div className="space-y-md">
           {isConflicted && (
