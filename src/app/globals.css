@@ -38,10 +38,14 @@
   --semantic-destructive: var(--status-danger);
   --semantic-in-progress: var(--brand-10);
 
-  /* Cleaning status colors */
-  --status-pending: var(--brand-10);
+  /* Cleaning + ticket status colors. Same mapping for both - cleans and
+     tickets share the unified status set, so a "pending" reads the same
+     across the app. confirmed = neutral foreground (work acknowledged but
+     not yet started); in_progress + completed both green (active or done);
+     pending = red (needs attention); cancelled = gray (deprioritized). */
+  --status-pending: var(--status-danger);
   --status-confirmed: var(--brand-10);
-  --status-in-progress: var(--brand-10);
+  --status-in-progress: var(--status-success);
   --status-completed: var(--status-success);
   --status-issues: var(--status-danger);
   --status-cancelled: #6b7280;
@@ -134,12 +138,12 @@
 
 .dark {
   /* 60/30/10 Palette - dark mode */
-  --surface-60: #0c123c;
-  --neutral-30: #0f164b;
-  --brand-10: #eeeeee;
-  --status-success: #4ade80;
+  --surface-60: #1f1f1e;
+  --neutral-30: #262626;
+  --brand-10: #faf9f5;
+  --status-success: #059669;
   --status-danger: #f87171;
-  --chart-grid: rgba(238, 238, 238, 0.12);
+  --chart-grid: rgba(250, 249, 245, 0.12);
 
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
