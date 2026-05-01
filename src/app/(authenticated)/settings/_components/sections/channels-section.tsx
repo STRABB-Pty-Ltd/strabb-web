@@ -67,7 +67,7 @@ export function ChannelsSection() {
   };
 
   const handleSave = () => {
-    addToast({ type: "success", message: "Channel settings saved" });
+    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
   };
 
   return (

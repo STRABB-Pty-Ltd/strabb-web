@@ -22,6 +22,14 @@ vi.mock("@/hooks/use-messages", () => ({
   useResendMessage: () => ({ mutate: resendMutate, isPending: false }),
 }));
 
+const routerReplaceMock = vi.fn();
+let searchParamsValue = new URLSearchParams();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: routerReplaceMock, push: vi.fn() }),
+  usePathname: () => "/messaging/scheduled",
+  useSearchParams: () => searchParamsValue,
+}));
+
 import ScheduledMessagesPage from "./page";
 
 const aMessage: ScheduledMessageResponse = {

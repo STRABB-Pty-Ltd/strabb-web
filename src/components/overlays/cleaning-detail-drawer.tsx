@@ -165,6 +165,7 @@ export function CleaningDetailDrawer() {
                   type="text"
                   value={cleanerName}
                   onChange={(e) => setCleanerName(e.target.value)}
+                  autoComplete="name"
                   placeholder="Cleaner name"
                   className="px-sm py-base text-body w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
@@ -173,6 +174,7 @@ export function CleaningDetailDrawer() {
                   type="email"
                   value={cleanerEmail}
                   onChange={(e) => setCleanerEmail(e.target.value)}
+                  autoComplete="email"
                   placeholder="cleaner@example.com"
                   className="px-sm py-base text-body w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
@@ -181,6 +183,7 @@ export function CleaningDetailDrawer() {
                   type="tel"
                   value={cleanerPhone}
                   onChange={(e) => setCleanerPhone(e.target.value)}
+                  autoComplete="tel"
                   placeholder="+61 400 000 000"
                   className="px-sm py-base text-body w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}

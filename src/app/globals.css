@@ -480,4 +480,15 @@
   .drain-progress {
     animation: none;
   }
+  /* Disable non-essential transforms (panel slide, dialog zoom) when the
+     user has requested reduced motion. Opacity-only transitions still run
+     so dismissals don't appear instant; only the spatial movement is cut. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

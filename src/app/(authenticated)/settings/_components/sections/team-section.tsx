@@ -115,6 +115,7 @@ export function TeamSection() {
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
+              autoComplete="email"
               className="px-sm py-base text-body w-full rounded-sm border bg-white"
               style={{ borderColor: "var(--border)" }}
               placeholder="email@example.com"

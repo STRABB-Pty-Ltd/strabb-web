@@ -5,6 +5,10 @@ import type { z } from "zod";
 /**
  * Convenience wrapper around useForm with zod resolver pre-configured.
  * Establishes the standard form pattern for the project.
+ *
+ * Validation runs on blur (first error) and on every change after the field
+ * has been blurred once - matches the Material Design pattern of "don't
+ * yell at the user mid-typing, but give live feedback once they've started".
  */
 export function useFormWithSchema<TOutput, TDef extends z.ZodTypeDef, TInput>(
   schema: z.ZodType<TOutput, TDef, TInput>,
@@ -15,5 +19,7 @@ export function useFormWithSchema<TOutput, TDef extends z.ZodTypeDef, TInput>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(schema as any),
     defaultValues,
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
 }

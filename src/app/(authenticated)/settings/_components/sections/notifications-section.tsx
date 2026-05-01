@@ -48,8 +48,8 @@ export function NotificationsSection() {
 
   const handleSave = () => {
     addToast({
-      type: "success",
-      message: "Notification preferences saved",
+      type: "warning",
+      message: "Settings save is coming soon, not wired up yet",
     });
   };
 

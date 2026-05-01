@@ -12,7 +12,7 @@ export function CleaningSection() {
   const [defaultCleanerEmail, setDefaultCleanerEmail] = useState("maria.s@cleanteam.com");
 
   const handleSave = () => {
-    addToast({ type: "success", message: "Cleaning settings saved" });
+    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
   };
 
   return (

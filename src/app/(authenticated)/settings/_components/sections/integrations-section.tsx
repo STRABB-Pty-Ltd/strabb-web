@@ -57,7 +57,7 @@ export function IntegrationsSection() {
 
   const handleAddIcal = () => {
     if (!icalUrl.trim()) return;
-    addToast({ type: "success", message: "iCal feed added" });
+    addToast({ type: "warning", message: "iCal feed save is coming soon, not wired up yet" });
     setIcalUrl("");
   };
 

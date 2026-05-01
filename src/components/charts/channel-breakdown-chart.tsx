@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recharts";
 
 import { ChartContainer } from "./chart-container";
 
@@ -46,9 +46,12 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
         <Bar
           dataKey="revenue"
           radius={[0, 3, 3, 0]}
-          fill="var(--brand-10)"
           label={{ position: "right", fontSize: 13, formatter: (v) => formatAUD(Number(v)) }}
-        />
+        >
+          {data.map((entry, i) => (
+            <Cell key={i} fill={entry.color} />
+          ))}
+        </Bar>
       </BarChart>
     </ChartContainer>
   );

@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { ChevronDown, ChevronRight, RefreshCw } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { type Column, DataTable } from "@/components/ui/data-table";
@@ -21,6 +22,7 @@ const tabs: { id: Tab; label: string }[] = [
 ];
 
 const PAGE_SIZE = 20;
+const VALID_TABS: Tab[] = ["pending", "sent", "failed", "logs"];
 
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
@@ -30,12 +32,20 @@ const statusColors: Record<string, string> = {
 };
 
 export default function ScheduledMessagesPage() {
-  const [tab, setTab] = useState<Tab>("pending");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const initialTab: Tab = VALID_TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "pending";
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [page, setPage] = useState(1);
 
   const handleTabChange = (next: Tab) => {
     setTab(next);
     setPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", next);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
