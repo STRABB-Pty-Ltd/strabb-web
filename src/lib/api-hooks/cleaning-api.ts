@@ -25,6 +25,7 @@ interface RawCleaningTask {
   checklistTotal: number;
   checklistDone: number;
   cost: string | null;
+  linkedTicketId?: string | null;
 }
 
 function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
@@ -46,6 +47,7 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
     estimatedHours:
       typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
     notes: raw.notes,
+    linkedTicketId: raw.linkedTicketId ?? null,
   };
 }
 

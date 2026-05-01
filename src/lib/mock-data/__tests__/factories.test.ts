@@ -160,7 +160,7 @@ describe("CleaningTask factory", () => {
     expect(statuses).toContain("confirmed");
     expect(statuses).toContain("in_progress");
     expect(statuses).toContain("completed");
-    expect(statuses).toContain("issues");
+    expect(statuses).toContain("ticket");
     expect(statuses).toContain("cancelled");
   });
 });

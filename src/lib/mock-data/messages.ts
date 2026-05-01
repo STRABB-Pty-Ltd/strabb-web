@@ -16,7 +16,7 @@ const defaults: Message = {
   id: "msg-001",
   bookingId: "bk-001",
   listingId: "lst-002",
-  listingName: "Bondi Beach Apartment — Unit A",
+  listingName: "Bondi Beach Apartment - Unit A",
   guestName: "Sarah Mitchell",
   channel: "airbnb",
   status: "unread",
@@ -35,9 +35,9 @@ export function createMessage(overrides?: Partial<Message>): Message {
 }
 
 export const mockMessageList: Message[] = [
-  // unread — high priority
+  // unread - high priority
   createMessage(),
-  // unread — medium priority
+  // unread - medium priority
   createMessage({
     id: "msg-002",
     bookingId: "bk-002",
@@ -55,12 +55,12 @@ export const mockMessageList: Message[] = [
     checkIn: day(-2),
     checkOut: day(4),
   }),
-  // unread — low priority
+  // unread - low priority
   createMessage({
     id: "msg-003",
     bookingId: "bk-003",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "Emma Chen",
     channel: "airbnb",
     status: "unread",
@@ -73,7 +73,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(5),
     checkOut: day(10),
   }),
-  // flagged — high priority
+  // flagged - high priority
   createMessage({
     id: "msg-004",
     bookingId: "bk-005",
@@ -91,7 +91,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(10),
     checkOut: day(14),
   }),
-  // flagged — medium priority
+  // flagged - medium priority
   createMessage({
     id: "msg-005",
     bookingId: "bk-004",
@@ -109,7 +109,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(7),
     checkOut: day(12),
   }),
-  // read — low priority
+  // read - low priority
   createMessage({
     id: "msg-006",
     bookingId: "bk-006",
@@ -127,7 +127,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(14),
     checkOut: day(18),
   }),
-  // read — medium priority
+  // read - medium priority
   createMessage({
     id: "msg-007",
     bookingId: "bk-010",
@@ -145,7 +145,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(3),
     checkOut: day(6),
   }),
-  // archived — low priority
+  // archived - low priority
   createMessage({
     id: "msg-008",
     bookingId: "bk-007",
@@ -163,7 +163,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(-10),
     checkOut: day(-5),
   }),
-  // archived — medium priority
+  // archived - medium priority
   createMessage({
     id: "msg-009",
     bookingId: "bk-008",
@@ -181,7 +181,7 @@ export const mockMessageList: Message[] = [
     checkIn: day(-8),
     checkOut: day(-3),
   }),
-  // unread — medium priority
+  // unread - medium priority
   createMessage({
     id: "msg-010",
     bookingId: "bk-011",

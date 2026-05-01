@@ -6,7 +6,7 @@ interface GanttBarProps {
   label: string;
   color: string;
   textColor?: string;
-  /** Optional 4px coloured stripe down the left edge — used by the calendar
+  /** Optional 4px coloured stripe down the left edge - used by the calendar
    *  gantt to flag a booking's channel (Airbnb / Booking.com / Vrbo / direct)
    *  the same way the messaging cards do. */
   accentColor?: string;
@@ -17,6 +17,10 @@ interface GanttBarProps {
   leftPx: number;
   widthPx: number;
   rowHeight: number;
+  /** Number of rows this bar visually spans. When > 1 the bar overflows its
+   *  anchor row's container, so it needs a higher z-index to paint over the
+   *  day cells of subsequent rows below. Default 1. */
+  spans?: number;
   onClick: () => void;
 }
 
@@ -29,6 +33,7 @@ export function GanttBar({
   leftPx,
   widthPx,
   rowHeight,
+  spans = 1,
   onClick,
 }: GanttBarProps) {
   return (
@@ -47,6 +52,10 @@ export function GanttBar({
         borderLeft: accentColor ? `4px solid ${accentColor}` : undefined,
         padding: "2px 5px",
         lineHeight: 1.25,
+        // Multi-row bars need to sit above the next rows' day cells (which
+        // would otherwise paint over them via document order). Today line
+        // uses z-index 8 so stay below that.
+        zIndex: spans > 1 ? 6 : undefined,
       }}
     >
       {icon && <span className="shrink-0 leading-none">{icon}</span>}

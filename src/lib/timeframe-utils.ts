@@ -228,7 +228,7 @@ export function ganttDateRange(
       end = addDays(start, 364);
       break;
     case "ytd":
-      // YTD has no clean gantt interpretation — fall back to fortnight.
+      // YTD has no clean gantt interpretation - fall back to fortnight.
       end = addDays(start, 13);
       break;
     default:

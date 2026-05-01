@@ -55,7 +55,7 @@ function bookingToEvent(b: Booking): CalendarEvent {
     type: "booking",
     listingId: b.listingId,
     listingName: b.listingName,
-    label: `${b.guestName} — ${b.listingName}`,
+    label: `${b.guestName} - ${b.listingName}`,
     start: b.checkIn,
     end: b.checkOut,
     color: channelColors[b.channel] ?? "var(--channel-direct)",
@@ -72,7 +72,7 @@ function vacancyToEvent(v: Vacancy): CalendarEvent {
     type: "vacancy",
     listingId: v.listingId,
     listingName: v.listingName,
-    label: `Vacancy — ${v.listingName} (${v.gapDays}d)`,
+    label: `Vacancy - ${v.listingName} (${v.gapDays}d)`,
     start: v.startDate,
     end: v.endDate,
     color: "var(--brand-10)",
@@ -88,7 +88,7 @@ function cleaningToEvent(t: CleaningTask): CalendarEvent | null {
     type: "cleaning",
     listingId: t.listingId,
     listingName: t.listingName,
-    label: t.assigneeName ? `Turnover — ${t.assigneeName}` : "Turnover",
+    label: t.assigneeName ? `Turnover - ${t.assigneeName}` : "Turnover",
     start: start.toISOString(),
     end: end.toISOString(),
     color: "var(--status-success)",
@@ -106,7 +106,7 @@ function ticketToEvent(t: Ticket): CalendarEvent | null {
     type: "ticket",
     listingId: t.listingId,
     listingName,
-    label: `${t.description} — ${listingName}`,
+    label: `${t.description} - ${listingName}`,
     start,
     end,
     color: "var(--status-danger)",
@@ -157,7 +157,7 @@ function computeEvents(
       ? tickets.filter((t) => t.listingId && selectedListings.includes(t.listingId))
       : tickets;
     const mapped = filtered
-      .filter((t) => t.status !== "cancelled")
+      .filter((t) => t.status !== "completed")
       .map(ticketToEvent)
       .filter((e): e is CalendarEvent => e !== null);
     events.push(...mapped);

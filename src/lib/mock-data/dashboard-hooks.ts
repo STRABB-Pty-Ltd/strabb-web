@@ -2,12 +2,20 @@
 
 import { useMemo } from "react";
 
-import { mockBookingList, mockCleaningTaskList, mockFinancialList, mockMessageList } from "./index";
+import {
+  mockBookingList,
+  mockCleaningTaskList,
+  mockFinancialList,
+  mockListingList,
+  mockMessageList,
+} from "./index";
+import { mockTicketsList } from "./ticket";
 import { REFERENCE_NOW } from "./reference-date";
 import type { Booking } from "@/types/booking";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { Financial } from "@/types/financial";
 import type { Message } from "@/types/message";
+import type { Ticket } from "@/types/ticket";
 
 export interface KPIData {
   label: string;
@@ -19,7 +27,7 @@ export interface KPIData {
 
 export interface AlertItem {
   id: string;
-  type: "conflict" | "overdue" | "message" | "sync";
+  type: "message" | "unscheduled" | "ticket" | "sync";
   severity: "red" | "amber" | "blue";
   description: string;
   count: number;
@@ -35,27 +43,19 @@ export interface PreviewData {
     checkIn: string;
     channel: string;
   }[];
-  taskSummary: { status: string; count: number; color: string }[];
+  cleansAndTickets: {
+    id: string;
+    kind: "clean" | "ticket";
+    listing: string;
+    date: string;
+  }[];
 }
 
-function computeKPIs(
-  bookings: Booking[],
-  tasks: CleaningTask[],
-  financials: Financial[],
-  selectedListings: string[],
-): KPIData[] {
-  const filtered =
-    selectedListings.length > 0
-      ? bookings.filter((b) => selectedListings.includes(b.listingId))
-      : bookings;
+function computeKPIs(financials: Financial[], selectedListings: string[]): KPIData[] {
   const filteredFinancials =
     selectedListings.length > 0
       ? financials.filter((f) => selectedListings.includes(f.listingId))
       : financials;
-  const filteredTasks =
-    selectedListings.length > 0
-      ? tasks.filter((t) => selectedListings.includes(t.listingId))
-      : tasks;
 
   const months = [...new Set(filteredFinancials.map((f) => f.month))].sort();
   const currentMonth = months[months.length - 1] ?? "";
@@ -69,9 +69,12 @@ function computeKPIs(
   const revenueTrend =
     prevRevenue > 0 ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 1000) / 10 : 0;
 
-  const activeBookings = filtered.filter(
-    (b) => b.status !== "cancelled" && b.status !== "checked_out",
-  );
+  const sumExpenses = (rows: Financial[]) =>
+    rows.reduce((s, f) => s + f.cleaningCost + f.ticketCost + f.suppliesCost + f.platformFees, 0);
+  const netIncome = totalRevenue - sumExpenses(currentFinancials);
+  const prevNetIncome = prevRevenue - sumExpenses(prevFinancials);
+  const netIncomeTrend =
+    prevNetIncome > 0 ? Math.round(((netIncome - prevNetIncome) / prevNetIncome) * 1000) / 10 : 0;
 
   const avgOccupancy =
     currentFinancials.length > 0
@@ -95,19 +98,6 @@ function computeKPIs(
         )
       : 0;
 
-  const now = REFERENCE_NOW;
-  const nextWeek = new Date(now);
-  nextWeek.setDate(nextWeek.getDate() + 7);
-
-  const upcomingCheckIns = filtered.filter((b) => {
-    const ci = new Date(b.checkIn);
-    return ci >= now && ci <= nextWeek && b.status !== "cancelled";
-  }).length;
-
-  const activeTasks = filteredTasks.filter(
-    (t) => t.status !== "completed" && t.status !== "cancelled",
-  ).length;
-
   return [
     {
       label: "Total Revenue",
@@ -117,11 +107,11 @@ function computeKPIs(
       type: "currency",
     },
     {
-      label: "Total Bookings",
-      value: activeBookings.length,
-      icon: "calendar",
-      trend: 8.2,
-      type: "number",
+      label: "Net Income",
+      value: netIncome,
+      icon: "trending-up",
+      trend: netIncomeTrend,
+      type: "currency",
     },
     {
       label: "Avg Occupancy",
@@ -137,26 +127,15 @@ function computeKPIs(
       trend: 3.5,
       type: "currency",
     },
-    {
-      label: "Upcoming Check-ins",
-      value: upcomingCheckIns,
-      icon: "log-in",
-      trend: 0,
-      type: "number",
-    },
-    {
-      label: "Active Tasks",
-      value: activeTasks,
-      icon: "sparkles",
-      trend: -12.5,
-      type: "number",
-    },
   ];
 }
+
+const MOCK_SYNC_ERROR_COUNT: number = 2;
 
 function computeAlerts(
   tasks: CleaningTask[],
   messages: Message[],
+  tickets: Ticket[],
   selectedListings: string[],
 ): AlertItem[] {
   const alerts: AlertItem[] = [];
@@ -169,43 +148,55 @@ function computeAlerts(
     selectedListings.length > 0
       ? tasks.filter((t) => selectedListings.includes(t.listingId))
       : tasks;
+  const filteredTickets =
+    selectedListings.length > 0
+      ? tickets.filter((t) => t.listingId !== null && selectedListings.includes(t.listingId))
+      : tickets;
 
   const unread = filteredMessages.filter((m) => m.status === "unread");
-  if (unread.length > 0) {
-    alerts.push({
-      id: "alert-messages",
-      type: "message",
-      severity: "blue",
-      description: `${unread.length} unread message${unread.length > 1 ? "s" : ""} requiring attention`,
-      count: unread.length,
-    });
-  }
+  alerts.push({
+    id: "alert-messages",
+    type: "message",
+    severity: "blue",
+    description: `${unread.length} unread message${unread.length === 1 ? "" : "s"}`,
+    count: unread.length,
+  });
 
-  const overdue = filteredTasks.filter(
+  const needsScheduling = filteredTasks.filter(
     (t) =>
-      (t.status === "pending" || t.status === "confirmed") &&
-      new Date(t.scheduledTime) < REFERENCE_NOW,
+      t.status === "pending" &&
+      t.assigneeName === null &&
+      new Date(t.scheduledTime) >= REFERENCE_NOW,
   );
-  if (overdue.length > 0) {
-    alerts.push({
-      id: "alert-overdue",
-      type: "overdue",
-      severity: "amber",
-      description: `${overdue.length} cleaning task${overdue.length > 1 ? "s" : ""} overdue`,
-      count: overdue.length,
-    });
-  }
+  alerts.push({
+    id: "alert-unscheduled",
+    type: "unscheduled",
+    severity: "amber",
+    description: `${needsScheduling.length} clean${needsScheduling.length === 1 ? "" : "s"} need scheduling`,
+    count: needsScheduling.length,
+  });
 
-  const issues = filteredTasks.filter((t) => t.status === "issues");
-  if (issues.length > 0) {
-    alerts.push({
-      id: "alert-issues",
-      type: "conflict",
-      severity: "red",
-      description: `${issues.length} cleaning task${issues.length > 1 ? "s" : ""} with reported issues`,
-      count: issues.length,
-    });
-  }
+  const urgentTickets = filteredTickets.filter(
+    (t) =>
+      (t.priority === "urgent" || t.priority === "high") &&
+      t.status !== "completed" &&
+      t.status !== "cancelled",
+  );
+  alerts.push({
+    id: "alert-tickets",
+    type: "ticket",
+    severity: "red",
+    description: `${urgentTickets.length} urgent ticket${urgentTickets.length === 1 ? "" : "s"}`,
+    count: urgentTickets.length,
+  });
+
+  alerts.push({
+    id: "alert-sync",
+    type: "sync",
+    severity: "red",
+    description: `${MOCK_SYNC_ERROR_COUNT} sync error${MOCK_SYNC_ERROR_COUNT === 1 ? "" : "s"}`,
+    count: MOCK_SYNC_ERROR_COUNT,
+  });
 
   return alerts;
 }
@@ -213,6 +204,7 @@ function computeAlerts(
 function computePreview(
   bookings: Booking[],
   tasks: CleaningTask[],
+  tickets: Ticket[],
   financials: Financial[],
   selectedListings: string[],
 ): PreviewData {
@@ -258,23 +250,41 @@ function computePreview(
       channel: b.channel,
     }));
 
-  const statusCounts: Record<string, { count: number; color: string }> = {
-    pending: { count: 0, color: "var(--status-pending)" },
-    confirmed: { count: 0, color: "var(--status-confirmed)" },
-    in_progress: { count: 0, color: "var(--status-in-progress)" },
-    completed: { count: 0, color: "var(--status-completed)" },
-    issues: { count: 0, color: "var(--status-issues)" },
-  };
-  for (const t of filteredTasks) {
-    if (statusCounts[t.status]) statusCounts[t.status].count++;
-  }
-  const taskSummary = Object.entries(statusCounts).map(([status, { count, color }]) => ({
-    status,
-    count,
-    color,
-  }));
+  const filteredTickets =
+    selectedListings.length > 0
+      ? tickets.filter((t) => t.listingId !== null && selectedListings.includes(t.listingId))
+      : tickets;
 
-  return { miniCalendar, revenueSparkline, upcomingBookings, taskSummary };
+  const listingNameById = new Map(mockListingList.map((l) => [l.id, l.name]));
+
+  type CleansAndTickets = PreviewData["cleansAndTickets"][number];
+
+  const upcomingCleans: CleansAndTickets[] = filteredTasks
+    .filter(
+      (t) =>
+        new Date(t.scheduledTime) >= now && t.status !== "completed" && t.status !== "cancelled",
+    )
+    .map((t) => ({
+      id: t.id,
+      kind: "clean" as const,
+      listing: t.listingName,
+      date: t.scheduledTime,
+    }));
+
+  const upcomingTickets: CleansAndTickets[] = filteredTickets
+    .filter((t) => t.status !== "completed")
+    .map((t) => {
+      const ref = t.dateScheduled ?? t.dateReported;
+      const listing = (t.listingId && listingNameById.get(t.listingId)) ?? "";
+      return { id: t.id, kind: "ticket" as const, listing, date: ref };
+    })
+    .filter((t) => new Date(t.date) >= now);
+
+  const cleansAndTickets = [...upcomingCleans, ...upcomingTickets]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5);
+
+  return { miniCalendar, revenueSparkline, upcomingBookings, cleansAndTickets };
 }
 
 export function useDashboardKPIsMock(
@@ -283,7 +293,7 @@ export function useDashboardKPIsMock(
   selectedListings: string[],
 ) {
   return useMemo(
-    () => computeKPIs(mockBookingList, mockCleaningTaskList, mockFinancialList, selectedListings),
+    () => computeKPIs(mockFinancialList, selectedListings),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [windowSize, anchor, selectedListings],
   );
@@ -291,7 +301,7 @@ export function useDashboardKPIsMock(
 
 export function useDashboardAlertsMock(selectedListings: string[]) {
   return useMemo(
-    () => computeAlerts(mockCleaningTaskList, mockMessageList, selectedListings),
+    () => computeAlerts(mockCleaningTaskList, mockMessageList, mockTicketsList, selectedListings),
     [selectedListings],
   );
 }
@@ -303,7 +313,13 @@ export function useDashboardPreviewMock(
 ) {
   return useMemo(
     () =>
-      computePreview(mockBookingList, mockCleaningTaskList, mockFinancialList, selectedListings),
+      computePreview(
+        mockBookingList,
+        mockCleaningTaskList,
+        mockTicketsList,
+        mockFinancialList,
+        selectedListings,
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedListings, windowSize, anchor],
   );

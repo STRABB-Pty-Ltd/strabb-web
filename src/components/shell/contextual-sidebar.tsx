@@ -12,7 +12,7 @@ import { SettingsNavSection } from "./sidebar-sections/settings-nav-section";
 import { TimeframeSelector } from "./sidebar-sections/timeframe-selector";
 import { ViewSwitcher } from "./sidebar-sections/view-switcher";
 
-const showViewSwitcher = (p: PageId) => p === "calendar" || p === "messaging" || p === "cleaning";
+const showViewSwitcher = (p: PageId) => p === "calendar";
 const showListingFilter = (p: PageId) => p !== "settings";
 const showTimeframe = (p: PageId) =>
   p === "dashboard" || p === "calendar" || p === "cleaning" || p === "reporting";
@@ -48,7 +48,7 @@ export function ContextualSidebar() {
     >
       {/* Spacer reserves room for the absolute logo overlay in app-shell.
           Sized so the first listing button top aligns with the canvas top
-          across the divider — see --logo-area-height in globals.css. */}
+          across the divider - see --logo-area-height in globals.css. */}
       <div className="shrink-0" style={{ height: "var(--logo-area-height)" }} aria-hidden="true" />
 
       {showSettingsNav(currentPage) && <SettingsNavSection />}

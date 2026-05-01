@@ -1,7 +1,7 @@
 import type { StateCreator } from "zustand";
 
 export interface CleaningPageState {
-  view: "kanban" | "calendar" | "list";
+  view: "kanban" | "list";
   windowSize: string;
   anchor: string | null;
   submenu: string[];

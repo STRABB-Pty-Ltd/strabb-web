@@ -40,6 +40,7 @@ export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="p-xs rounded hover:bg-gray-100"
             aria-label="Close shortcuts help"
+            data-no-elevate
           >
             <X size={21} />
           </button>

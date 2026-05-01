@@ -7,7 +7,7 @@ import { useApiClient } from "./use-api-client";
 
 /**
  * Convenience hook that combines useQuery with the authenticated API client.
- * Waits for a valid session before firing — prevents 401s during session loading.
+ * Waits for a valid session before firing - prevents 401s during session loading.
  */
 export function useAuthenticatedQuery<T>(
   queryKey: string[],

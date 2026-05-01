@@ -7,7 +7,7 @@ import {
   timeframeToDateRange,
 } from "./timeframe-utils";
 
-// Wed 15 April 2026, 12:00 local — used to anchor "current" tests
+// Wed 15 April 2026, 12:00 local - used to anchor "current" tests
 const FROZEN_NOW = new Date(2026, 3, 15, 12, 0, 0);
 
 describe("timeframeToDateRange", () => {

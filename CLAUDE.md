@@ -54,3 +54,7 @@ Copy `.env.example` to `.env.local` for local development. Never commit `.env` f
 - `main` branch is protected — no direct pushes
 - Feature branches with PR workflow
 - All CI gates must pass before merge
+
+## Dev gotchas
+
+- **Stale `.next/` after rapid edits.** When the `next dev` server runs through several quick file edits (especially across `npm uninstall`/`install`, large refactors, or many sequential edits to imported modules), the in-memory webpack module map can desync from disk. The HTML keeps referencing CSS hashes (e.g. `/_next/static/css/app/layout.css?v=...`) that 404, so the page renders unstyled (raw HTML). Stop the dev server, `rm -rf .next`, restart. Should not be necessary on a single edit, only after a burst.

@@ -38,9 +38,9 @@ export const submenuConfigs: Record<Exclude<PageId, "settings">, SubmenuChip[]> 
   ],
   cleaning: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
-    { id: "tickets", label: "Tickets", behavior: "nav", href: "/properties/tickets" },
-    { id: "confirmed", label: "Confirmed", behavior: "multi" },
-    { id: "pending", label: "Pending", behavior: "multi" },
+    { id: "tickets", label: "Tickets", behavior: "nav", href: "/cleaning/tickets" },
+    { id: "confirmed", label: "Confirmed", behavior: "exclusive" },
+    { id: "pending", label: "Pending", behavior: "exclusive" },
     { id: "archived", label: "Archived", behavior: "exclusive" },
   ],
   reporting: [

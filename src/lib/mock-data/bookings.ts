@@ -10,7 +10,7 @@ const day = (offset: number) => {
 const defaults: Booking = {
   id: "bk-001",
   listingId: "lst-002",
-  listingName: "Bondi Beach Apartment — Unit A",
+  listingName: "Bondi Beach Apartment - Unit A",
   guestName: "Sarah Mitchell",
   guestEmail: "sarah.m@email.com",
   channel: "airbnb",
@@ -29,11 +29,11 @@ export function createBooking(overrides?: Partial<Booking>): Booking {
 }
 
 export const mockBookingList: Booking[] = [
-  // ── Bondi Beach Apartment — Unit A (lst-002) ──
+  // ── Bondi Beach Apartment - Unit A (lst-002) ──
   createBooking({
     id: "bk-001",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "Sarah Mitchell",
     guestEmail: "sarah.m@email.com",
     channel: "airbnb",
@@ -48,7 +48,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-002",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "David Russell",
     guestEmail: "david.r@email.com",
     channel: "booking_com",
@@ -63,7 +63,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-003",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "Yuki Tanaka",
     guestEmail: "yuki.t@email.com",
     channel: "airbnb",
@@ -78,7 +78,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-004",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "Steve McCarthy",
     guestEmail: "steve.mc@email.com",
     channel: "vrbo",
@@ -93,7 +93,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-005",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "Laura Chen",
     guestEmail: "laura.c@email.com",
     channel: "airbnb",
@@ -108,7 +108,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-006",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "Mark Evans",
     guestEmail: "mark.e@email.com",
     channel: "booking_com",
@@ -121,11 +121,11 @@ export const mockBookingList: Booking[] = [
     createdAt: day(-2),
   }),
 
-  // ── Bondi Beach Apartment — Unit B (lst-003) ──
+  // ── Bondi Beach Apartment - Unit B (lst-003) ──
   createBooking({
     id: "bk-007",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "Emma Chen",
     guestEmail: "emma.c@email.com",
     channel: "airbnb",
@@ -140,7 +140,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-008",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "The Henderson Family",
     guestEmail: "henderson@email.com",
     channel: "booking_com",
@@ -155,7 +155,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-009",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "Olivia Kim",
     guestEmail: "olivia.k@email.com",
     channel: "airbnb",
@@ -170,7 +170,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-010",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "The Fraser Family",
     guestEmail: "fraser@email.com",
     channel: "vrbo",
@@ -185,7 +185,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-011",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "Ethan Wilson",
     guestEmail: "ethan.w@email.com",
     channel: "direct",
@@ -200,7 +200,7 @@ export const mockBookingList: Booking[] = [
   createBooking({
     id: "bk-012",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     guestName: "Sophie Adams",
     guestEmail: "sophie.a@email.com",
     channel: "airbnb",
@@ -536,11 +536,11 @@ export const mockBookingList: Booking[] = [
     createdAt: day(-1),
   }),
 
-  // ── Cancelled bookings (realistic — ~5% cancel rate) ──
+  // ── Cancelled bookings (realistic - ~5% cancel rate) ──
   createBooking({
     id: "bk-034",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     guestName: "Peter Clarke",
     guestEmail: "peter.c@email.com",
     channel: "airbnb",
@@ -550,7 +550,7 @@ export const mockBookingList: Booking[] = [
     nightlyRate: 180,
     totalAmount: 900,
     status: "cancelled",
-    notes: "Guest cancelled — flight change",
+    notes: "Guest cancelled - flight change",
     createdAt: day(-10),
   }),
   createBooking({

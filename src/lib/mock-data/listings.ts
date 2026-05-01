@@ -24,7 +24,7 @@ export const mockListingList: Listing[] = [
   createListing(),
   createListing({
     id: "lst-002",
-    name: "Bondi Beach Apartment — Unit A",
+    name: "Bondi Beach Apartment - Unit A",
     relationship: "child",
     parentId: "lst-001",
     children: [],
@@ -38,7 +38,7 @@ export const mockListingList: Listing[] = [
   }),
   createListing({
     id: "lst-003",
-    name: "Bondi Beach Apartment — Unit B",
+    name: "Bondi Beach Apartment - Unit B",
     relationship: "child",
     parentId: "lst-001",
     children: [],

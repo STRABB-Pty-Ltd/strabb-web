@@ -134,6 +134,41 @@ describe("Submenu chip integration", () => {
     });
   });
 
+  describe("messaging chips default to list view", () => {
+    it("clicking Unread switches messaging view to list", async () => {
+      const user = userEvent.setup();
+      useAppStore.getState().setCurrentPage("messaging");
+      expect(useAppStore.getState().messaging.view).toBe("kanban");
+
+      render(<SubmenuBar />);
+      await user.click(screen.getByText("Unread"));
+
+      expect(useAppStore.getState().messaging.view).toBe("list");
+    });
+
+    it("clicking Archived switches messaging view to list", async () => {
+      const user = userEvent.setup();
+      useAppStore.getState().setCurrentPage("messaging");
+
+      render(<SubmenuBar />);
+      await user.click(screen.getByText("Archived"));
+
+      expect(useAppStore.getState().messaging.view).toBe("list");
+    });
+
+    it("clicking Overview switches messaging view back to kanban", async () => {
+      const user = userEvent.setup();
+      useAppStore.getState().setCurrentPage("messaging");
+      useAppStore.getState().setSubmenu("messaging", ["unread"]);
+      useAppStore.getState().setView("messaging", "list");
+
+      render(<SubmenuBar />);
+      await user.click(screen.getByText("Overview"));
+
+      expect(useAppStore.getState().messaging.view).toBe("kanban");
+    });
+  });
+
   describe("chip state persistence within session", () => {
     it("submenu state persists in store across page changes", () => {
       // Set calendar submenu

@@ -35,7 +35,7 @@ export const createListingsSlice: StateCreator<ListingsSlice, [], [], ListingsSl
   },
   selectAllListings: () => {
     // Populated by the component that knows the full listing set
-    // This is a no-op at store level — consumers call setSelectedListings with the full list
+    // This is a no-op at store level - consumers call setSelectedListings with the full list
     // Keeping this action for API consistency; components pass all IDs via setSelectedListings
   },
   clearListings: () => set({ selectedListings: [] }),

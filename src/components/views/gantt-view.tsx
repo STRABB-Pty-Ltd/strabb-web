@@ -31,16 +31,24 @@ export interface GanttViewProps<T> {
   getAccentColor?: (item: T) => string | undefined;
   /** Optional icon rendered before the label. */
   getIcon?: (item: T) => ReactNode | undefined;
+  /** Optional: how many adjacent rows this item visually spans. When > 1 the
+   *  bar grows tall enough to cover the additional rows below its anchor row,
+   *  used by the calendar gantt to render a parent-listing booking as a
+   *  single chip across all its children's rows. Default 1. */
+  getRowSpan?: (item: T) => number;
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
 }
 
-const LABEL_WIDTH = 144;
 const MIN_CELL_WIDTH = 34;
-// Listing-row height. Doubled from 34 → 68 so the gantt rail reads at a
+// Listing-row height. Doubled from 34 -> 68 so the gantt rail reads at a
 // more comfortable density. Header height is unaffected.
 const ROW_HEIGHT = 68;
+// Vertical gap between rows; matches the mb-xs (var(--space-xs)) class on
+// each row container. Multi-row spanning bars need this so their height
+// covers the gap as well as the row strips.
+const ROW_GAP = 5;
 
 export function GanttView<T>({
   rows,
@@ -53,6 +61,7 @@ export function GanttView<T>({
   getPartialDay,
   getAccentColor,
   getIcon,
+  getRowSpan,
   dateRange,
   onItemClick,
   todayLineColor = "var(--status-danger)",
@@ -70,8 +79,7 @@ export function GanttView<T>({
     if (!el) return;
 
     const observer = new ResizeObserver(([entry]) => {
-      const available = entry.contentRect.width - LABEL_WIDTH;
-      const computed = Math.max(MIN_CELL_WIDTH, Math.floor(available / totalDays));
+      const computed = Math.max(MIN_CELL_WIDTH, Math.floor(entry.contentRect.width / totalDays));
       setCellWidth(computed);
     });
     observer.observe(el);
@@ -91,29 +99,9 @@ export function GanttView<T>({
 
         return (
           <div key={row.id} className="mb-xs flex" style={{ minHeight: ROW_HEIGHT }}>
-            {/* Row label */}
-            <div
-              className="gap-base px-base text-body flex shrink-0 items-center border-r border-b bg-white"
-              style={{
-                width: LABEL_WIDTH,
-                position: "sticky",
-                left: 0,
-                zIndex: 5,
-                borderColor: "var(--border)",
-              }}
-            >
-              {row.color && (
-                <span
-                  className="h-base w-base shrink-0 rounded-full"
-                  style={{ backgroundColor: row.color }}
-                />
-              )}
-              <span className="truncate">{row.label}</span>
-            </div>
-
             {/* Grid area */}
             <div className="relative flex border-b" style={{ borderColor: "var(--border)" }}>
-              {/* Day cells. No today-cell fill — it's the same neutral-30 as
+              {/* Day cells. No today-cell fill - it's the same neutral-30 as
                   the booking bars and made partial-day check-in slivers
                   indistinguishable from the cell behind them. Today is
                   signalled by the header highlight + the dashed line below. */}
@@ -142,7 +130,7 @@ export function GanttView<T>({
                 if (visibleEnd < 0 || visibleStart > visibleEnd) return null;
 
                 const partial = getPartialDay?.(item);
-                // Insets only apply when the bar's edge is actually visible —
+                // Insets only apply when the bar's edge is actually visible -
                 // when the item extends past the viewport the bar continues
                 // to the edge instead of being chopped.
                 const insetStart = startClipped ? 0 : (partial?.insetStart ?? 0);
@@ -160,6 +148,13 @@ export function GanttView<T>({
                 const widthPx = rightPx - leftPx - adjacencyGap;
                 if (widthPx <= 0) return null;
 
+                // Row span: a parent-listing booking renders as a single
+                // chip covering its anchor row plus the rows below for each
+                // additional spanned row. Height includes the inter-row gaps
+                // so the chip reads as one continuous bar.
+                const span = Math.max(1, getRowSpan?.(item) ?? 1);
+                const heightPx = span * ROW_HEIGHT + (span - 1) * ROW_GAP;
+
                 return (
                   <GanttBar
                     key={`${row.id}-${getLabel(item)}-${idx}`}
@@ -170,7 +165,8 @@ export function GanttView<T>({
                     icon={getIcon?.(item)}
                     leftPx={leftPx}
                     widthPx={widthPx}
-                    rowHeight={ROW_HEIGHT}
+                    rowHeight={heightPx}
+                    spans={span}
                     onClick={() => onItemClick(item)}
                   />
                 );

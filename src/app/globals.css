@@ -26,13 +26,13 @@
   --strabb-secondary: var(--brand-10);
   --strabb-accent: var(--brand-10);
 
-  /* Channel colors — Airbnb/Booking/VRBO keep brand identity; Direct goes neutral (no amber) */
+  /* Channel colors - Airbnb/Booking/VRBO keep brand identity; Direct goes neutral (no amber) */
   --channel-airbnb: #ff5a5f;
   --channel-booking: #003580;
   --channel-vrbo: #3b5998;
   --channel-direct: #6b7280;
 
-  /* Semantic colors — only green + red are accent; warning/in-progress collapse to navy */
+  /* Semantic colors - only green + red are accent; warning/in-progress collapse to navy */
   --semantic-success: var(--status-success);
   --semantic-warning: var(--brand-10);
   --semantic-destructive: var(--status-danger);
@@ -58,14 +58,14 @@
   --chart-bar-hover: var(--brand-10);
   --chart-grid: rgba(30, 30, 133, 0.08);
 
-  /* Interactive — pill buttons */
+  /* Interactive - pill buttons */
   --btn-active-bg: var(--brand-10);
   --btn-active-text: var(--surface-60);
   --btn-inactive-bg: var(--neutral-30);
   --btn-inactive-text: var(--brand-10);
   --btn-inactive-border: transparent;
 
-  /* Icon tiles — solid navy tile with neutral-30 symbol */
+  /* Icon tiles - solid navy tile with neutral-30 symbol */
   --icon-bg: var(--brand-10);
   --icon-color: var(--neutral-30);
 
@@ -73,7 +73,7 @@
   --border-default: transparent;
   --border-light: transparent;
 
-  /* Layout dimensions — all on Fibonacci ladder (5/8/13/21/34/55/89/144/233/377/610) */
+  /* Layout dimensions - all on Fibonacci ladder (5/8/13/21/34/55/89/144/233/377/610) */
   --topnav-height: 55px;
   --submenu-height: 55px;
   --sidebar-width: 16vw;
@@ -98,7 +98,7 @@
     2 * var(--space-sm) + 2 * (2 * var(--space-base) + var(--text-body) * 1.615) + 14px
   );
 
-  /* Spacing scale — golden-ratio / Fibonacci ladder */
+  /* Spacing scale - golden-ratio / Fibonacci ladder */
   --space-xs: 5px;
   --space-base: 8px;
   --space-sm: 13px;
@@ -133,7 +133,7 @@
 }
 
 .dark {
-  /* 60/30/10 Palette — dark mode */
+  /* 60/30/10 Palette - dark mode */
   --surface-60: #0c123c;
   --neutral-30: #0f164b;
   --brand-10: #eeeeee;
@@ -166,7 +166,7 @@
   --font-sans: var(--font-sans);
   --font-data: var(--font-data);
 
-  /* Golden-ratio spacing — Fibonacci ladder (5 → 8 → 13 → 21 → 34 → 55) */
+  /* Golden-ratio spacing - Fibonacci ladder (5 → 8 → 13 → 21 → 34 → 55) */
   --spacing-xs: 5px;
   --spacing-base: 8px;
   --spacing-sm: 13px;
@@ -174,7 +174,7 @@
   --spacing-lg: 34px;
   --spacing-xl: 55px;
 
-  /* Restore Tailwind default max-width scale — Fibonacci spacing tokens
+  /* Restore Tailwind default max-width scale - Fibonacci spacing tokens
      above would otherwise hijack max-w-sm/md/lg/xl via fallback */
   --max-width-xs: 20rem;
   --max-width-sm: 24rem;
@@ -188,7 +188,7 @@
   --max-width-6xl: 72rem;
   --max-width-7xl: 80rem;
 
-  /* Type scale — Fibonacci ladder (13 → 21 → 34 → 55) */
+  /* Type scale - Fibonacci ladder (13 → 21 → 34 → 55) */
   --text-body: 13px;
   --text-body--line-height: 1.615;
   --text-subheading: 21px;
@@ -216,6 +216,51 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+
+  /* STRABB semantic tokens, exposed as Tailwind utilities so components can */
+  /* write bg-status-pending instead of style={{ backgroundColor: "var(--status-pending)" }}. */
+  /* Pure aliases: the underlying --xxx vars above remain the single source of truth. */
+  --color-status-success: var(--status-success);
+  --color-status-danger: var(--status-danger);
+  --color-status-pending: var(--status-pending);
+  --color-status-confirmed: var(--status-confirmed);
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-completed: var(--status-completed);
+  --color-status-issues: var(--status-issues);
+  --color-status-cancelled: var(--status-cancelled);
+
+  --color-booking-checked-out: var(--booking-checked-out);
+  --color-booking-checked-in: var(--booking-checked-in);
+  --color-booking-confirmed: var(--booking-confirmed);
+  --color-booking-pending: var(--booking-pending);
+  --color-booking-cancelled: var(--booking-cancelled);
+
+  --color-channel-airbnb: var(--channel-airbnb);
+  --color-channel-booking: var(--channel-booking);
+  --color-channel-vrbo: var(--channel-vrbo);
+  --color-channel-direct: var(--channel-direct);
+
+  --color-surface-page: var(--surface-page);
+  --color-surface-card: var(--surface-card);
+  --color-surface-sidebar: var(--surface-sidebar);
+  --color-surface-submenu: var(--surface-submenu);
+  --color-surface-topnav: var(--surface-topnav);
+
+  --color-strabb-primary: var(--strabb-primary);
+  --color-strabb-secondary: var(--strabb-secondary);
+  --color-strabb-accent: var(--strabb-accent);
+
+  --color-btn-active-bg: var(--btn-active-bg);
+  --color-btn-active-text: var(--btn-active-text);
+  --color-btn-inactive-bg: var(--btn-inactive-bg);
+  --color-btn-inactive-text: var(--btn-inactive-text);
+
+  --color-icon-bg: var(--icon-bg);
+  --color-icon-color: var(--icon-color);
+
+  --color-chart-bar: var(--chart-bar);
+  --color-chart-bar-hover: var(--chart-bar-hover);
+  --color-chart-grid: var(--chart-grid);
 
   /* Remap Tailwind default colors to 60/30/10 palette so hardcoded utility */
   /* classes (bg-white, bg-gray-*, text-gray-*, etc.) inherit dark-mode overrides */
@@ -328,7 +373,7 @@
   --color-purple-600: var(--brand-10);
   --color-pink-500: var(--brand-10);
   --color-pink-600: var(--brand-10);
-  /* Radius ladder — Fibonacci (3 → 5 → 8 → 13 → 21 → 34 → 55) */
+  /* Radius ladder - Fibonacci (3 → 5 → 8 → 13 → 21 → 34 → 55) */
   --radius-sm: 3px;
   --radius-md: 5px;
   --radius-lg: 8px;
@@ -348,7 +393,7 @@
   html {
     @apply font-sans;
   }
-  /* Global keyboard focus indicator — uses box-shadow so it can't be
+  /* Global keyboard focus indicator - uses box-shadow so it can't be
      overridden by inline style={{ backgroundColor }} on custom buttons */
   :focus-visible {
     outline: 2px solid var(--ring);
@@ -358,6 +403,21 @@
   button:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+  /* Elevate-on-hover for all enabled buttons + button-styled anchors -
+     matches the KPI card pattern on the dashboard. Uses :where() so any
+     per-component override wins. Opt out per-element with [data-no-elevate]
+     for inner icon buttons or inline text links where the shadow would
+     visually clash (e.g. tiny X close buttons inside a chip/header). */
+  button:where(:not(:disabled):not([aria-disabled="true"]):not([data-no-elevate])),
+  a:where(:not([aria-disabled="true"]):not([data-no-elevate])) {
+    transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  button:where(:not(:disabled):not([aria-disabled="true"]):not([data-no-elevate])):hover,
+  a:where(:not([aria-disabled="true"]):not([data-no-elevate])):hover {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 }
 

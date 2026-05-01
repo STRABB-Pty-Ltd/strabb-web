@@ -42,7 +42,7 @@ export default function ScheduledMessagesPage() {
     <div className="p-md space-y-md">
       <PageHeader
         title="Scheduled messages"
-        description="View queued, sent, and failed guest messages — and the underlying event log."
+        description="View queued, sent, and failed guest messages - and the underlying event log."
       />
 
       <div className="gap-xs flex border-b" style={{ borderColor: "var(--border)" }}>

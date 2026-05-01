@@ -6,7 +6,6 @@ import type { CurrentUser, UserRole } from "@/types/auth";
 declare module "next-auth" {
   interface Session {
     accessToken: string;
-    refreshToken: string;
     tenantId: string;
     userId: string;
     role: UserRole;

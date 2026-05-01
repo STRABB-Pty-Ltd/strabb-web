@@ -3,10 +3,10 @@
 import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
-import { AlertStrip } from "@/components/pages/dashboard/alert-strip";
-import { ComparePanel } from "@/components/pages/dashboard/compare-panel";
-import { KPIGrid } from "@/components/pages/dashboard/kpi-grid";
-import { PreviewGrid } from "@/components/pages/dashboard/preview-grid";
+import { AlertStrip } from "./_components/alert-strip";
+import { ComparePanel } from "./_components/compare-panel";
+import { KPIGrid } from "./_components/kpi-grid";
+import { PreviewGrid } from "./_components/preview-grid";
 
 export default function DashboardPage() {
   const windowSize = useAppStore((s) => s.dashboard.windowSize);
@@ -38,14 +38,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-md">
-      <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
-
+    <div className="space-y-sm">
       {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}
+
+      {alerts && alerts.length > 0 && (
+        <div className="flex items-center">
+          <div className="w-full" style={{ height: "2px", backgroundColor: "var(--neutral-30)" }} />
+        </div>
+      )}
+
+      <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
 
       {isCompare && <ComparePanel current={kpis} comparison={kpis} />}
 
-      <PreviewGrid data={preview} />
+      <PreviewGrid data={preview} windowSize={windowSize} />
     </div>
   );
 }

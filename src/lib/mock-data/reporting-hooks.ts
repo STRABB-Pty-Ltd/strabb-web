@@ -140,7 +140,7 @@ function computeChartData(financials: Financial[], selectedListings: string[]): 
   const latestMonth = months[months.length - 1] ?? "";
   const latestData = filtered.filter((f) => f.month === latestMonth);
   const occupancy = latestData.map((f) => ({
-    listing: f.listingName.replace(/.*— /, "").substring(0, 15),
+    listing: f.listingName.replace(/.*- /, "").substring(0, 15),
     occupancy: f.occupancyRate,
   }));
 
@@ -157,7 +157,7 @@ function computeChartData(financials: Financial[], selectedListings: string[]): 
 
   const listingMap = new Map(mockListingList.map((l) => [l.id, l.color]));
   const revenueByListing = latestData.map((f) => ({
-    listing: f.listingName.replace(/.*— /, "").substring(0, 15),
+    listing: f.listingName.replace(/.*- /, "").substring(0, 15),
     revenue: f.revenue,
     color: listingMap.get(f.listingId) ?? "var(--brand-10)",
   }));

@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { addDays, format, startOfDay } from "date-fns";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
@@ -31,11 +30,11 @@ interface RawKPIResponse extends RawKPIMetrics {
   trends?: RawKPITrends;
 }
 
-interface RawAlertResponse {
-  overdueTasks: number;
-  blockedTasks: number;
+export interface RawAlertResponse {
   unreadMessages: number;
-  highPriority: number;
+  unscheduledCleans: number;
+  urgentTickets: number;
+  syncErrors: number;
 }
 
 function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
@@ -49,11 +48,11 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
       type: "currency",
     },
     {
-      label: "Total Bookings",
-      value: raw.totalBookings,
-      icon: "calendar",
-      trend: t?.totalBookings,
-      type: "number",
+      label: "Net Income",
+      value: raw.netIncome,
+      icon: "trending-up",
+      trend: t?.netIncome,
+      type: "currency",
     },
     {
       label: "Avg Occupancy",
@@ -69,53 +68,45 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
       trend: t?.avgNightlyRate,
       type: "currency",
     },
-    {
-      label: "Net Income",
-      value: raw.netIncome,
-      icon: "trending-up",
-      trend: t?.netIncome,
-      type: "currency",
-    },
-    {
-      label: "Expenses",
-      value: raw.expenses,
-      icon: "receipt",
-      trend: t?.expenses,
-      type: "currency",
-    },
   ];
 }
 
-function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
-  const alerts: AlertItem[] = [];
-  if (raw.unreadMessages > 0) {
-    alerts.push({
+export function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
+  // `?? 0` defensive against malformed responses; backend always returns these fields.
+  const unscheduled = raw.unscheduledCleans ?? 0;
+  const urgent = raw.urgentTickets ?? 0;
+  const sync = raw.syncErrors ?? 0;
+
+  return [
+    {
       id: "alert-messages",
       type: "message",
       severity: "blue",
-      description: `${raw.unreadMessages} unread message${raw.unreadMessages > 1 ? "s" : ""} requiring attention`,
+      description: `${raw.unreadMessages} unread message${raw.unreadMessages === 1 ? "" : "s"}`,
       count: raw.unreadMessages,
-    });
-  }
-  if (raw.overdueTasks > 0) {
-    alerts.push({
-      id: "alert-overdue",
-      type: "overdue",
+    },
+    {
+      id: "alert-unscheduled",
+      type: "unscheduled",
       severity: "amber",
-      description: `${raw.overdueTasks} cleaning task${raw.overdueTasks > 1 ? "s" : ""} overdue`,
-      count: raw.overdueTasks,
-    });
-  }
-  if (raw.highPriority > 0) {
-    alerts.push({
-      id: "alert-priority",
-      type: "conflict",
+      description: `${unscheduled} clean${unscheduled === 1 ? "" : "s"} need scheduling`,
+      count: unscheduled,
+    },
+    {
+      id: "alert-tickets",
+      type: "ticket",
       severity: "red",
-      description: `${raw.highPriority} high priority item${raw.highPriority > 1 ? "s" : ""}`,
-      count: raw.highPriority,
-    });
-  }
-  return alerts;
+      description: `${urgent} urgent ticket${urgent === 1 ? "" : "s"}`,
+      count: urgent,
+    },
+    {
+      id: "alert-sync",
+      type: "sync",
+      severity: "red",
+      description: `${sync} sync error${sync === 1 ? "" : "s"}`,
+      count: sync,
+    },
+  ];
 }
 
 export function useDashboardKPIsAPI(
@@ -157,7 +148,8 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
   });
 }
 
-interface RawPreviewResponse {
+export interface RawPreviewResponse {
+  miniCalendar: { date: string; bookings: number }[];
   revenueTrend: { month: string; amount: number }[];
   upcomingBookings: {
     id: string;
@@ -166,50 +158,30 @@ interface RawPreviewResponse {
     checkIn: string;
     channel: string;
   }[];
-  cleaningStatus: Record<string, number>;
+  cleansAndTickets: {
+    id: string;
+    kind: "clean" | "ticket";
+    listing: string;
+    date: string;
+  }[];
   channelBreakdown: { channel: string; count: number; revenue: number }[];
 }
 
-const statusColors: Record<string, string> = {
-  pending: "var(--status-pending)",
-  confirmed: "var(--status-confirmed)",
-  inProgress: "var(--status-in-progress)",
-  completed: "var(--status-completed)",
-  issues: "var(--status-issues)",
-};
-
-function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
-  // Backend doesn't return a per-day mini-calendar; derive one from the
-  // upcoming-bookings list by counting check-ins per day for the next 7 days.
-  // Approximate (only counts check-ins, not bookings already in progress)
-  // until the API exposes a dedicated booking-density endpoint.
-  const today = startOfDay(new Date());
-  const upcoming = raw.upcomingBookings ?? [];
-  const miniCalendar = Array.from({ length: 7 }, (_, i) => {
-    const day = addDays(today, i);
-    const dayStr = format(day, "yyyy-MM-dd");
-    const bookings = upcoming.filter((b) => b.checkIn.split("T")[0] === dayStr).length;
-    return { date: dayStr, bookings };
-  });
-
+export function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
   return {
-    miniCalendar,
+    miniCalendar: raw.miniCalendar ?? [],
     revenueSparkline: (raw.revenueTrend ?? []).map((r) => ({
       label: r.month,
       revenue: r.amount,
     })),
-    upcomingBookings: upcoming.map((b) => ({
+    upcomingBookings: (raw.upcomingBookings ?? []).map((b) => ({
       id: b.id,
       guest: b.guestName,
       listing: b.listingName,
       checkIn: b.checkIn,
       channel: b.channel,
     })),
-    taskSummary: Object.entries(raw.cleaningStatus ?? {}).map(([status, count]) => ({
-      status,
-      count,
-      color: statusColors[status] ?? "var(--brand-10)",
-    })),
+    cleansAndTickets: raw.cleansAndTickets ?? [],
   };
 }
 

@@ -10,7 +10,7 @@ const defaults: Financial = {
   id: "fin-001",
   month: monthStr(0),
   listingId: "lst-002",
-  listingName: "Bondi Beach Apartment — Unit A",
+  listingName: "Bondi Beach Apartment - Unit A",
   revenue: 5400,
   cleaningCost: 480,
   ticketCost: 150,
@@ -26,8 +26,8 @@ export function createFinancial(overrides?: Partial<Financial>): Financial {
 }
 
 const listings = [
-  { id: "lst-002", name: "Bondi Beach Apartment — Unit A", rate: 180 },
-  { id: "lst-003", name: "Bondi Beach Apartment — Unit B", rate: 250 },
+  { id: "lst-002", name: "Bondi Beach Apartment - Unit A", rate: 180 },
+  { id: "lst-003", name: "Bondi Beach Apartment - Unit B", rate: 250 },
   { id: "lst-004", name: "Manly Surf Lodge", rate: 450 },
   { id: "lst-005", name: "Coogee Bay Studio", rate: 160 },
   { id: "lst-006", name: "Newtown Terrace", rate: 220 },

@@ -34,14 +34,6 @@ describe("TimeframeSelector", () => {
     storeState.reporting.windowSize = "month";
   });
 
-  it("dashboard chip set: Month / Quarter / YTD / Year", () => {
-    render(<TimeframeSelector page="dashboard" />);
-    expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Quarter" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "YTD" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Year" })).toBeInTheDocument();
-  });
-
   it("default windowSize is highlighted on first render", () => {
     storeState.dashboard.windowSize = "month";
     render(<TimeframeSelector page="dashboard" />);

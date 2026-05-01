@@ -4,7 +4,7 @@ import type { JwtPayload } from "@/types/auth";
  * Decode the payload segment of a JWT without verifying the signature.
  * Used client-side to extract claims (sub, tenant_id, exp) from the token
  * that Auth.js stores in the session. Signature verification is handled
- * by the backend — this is only for reading claims.
+ * by the backend - this is only for reading claims.
  */
 export function decodeJwtPayload(token: string): JwtPayload {
   const parts = token.split(".");

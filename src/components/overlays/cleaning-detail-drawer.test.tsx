@@ -29,6 +29,10 @@ vi.mock("@/hooks/use-cleaning-tasks", () => ({
   useUpdateCleaningTask: () => ({ mutate: updateMock, isPending: false }),
 }));
 
+vi.mock("@/hooks/use-property-timezone", () => ({
+  usePropertyTimezone: () => "Australia/Sydney",
+}));
+
 import { CleaningDetailDrawer } from "./cleaning-detail-drawer";
 
 const baseTask: CleaningTaskResponse = {

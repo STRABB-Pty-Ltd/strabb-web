@@ -43,12 +43,19 @@ async function fetchCurrentUser(accessToken: string): Promise<CurrentUser> {
   };
 }
 
+const IS_DEV_SESSION = process.env.NODE_ENV === "development";
+
+if (IS_DEV_SESSION) {
+  console.warn("[auth] DEV-ONLY: session.maxAge bumped to 30 days. Production uses 1 day.");
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/login",
   },
   session: {
     strategy: "jwt",
+    maxAge: IS_DEV_SESSION ? 30 * 24 * 60 * 60 : 24 * 60 * 60,
   },
   providers: [
     Credentials({
@@ -110,7 +117,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token;
       }
 
-      // Access token expired or expiring soon — refresh it
+      // Access token expired or expiring soon - refresh it
       try {
         const tokens = await refreshAccessToken(token.refreshToken);
         const payload = decodeJwtPayload(tokens.access_token);
@@ -136,7 +143,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
-      // refreshToken intentionally NOT exposed to client session — stays server-side in JWT only
+      // refreshToken intentionally NOT exposed to client session - stays server-side in JWT only
       session.tenantId = token.tenantId;
       session.userId = token.userId;
       session.role = token.role;

@@ -54,13 +54,6 @@ const defaultProps: GanttViewProps<TestItem> = {
 };
 
 describe("GanttView", () => {
-  it("renders the correct number of rows", () => {
-    render(<GanttView {...defaultProps} />);
-    expect(screen.getByText("Listing A")).toBeInTheDocument();
-    expect(screen.getByText("Listing B")).toBeInTheDocument();
-    expect(screen.getByText("Listing C")).toBeInTheDocument();
-  });
-
   it("renders bars for items", () => {
     render(<GanttView {...defaultProps} />);
     expect(screen.getByText("Guest Alpha")).toBeInTheDocument();

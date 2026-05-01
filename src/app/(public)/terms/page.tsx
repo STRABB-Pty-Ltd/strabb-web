@@ -24,7 +24,7 @@ export default function TermsPage() {
         <p>
           STRABB imports booking data via iCal feeds provided by you. Booking data is eventually
           consistent and may not reflect real-time changes on source platforms. STRABB detects but
-          does not prevent booking conflicts — resolution must be done on the source platform.
+          does not prevent booking conflicts - resolution must be done on the source platform.
         </p>
 
         <h2 className="text-subheading font-semibold">4. Billing</h2>
@@ -49,7 +49,7 @@ export default function TermsPage() {
         <h2 className="text-subheading font-semibold">7. Contact</h2>
         <p>
           For questions about these terms, email{" "}
-          <a href="mailto:support@strabb.io" className="underline">
+          <a href="mailto:support@strabb.io" className="underline" data-no-elevate>
             support@strabb.io
           </a>
           .
@@ -57,7 +57,7 @@ export default function TermsPage() {
       </div>
 
       <div className="mt-lg">
-        <Link href="/login" className="text-body underline">
+        <Link href="/login" className="text-body underline" data-no-elevate>
           Back to login
         </Link>
       </div>

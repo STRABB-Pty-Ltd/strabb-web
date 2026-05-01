@@ -12,7 +12,6 @@ const timeframeOptions: Record<string, TimeframeOption[]> = {
   dashboard: [
     { id: "month", label: "Month" },
     { id: "quarter", label: "Quarter" },
-    { id: "ytd", label: "YTD" },
     { id: "year", label: "Year" },
   ],
   calendar: [
@@ -35,7 +34,7 @@ const timeframeOptions: Record<string, TimeframeOption[]> = {
   ],
 };
 
-// Cleaning's "Today" chip maps to windowSize "day" — keep the friendlier label.
+// Cleaning's "Today" chip maps to windowSize "day" - keep the friendlier label.
 const chipIdToWindowSize: Record<string, string> = {
   today: "day",
 };
@@ -130,7 +129,9 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               },
             });
           }}
-          className="px-sm py-base text-body col-span-2 rounded-lg font-medium transition-colors"
+          className={`px-sm py-base text-body rounded-lg font-medium transition-colors ${
+            page === "dashboard" ? "" : "col-span-2"
+          }`}
           style={{
             backgroundColor:
               currentWs === "custom" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",

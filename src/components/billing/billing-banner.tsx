@@ -49,7 +49,11 @@ export function BillingBanner() {
         <AlertTriangleIcon className="size-sm shrink-0" style={{ color: "var(--status-danger)" }} />
         <p>
           {message}{" "}
-          <Link href="/settings" className="font-medium underline underline-offset-2">
+          <Link
+            href="/settings"
+            className="font-medium underline underline-offset-2"
+            data-no-elevate
+          >
             Go to billing
           </Link>
         </p>

@@ -4,13 +4,10 @@ import { useEffect, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
+import { useTimezoneForListing } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
-import { formatInPropertyTimezone, getTimezoneAbbr } from "@/lib/date-utils";
+import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { useAppStore } from "@/stores/app-store";
-
-// Property timezone lookup is deferred until Channex integration confirms how
-// timezone propagates onto bookings/properties. UTC is a safe display fallback.
-const FALLBACK_TIMEZONE = "UTC";
 
 const statusColors: Record<string, string> = {
   confirmed: "var(--status-confirmed)",
@@ -39,6 +36,7 @@ export function BookingDetailDrawer() {
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: booking, isLoading } = useBooking(itemId);
+  const tz = useTimezoneForListing(booking?.listingId);
   const updateNotes = useUpdateBookingNotes();
   const dismissConflict = useDismissConflict();
 
@@ -51,8 +49,6 @@ export function BookingDetailDrawer() {
   if (!open) return null;
 
   const showError = toastError(addToast);
-  const tz = FALLBACK_TIMEZONE;
-  const tzAbbr = booking ? getTimezoneAbbr(booking.checkIn, tz) : tz;
   const isConflicted = booking?.conflictStatus === "conflicted";
   const status = booking?.status ?? "pending";
 
@@ -124,7 +120,6 @@ export function BookingDetailDrawer() {
               </p>
             </div>
           </div>
-          <p className="text-body text-gray-500">Times shown in {tzAbbr}</p>
 
           <div className="gap-sm grid grid-cols-2">
             <div>
@@ -141,7 +136,7 @@ export function BookingDetailDrawer() {
             <div>
               <p className="text-body text-gray-500">Guest</p>
               <p className="text-body text-gray-800">
-                {booking.guestName ?? "—"}
+                {booking.guestName ?? "-"}
                 {booking.guestEmail && (
                   <span className="ml-xs text-gray-500">({booking.guestEmail})</span>
                 )}

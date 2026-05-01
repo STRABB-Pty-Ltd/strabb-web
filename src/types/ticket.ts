@@ -38,7 +38,7 @@ export const TICKET_PRIORITY_OPTIONS: { value: TicketPriority; label: string }[]
 export const TICKET_STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
   { value: "reported", label: "Reported" },
   { value: "scheduled", label: "Scheduled" },
-  { value: "in_progress", label: "In progress" },
+  { value: "in_progress", label: "In Progress" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
 ];

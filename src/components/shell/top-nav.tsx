@@ -19,7 +19,7 @@ export function TopNav() {
         backgroundColor: "var(--surface-60)",
       }}
     >
-      {/* Page buttons — optical centre, shifted left by sidebar_width/4
+      {/* Page buttons - optical centre, shifted left by sidebar_width/4
           to counterbalance the sidebar's visual weight */}
       <div
         className="gap-xs absolute top-1/2 flex items-center"

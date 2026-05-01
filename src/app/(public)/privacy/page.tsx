@@ -42,7 +42,7 @@ export default function PrivacyPage() {
         <h2 className="text-subheading font-semibold">6. Contact</h2>
         <p>
           For privacy-related enquiries, email{" "}
-          <a href="mailto:privacy@strabb.io" className="underline">
+          <a href="mailto:privacy@strabb.io" className="underline" data-no-elevate>
             privacy@strabb.io
           </a>
           .
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
       </div>
 
       <div className="mt-lg">
-        <Link href="/login" className="text-body underline">
+        <Link href="/login" className="text-body underline" data-no-elevate>
           Back to login
         </Link>
       </div>

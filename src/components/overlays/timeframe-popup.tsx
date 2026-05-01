@@ -59,7 +59,7 @@ export function TimeframePopup() {
 
   // Auto-confirm: when popup opens because of a window-size change, auto-close
   // after AUTO_CONFIRM_SECONDS. Mouse-down inside the popup body cancels via
-  // cancelAutoConfirm. Custom range is excluded — users are filling a form,
+  // cancelAutoConfirm. Custom range is excluded - users are filling a form,
   // a timer would interrupt them.
   const [progressActive, setProgressActive] = useState(false);
   const cancelledRef = useRef(false);
@@ -164,6 +164,7 @@ export function TimeframePopup() {
             onClick={closeTimeframePopup}
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
             aria-label="Close"
+            data-no-elevate
           >
             <X size={16} />
           </button>
@@ -489,7 +490,7 @@ function DayPicker({
     <MonthGrid
       viewDate={viewDate}
       onViewDateChange={setViewDate}
-      // Day mode: single navy cell, no band. Week/fortnight: grey band — hover
+      // Day mode: single navy cell, no band. Week/fortnight: grey band - hover
       // overrides the auto-selected period when the user mouses elsewhere.
       isStrongHighlighted={windowSize === "day" ? (day) => isSameDay(day, effective) : undefined}
       isHighlighted={(day) => {

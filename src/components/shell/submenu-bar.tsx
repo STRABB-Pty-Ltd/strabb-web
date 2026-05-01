@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { CalendarClock, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
@@ -17,7 +18,10 @@ export function SubmenuBar() {
   const currentPage = useAppStore((s) => s.currentPage);
   const toggleSubmenuChip = useAppStore((s) => s.toggleSubmenuChip);
   const setSubmenu = useAppStore((s) => s.setSubmenu);
+  const setView = useAppStore((s) => s.setView);
   const toggleCompare = useAppStore((s) => s.toggleCompare);
+  const pathname = usePathname();
+  const router = useRouter();
 
   const dashboardSubmenu = useAppStore((s) => s.dashboard.submenu);
   const dashboardCompare = useAppStore((s) => s.dashboard.compare);
@@ -40,8 +44,18 @@ export function SubmenuBar() {
     reporting: reportingSubmenu,
   }[currentPage];
 
+  const pageRoute = `/${currentPage}`;
+  const onNavSubRoute = chips.some(
+    (c) => c.behavior === "nav" && c.href && pathname.startsWith(c.href),
+  );
+
   const isChipActive = (chip: SubmenuChip): boolean => {
-    if (chip.behavior === "nav") return false;
+    if (chip.behavior === "nav") {
+      return chip.href ? pathname === chip.href || pathname.startsWith(chip.href + "/") : false;
+    }
+    // When the user is on a nav-chip sub-route, no submenu chip is active -
+    // the nav chip owns the highlight, including over Overview.
+    if (onNavSubRoute) return false;
     if (chip.behavior === "toggle" && currentPage === "dashboard" && chip.id === "compare") {
       return dashboardCompare;
     }
@@ -50,6 +64,17 @@ export function SubmenuBar() {
 
   const handleChipClick = (chip: SubmenuChip) => {
     const page = currentPage as Exclude<PageId, "settings">;
+
+    if ((page === "messaging" || page === "cleaning") && chip.behavior !== "nav") {
+      setView(page, chip.id === "overview" ? "kanban" : "list");
+    }
+
+    // If we're on a nav-chip sub-route (e.g. /cleaning/tickets) and the user
+    // clicks any non-nav chip, route back to the page root so the nav chip
+    // deactivates and the clicked chip becomes the only active one.
+    if (chip.behavior !== "nav" && onNavSubRoute) {
+      router.push(pageRoute);
+    }
 
     switch (chip.behavior) {
       case "single-default":
@@ -93,9 +118,14 @@ export function SubmenuBar() {
       case "more-dropdown":
         setMoreOpen((prev) => !prev);
         break;
-      case "nav":
-        // Handled via <Link> render branch below
+      case "nav": {
+        // Toggle: clicking an already-active nav chip goes back to the page
+        // root so it can deselect like every other chip.
+        if (!chip.href) break;
+        const isOnTarget = pathname === chip.href || pathname.startsWith(chip.href + "/");
+        router.push(isOnTarget ? pageRoute : chip.href);
         break;
+      }
     }
   };
 
@@ -140,7 +170,7 @@ export function SubmenuBar() {
           const isNav = chip.behavior === "nav";
 
           const chipClass =
-            "gap-xs px-sm py-base text-body inline-flex shrink-0 items-center justify-center border-0 font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
+            "gap-xs px-sm py-base text-body inline-flex shrink-0 cursor-pointer items-center justify-center border-0 font-medium whitespace-nowrap outline-none transition-all hover:opacity-80 active:scale-95 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
           const chipStyle = {
             width: 95,
             borderRadius: 5,
@@ -150,15 +180,22 @@ export function SubmenuBar() {
 
           if (isNav && chip.href) {
             return (
-              <Link key={chip.id} href={chip.href} className={chipClass} style={chipStyle}>
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => handleChipClick(chip)}
+                aria-pressed={active}
+                className={chipClass}
+                style={chipStyle}
+              >
                 {chip.label}
-              </Link>
+              </button>
             );
           }
 
           // The More dropdown needs a positioned wrapper so the menu can
           // anchor under it. Other chips render directly as flex children
-          // — same structure as TopNav so the parent's gap applies cleanly.
+          // - same structure as TopNav so the parent's gap applies cleanly.
           if (isMore) {
             return (
               <div key={chip.id} className="relative" ref={moreRef}>

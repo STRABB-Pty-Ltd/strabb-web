@@ -17,14 +17,12 @@ export interface SmsUsageSummaryResponse {
 export const phoneNumberSchema = z
   .string()
   .trim()
-  .min(8, "Phone number must be at least 8 characters")
-  .max(32, "Phone number must be at most 32 characters");
+  .regex(/^\+\d{8,15}$/, "Phone must be E.164 format starting with + (e.g. +61412345678)");
 
 export const otpCodeSchema = z
   .string()
   .trim()
-  .min(4, "Code must be at least 4 digits")
-  .max(10, "Code must be at most 10 digits");
+  .regex(/^\d{4,10}$/, "Code must be 4-10 digits, numbers only");
 
 export type PhoneNumberInput = z.infer<typeof phoneNumberSchema>;
 export type OtpCodeInput = z.infer<typeof otpCodeSchema>;

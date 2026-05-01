@@ -10,7 +10,7 @@ const day = (offset: number) => {
 const defaults: ShoppingItem = {
   id: "si-001",
   listingId: "lst-002",
-  listingName: "Bondi Beach Apartment — Unit A",
+  listingName: "Bondi Beach Apartment - Unit A",
   item: "Bath towels (set of 4)",
   quantity: 2,
   status: "requested",
@@ -54,7 +54,7 @@ export const mockShoppingItemList: ShoppingItem[] = [
     status: "requested",
     requestedDate: day(-1),
     priority: "medium",
-    notes: "Guest prefers decaf — check Aldi stock first",
+    notes: "Guest prefers decaf - check Aldi stock first",
   }),
   createShoppingItem({
     id: "si-005",
@@ -69,7 +69,7 @@ export const mockShoppingItemList: ShoppingItem[] = [
   createShoppingItem({
     id: "si-006",
     listingId: "lst-003",
-    listingName: "Bondi Beach Apartment — Unit B",
+    listingName: "Bondi Beach Apartment - Unit B",
     item: "Hand soap refill",
     quantity: 2,
     status: "requested",
@@ -90,7 +90,7 @@ export const mockShoppingItemList: ShoppingItem[] = [
   createShoppingItem({
     id: "si-008",
     listingId: "lst-002",
-    listingName: "Bondi Beach Apartment — Unit A",
+    listingName: "Bondi Beach Apartment - Unit A",
     item: "Light bulbs (LED warm white)",
     quantity: 6,
     status: "approved",

@@ -85,7 +85,7 @@ export default function AdminPage() {
             <div className="gap-base p-sm flex items-center rounded-xl border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
               <CheckCircleIcon className="size-md text-green-600 dark:text-green-400" />
               <p className="text-body font-medium text-green-800 dark:text-green-200">
-                All systems healthy — no failures detected.
+                All systems healthy - no failures detected.
               </p>
             </div>
           )}
@@ -173,7 +173,7 @@ function SyncErrorsSection() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "—"}</span>
+        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "-"}</span>
       ),
     },
   ];
@@ -248,7 +248,7 @@ function FailedMessagesSection() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "—"}</span>
+        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "-"}</span>
       ),
     },
     {
