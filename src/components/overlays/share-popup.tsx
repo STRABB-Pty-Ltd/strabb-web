@@ -52,6 +52,7 @@ export function SharePopup() {
             <button
               type="button"
               onClick={closeSharePopup}
+              aria-label="Close share dialog"
               className="p-xs rounded text-gray-400 hover:bg-gray-100"
               data-no-elevate
             >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 interface DrillDownPanelProps {
@@ -11,6 +11,8 @@ interface DrillDownPanelProps {
   children: React.ReactNode;
 }
 
+const EXIT_MS = 300;
+
 export function DrillDownPanel({
   open,
   onClose,
@@ -18,6 +20,26 @@ export function DrillDownPanel({
   accentColor = "var(--strabb-secondary)",
   children,
 }: DrillDownPanelProps) {
+  // Keep the panel mounted briefly after `open` flips to false so the
+  // slideOutRight animation can play before unmount. Without this the
+  // panel disappears instantly on close, which feels jarring against
+  // the slide-in entrance. Only run the exit animation if the panel was
+  // actually opened first - otherwise initial open=false would briefly
+  // render the panel.
+  const [exiting, setExiting] = useState(false);
+  const wasOpened = useRef(false);
+
+  useEffect(() => {
+    if (open) {
+      wasOpened.current = true;
+      setExiting(false);
+    } else if (wasOpened.current) {
+      setExiting(true);
+      const t = setTimeout(() => setExiting(false), EXIT_MS);
+      return () => clearTimeout(t);
+    }
+  }, [open]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -32,7 +54,7 @@ export function DrillDownPanel({
     }
   }, [open, handleKeyDown]);
 
-  if (!open) return null;
+  if (!open && !exiting) return null;
 
   return (
     <>
@@ -44,7 +66,9 @@ export function DrillDownPanel({
         className="fixed top-0 right-0 z-[150] flex h-full flex-col bg-white shadow-xl"
         style={{
           width: "var(--drilldown-width)",
-          animation: "slideInRight 300ms ease",
+          animation: !open
+            ? `slideOutRight ${EXIT_MS}ms ease forwards`
+            : `slideInRight ${EXIT_MS}ms ease`,
         }}
       >
         {/* Accent bar */}
@@ -59,6 +83,7 @@ export function DrillDownPanel({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close panel"
             className="p-xs rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             data-no-elevate
           >

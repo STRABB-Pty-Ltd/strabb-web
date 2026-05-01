@@ -21,7 +21,9 @@ export function ToastContainer() {
             : toast.type === "warning"
               ? sonnerToast.warning
               : sonnerToast.info;
-      fn(toast.message, { id: toast.id });
+      // Errors stay long enough to read + recover (sticky-style); other toasts auto-dismiss.
+      const duration = toast.type === "error" ? 10000 : 5000;
+      fn(toast.message, { id: toast.id, duration });
       removeToast(toast.id);
     }
   }, [toasts, removeToast]);

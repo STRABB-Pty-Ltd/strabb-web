@@ -81,6 +81,7 @@ export function ShoppingListPopup() {
               <button
                 type="button"
                 onClick={closeShoppingListPopup}
+                aria-label="Close shopping list"
                 className="p-xs rounded text-gray-400 hover:bg-gray-100"
                 data-no-elevate
               >

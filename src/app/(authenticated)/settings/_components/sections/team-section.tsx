@@ -145,6 +145,7 @@ export function TeamSection() {
           <button
             type="button"
             onClick={() => setShowInvite(false)}
+            aria-label="Cancel invitation"
             className="p-base rounded-lg text-gray-400 hover:text-gray-600"
           >
             <X size={16} />

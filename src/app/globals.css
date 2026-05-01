@@ -447,6 +447,15 @@
   }
 }
 
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @keyframes drainProgress {
   from {
     transform: scaleX(1);

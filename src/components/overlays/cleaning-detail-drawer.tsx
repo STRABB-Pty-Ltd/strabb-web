@@ -239,7 +239,7 @@ export function CleaningDetailDrawer() {
                 type="button"
                 onClick={handleComplete}
                 disabled={isCompleted || completeTask.isPending}
-                className="px-sm py-base text-body rounded-lg font-medium text-white dark:text-[var(--brand-10)] disabled:opacity-60"
+                className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60 dark:text-[var(--brand-10)]"
                 style={{ backgroundColor: "var(--semantic-success)" }}
               >
                 {completeTask.isPending ? "Completing…" : "Mark complete"}

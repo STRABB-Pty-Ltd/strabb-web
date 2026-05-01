@@ -130,6 +130,8 @@ export function ListingFilterTree() {
                 <button
                   type="button"
                   onClick={() => toggleGroup(group.id)}
+                  aria-label={`${isExpanded ? "Collapse" : "Expand"} group ${group.name}`}
+                  aria-expanded={isExpanded}
                   className="p-xs shrink-0"
                   data-no-elevate
                 >
@@ -139,6 +141,7 @@ export function ListingFilterTree() {
                 <button
                   type="button"
                   onClick={() => deleteCustomGroup(group.id)}
+                  aria-label={`Delete group ${group.name}`}
                   className="p-xs"
                   style={{ color: "var(--status-issues)" }}
                   data-no-elevate

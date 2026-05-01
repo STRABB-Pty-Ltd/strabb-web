@@ -90,6 +90,7 @@ export function SavedReportsDrawer() {
                 <button
                   type="button"
                   onClick={() => deleteReport(report.id)}
+                  aria-label="Delete saved report"
                   className="p-xs rounded-sm text-gray-400 hover:text-red-500"
                   data-no-elevate
                 >

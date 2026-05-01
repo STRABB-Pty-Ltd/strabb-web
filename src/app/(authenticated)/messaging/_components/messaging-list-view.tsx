@@ -57,7 +57,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
               className="gap-sm px-md py-sm flex w-full items-center rounded-lg bg-white text-left transition-shadow hover:shadow-sm"
               style={{
                 borderLeft: `4px solid ${channelColor}`,
-                outline: isSelected ? `2px solid ${channelColor}` : "none",
+                outline: isSelected ? `2px solid ${channelColor}` : undefined,
                 outlineOffset: isSelected ? "-2px" : undefined,
               }}
             >

@@ -32,6 +32,15 @@ const validPages: PageId[] = [
   "settings",
 ];
 
+const pageLabels: Record<PageId, string> = {
+  dashboard: "Dashboard",
+  calendar: "Calendar",
+  messaging: "Messaging",
+  cleaning: "Cleaning",
+  reporting: "Reporting",
+  settings: "Settings",
+};
+
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const currentPage = useAppStore((s) => s.currentPage);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
@@ -117,6 +126,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         />
         <ErrorBoundary>
           <Suspense fallback={<PageLoading />}>
+            <h1 className="sr-only">{pageLabels[currentPage]}</h1>
             <Canvas>{children}</Canvas>
           </Suspense>
         </ErrorBoundary>

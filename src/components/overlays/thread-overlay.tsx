@@ -72,6 +72,7 @@ export function ThreadOverlay({
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Close thread"
                 className="p-xs rounded text-gray-400 hover:bg-gray-100"
                 data-no-elevate
               >

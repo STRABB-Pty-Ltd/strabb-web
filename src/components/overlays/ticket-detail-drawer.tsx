@@ -305,7 +305,7 @@ export function TicketDetailDrawer() {
                       type="button"
                       onClick={handleDelete}
                       disabled={deleteTicket.isPending}
-                      className="px-sm py-base text-body rounded-lg font-medium text-white dark:text-[var(--brand-10)] disabled:opacity-60"
+                      className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60 dark:text-[var(--brand-10)]"
                       style={{ backgroundColor: "var(--status-danger)" }}
                     >
                       {deleteTicket.isPending ? "Deleting…" : "Yes, delete"}
