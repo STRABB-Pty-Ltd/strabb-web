@@ -1,13 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { rawPreviewToPreviewData, type RawPreviewResponse } from "./dashboard-api";
+import {
+  rawAlertsToAlertItems,
+  rawPreviewToPreviewData,
+  type RawAlertResponse,
+  type RawPreviewResponse,
+} from "./dashboard-api";
 
 function emptyRaw(overrides: Partial<RawPreviewResponse> = {}): RawPreviewResponse {
   return {
     miniCalendar: [],
     revenueTrend: [],
     upcomingBookings: [],
-    cleaningStatus: {},
+    cleansAndTickets: [],
     channelBreakdown: [],
     ...overrides,
   };
@@ -79,6 +84,18 @@ describe("rawPreviewToPreviewData", () => {
     });
   });
 
+  describe("cleansAndTickets", () => {
+    it("passes API entries through verbatim", () => {
+      const cleansAndTickets = [
+        { id: "c1", kind: "clean" as const, listing: "Beach House", date: "2026-05-02" },
+        { id: "t1", kind: "ticket" as const, listing: "City Loft", date: "2026-05-03" },
+        { id: "c2", kind: "clean" as const, listing: "Beach House", date: "2026-05-05" },
+      ];
+      const result = rawPreviewToPreviewData(emptyRaw({ cleansAndTickets }));
+      expect(result.cleansAndTickets).toEqual(cleansAndTickets);
+    });
+  });
+
   describe("missing fields", () => {
     it("treats missing arrays/maps as empty", () => {
       const result = rawPreviewToPreviewData({} as RawPreviewResponse);
@@ -87,5 +104,48 @@ describe("rawPreviewToPreviewData", () => {
       expect(result.upcomingBookings).toEqual([]);
       expect(result.cleansAndTickets).toEqual([]);
     });
+  });
+});
+
+describe("rawAlertsToAlertItems", () => {
+  function makeRaw(overrides: Partial<RawAlertResponse> = {}): RawAlertResponse {
+    return {
+      unreadMessages: 0,
+      unscheduledCleans: 0,
+      urgentTickets: 0,
+      syncErrors: 0,
+      ...overrides,
+    };
+  }
+
+  it("renders all four alert chips with the correct counts", () => {
+    const items = rawAlertsToAlertItems(
+      makeRaw({
+        unreadMessages: 3,
+        unscheduledCleans: 5,
+        urgentTickets: 2,
+        syncErrors: 1,
+      }),
+    );
+    expect(items).toHaveLength(4);
+    expect(items[0]).toMatchObject({ id: "alert-messages", count: 3 });
+    expect(items[1]).toMatchObject({ id: "alert-unscheduled", count: 5 });
+    expect(items[2]).toMatchObject({ id: "alert-tickets", count: 2 });
+    expect(items[3]).toMatchObject({ id: "alert-sync", count: 1 });
+  });
+
+  it("uses singular nouns when count is exactly 1", () => {
+    const items = rawAlertsToAlertItems(
+      makeRaw({ unreadMessages: 1, unscheduledCleans: 1, urgentTickets: 1, syncErrors: 1 }),
+    );
+    expect(items[0].description).toBe("1 unread message");
+    expect(items[1].description).toBe("1 clean need scheduling");
+    expect(items[2].description).toBe("1 urgent ticket");
+    expect(items[3].description).toBe("1 sync error");
+  });
+
+  it("defaults missing fields to 0 (defensive against malformed responses)", () => {
+    const items = rawAlertsToAlertItems({ unreadMessages: 0 } as RawAlertResponse);
+    expect(items.map((i) => i.count)).toEqual([0, 0, 0, 0]);
   });
 });

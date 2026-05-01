@@ -30,13 +30,11 @@ interface RawKPIResponse extends RawKPIMetrics {
   trends?: RawKPITrends;
 }
 
-interface RawAlertResponse {
+export interface RawAlertResponse {
   unreadMessages: number;
-  unscheduledCleans?: number;
-  urgentTickets?: number;
-  syncErrors?: number;
-  overdueTasks?: number;
-  highPriority?: number;
+  unscheduledCleans: number;
+  urgentTickets: number;
+  syncErrors: number;
 }
 
 function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
@@ -73,11 +71,10 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
   ];
 }
 
-function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
-  // TODO: backend should return unscheduledCleans, urgentTickets, syncErrors directly.
-  // overdueTasks and highPriority kept as fallbacks until backend updated.
-  const unscheduled = raw.unscheduledCleans ?? raw.overdueTasks ?? 0;
-  const urgent = raw.urgentTickets ?? raw.highPriority ?? 0;
+export function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
+  // `?? 0` defensive against malformed responses; backend always returns these fields.
+  const unscheduled = raw.unscheduledCleans ?? 0;
+  const urgent = raw.urgentTickets ?? 0;
   const sync = raw.syncErrors ?? 0;
 
   return [
@@ -161,7 +158,12 @@ export interface RawPreviewResponse {
     checkIn: string;
     channel: string;
   }[];
-  cleaningStatus: Record<string, number>;
+  cleansAndTickets: {
+    id: string;
+    kind: "clean" | "ticket";
+    listing: string;
+    date: string;
+  }[];
   channelBreakdown: { channel: string; count: number; revenue: number }[];
 }
 
@@ -179,7 +181,7 @@ export function rawPreviewToPreviewData(raw: RawPreviewResponse): PreviewData {
       checkIn: b.checkIn,
       channel: b.channel,
     })),
-    cleansAndTickets: [],
+    cleansAndTickets: raw.cleansAndTickets ?? [],
   };
 }
 
