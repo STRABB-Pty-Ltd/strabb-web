@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
+import { EmptyState } from "@/components/ui/empty-state";
 import { useMessageActions, useMessageThread } from "@/hooks/use-messaging";
 import type { Message } from "@/types/message";
 import { useAppStore } from "@/stores/app-store";
@@ -44,7 +45,11 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
         }}
       >
         {messages.length === 0 && (
-          <p className="py-lg text-body text-center text-gray-400">No messages</p>
+          <EmptyState
+            icon={MessageSquare}
+            title="No messages"
+            description="New conversations from connected channels will land here."
+          />
         )}
         {messages.map((msg) => {
           const isSelected = selectedMessage === msg.id;

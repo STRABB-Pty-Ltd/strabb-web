@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
@@ -31,8 +32,17 @@ export default function DashboardPage() {
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading dashboard...</p>
+      <div className="space-y-sm" aria-busy="true">
+        <span className="sr-only">Loading dashboard</span>
+        <div className="gap-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} h={89} />
+          ))}
+        </div>
+        <div className="gap-sm grid grid-cols-1 lg:grid-cols-2">
+          <Skeleton h={233} />
+          <Skeleton h={233} />
+        </div>
       </div>
     );
   }

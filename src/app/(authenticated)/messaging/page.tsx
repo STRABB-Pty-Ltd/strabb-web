@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
@@ -76,8 +77,11 @@ export default function MessagingPage() {
 
   if (isLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading messages...</p>
+      <div className="space-y-xs" aria-busy="true">
+        <span className="sr-only">Loading messages</span>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} h={55} />
+        ))}
       </div>
     );
   }

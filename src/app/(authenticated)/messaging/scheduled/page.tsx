@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { type Column, DataTable } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMessageLogs, useResendMessage, useScheduledMessages } from "@/hooks/use-messages";
 import { ApiError } from "@/lib/api-client";
 import type { MessageLogResponse, ScheduledMessageResponse } from "@/lib/schemas/message";
@@ -183,7 +184,14 @@ function ScheduledTab({
   ];
 
   if (isLoading) {
-    return <p className="text-body text-gray-400">Loading messages…</p>;
+    return (
+      <div className="space-y-xs" aria-busy="true">
+        <span className="sr-only">Loading messages</span>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} h={55} />
+        ))}
+      </div>
+    );
   }
 
   const messages = data?.data ?? [];

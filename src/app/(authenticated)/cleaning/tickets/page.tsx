@@ -7,6 +7,7 @@ import { TicketFormDialog } from "./_components/ticket-form-dialog";
 import { TicketsListView } from "./_components/tickets-list-view";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useProperties } from "@/hooks/use-properties";
 import { type TicketFilters, useTicketsAPI } from "@/lib/api-hooks/tickets-api";
 import { TICKET_PRIORITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@/types/ticket";
@@ -83,7 +84,12 @@ export default function TicketsPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-body text-gray-400">Loading tickets…</p>
+        <div className="space-y-xs" aria-busy="true">
+          <span className="sr-only">Loading tickets</span>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} h={55} />
+          ))}
+        </div>
       ) : (
         <>
           <TicketsListView

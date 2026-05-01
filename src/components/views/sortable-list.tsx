@@ -1,5 +1,9 @@
 "use client";
 
+import { Inbox } from "lucide-react";
+
+import { EmptyState } from "@/components/ui/empty-state";
+
 import { SortableListHeader, type ColumnDef } from "./sortable-list-header";
 import { SortableListRow } from "./sortable-list-row";
 
@@ -33,9 +37,7 @@ export function SortableList<T>({
         onSort={onSort}
       />
       <div>
-        {data.length === 0 && (
-          <div className="py-lg text-body text-center text-gray-400">No items to display</div>
-        )}
+        {data.length === 0 && <EmptyState icon={Inbox} title="No items to display" />}
         {data.map((item, index) => (
           <SortableListRow
             key={getRowId(item)}

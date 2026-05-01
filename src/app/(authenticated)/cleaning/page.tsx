@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CleaningKanbanView } from "./_components/cleaning-kanban-view";
 import { CleaningListView } from "./_components/cleaning-list-view";
 import { useCleaningTasks } from "@/hooks/use-cleaning";
@@ -32,8 +33,11 @@ export default function CleaningPage() {
 
   if (isLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading cleaning tasks...</p>
+      <div className="space-y-xs" aria-busy="true">
+        <span className="sr-only">Loading cleaning tasks</span>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} h={55} />
+        ))}
       </div>
     );
   }

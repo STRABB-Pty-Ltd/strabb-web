@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useListings } from "@/hooks/use-listings";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
@@ -19,6 +20,10 @@ export function ListingFilterTree() {
 
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
+  const [pendingDeleteGroupId, setPendingDeleteGroupId] = useState<string | null>(null);
+  const pendingDeleteGroup = pendingDeleteGroupId
+    ? (customGroups.find((g) => g.id === pendingDeleteGroupId) ?? null)
+    : null;
 
   const { data: listingsData } = useListings();
   const allListings = (listingsData?.data ?? []) as unknown as Listing[];
@@ -140,7 +145,7 @@ export function ListingFilterTree() {
                 <span className="text-body flex-1 truncate font-medium">{group.name}</span>
                 <button
                   type="button"
-                  onClick={() => deleteCustomGroup(group.id)}
+                  onClick={() => setPendingDeleteGroupId(group.id)}
                   aria-label={`Delete group ${group.name}`}
                   className="p-xs"
                   style={{ color: "var(--status-issues)" }}
@@ -213,6 +218,22 @@ export function ListingFilterTree() {
           Create Group
         </button>
       )}
+
+      <ConfirmDialog
+        open={!!pendingDeleteGroup}
+        onOpenChange={(o) => !o && setPendingDeleteGroupId(null)}
+        title="Delete custom group"
+        description={
+          pendingDeleteGroup
+            ? `"${pendingDeleteGroup.name}" will be removed. The listings inside it stay - only the grouping is deleted.`
+            : undefined
+        }
+        confirmLabel="Delete group"
+        destructive
+        onConfirm={() => {
+          if (pendingDeleteGroupId) deleteCustomGroup(pendingDeleteGroupId);
+        }}
+      />
     </div>
   );
 }

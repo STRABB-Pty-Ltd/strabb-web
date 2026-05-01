@@ -11,7 +11,10 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { CalendarDays } from "lucide-react";
 import type { ReactNode } from "react";
+
+import { EmptyState } from "@/components/ui/empty-state";
 
 import { CalendarDayCell } from "./calendar-day-cell";
 
@@ -237,9 +240,7 @@ export function CalendarGrid<T>({
     return (
       <div>
         <div className="gap-base flex flex-col">
-          {dayEvents.length === 0 && (
-            <p className="py-lg text-body text-center text-gray-400">No events</p>
-          )}
+          {dayEvents.length === 0 && <EmptyState icon={CalendarDays} title="No events" />}
           {dayEvents.map((ev, i) => {
             const accent = getEventAccentColor?.(ev);
             const icon = getEventIcon?.(ev);
