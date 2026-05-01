@@ -131,7 +131,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           </Suspense>
         </ErrorBoundary>
       </div>
-      {helpOpen && <KeyboardHelpModal onClose={() => setHelpOpen(false)} />}
+      <KeyboardHelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
       <BookingDetailDrawer />
       <CleaningDetailDrawer />
       <TicketDetailDrawer />

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 import type { ThreadMessage } from "@/types/message";
 
 interface ThreadOverlayProps {
@@ -23,6 +24,8 @@ const channelColors: Record<string, string> = {
   direct: "var(--channel-direct)",
 };
 
+const EXIT_MS = 300;
+
 export function ThreadOverlay({
   open,
   onClose,
@@ -34,43 +37,64 @@ export function ThreadOverlay({
   messages,
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
+
+  // Cache the props that drive header + body so the panel keeps showing
+  // the conversation that was just open through the slide-out animation.
+  // While open we trust the live props; only fall back during close.
+  const lastDataRef = useRef({ guestName, listingName, checkIn, checkOut, channel, messages });
+  if (open) {
+    lastDataRef.current = { guestName, listingName, checkIn, checkOut, channel, messages };
+  }
+  const data = open
+    ? { guestName, listingName, checkIn, checkOut, channel, messages }
+    : lastDataRef.current;
 
   // Escape key is handled by the global keyboard shortcuts in app-shell.tsx
 
-  if (!open) return null;
+  if (!shouldRender) return null;
 
   return (
     <>
       {/* Scrim */}
-      <div className="fixed inset-0 z-[170] bg-black/30" />
+      <div
+        className="fixed inset-0 z-[170] bg-black/30"
+        style={{
+          animation: !open ? `fadeOut ${EXIT_MS}ms ease forwards` : `fadeIn ${EXIT_MS}ms ease`,
+        }}
+      />
 
       {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div
-        className="rounded-2xl fixed z-[175] flex flex-col overflow-hidden bg-[var(--neutral-30)] shadow-xl"
+        className="fixed z-[175] flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           top: "var(--space-md)",
           right: "var(--space-md)",
           bottom: "var(--space-md)",
           width: "var(--thread-width)",
-          animation: "slideInRight 300ms ease",
+          animation: !open
+            ? `slideOutRight ${EXIT_MS}ms ease forwards`
+            : `slideInRight ${EXIT_MS}ms ease`,
         }}
       >
         {/* Booking context header */}
         <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-body font-semibold text-gray-800">{guestName}</h2>
-              <p className="text-body text-gray-500">{listingName}</p>
+              <h2 className="text-body font-semibold text-gray-800">{data.guestName}</h2>
+              <p className="text-body text-gray-500">{data.listingName}</p>
               <p className="text-body text-gray-400">
-                {checkIn} &ndash; {checkOut}
+                {data.checkIn} &ndash; {data.checkOut}
               </p>
             </div>
             <div className="gap-base flex items-center">
               <span
                 className="px-base py-xs text-body rounded font-medium text-white dark:text-[var(--brand-10)]"
-                style={{ backgroundColor: channelColors[channel] ?? "var(--channel-direct)" }}
+                style={{
+                  backgroundColor: channelColors[data.channel] ?? "var(--channel-direct)",
+                }}
               >
-                {channel.replace("_", ".")}
+                {data.channel.replace("_", ".")}
               </span>
               <button
                 type="button"
@@ -87,7 +111,7 @@ export function ThreadOverlay({
 
         {/* Thread body */}
         <div className="space-y-sm p-sm flex-1 overflow-y-auto">
-          {messages.map((msg) => (
+          {data.messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.isGuest ? "justify-start" : "justify-end"}`}>
               <div
                 className="px-sm py-base max-w-[80%]"

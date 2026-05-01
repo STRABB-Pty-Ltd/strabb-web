@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { X } from "lucide-react";
+
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 
 interface DrillDownPanelProps {
   open: boolean;
@@ -20,25 +22,8 @@ export function DrillDownPanel({
   accentColor = "var(--strabb-secondary)",
   children,
 }: DrillDownPanelProps) {
-  // Keep the panel mounted briefly after `open` flips to false so the
-  // slideOutRight animation can play before unmount. Without this the
-  // panel disappears instantly on close, which feels jarring against
-  // the slide-in entrance. Only run the exit animation if the panel was
-  // actually opened first - otherwise initial open=false would briefly
-  // render the panel.
-  const [exiting, setExiting] = useState(false);
-  const wasOpened = useRef(false);
-
-  useEffect(() => {
-    if (open) {
-      wasOpened.current = true;
-      setExiting(false);
-    } else if (wasOpened.current) {
-      setExiting(true);
-      const t = setTimeout(() => setExiting(false), EXIT_MS);
-      return () => clearTimeout(t);
-    }
-  }, [open]);
+  // Keep the panel mounted briefly after close so slideOutRight can play.
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -54,7 +39,7 @@ export function DrillDownPanel({
     }
   }, [open, handleKeyDown]);
 
-  if (!open && !exiting) return null;
+  if (!shouldRender) return null;
 
   return (
     <>
@@ -63,7 +48,7 @@ export function DrillDownPanel({
 
       {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div
-        className="rounded-2xl fixed z-[150] flex flex-col overflow-hidden bg-[var(--neutral-30)] shadow-xl"
+        className="fixed z-[150] flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           top: "var(--space-md)",
           right: "var(--space-md)",

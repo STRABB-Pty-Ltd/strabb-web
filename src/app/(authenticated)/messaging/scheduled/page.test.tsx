@@ -23,7 +23,7 @@ vi.mock("@/hooks/use-messages", () => ({
 }));
 
 const routerReplaceMock = vi.fn();
-let searchParamsValue = new URLSearchParams();
+const searchParamsValue = new URLSearchParams();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: routerReplaceMock, push: vi.fn() }),
   usePathname: () => "/messaging/scheduled",

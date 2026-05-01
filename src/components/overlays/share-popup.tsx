@@ -3,6 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { X } from "lucide-react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useAppStore } from "@/stores/app-store";
 
 const defaultFields = [
@@ -13,11 +14,15 @@ const defaultFields = [
   { key: "expenses", label: "Expenses" },
 ];
 
+const EXIT_MS = 200;
+
 export function SharePopup() {
   const sharePopup = useAppStore((s) => s.sharePopup);
   const closeSharePopup = useAppStore((s) => s.closeSharePopup);
   const shareFields = useAppStore((s) => s.shareFields);
   const setShareFields = useAppStore((s) => s.setShareFields);
+  const open = sharePopup.open;
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -27,23 +32,33 @@ export function SharePopup() {
   );
 
   useEffect(() => {
-    if (sharePopup.open) {
+    if (open) {
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [sharePopup.open, handleKeyDown]);
+  }, [open, handleKeyDown]);
 
-  if (!sharePopup.open) return null;
+  if (!shouldRender) return null;
 
   const toggleField = (key: string) => {
     setShareFields({ ...shareFields, [key]: !shareFields[key] });
   };
 
+  const scrimAnim = !open ? `fadeOut ${EXIT_MS}ms ease forwards` : `fadeIn ${EXIT_MS}ms ease`;
+  const cardAnim = !open ? `scaleOut ${EXIT_MS}ms ease forwards` : `scaleIn ${EXIT_MS}ms ease`;
+
   return (
     <>
-      <div className="fixed inset-0 z-[180] bg-black/30" onClick={closeSharePopup} />
+      <div
+        className="fixed inset-0 z-[180] bg-black/30"
+        style={{ animation: scrimAnim }}
+        onClick={closeSharePopup}
+      />
       <div className="fixed inset-0 z-[185] flex items-center justify-center">
-        <div className="w-full max-w-md rounded-xl bg-white shadow-xl">
+        <div
+          className="w-full max-w-md rounded-xl bg-white shadow-xl"
+          style={{ animation: cardAnim }}
+        >
           <div
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}

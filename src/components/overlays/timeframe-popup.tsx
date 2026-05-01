@@ -19,12 +19,14 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const WEEK_OPTS = { weekStartsOn: 1 as const };
 const AUTO_CONFIRM_SECONDS = 7;
+const EXIT_MS = 200;
 
 type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
 
@@ -117,9 +119,12 @@ export function TimeframePopup() {
     }
   }, [tfPopup.open]);
 
-  if (!tfPopup.open || !isTimeframePage(currentPage)) return null;
+  const open = tfPopup.open && isTimeframePage(currentPage);
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
+  if (!shouldRender) return null;
 
   const writeAnchor = (next: string) => {
+    if (!isTimeframePage(currentPage)) return;
     setTimeframeAnchor(currentPage, next);
     closeTimeframePopup();
   };
@@ -141,6 +146,8 @@ export function TimeframePopup() {
       })()
     : { top: 144, left: "calc(var(--sidebar-width) + 8px)" };
 
+  const cardAnim = !open ? `scaleOut ${EXIT_MS}ms ease forwards` : `scaleIn ${EXIT_MS}ms ease`;
+
   return (
     <>
       <div className="fixed inset-0 z-[140]" onClick={closeTimeframePopup} />
@@ -151,6 +158,7 @@ export function TimeframePopup() {
           left: positionStyle.left,
           width: POPUP_WIDTH,
           borderColor: "var(--border)",
+          animation: cardAnim,
         }}
         onMouseDown={cancelAutoConfirm}
       >

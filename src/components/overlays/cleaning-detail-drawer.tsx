@@ -124,9 +124,7 @@ export function CleaningDetailDrawer() {
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
       {open && isLoading && <p className="text-body text-gray-400">Loading task…</p>}
-      {open && !isLoading && !task && (
-        <p className="text-body text-gray-500">Task not found.</p>
-      )}
+      {open && !isLoading && !task && <p className="text-body text-gray-500">Task not found.</p>}
       {displayTask && (
         <div className="space-y-md">
           <div>

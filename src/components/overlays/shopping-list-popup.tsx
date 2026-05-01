@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { X } from "lucide-react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useShoppingList } from "@/hooks/use-cleaning";
 import { useAppStore } from "@/stores/app-store";
 
@@ -12,6 +13,8 @@ const priorityBadge: Record<string, { bg: string; text: string }> = {
   low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
+const EXIT_MS = 200;
+
 export function ShoppingListPopup() {
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
@@ -19,6 +22,8 @@ export function ShoppingListPopup() {
   const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { data: shoppingItemList = [] } = useShoppingList(selectedListings);
+  const open = shoppingListPopup.open;
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   const [showAll, setShowAll] = useState(true);
 
@@ -30,13 +35,13 @@ export function ShoppingListPopup() {
   );
 
   useEffect(() => {
-    if (shoppingListPopup.open) {
+    if (open) {
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [shoppingListPopup.open, handleKeyDown]);
+  }, [open, handleKeyDown]);
 
-  if (!shoppingListPopup.open) return null;
+  if (!shouldRender) return null;
 
   const items = showAll
     ? shoppingItemList
@@ -60,11 +65,21 @@ export function ShoppingListPopup() {
     navigator.clipboard.writeText(text);
   };
 
+  const scrimAnim = !open ? `fadeOut ${EXIT_MS}ms ease forwards` : `fadeIn ${EXIT_MS}ms ease`;
+  const cardAnim = !open ? `scaleOut ${EXIT_MS}ms ease forwards` : `scaleIn ${EXIT_MS}ms ease`;
+
   return (
     <>
-      <div className="fixed inset-0 z-[180] bg-black/30" onClick={closeShoppingListPopup} />
+      <div
+        className="fixed inset-0 z-[180] bg-black/30"
+        style={{ animation: scrimAnim }}
+        onClick={closeShoppingListPopup}
+      />
       <div className="fixed inset-0 z-[185] flex items-center justify-center">
-        <div className="w-full max-w-lg rounded-xl bg-white shadow-xl">
+        <div
+          className="w-full max-w-lg rounded-xl bg-white shadow-xl"
+          style={{ animation: cardAnim }}
+        >
           <div
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}

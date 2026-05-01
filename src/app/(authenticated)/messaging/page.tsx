@@ -58,10 +58,21 @@ export default function MessagingPage() {
     };
   }, [viewingMessageId, viewingStatus]);
 
-  const threadMsg = threadOverlay
+  // Cache the live thread message so the overlay keeps rendering with the
+  // last conversation through its 300ms close animation. Without this the
+  // parent stops passing threadMsg the moment the user clicks close, which
+  // unmounts ThreadOverlay before its slide-out fires.
+  const liveThreadMsg = threadOverlay
     ? (messages ?? []).find((m) => m.id === threadOverlay.messageId)
     : null;
-  const { data: threadMessages } = useMessageThread(threadOverlay?.messageId ?? null);
+  const lastThreadMsgRef = useRef(liveThreadMsg ?? null);
+  if (liveThreadMsg) lastThreadMsgRef.current = liveThreadMsg;
+  const threadMsg = liveThreadMsg ?? lastThreadMsgRef.current;
+
+  const { data: liveThreadMessages } = useMessageThread(threadOverlay?.messageId ?? null);
+  const lastThreadMessagesRef = useRef(liveThreadMessages);
+  if (liveThreadMessages) lastThreadMessagesRef.current = liveThreadMessages;
+  const threadMessages = liveThreadMessages ?? lastThreadMessagesRef.current;
 
   if (isLoading) {
     return (
@@ -76,9 +87,9 @@ export default function MessagingPage() {
       {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
       {view === "list" && <MessagingListView messages={messages ?? []} />}
 
-      {threadMsg && threadOverlay?.open && (
+      {threadMsg && (
         <ThreadOverlay
-          open
+          open={!!threadOverlay?.open}
           onClose={closeThreadOverlay}
           guestName={threadMsg.guestName}
           listingName={threadMsg.listingName}
