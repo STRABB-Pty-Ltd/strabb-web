@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useProperties } from "@/hooks/use-properties";
@@ -74,9 +74,16 @@ export function TicketDetailDrawer() {
     }
   }, [ticket?.id, ticket]);
 
-  const propertyName = ticket
-    ? ((propertiesData?.data ?? []).find((p) => p.id === ticket.propertyId)?.name ??
-      ticket.propertyId.slice(0, 8))
+  // Cache the last-seen ticket so the drawer body stays populated through
+  // the 300ms close animation. Only fall back during close - while open we
+  // trust the live `ticket` so loading states fire correctly on re-open.
+  const lastTicketRef = useRef<typeof ticket | null>(null);
+  if (ticket) lastTicketRef.current = ticket;
+  const displayTicket = open ? ticket : lastTicketRef.current;
+
+  const propertyName = displayTicket
+    ? ((propertiesData?.data ?? []).find((p) => p.id === displayTicket.propertyId)?.name ??
+      displayTicket.propertyId.slice(0, 8))
     : "";
 
   const surfaceError = (err: unknown) => {
@@ -146,7 +153,7 @@ export function TicketDetailDrawer() {
       {open && !isLoading && !ticket && (
         <p className="text-body text-gray-500">Ticket not found.</p>
       )}
-      {ticket && (
+      {displayTicket && (
         <div className="space-y-md">
           <div>
             <p className="text-body text-gray-500">Property</p>
@@ -206,7 +213,7 @@ export function TicketDetailDrawer() {
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-gray-500">Reported</p>
-              <p className="font-data text-body">{fmtDate(ticket.dateReported, tz)}</p>
+              <p className="font-data text-body">{fmtDate(displayTicket.dateReported, tz)}</p>
             </div>
             <div>
               <p className="text-body text-gray-500">Scheduled</p>
@@ -219,7 +226,7 @@ export function TicketDetailDrawer() {
                   style={{ borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">{fmtDate(ticket.dateScheduled, tz)}</p>
+                <p className="font-data text-body">{fmtDate(displayTicket.dateScheduled, tz)}</p>
               )}
             </div>
           </div>
@@ -235,7 +242,9 @@ export function TicketDetailDrawer() {
                 style={{ borderColor: "var(--border)" }}
               />
             ) : (
-              <p className="text-body whitespace-pre-wrap text-gray-800">{ticket.description}</p>
+              <p className="text-body whitespace-pre-wrap text-gray-800">
+                {displayTicket.description}
+              </p>
             )}
           </div>
 
@@ -252,12 +261,14 @@ export function TicketDetailDrawer() {
                   style={{ borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">{ticket.cost ? `$${ticket.cost}` : "-"}</p>
+                <p className="font-data text-body">
+                  {displayTicket.cost ? `$${displayTicket.cost}` : "-"}
+                </p>
               )}
             </div>
             <div>
               <p className="text-body text-gray-500">Completed</p>
-              <p className="font-data text-body">{fmtDate(ticket.dateCompleted, tz)}</p>
+              <p className="font-data text-body">{fmtDate(displayTicket.dateCompleted, tz)}</p>
             </div>
           </div>
 
@@ -273,7 +284,7 @@ export function TicketDetailDrawer() {
               />
             ) : (
               <p className="text-body whitespace-pre-wrap text-gray-800">
-                {ticket.notes || <span className="text-gray-400">None</span>}
+                {displayTicket.notes || <span className="text-gray-400">None</span>}
               </p>
             )}
           </div>

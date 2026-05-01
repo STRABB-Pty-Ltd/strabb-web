@@ -47,12 +47,13 @@ export function BookingDetailDrawer() {
   }, [booking?.id, booking]);
 
   const showError = toastError(addToast);
-  const isConflicted = booking?.conflictStatus === "conflicted";
-  // Cache the last-seen status so the accent bar doesn't flash to the
-  // "pending" fallback during the 300ms close animation.
-  const lastStatusRef = useRef<string>("pending");
-  if (booking?.status) lastStatusRef.current = booking.status;
-  const status = lastStatusRef.current;
+  // Cache the last-seen booking so accent bar + body content stay populated
+  // through the 300ms close animation. Only fall back during close.
+  const lastBookingRef = useRef<typeof booking | null>(null);
+  if (booking) lastBookingRef.current = booking;
+  const displayBooking = open ? booking : lastBookingRef.current;
+  const isConflicted = displayBooking?.conflictStatus === "conflicted";
+  const status = displayBooking?.status ?? "pending";
 
   const handleSaveNotes = () => {
     if (!booking) return;
@@ -87,7 +88,7 @@ export function BookingDetailDrawer() {
       {open && !isLoading && !booking && (
         <p className="text-body text-gray-500">Booking not found.</p>
       )}
-      {booking && (
+      {displayBooking && (
         <div className="space-y-md">
           {isConflicted && (
             <div className="p-sm rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
@@ -114,13 +115,13 @@ export function BookingDetailDrawer() {
             <div>
               <p className="text-body text-gray-500">Check-in</p>
               <p className="text-body font-medium text-gray-800">
-                {formatInPropertyTimezone(booking.checkIn, tz)}
+                {formatInPropertyTimezone(displayBooking.checkIn, tz)}
               </p>
             </div>
             <div>
               <p className="text-body text-gray-500">Check-out</p>
               <p className="text-body font-medium text-gray-800">
-                {formatInPropertyTimezone(booking.checkOut, tz)}
+                {formatInPropertyTimezone(displayBooking.checkOut, tz)}
               </p>
             </div>
           </div>
@@ -128,37 +129,39 @@ export function BookingDetailDrawer() {
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-gray-500">Platform</p>
-              <p className="text-body text-gray-800">{booking.source}</p>
+              <p className="text-body text-gray-800">{displayBooking.source}</p>
             </div>
             <div>
               <p className="text-body text-gray-500">Status</p>
-              <p className="text-body text-gray-800 capitalize">{booking.status}</p>
+              <p className="text-body text-gray-800 capitalize">{displayBooking.status}</p>
             </div>
           </div>
 
-          {(booking.guestName || booking.guestEmail) && (
+          {(displayBooking.guestName || displayBooking.guestEmail) && (
             <div>
               <p className="text-body text-gray-500">Guest</p>
               <p className="text-body text-gray-800">
-                {booking.guestName ?? "-"}
-                {booking.guestEmail && (
-                  <span className="ml-xs text-gray-500">({booking.guestEmail})</span>
+                {displayBooking.guestName ?? "-"}
+                {displayBooking.guestEmail && (
+                  <span className="ml-xs text-gray-500">({displayBooking.guestEmail})</span>
                 )}
               </p>
             </div>
           )}
 
-          {booking.externalBookingId && (
+          {displayBooking.externalBookingId && (
             <div>
               <p className="text-body text-gray-500">External ID</p>
-              <p className="font-data text-body text-gray-700">{booking.externalBookingId}</p>
+              <p className="font-data text-body text-gray-700">
+                {displayBooking.externalBookingId}
+              </p>
             </div>
           )}
 
-          {booking.rawSummary && (
+          {displayBooking.rawSummary && (
             <div>
               <p className="text-body text-gray-500">iCal summary</p>
-              <p className="text-body text-gray-700">{booking.rawSummary}</p>
+              <p className="text-body text-gray-700">{displayBooking.rawSummary}</p>
             </div>
           )}
 
@@ -179,7 +182,7 @@ export function BookingDetailDrawer() {
               <button
                 type="button"
                 onClick={handleSaveNotes}
-                disabled={updateNotes.isPending || notes === (booking.notes ?? "")}
+                disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
                 className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
                 style={{ backgroundColor: "var(--strabb-secondary)" }}
               >

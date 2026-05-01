@@ -105,11 +105,14 @@ export function CleaningDetailDrawer() {
     });
   };
 
-  // Cache the last-seen status so the accent bar + chip don't flash to the
-  // "pending" fallback during the 300ms close animation when task becomes null.
-  const lastStatusRef = useRef<string>("pending");
-  if (task?.status) lastStatusRef.current = task.status;
-  const status = lastStatusRef.current;
+  // Cache the last-seen task so the accent bar + body content stay visible
+  // through the 300ms close animation. While the drawer is open we trust
+  // `task` directly (so a fresh open can show its real loading state); only
+  // during the closing slide do we fall back to the cached snapshot.
+  const lastTaskRef = useRef<typeof task | null>(null);
+  if (task) lastTaskRef.current = task;
+  const displayTask = open ? task : lastTaskRef.current;
+  const status = displayTask?.status ?? "pending";
   const isCompleted = status === "completed" || status === "cancelled";
   const canResend = !!task?.cleanerEmail && !isCompleted;
 
@@ -124,12 +127,12 @@ export function CleaningDetailDrawer() {
       {open && !isLoading && !task && (
         <p className="text-body text-gray-500">Task not found.</p>
       )}
-      {task && (
+      {displayTask && (
         <div className="space-y-md">
           <div>
             <p className="text-body text-gray-500">Scheduled</p>
             <p className="text-body font-medium text-gray-800">
-              {formatInPropertyTimezone(task.scheduledDate, tz, "d MMM yyyy, HH:mm")}
+              {formatInPropertyTimezone(displayTask.scheduledDate, tz, "d MMM yyyy, HH:mm")}
             </p>
           </div>
 
@@ -161,9 +164,13 @@ export function CleaningDetailDrawer() {
 
             {!editing ? (
               <div className="text-body space-y-xs">
-                <p className="text-gray-800">{task.cleanerName || "Unassigned"}</p>
-                {task.cleanerEmail && <p className="text-gray-500">{task.cleanerEmail}</p>}
-                {task.cleanerPhone && <p className="text-gray-500">{task.cleanerPhone}</p>}
+                <p className="text-gray-800">{displayTask.cleanerName || "Unassigned"}</p>
+                {displayTask.cleanerEmail && (
+                  <p className="text-gray-500">{displayTask.cleanerEmail}</p>
+                )}
+                {displayTask.cleanerPhone && (
+                  <p className="text-gray-500">{displayTask.cleanerPhone}</p>
+                )}
               </div>
             ) : (
               <div className="space-y-xs">
@@ -202,7 +209,7 @@ export function CleaningDetailDrawer() {
             <p className="text-body font-semibold text-gray-700">Notes</p>
             {!editing ? (
               <p className="text-body whitespace-pre-wrap text-gray-800">
-                {task.notes || <span className="text-gray-400">None</span>}
+                {displayTask.notes || <span className="text-gray-400">None</span>}
               </p>
             ) : (
               <textarea
@@ -231,10 +238,10 @@ export function CleaningDetailDrawer() {
                 type="button"
                 onClick={() => {
                   setEditing(false);
-                  setCleanerName(task.cleanerName ?? "");
-                  setCleanerEmail(task.cleanerEmail ?? "");
-                  setCleanerPhone(task.cleanerPhone ?? "");
-                  setNotes(task.notes ?? "");
+                  setCleanerName(displayTask.cleanerName ?? "");
+                  setCleanerEmail(displayTask.cleanerEmail ?? "");
+                  setCleanerPhone(displayTask.cleanerPhone ?? "");
+                  setNotes(displayTask.notes ?? "");
                 }}
                 className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
                 style={{ borderColor: "var(--border)" }}
