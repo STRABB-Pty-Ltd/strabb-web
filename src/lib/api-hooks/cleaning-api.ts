@@ -108,6 +108,7 @@ export function useCreateCleaningTaskAPI() {
     mutationFn: (data: Partial<CleaningTask>) => apiClient.post("/cleaning-tasks", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
     },
   });
 }
@@ -121,6 +122,7 @@ export function useUpdateCleaningTaskAPI() {
       apiClient.patch(`/cleaning-tasks/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
     },
   });
 }
