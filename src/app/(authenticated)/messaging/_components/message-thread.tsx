@@ -48,7 +48,7 @@ export function MessageThread({
             </p>
           </div>
           <span
-            className="px-base py-xs text-body rounded-sm font-medium text-white"
+            className="px-base py-xs text-body rounded-sm font-medium text-white dark:text-[var(--brand-10)]"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}

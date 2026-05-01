@@ -51,7 +51,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
 
         <div className="gap-base flex items-center">
           <span
-            className="px-xs py-xs text-body shrink-0 rounded-sm font-medium text-white"
+            className="px-xs py-xs text-body shrink-0 rounded-sm font-medium text-white dark:text-[var(--brand-10)]"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}

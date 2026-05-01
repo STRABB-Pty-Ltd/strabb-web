@@ -64,7 +64,7 @@ export function ThreadOverlay({
             </div>
             <div className="gap-base flex items-center">
               <span
-                className="px-base py-xs text-body rounded font-medium text-white"
+                className="px-base py-xs text-body rounded font-medium text-white dark:text-[var(--brand-10)]"
                 style={{ backgroundColor: channelColors[channel] ?? "var(--channel-direct)" }}
               >
                 {channel.replace("_", ".")}
