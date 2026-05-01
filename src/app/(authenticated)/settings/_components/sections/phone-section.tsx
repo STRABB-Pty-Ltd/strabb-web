@@ -162,7 +162,7 @@ export function PhoneSection() {
                   type="button"
                   onClick={handleClear}
                   disabled={clearPhone.isPending}
-                  className="px-sm py-xs text-body rounded-lg font-medium text-white"
+                  className="px-sm py-xs text-body rounded-lg font-medium text-white dark:text-[var(--brand-10)]"
                   style={{ backgroundColor: "var(--status-danger)" }}
                 >
                   {clearPhone.isPending ? "Removing…" : "Yes, remove"}

@@ -76,7 +76,7 @@ export function IntegrationsSection() {
             style={{ borderColor: "var(--border)" }}
           >
             <div
-              className="h-lg text-subheading flex w-lg items-center justify-center rounded-lg font-bold text-white"
+              className="h-lg text-subheading flex w-lg items-center justify-center rounded-lg font-bold text-white dark:text-[var(--brand-10)]"
               style={{ backgroundColor: platform.color }}
             >
               {platform.logo}
