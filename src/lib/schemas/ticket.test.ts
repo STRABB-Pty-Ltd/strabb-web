@@ -186,7 +186,13 @@ describe("ticketUpdateSchema", () => {
   });
 
   it("accepts every status value from the enum", () => {
-    for (const status of ["pending", "confirmed", "completed"] as const) {
+    for (const status of [
+      "reported",
+      "scheduled",
+      "in_progress",
+      "completed",
+      "cancelled",
+    ] as const) {
       const result = ticketUpdateSchema.parse({ status });
       expect(result.status).toBe(status);
     }

@@ -69,7 +69,7 @@ describe("tickets-api hooks", () => {
     const { result } = renderHook(
       () =>
         useTicketsAPI({
-          status: "pending",
+          status: "reported",
           priority: "high",
           dateFrom: "2026-04-01",
           dateTo: "2026-04-30",
@@ -80,7 +80,7 @@ describe("tickets-api hooks", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(getMock).toHaveBeenCalledWith(
-      "/tickets?status=pending&priority=high&date_from=2026-04-01&date_to=2026-04-30&page=2&page_size=20",
+      "/tickets?status=reported&priority=high&date_from=2026-04-01&date_to=2026-04-30&page=2&page_size=20",
     );
   });
 
@@ -91,7 +91,7 @@ describe("tickets-api hooks", () => {
       listingId: null,
       description: "Leaking tap",
       priority: "high",
-      status: "pending",
+      status: "reported",
       dateReported: "2026-04-25T00:00:00Z",
       dateScheduled: null,
       dateCompleted: null,

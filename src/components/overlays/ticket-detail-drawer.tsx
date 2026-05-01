@@ -18,9 +18,11 @@ import {
 } from "@/types/ticket";
 
 const statusColors: Record<string, string> = {
-  pending: "var(--status-pending)",
-  confirmed: "var(--status-confirmed)",
+  reported: "var(--status-pending)",
+  scheduled: "var(--status-confirmed)",
+  in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
+  cancelled: "var(--status-cancelled)",
 };
 
 function fmtDate(iso: string | null, tz: string): string {
@@ -54,7 +56,7 @@ export function TicketDetailDrawer() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TicketPriority>("medium");
-  const [status, setStatus] = useState<TicketStatus>("pending");
+  const [status, setStatus] = useState<TicketStatus>("reported");
   const [dateScheduled, setDateScheduled] = useState("");
   const [cost, setCost] = useState("");
   const [notes, setNotes] = useState("");
@@ -140,7 +142,7 @@ export function TicketDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Ticket"
-      accentColor={statusColors[ticket?.status ?? "pending"] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[ticket?.status ?? "reported"] ?? "var(--strabb-secondary)"}
     >
       {isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
       {!isLoading && !ticket && <p className="text-body text-gray-500">Ticket not found.</p>}
