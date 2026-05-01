@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import {
@@ -105,7 +105,11 @@ export function CleaningDetailDrawer() {
     });
   };
 
-  const status = task?.status ?? "pending";
+  // Cache the last-seen status so the accent bar + chip don't flash to the
+  // "pending" fallback during the 300ms close animation when task becomes null.
+  const lastStatusRef = useRef<string>("pending");
+  if (task?.status) lastStatusRef.current = task.status;
+  const status = lastStatusRef.current;
   const isCompleted = status === "completed" || status === "cancelled";
   const canResend = !!task?.cleanerEmail && !isCompleted;
 

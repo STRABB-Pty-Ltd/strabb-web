@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
@@ -48,7 +48,11 @@ export function BookingDetailDrawer() {
 
   const showError = toastError(addToast);
   const isConflicted = booking?.conflictStatus === "conflicted";
-  const status = booking?.status ?? "pending";
+  // Cache the last-seen status so the accent bar doesn't flash to the
+  // "pending" fallback during the 300ms close animation.
+  const lastStatusRef = useRef<string>("pending");
+  if (booking?.status) lastStatusRef.current = booking.status;
+  const status = lastStatusRef.current;
 
   const handleSaveNotes = () => {
     if (!booking) return;

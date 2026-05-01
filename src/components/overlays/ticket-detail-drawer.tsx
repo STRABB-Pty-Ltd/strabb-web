@@ -140,7 +140,7 @@ export function TicketDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Ticket"
-      accentColor={statusColors[ticket?.status ?? "pending"] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
       {open && isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
       {open && !isLoading && !ticket && (
