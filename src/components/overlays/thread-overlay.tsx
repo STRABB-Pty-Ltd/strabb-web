@@ -44,10 +44,13 @@ export function ThreadOverlay({
       {/* Scrim */}
       <div className="fixed inset-0 z-[170] bg-black/30" />
 
-      {/* Panel */}
+      {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div
-        className="fixed top-0 right-0 z-[175] flex h-full flex-col bg-white shadow-xl"
+        className="rounded-2xl fixed z-[175] flex flex-col overflow-hidden bg-white shadow-xl"
         style={{
+          top: "var(--space-md)",
+          right: "var(--space-md)",
+          bottom: "var(--space-md)",
           width: "var(--thread-width)",
           animation: "slideInRight 300ms ease",
         }}
