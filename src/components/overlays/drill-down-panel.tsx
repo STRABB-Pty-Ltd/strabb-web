@@ -63,7 +63,7 @@ export function DrillDownPanel({
 
       {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div
-        className="rounded-2xl fixed z-[150] flex flex-col overflow-hidden bg-white shadow-xl"
+        className="rounded-2xl fixed z-[150] flex flex-col overflow-hidden bg-[var(--neutral-30)] shadow-xl"
         style={{
           top: "var(--space-md)",
           right: "var(--space-md)",
