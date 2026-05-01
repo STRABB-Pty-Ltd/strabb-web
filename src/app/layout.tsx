@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
 import { FaviconSwitcher } from "@/components/favicon-switcher";
@@ -28,6 +28,11 @@ export const metadata: Metadata = {
       { url: "/favicon-dark.png", media: "(prefers-color-scheme: dark)" },
     ],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
