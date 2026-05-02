@@ -71,20 +71,18 @@ describe("Submenu chip integration", () => {
     });
   });
 
-  describe("multi behavior (Calendar Bookings)", () => {
-    it("clicking a multi chip adds it to active set", async () => {
+  describe("exclusive behavior (Calendar Bookings)", () => {
+    it("clicking an exclusive chip replaces the active set", async () => {
       const user = userEvent.setup();
       useAppStore.getState().setCurrentPage("calendar");
 
       render(<SubmenuBar />);
       await user.click(screen.getByText("Bookings"));
 
-      const submenu = useAppStore.getState().calendar.submenu;
-      expect(submenu).toContain("bookings");
-      expect(submenu).not.toContain("overview");
+      expect(useAppStore.getState().calendar.submenu).toEqual(["bookings"]);
     });
 
-    it("clicking multiple multi chips accumulates them", async () => {
+    it("clicking a different exclusive chip swaps - never accumulates", async () => {
       const user = userEvent.setup();
       useAppStore.getState().setCurrentPage("calendar");
 
@@ -92,12 +90,10 @@ describe("Submenu chip integration", () => {
       await user.click(screen.getByText("Bookings"));
       await user.click(screen.getByText("Vacancy"));
 
-      const submenu = useAppStore.getState().calendar.submenu;
-      expect(submenu).toContain("bookings");
-      expect(submenu).toContain("vacancy");
+      expect(useAppStore.getState().calendar.submenu).toEqual(["vacancy"]);
     });
 
-    it("removing last multi chip reverts to overview", async () => {
+    it("clicking the active exclusive chip reverts to overview", async () => {
       const user = userEvent.setup();
       useAppStore.getState().setCurrentPage("calendar");
       useAppStore.getState().setSubmenu("calendar", ["bookings"]);

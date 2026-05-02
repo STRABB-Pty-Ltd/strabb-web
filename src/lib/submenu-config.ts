@@ -24,16 +24,16 @@ export const submenuConfigs: Record<Exclude<PageId, "settings">, SubmenuChip[]> 
   ],
   calendar: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
-    { id: "bookings", label: "Bookings", behavior: "multi" },
-    { id: "cleaning", label: "Cleaning", behavior: "multi" },
-    { id: "vacancy", label: "Vacancy", behavior: "multi" },
-    { id: "ticket", label: "Tickets", behavior: "multi" },
+    { id: "bookings", label: "Bookings", behavior: "exclusive" },
+    { id: "cleaning", label: "Cleaning", behavior: "exclusive" },
+    { id: "vacancy", label: "Vacancy", behavior: "exclusive" },
+    { id: "ticket", label: "Tickets", behavior: "exclusive" },
   ],
   messaging: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
-    { id: "unread", label: "Unread", behavior: "multi" },
-    { id: "flagged", label: "Flagged", behavior: "multi" },
-    { id: "read", label: "Read", behavior: "multi" },
+    { id: "unread", label: "Unread", behavior: "exclusive" },
+    { id: "flagged", label: "Flagged", behavior: "exclusive" },
+    { id: "read", label: "Read", behavior: "exclusive" },
     { id: "archived", label: "Archived", behavior: "exclusive" },
   ],
   cleaning: [
@@ -45,9 +45,9 @@ export const submenuConfigs: Record<Exclude<PageId, "settings">, SubmenuChip[]> 
   ],
   reporting: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
-    { id: "revenue", label: "Revenue", behavior: "multi" },
-    { id: "expenses", label: "Expenses", behavior: "multi" },
-    { id: "bookings", label: "Bookings", behavior: "multi" },
+    { id: "revenue", label: "Revenue", behavior: "exclusive" },
+    { id: "expenses", label: "Expenses", behavior: "exclusive" },
+    { id: "bookings", label: "Bookings", behavior: "exclusive" },
     { id: "more", label: "More", behavior: "more-dropdown" },
   ],
 };
