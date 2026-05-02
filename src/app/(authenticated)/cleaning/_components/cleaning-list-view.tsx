@@ -85,7 +85,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
         label: "Assignee",
         width: "144px",
         render: (t) => (
-          <span className="text-body text-gray-600">{t.assigneeName ?? "Unassigned"}</span>
+          <span className="text-body text-gray-600">{t.cleanerName ?? "Unassigned"}</span>
         ),
       },
       {
@@ -164,7 +164,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
           cmp = new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime();
           break;
         case "assignee":
-          cmp = (a.assigneeName ?? "").localeCompare(b.assigneeName ?? "");
+          cmp = (a.cleanerName ?? "").localeCompare(b.cleanerName ?? "");
           break;
         case "status":
           cmp = a.status.localeCompare(b.status);

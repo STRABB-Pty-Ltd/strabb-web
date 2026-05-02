@@ -88,7 +88,7 @@ function cleaningToEvent(t: CleaningTask): CalendarEvent | null {
     type: "cleaning",
     listingId: t.listingId,
     listingName: t.listingName,
-    label: t.assigneeName ? `Turnover - ${t.assigneeName}` : "Turnover",
+    label: t.cleanerName ? `Turnover - ${t.cleanerName}` : "Turnover",
     start: start.toISOString(),
     end: end.toISOString(),
     color: "var(--status-success)",

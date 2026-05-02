@@ -16,8 +16,8 @@ export interface CleaningTask {
   listingName: string;
   listingColor: string;
   bookingId: string | null;
-  assigneeName: string | null;
-  assigneeEmail: string | null;
+  cleanerName: string | null;
+  cleanerEmail: string | null;
   scheduledTime: string;
   completedTime: string | null;
   checklistTotal: number;

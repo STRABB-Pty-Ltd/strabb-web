@@ -60,7 +60,7 @@ export function useCleaningActions() {
       if (!USE_MOCK) {
         updateTaskMutation.mutate({
           id: taskId,
-          data: { assigneeName: assignee } as Partial<CleaningTask>,
+          data: { cleanerName: assignee } as Partial<CleaningTask>,
         });
       }
     },

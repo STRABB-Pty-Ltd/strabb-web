@@ -75,6 +75,18 @@ describe("propertyCreateSchema", () => {
     }
   });
 
+  it("fails when timezone is not a valid IANA name", () => {
+    const result = propertyCreateSchema.safeParse({
+      name: "Beach House",
+      timezone: "Not/AReal_Zone",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const issue = result.error.issues.find((i) => i.path[0] === "timezone");
+      expect(issue?.message).toBe("Invalid timezone");
+    }
+  });
+
   it("fails when cleaningDurationMinutes is negative", () => {
     const result = propertyCreateSchema.safeParse({
       name: "Beach House",

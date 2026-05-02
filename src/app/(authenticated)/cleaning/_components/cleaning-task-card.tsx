@@ -59,10 +59,10 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
           <span>{formatInPropertyTimezone(task.scheduledTime, tz, "d MMM, HH:mm")}</span>
         </div>
 
-        {task.assigneeName && (
+        {task.cleanerName && (
           <div className="gap-xs text-body flex items-center text-gray-500">
             <User size={10} />
-            <span>{task.assigneeName}</span>
+            <span>{task.cleanerName}</span>
           </div>
         )}
 
