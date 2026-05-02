@@ -44,16 +44,20 @@ const pageLabels: Record<PageId, string> = {
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const currentPage = useAppStore((s) => s.currentPage);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
+  const resetPageDefaults = useAppStore((s) => s.resetPageDefaults);
   const pathname = usePathname();
   const { helpOpen, setHelpOpen } = useKeyboardShortcuts();
 
-  // Sync store's currentPage with URL on mount and navigation
+  // Sync store's currentPage with URL on mount and navigation. Every
+  // top-level page change also resets that page's chip + view to defaults
+  // so each entry feels fresh (no leaked filter from the last visit).
   useEffect(() => {
     const segment = pathname.split("/")[1] as PageId;
     if (segment && validPages.includes(segment) && segment !== currentPage) {
       setCurrentPage(segment);
+      if (segment !== "settings") resetPageDefaults(segment);
     }
-  }, [pathname, currentPage, setCurrentPage]);
+  }, [pathname, currentPage, setCurrentPage, resetPageDefaults]);
 
   const showSidebarSeparator = currentPage !== "settings";
 

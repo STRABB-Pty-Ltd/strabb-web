@@ -70,6 +70,11 @@ export function useCalendarEventsAPI(
       const mapped = chipToType[t] ?? t;
       params.append("types", mapped);
     });
+    // Tickets chip surfaces bookings alongside so the operator sees the
+    // ticket in the context of the booking it relates to.
+    if (submenuFilters.includes("ticket")) {
+      params.append("types", "booking");
+    }
   }
   if (startDate) params.set("start_date", startDate);
   if (endDate) params.set("end_date", endDate);

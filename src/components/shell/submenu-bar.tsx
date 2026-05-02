@@ -65,8 +65,22 @@ export function SubmenuBar() {
   const handleChipClick = (chip: SubmenuChip) => {
     const page = currentPage as Exclude<PageId, "settings">;
 
+    // Each chip on a viewable page snaps the page to its default view.
+    // Forced on every click - the user cannot stick on a non-default view
+    // for a given chip; this is intentional per the chip-driven layout
+    // (Overview = wide-zoom view, filtered chips = focused list/grid).
     if ((page === "messaging" || page === "cleaning") && chip.behavior !== "nav") {
       setView(page, chip.id === "overview" ? "kanban" : "list");
+    }
+    if (page === "calendar" && chip.behavior !== "nav") {
+      const calendarViewByChip: Record<string, "gantt" | "calendar" | "list"> = {
+        overview: "gantt",
+        bookings: "calendar",
+        cleaning: "list",
+        vacancy: "calendar",
+        ticket: "gantt",
+      };
+      setView(page, calendarViewByChip[chip.id] ?? "gantt");
     }
 
     // If we're on a nav-chip sub-route (e.g. /cleaning/tickets) and the user
