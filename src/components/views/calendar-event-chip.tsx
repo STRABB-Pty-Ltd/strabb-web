@@ -97,19 +97,19 @@ export function CalendarEventChip({
         // left/right brand-10 so the multi-day bar reads as one continuous
         // outlined shape across day cells. The 4px channel accent (when
         // present) takes over the start/end edge - it's the chip's "cap".
-        borderTop: "1px solid var(--brand-10)",
-        borderBottom: "1px solid var(--brand-10)",
+        borderTop: "0.5px solid var(--brand-10)",
+        borderBottom: "0.5px solid var(--brand-10)",
         borderLeft:
           accentColor && isEventStart
             ? `4px solid ${accentColor}`
             : isEventStart
-              ? "1px solid var(--brand-10)"
+              ? "0.5px solid var(--brand-10)"
               : undefined,
         borderRight:
           accentColor && isEventEnd
             ? `4px solid ${accentColor}`
             : isEventEnd
-              ? "1px solid var(--brand-10)"
+              ? "0.5px solid var(--brand-10)"
               : undefined,
         // Pad on the side that's actually a chip edge so the label has
         // breathing room from the bg edge. Mid-row continuation chips
