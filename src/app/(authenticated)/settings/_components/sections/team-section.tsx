@@ -177,7 +177,7 @@ export function TeamSection() {
               <div className="px-sm py-sm w-[233px] text-gray-500">{member.email}</div>
               <div className="px-sm py-sm w-[89px]">
                 <span
-                  className="px-base py-xs text-body rounded-full font-medium capitalize"
+                  className="px-base py-xs text-body rounded-md font-medium capitalize"
                   style={{ backgroundColor: badge.bg, color: badge.text }}
                 >
                   {member.role}

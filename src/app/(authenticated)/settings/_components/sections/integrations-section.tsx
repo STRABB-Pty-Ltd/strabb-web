@@ -76,7 +76,7 @@ export function IntegrationsSection() {
             style={{ borderColor: "var(--border)" }}
           >
             <div
-              className="h-lg text-subheading flex w-lg items-center justify-center rounded-lg font-bold text-white dark:text-[var(--brand-10)]"
+              className="h-lg text-subheading text-text-on-color flex w-lg items-center justify-center rounded-lg font-bold"
               style={{ backgroundColor: platform.color }}
             >
               {platform.logo}
@@ -94,7 +94,7 @@ export function IntegrationsSection() {
             <div className="gap-base flex items-center">
               {platform.connected && (
                 <span
-                  className="px-base py-xs text-body rounded-full font-medium"
+                  className="px-base py-xs text-body rounded-md font-medium"
                   style={{
                     backgroundColor: "var(--status-success-tint)",
                     color: "var(--status-success)",

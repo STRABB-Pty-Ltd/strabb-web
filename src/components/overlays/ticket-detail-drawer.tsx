@@ -197,8 +197,8 @@ export function TicketDetailDrawer() {
                 </select>
               ) : (
                 <span
-                  className={`px-base py-xs text-body inline-block rounded-md font-medium text-white ${
-                    status === "confirmed" ? "" : "dark:text-[var(--brand-10)]"
+                  className={`px-base py-xs text-body inline-block rounded-md font-medium ${
+                    status === "confirmed" ? "text-white" : "text-text-on-color"
                   }`}
                   style={{
                     backgroundColor: statusColors[status] ?? "var(--brand-10)",
@@ -307,7 +307,7 @@ export function TicketDetailDrawer() {
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(true)}
-                    className="px-sm py-base text-body rounded-lg font-medium text-white dark:text-[var(--brand-10)]"
+                    className="px-sm py-base text-body text-text-on-color rounded-lg font-medium"
                     style={{ backgroundColor: "var(--status-danger)" }}
                   >
                     Delete
@@ -318,7 +318,7 @@ export function TicketDetailDrawer() {
                       type="button"
                       onClick={handleDelete}
                       disabled={deleteTicket.isPending}
-                      className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60 dark:text-[var(--brand-10)]"
+                      className="px-sm py-base text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
                       style={{ backgroundColor: "var(--status-danger)" }}
                     >
                       {deleteTicket.isPending ? "Deleting…" : "Yes, delete"}

@@ -103,7 +103,7 @@ export function BookingDetailDrawer() {
                 type="button"
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
-                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-red-800 disabled:opacity-60"
+                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-red-800 disabled:cursor-not-allowed disabled:opacity-60"
                 style={{
                   borderColor: "var(--status-danger)",
                   backgroundColor: "var(--surface-60)",

@@ -51,8 +51,8 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
             {ticket.priority}
           </span>
           <span
-            className={`px-xs py-xs text-body rounded-sm font-medium text-white ${
-              ticket.status === "confirmed" ? "" : "dark:text-[var(--brand-10)]"
+            className={`px-xs py-xs text-body rounded-sm font-medium ${
+              ticket.status === "confirmed" ? "text-white" : "text-text-on-color"
             }`}
             style={{ backgroundColor: statusColors[ticket.status] ?? "var(--brand-10)" }}
           >

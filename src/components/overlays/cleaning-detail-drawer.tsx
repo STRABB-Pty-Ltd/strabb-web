@@ -137,8 +137,8 @@ export function CleaningDetailDrawer() {
           <div>
             <p className="text-body text-gray-500">Status</p>
             <span
-              className={`px-base py-xs text-body inline-block rounded-md font-medium text-white ${
-                status === "confirmed" ? "" : "dark:text-[var(--brand-10)]"
+              className={`px-base py-xs text-body inline-block rounded-md font-medium ${
+                status === "confirmed" ? "text-white" : "text-text-on-color"
               }`}
               style={{ backgroundColor: statusColors[status] ?? "var(--brand-10)" }}
             >
@@ -253,7 +253,7 @@ export function CleaningDetailDrawer() {
                 type="button"
                 onClick={handleComplete}
                 disabled={isCompleted || completeTask.isPending}
-                className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60 dark:text-[var(--brand-10)]"
+                className="px-sm py-base text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
                 style={{ backgroundColor: "var(--semantic-success)" }}
               >
                 {completeTask.isPending ? "Completing…" : "Mark complete"}

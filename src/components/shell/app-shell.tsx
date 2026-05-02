@@ -63,6 +63,15 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative flex h-screen overflow-hidden">
+      {/* Skip-link for keyboard users. Visually hidden until focused, then
+          jumps the user past the persistent rails (sidebar + top nav +
+          submenu) straight to the main canvas content. */}
+      <a
+        href="#main-content"
+        className="focus:px-sm focus:py-base focus:text-body focus:bg-primary focus:text-primary-foreground sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[1000] focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
       {/* Persistent logo overlay - pinned to top-left of the sidebar column.
           pointer-events-none so the bottom of the logo (which overflows
           --logo-area-height into the listings header by design) doesn't
@@ -131,7 +140,9 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         <ErrorBoundary>
           <Suspense fallback={<PageLoading />}>
             <h1 className="sr-only">{pageLabels[currentPage]}</h1>
-            <Canvas>{children}</Canvas>
+            <main id="main-content" className="contents">
+              <Canvas>{children}</Canvas>
+            </main>
           </Suspense>
         </ErrorBoundary>
       </div>

@@ -157,7 +157,7 @@ export function CalendarDayCell({
                 setOverflowOpen((v) => !v);
               }}
               className="text-body text-left text-gray-500 hover:text-gray-700"
-              style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
+              style={{ background: "none", border: "none", padding: 0 }}
             >
               +{overflowEvents.length} more
             </button>

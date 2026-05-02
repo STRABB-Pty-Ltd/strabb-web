@@ -71,7 +71,7 @@ export default function SyncLogsPage() {
       header: "Status",
       render: (_v, row) => (
         <span
-          className="px-base py-xs text-body rounded-full font-medium text-white dark:text-[var(--brand-10)]"
+          className="px-base py-xs text-body text-text-on-color rounded-md font-medium"
           style={{ backgroundColor: statusColors[row.status] ?? "var(--brand-10)" }}
         >
           {row.status}

@@ -94,8 +94,8 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
         width: "89px",
         render: (t) => (
           <span
-            className={`px-base py-xs text-body rounded-md font-medium text-white ${
-              t.status === "confirmed" ? "" : "dark:text-[var(--brand-10)]"
+            className={`px-base py-xs text-body rounded-md font-medium ${
+              t.status === "confirmed" ? "text-white" : "text-text-on-color"
             }`}
             style={{
               backgroundColor: statusColors[t.status] ?? "var(--brand-10)",

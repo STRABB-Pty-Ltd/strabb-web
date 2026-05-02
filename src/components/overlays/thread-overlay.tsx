@@ -90,7 +90,7 @@ export function ThreadOverlay({
             </div>
             <div className="gap-base flex items-center">
               <span
-                className="px-base py-xs text-body rounded font-medium text-white dark:text-[var(--brand-10)]"
+                className="px-base py-xs text-body text-text-on-color rounded font-medium"
                 style={{
                   backgroundColor: channelColors[data.channel] ?? "var(--channel-direct)",
                 }}
@@ -144,21 +144,21 @@ export function ThreadOverlay({
         >
           <button
             type="button"
-            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
           >
             <Flag size={12} />
             Flag
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
           >
             <TicketPlus size={12} />
             Create Ticket
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
           >
             <Archive size={12} />
             Archive
@@ -174,12 +174,14 @@ export function ThreadOverlay({
             value={compose}
             onChange={(e) => setCompose(e.target.value)}
             placeholder="Type a message..."
+            aria-label="Compose reply"
             className="p-base text-body flex-1 resize-none rounded-lg border"
             rows={2}
           />
           <button
             type="button"
-            className="p-base self-end rounded-lg text-white"
+            aria-label="Send reply"
+            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
             style={{ backgroundColor: "var(--strabb-secondary)" }}
           >
             <Send size={18} />

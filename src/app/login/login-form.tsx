@@ -19,6 +19,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -35,6 +36,7 @@ export function LoginForm() {
 
     if (result?.error) {
       setError("Invalid email or password");
+      setFocus("email");
       return;
     }
 

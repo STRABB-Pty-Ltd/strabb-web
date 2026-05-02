@@ -160,7 +160,7 @@ export function SubmenuBar() {
         {currentPage === "messaging" ? (
           <Link
             href="/messaging/scheduled"
-            className="gap-xs px-xs py-xs text-body inline-flex items-center rounded-sm font-semibold hover:bg-gray-100"
+            className="gap-xs px-base py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold hover:bg-gray-100"
           >
             <CalendarClock size={16} />
             Scheduled messages

@@ -112,13 +112,15 @@ export function MessageThread({
           value={compose}
           onChange={(e) => setCompose(e.target.value)}
           placeholder="Type a message..."
+          aria-label="Compose reply"
           className="p-base text-body flex-1 resize-none rounded-lg border"
           rows={2}
         />
         <button
           type="button"
           onClick={handleSend}
-          className="p-base self-end rounded-lg text-white"
+          aria-label="Send reply"
+          className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
           style={{ backgroundColor: "var(--strabb-secondary)" }}
         >
           <Send size={18} />

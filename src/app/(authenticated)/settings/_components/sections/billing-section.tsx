@@ -111,7 +111,7 @@ export function BillingSection() {
           </div>
           {status === "trial" && daysLeft !== null && daysLeft >= 0 && (
             <span
-              className="px-sm py-xs text-body rounded-full font-medium"
+              className="px-sm py-xs text-body rounded-md font-medium"
               style={{
                 backgroundColor: daysLeft <= 3 ? "var(--status-warning-tint)" : "var(--neutral-30)",
                 color: daysLeft <= 3 ? "var(--status-warning)" : "var(--brand-10)",

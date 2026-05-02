@@ -79,11 +79,16 @@ export function CleaningSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">
+          <label
+            htmlFor="default-cleaner-email"
+            className="mb-xs text-body block font-medium text-gray-700"
+          >
             Default Cleaner Email
           </label>
           <input
+            id="default-cleaner-email"
             type="email"
+            autoComplete="email"
             value={defaultCleanerEmail}
             onChange={(e) => setDefaultCleanerEmail(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"

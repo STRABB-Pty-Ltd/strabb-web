@@ -50,7 +50,7 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="p-xs rounded hover:bg-gray-100"
+            className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
             aria-label="Close shortcuts help"
             data-no-elevate
           >

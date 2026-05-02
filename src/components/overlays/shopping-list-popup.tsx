@@ -97,7 +97,7 @@ export function ShoppingListPopup() {
                 type="button"
                 onClick={closeShoppingListPopup}
                 aria-label="Close shopping list"
-                className="p-xs rounded text-gray-400 hover:bg-gray-100"
+                className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
                 data-no-elevate
               >
                 <X size={18} />
@@ -135,7 +135,7 @@ export function ShoppingListPopup() {
                         </span>
                         <span className="font-data text-body text-gray-500">x{item.quantity}</span>
                         <span
-                          className="px-base py-xs text-body rounded-full"
+                          className="px-base py-xs text-body rounded-md"
                           style={{ backgroundColor: badge.bg, color: badge.text }}
                         >
                           {item.priority}

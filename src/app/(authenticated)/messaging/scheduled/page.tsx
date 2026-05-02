@@ -146,7 +146,7 @@ function ScheduledTab({
       header: "Status",
       render: (_v, m) => (
         <span
-          className="px-base py-xs text-body rounded-full font-medium text-[var(--text-on-color)]"
+          className="px-base py-xs text-body rounded-md font-medium text-[var(--text-on-color)]"
           style={{ backgroundColor: statusColors[m.status] ?? "var(--brand-10)" }}
         >
           {m.status}
