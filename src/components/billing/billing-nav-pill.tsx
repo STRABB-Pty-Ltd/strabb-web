@@ -27,9 +27,13 @@ const toneStyles: Record<Tone, { bg: string; text: string; border: string }> = {
     border: "var(--status-danger)",
   },
   cta: {
-    // Filled brand pill: always-light text on coloured bg.
+    // Filled brand pill. The bg is --strabb-secondary which IS --brand-10
+    // (a flipping token), so text uses --surface-60 directly - it inverts
+    // OPPOSITE to brand-10 and stays readable in both themes.
+    // Don't switch to --text-on-color here: that token flips the same way
+    // as brand-10 and would render warm-white-on-warm-white in dark mode.
     bg: "var(--strabb-secondary)",
-    text: "var(--text-on-color)",
+    text: "var(--surface-60)",
     border: "var(--strabb-secondary)",
   },
 };

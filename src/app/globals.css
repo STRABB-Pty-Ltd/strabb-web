@@ -46,10 +46,13 @@
   --status-warning-tint: rgba(202, 138, 4, 0.1);
   --status-danger-tint: rgba(185, 28, 28, 0.08);
 
-  /* Always-light text for use on top of non-flipping coloured backgrounds
-     (success green, danger red, channel pills). text-white can't be used
-     because surface-60 inverts in dark mode and renders dark on those
-     still-coloured surfaces. This token stays light in both themes. */
+  /* Always-light text for use on top of NON-FLIPPING coloured backgrounds
+     (status-success green, status-danger red, channel-airbnb red, etc).
+     text-white can't be used there because surface-60 inverts in dark
+     mode and renders dark on those still-coloured surfaces.
+     IMPORTANT: do NOT use this token on top of FLIPPING backgrounds
+     (--brand-10 / --strabb-secondary / --neutral-30). For those, use
+     var(--surface-60) directly so the text inverts OPPOSITE to the bg. */
   --text-on-color: var(--surface-60);
 
   /* Modal/drawer scrim. Fixed black overlay regardless of theme - black IS

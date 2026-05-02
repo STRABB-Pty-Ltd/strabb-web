@@ -118,7 +118,7 @@ export function ThreadOverlay({
                 className="px-sm py-base max-w-[80%]"
                 style={{
                   backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
-                  color: msg.isGuest ? "var(--brand-10)" : "var(--text-on-color)",
+                  color: msg.isGuest ? "var(--brand-10)" : "var(--surface-60)",
                   borderRadius: msg.isGuest
                     ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
                     : "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)",
