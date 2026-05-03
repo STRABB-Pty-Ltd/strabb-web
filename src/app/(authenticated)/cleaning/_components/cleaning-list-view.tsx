@@ -17,12 +17,9 @@ const statusColors: Record<string, string> = {
 };
 
 const typeLabels: Record<string, string> = {
-  checkout: "Checkout",
-  checkin: "Check-in",
-  deep_clean: "Deep Clean",
-  mid_stay: "Mid-Stay",
-  inspection: "Inspection",
   turnover: "Turnover",
+  deep_clean: "Deep Clean",
+  ad_hoc: "Ad Hoc",
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {

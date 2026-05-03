@@ -2,13 +2,7 @@ export type CleaningStatus = "pending" | "confirmed" | "in_progress" | "complete
 
 export type CleaningPriority = "low" | "medium" | "high" | "urgent";
 
-export type CleaningType =
-  | "checkout"
-  | "checkin"
-  | "deep_clean"
-  | "mid_stay"
-  | "inspection"
-  | "turnover";
+export type CleaningType = "turnover" | "deep_clean" | "ad_hoc";
 
 export interface CleaningTask {
   id: string;
