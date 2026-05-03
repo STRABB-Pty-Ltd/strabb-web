@@ -17,7 +17,7 @@ import {
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useAppStore } from "@/stores/app-store";
@@ -196,7 +196,10 @@ export function TimeframePopup() {
             className="overflow-hidden"
             style={{ height: 3, backgroundColor: "var(--neutral-30)" }}
           >
-            <div className="drain-progress h-full" />
+            <div
+              className="drain-progress h-full"
+              style={{ "--drain-duration": `${AUTO_CONFIRM_SECONDS}s` } as CSSProperties}
+            />
           </div>
         )}
 

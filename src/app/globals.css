@@ -46,13 +46,20 @@
   --status-warning-tint: rgba(202, 138, 4, 0.1);
   --status-danger-tint: rgba(185, 28, 28, 0.08);
 
-  /* Always-light text for use on top of NON-FLIPPING coloured backgrounds
-     (status-success green, status-danger red, channel-airbnb red, etc).
-     text-white can't be used there because surface-60 inverts in dark
-     mode and renders dark on those still-coloured surfaces.
-     IMPORTANT: do NOT use this token on top of FLIPPING backgrounds
-     (--brand-10 / --strabb-secondary / --neutral-30). For those, use
-     var(--surface-60) directly so the text inverts OPPOSITE to the bg. */
+  /* Light text for the few surfaces that stay dark in both modes
+     (channel-airbnb red, channel-booking blue, etc - tones that don't
+     invert). text-white can't be used there because surface-60 inverts
+     in dark mode and renders dark on those still-coloured surfaces.
+     IMPORTANT: do NOT use this token on FLIPPING backgrounds. The full
+     list of flipping bgs:
+       - --brand-10 / --strabb-secondary (dark navy -> off-white)
+       - --neutral-30 (light gray -> dark gray)
+       - --surface-60 (light -> dark)
+       - --status-pending / --status-danger (dark red -> light pink)
+       - --status-success / --status-completed / --status-in-progress
+         (dark green -> medium green; light text fails in dark mode)
+     For all flipping bgs use var(--surface-60) directly so the text
+     inverts OPPOSITE to the bg in both modes. */
   --text-on-color: var(--surface-60);
 
   /* Modal/drawer scrim. Fixed black overlay regardless of theme - black IS
@@ -575,15 +582,17 @@
   }
 }
 
-/* Auto-confirm progress bar in the timeframe popup. Keep the duration in
-   sync with AUTO_CONFIRM_SECONDS in src/components/overlays/timeframe-popup.tsx.
-   When the user prefers reduced motion the popup skips auto-confirm entirely
-   (handled in JS) so the bar never renders for those users. */
+/* Auto-confirm progress bar in the timeframe popup. Duration is set inline
+   from AUTO_CONFIRM_SECONDS in src/components/overlays/timeframe-popup.tsx
+   via the --drain-duration custom property; the 3s here is just a fallback
+   if the JS fails to inject one. When the user prefers reduced motion the
+   popup skips auto-confirm entirely (handled in JS) so the bar never
+   renders for those users. */
 .drain-progress {
   width: 100%;
   transform-origin: left;
   background-color: var(--strabb-secondary);
-  animation: drainProgress 3s linear forwards;
+  animation: drainProgress var(--drain-duration, 3s) linear forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
