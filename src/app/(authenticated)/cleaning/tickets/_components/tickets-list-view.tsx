@@ -18,10 +18,10 @@ const statusColors: Record<string, string> = {
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
-  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  urgent: { bg: "var(--row-alt)", text: "var(--status-danger)" },
+  high: { bg: "var(--row-alt)", text: "var(--status-danger)" },
+  medium: { bg: "var(--row-alt)", text: "var(--brand-10)" },
+  low: { bg: "var(--row-alt)", text: "var(--brand-10)" },
 };
 
 interface TicketsListViewProps {
