@@ -129,7 +129,7 @@ export default function SyncLogsPage() {
             disabled={trigger.isPending}
             title={RATE_LIMIT_TOOLTIP}
             className="gap-xs px-sm py-base text-body inline-flex items-center rounded-lg font-medium text-white disabled:opacity-60"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <RefreshCw size={14} className={trigger.isPending ? "animate-spin" : undefined} />
             {trigger.isPending ? "Syncing…" : "Trigger sync"}

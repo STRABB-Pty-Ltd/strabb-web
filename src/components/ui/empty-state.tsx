@@ -32,7 +32,7 @@ export function EmptyState({ icon: Icon, title, description, action, compact }: 
           type="button"
           onClick={action.onClick}
           className="mt-xs px-sm py-base text-body rounded-lg font-medium text-white"
-          style={{ backgroundColor: "var(--strabb-secondary)" }}
+          style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
         >
           {action.label}
         </button>

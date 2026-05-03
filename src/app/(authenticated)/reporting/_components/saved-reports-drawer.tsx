@@ -54,7 +54,7 @@ export function SavedReportsDrawer() {
             type="button"
             onClick={handleSave}
             className="px-sm py-xs text-body rounded-sm text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Save
           </button>

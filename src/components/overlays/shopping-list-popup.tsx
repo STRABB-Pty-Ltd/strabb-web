@@ -174,7 +174,7 @@ export function ShoppingListPopup() {
               type="button"
               onClick={handleCopyList}
               className="px-sm py-base text-body rounded-lg text-white"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy List
             </button>

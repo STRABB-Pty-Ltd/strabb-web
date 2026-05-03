@@ -221,7 +221,7 @@ export function PhoneSection() {
               onClick={handleConfirm}
               disabled={confirmVerification.isPending || otpInput.length === 0}
               className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {confirmVerification.isPending ? "Verifying…" : "Verify"}
             </button>
@@ -276,7 +276,7 @@ export function PhoneSection() {
               onClick={handleRequest}
               disabled={requestVerification.isPending || cooldown > 0}
               className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {requestVerification.isPending
                 ? "Sending…"

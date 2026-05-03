@@ -184,7 +184,7 @@ export function ThreadOverlay({
             type="button"
             aria-label="Send reply"
             className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <Send size={18} />
           </button>

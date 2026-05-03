@@ -123,7 +123,7 @@ export function SharePopup() {
                 closeSharePopup();
               }}
               className="px-sm py-base text-body rounded-lg text-white"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy Link
             </button>

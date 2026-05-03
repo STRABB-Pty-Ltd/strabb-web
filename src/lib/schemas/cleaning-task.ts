@@ -23,22 +23,3 @@ export interface CleaningTaskListResponse {
     totalPages: number;
   };
 }
-
-export interface CleaningTaskSummaryResponse {
-  total: number;
-  pending: number;
-  scheduled: number;
-  notified: number;
-  completed: number;
-  failed: number;
-}
-
-export const TASK_STATUS_OPTIONS = [
-  { value: "", label: "All statuses" },
-  { value: "pending", label: "Pending" },
-  { value: "scheduled", label: "Scheduled" },
-  { value: "notified", label: "Notified" },
-  { value: "completed", label: "Completed" },
-  { value: "failed", label: "Failed" },
-  { value: "cancelled", label: "Cancelled" },
-] as const;

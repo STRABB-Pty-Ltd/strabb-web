@@ -625,7 +625,7 @@ function CustomRangeForm({
         disabled={!valid}
         onClick={() => onApply(start, end)}
         className="mt-base py-xs text-body w-full rounded-lg text-white disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Apply
       </button>

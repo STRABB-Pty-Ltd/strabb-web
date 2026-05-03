@@ -95,7 +95,7 @@ export function NotificationsSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body rounded-lg font-medium text-white"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Preferences
       </button>

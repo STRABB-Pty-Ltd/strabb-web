@@ -8,7 +8,6 @@ import { keysToCamel, keysToSnake } from "@/lib/case-utils";
 import type {
   CleaningTaskListResponse,
   CleaningTaskResponse,
-  CleaningTaskSummaryResponse,
 } from "@/lib/schemas/cleaning-task";
 
 const TASKS_KEY = ["cleaning-tasks"];
@@ -37,14 +36,6 @@ export function useCleaningTasks({
     [...TASKS_KEY, propertyId ?? "all", status ?? "all", String(page)],
     `/cleaning-tasks?${params.toString()}`,
     { select: (raw) => keysToCamel<CleaningTaskListResponse>(raw) },
-  );
-}
-
-export function useCleaningTaskSummary() {
-  return useAuthenticatedQuery<CleaningTaskSummaryResponse>(
-    [...TASKS_KEY, "summary"],
-    "/cleaning-tasks/summary",
-    { select: (raw) => keysToCamel<CleaningTaskSummaryResponse>(raw) },
   );
 }
 

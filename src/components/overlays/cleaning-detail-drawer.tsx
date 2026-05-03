@@ -350,7 +350,7 @@ export function CleaningDetailDrawer() {
                     onClick={handleLink}
                     disabled={!selectedTicketId || linkTicket.isPending}
                     className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                    style={{ backgroundColor: "var(--strabb-secondary)" }}
+                    style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
                   >
                     {linkTicket.isPending ? "Linking…" : "Confirm"}
                   </button>
@@ -391,7 +391,7 @@ export function CleaningDetailDrawer() {
                 onClick={handleSave}
                 disabled={updateTask.isPending}
                 className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                style={{ backgroundColor: "var(--strabb-secondary)" }}
+                style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
               >
                 {updateTask.isPending ? "Saving…" : "Save"}
               </button>

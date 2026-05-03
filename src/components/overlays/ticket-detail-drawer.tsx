@@ -411,7 +411,7 @@ export function TicketDetailDrawer() {
                     onClick={handleLinkClean}
                     disabled={!selectedCleanId || linkClean.isPending}
                     className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                    style={{ backgroundColor: "var(--strabb-secondary)" }}
+                    style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
                   >
                     {linkClean.isPending ? "Linking…" : "Confirm"}
                   </button>
@@ -497,7 +497,7 @@ export function TicketDetailDrawer() {
                   onClick={handleSave}
                   disabled={updateTicket.isPending}
                   className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                  style={{ backgroundColor: "var(--strabb-secondary)" }}
+                  style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
                 >
                   {updateTicket.isPending ? "Saving…" : "Save"}
                 </button>

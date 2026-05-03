@@ -198,7 +198,7 @@ export function BookingDetailDrawer() {
                 onClick={handleSaveNotes}
                 disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
                 className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                style={{ backgroundColor: "var(--strabb-secondary)" }}
+                style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
               >
                 {updateNotes.isPending ? "Saving…" : "Save notes"}
               </button>

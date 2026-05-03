@@ -97,7 +97,7 @@ export function TeamSection() {
           type="button"
           onClick={() => setShowInvite(true)}
           className="gap-xs px-sm py-base text-body flex items-center rounded-lg font-medium text-white"
-          style={{ backgroundColor: "var(--strabb-secondary)" }}
+          style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
         >
           <Plus size={16} />
           Invite Member
@@ -139,7 +139,7 @@ export function TeamSection() {
             type="button"
             onClick={handleInvite}
             className="px-sm py-base text-body rounded-lg font-medium text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Send Invite
           </button>
