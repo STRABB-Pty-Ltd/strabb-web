@@ -28,10 +28,20 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-const eventTypeChip: Record<string, { label: string; bg: string }> = {
-  cleaning: { label: "Clean", bg: "var(--status-success)" },
-  ticket: { label: "Ticket", bg: "var(--status-danger)" },
-  vacancy: { label: "Vacancy", bg: "var(--brand-10)" },
+const eventTypeLabels: Record<string, string> = {
+  cleaning: "Clean",
+  ticket: "Ticket",
+  vacancy: "Vacancy",
+};
+
+// Same status palette as the cleaning/ticket list views and gantt cleaning bars.
+// Drives the colour of Clean and Ticket chips in the Source column.
+const eventStatusColors: Record<string, string> = {
+  pending: "var(--status-pending)",
+  confirmed: "var(--status-confirmed)",
+  in_progress: "var(--status-in-progress)",
+  completed: "var(--status-completed)",
+  cancelled: "var(--status-cancelled)",
 };
 
 const columns: ColumnDef<CalendarEvent>[] = [
@@ -58,25 +68,32 @@ const columns: ColumnDef<CalendarEvent>[] = [
     width: "144px",
     render: (ev) => {
       if (ev.channel) {
+        // Mirror the gantt booking-bar treatment: --row-alt main fill with a
+        // 4px channel-coloured stripe down the left edge.
         return (
           <span
-            className="px-base py-xs text-body text-text-on-color rounded-sm font-medium"
+            className="px-base py-xs text-body rounded-sm font-medium"
             style={{
-              backgroundColor: channelColors[ev.channel] ?? "var(--channel-direct)",
+              backgroundColor: "var(--row-alt)",
+              borderLeft: `4px solid ${channelColors[ev.channel] ?? "var(--channel-direct)"}`,
+              color: "var(--brand-10)",
             }}
           >
             {channelLabels[ev.channel] ?? ev.channel}
           </span>
         );
       }
-      const typeChip = eventTypeChip[ev.type];
-      if (typeChip) {
+      const label = eventTypeLabels[ev.type];
+      if (label) {
+        const bg = ev.status
+          ? (eventStatusColors[ev.status] ?? "var(--brand-10)")
+          : "var(--brand-10)";
         return (
           <span
             className="px-base py-xs text-body text-text-on-color rounded-sm font-medium"
-            style={{ backgroundColor: typeChip.bg }}
+            style={{ backgroundColor: bg }}
           >
-            {typeChip.label}
+            {label}
           </span>
         );
       }
