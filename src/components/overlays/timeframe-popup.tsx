@@ -25,7 +25,7 @@ import type { PageId } from "@/stores/types";
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const WEEK_OPTS = { weekStartsOn: 1 as const };
-const AUTO_CONFIRM_SECONDS = 7;
+const AUTO_CONFIRM_SECONDS = 3;
 const EXIT_MS = 200;
 
 type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
@@ -68,7 +68,14 @@ export function TimeframePopup() {
 
   useEffect(() => {
     cancelledRef.current = false;
-    if (!tfPopup.open || !tfPopup.autoSelect || windowSize === "custom") {
+    // Skip auto-confirm entirely when the user prefers reduced motion - the
+    // draining bar wouldn't animate and a silent timer firing on its own
+    // contradicts the spirit of the preference. Reduced-motion users dismiss
+    // manually via Esc, click-outside, or selecting an option.
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (!tfPopup.open || !tfPopup.autoSelect || windowSize === "custom" || prefersReduced) {
       setProgressActive(false);
       return;
     }
@@ -149,7 +156,9 @@ export function TimeframePopup() {
       })()
     : { top: 144, left: "calc(var(--sidebar-width) + 8px)" };
 
-  const cardAnim = !open ? `scaleOut ${EXIT_MS}ms ease forwards` : `scaleIn ${EXIT_MS}ms ease`;
+  const cardAnim = !open
+    ? `scaleOut ${EXIT_MS}ms ease-in forwards`
+    : `scaleIn ${EXIT_MS}ms ease-out`;
 
   return (
     <>

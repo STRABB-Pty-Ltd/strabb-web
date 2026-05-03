@@ -24,7 +24,7 @@ const channelColors: Record<string, string> = {
   direct: "var(--channel-direct)",
 };
 
-const EXIT_MS = 300;
+const EXIT_MS = 200;
 
 export function ThreadOverlay({
   open,
@@ -61,7 +61,9 @@ export function ThreadOverlay({
         className="fixed inset-0 z-[170]"
         style={{
           backgroundColor: "var(--scrim)",
-          animation: !open ? `fadeOut ${EXIT_MS}ms ease forwards` : `fadeIn ${EXIT_MS}ms ease`,
+          animation: !open
+            ? `fadeOut ${EXIT_MS}ms ease-in forwards`
+            : `fadeIn ${EXIT_MS}ms ease-out`,
         }}
       />
 
@@ -74,8 +76,8 @@ export function ThreadOverlay({
           bottom: "var(--space-md)",
           width: "var(--thread-width)",
           animation: !open
-            ? `slideOutRight ${EXIT_MS}ms ease forwards`
-            : `slideInRight ${EXIT_MS}ms ease`,
+            ? `slideOutRight ${EXIT_MS}ms ease-in forwards`
+            : `slideInRight ${EXIT_MS}ms ease-out`,
         }}
       >
         {/* Booking context header */}

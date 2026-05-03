@@ -65,8 +65,12 @@ export function ShoppingListPopup() {
     navigator.clipboard.writeText(text);
   };
 
-  const scrimAnim = !open ? `fadeOut ${EXIT_MS}ms ease forwards` : `fadeIn ${EXIT_MS}ms ease`;
-  const cardAnim = !open ? `scaleOut ${EXIT_MS}ms ease forwards` : `scaleIn ${EXIT_MS}ms ease`;
+  const scrimAnim = !open
+    ? `fadeOut ${EXIT_MS}ms ease-in forwards`
+    : `fadeIn ${EXIT_MS}ms ease-out`;
+  const cardAnim = !open
+    ? `scaleOut ${EXIT_MS}ms ease-in forwards`
+    : `scaleIn ${EXIT_MS}ms ease-out`;
 
   return (
     <>

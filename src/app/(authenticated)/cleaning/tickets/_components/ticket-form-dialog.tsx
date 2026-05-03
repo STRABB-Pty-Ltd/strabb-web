@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormWithSchema } from "@/hooks/use-form-with-schema";
@@ -25,11 +26,19 @@ import { useAppStore } from "@/stores/app-store";
 import { TICKET_PRIORITY_OPTIONS } from "@/types/ticket";
 
 interface TicketFormDialogProps {
-  trigger: React.ReactElement;
+  trigger?: React.ReactElement;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
-  const [open, setOpen] = useState(false);
+export function TicketFormDialog({
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
+}: TicketFormDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const addToast = useAppStore((s) => s.addToast);
   const createTicket = useCreateTicketAPI();
   const { data: propertiesData } = useProperties();
@@ -87,7 +96,7 @@ export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
         if (!nextOpen) reset();
       }}
     >
-      <DialogTrigger render={trigger} />
+      {trigger && <DialogTrigger render={trigger} />}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>New ticket</DialogTitle>
@@ -165,7 +174,14 @@ export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating…" : "Create ticket"}
+              {isSubmitting ? (
+                <>
+                  <LoadingSpinner className="border-primary-foreground h-sm w-sm border-t-transparent" />
+                  Creating…
+                </>
+              ) : (
+                "Create ticket"
+              )}
             </Button>
           </DialogFooter>
         </form>

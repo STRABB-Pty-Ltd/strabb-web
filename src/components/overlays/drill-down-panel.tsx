@@ -55,8 +55,8 @@ export function DrillDownPanel({
           bottom: "var(--space-md)",
           width: "var(--drilldown-width)",
           animation: !open
-            ? `slideOutRight ${EXIT_MS}ms ease forwards`
-            : `slideInRight ${EXIT_MS}ms ease`,
+            ? `slideOutRight ${EXIT_MS}ms ease-in forwards`
+            : `slideInRight ${EXIT_MS}ms ease-out`,
         }}
       >
         {/* Accent bar */}

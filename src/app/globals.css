@@ -577,13 +577,13 @@
 
 /* Auto-confirm progress bar in the timeframe popup. Keep the duration in
    sync with AUTO_CONFIRM_SECONDS in src/components/overlays/timeframe-popup.tsx.
-   When the user prefers reduced motion the animation is suppressed; the bar
-   stays full while the timer still elapses. */
+   When the user prefers reduced motion the popup skips auto-confirm entirely
+   (handled in JS) so the bar never renders for those users. */
 .drain-progress {
   width: 100%;
   transform-origin: left;
   background-color: var(--strabb-secondary);
-  animation: drainProgress 7s linear forwards;
+  animation: drainProgress 3s linear forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

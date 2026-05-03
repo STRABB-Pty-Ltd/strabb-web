@@ -1,11 +1,12 @@
 "use client";
 
 import { format } from "date-fns";
-import { ChevronDown, ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronDown, ChevronRight, Inbox, RefreshCw } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { type Column, DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMessageLogs, useResendMessage, useScheduledMessages } from "@/hooks/use-messages";
@@ -197,12 +198,29 @@ function ScheduledTab({
   const messages = data?.data ?? [];
   const meta = data?.meta;
 
+  const emptyCopy: Record<typeof status, { title: string; description?: string }> = {
+    pending: {
+      title: "No scheduled messages",
+      description: "Queued messages will appear here once a template fires.",
+    },
+    sent: {
+      title: "No sent messages yet",
+      description: "Delivered messages will appear here once a send succeeds.",
+    },
+    failed: {
+      title: "No failures - all good",
+      description: "Failed deliveries will land here so you can retry them.",
+    },
+  };
+  const empty = emptyCopy[status];
+
   return (
     <div className="space-y-sm">
       <DataTable<ScheduledMessageResponse>
         columns={columns}
         data={messages}
-        emptyMessage="No messages in this view"
+        emptyMessage={empty.title}
+        emptyDescription={empty.description}
       />
       {meta && <Pagination meta={meta} page={page} onChange={setPage} />}
     </div>
@@ -230,7 +248,15 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
   const meta = data?.meta;
 
   if (logs.length === 0) {
-    return <p className="text-body text-gray-500">No log entries.</p>;
+    return (
+      <div className="rounded-md border">
+        <EmptyState
+          icon={Inbox}
+          title="No log entries yet"
+          description="Provider responses and lifecycle events for scheduled messages will land here."
+        />
+      </div>
+    );
   }
 
   return (

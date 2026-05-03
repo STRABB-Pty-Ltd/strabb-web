@@ -99,9 +99,7 @@ function computeKPIs(financials: Financial[], selectedListings: string[]): KPIDa
       : 0;
   const prevAvgNightlyRate =
     prevFinancials.length > 0
-      ? Math.round(
-          prevFinancials.reduce((s, f) => s + f.avgNightlyRate, 0) / prevFinancials.length,
-        )
+      ? Math.round(prevFinancials.reduce((s, f) => s + f.avgNightlyRate, 0) / prevFinancials.length)
       : 0;
   const nightlyRateTrend =
     prevAvgNightlyRate > 0
