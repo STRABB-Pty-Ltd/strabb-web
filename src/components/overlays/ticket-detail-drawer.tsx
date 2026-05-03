@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useCompleteCleaningTask } from "@/hooks/use-cleaning-tasks";
+import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
@@ -59,6 +60,7 @@ export function TicketDetailDrawer() {
   const { data: ticket, isLoading } = useTicket(itemId);
   const tz = usePropertyTimezone(ticket?.propertyId);
   const { data: propertiesData } = useProperties();
+  const { data: listingsData } = useListings();
   const updateTicket = useUpdateTicketAPI();
   const deleteTicket = useDeleteTicketAPI();
   const linkClean = useLinkCleanToTicket();
@@ -111,6 +113,11 @@ export function TicketDetailDrawer() {
     ? ((propertiesData?.data ?? []).find((p) => p.id === displayTicket.propertyId)?.name ??
       displayTicket.propertyId.slice(0, 8))
     : "";
+  const listingName = displayTicket?.listingId
+    ? ((listingsData?.data ?? []).find((l) => l.id === displayTicket.listingId)?.name ?? null)
+    : null;
+  const placeLabel = listingName ? "Listing" : "Property";
+  const placeValue = listingName ?? propertyName;
 
   const surfaceError = (err: unknown) => {
     const message =
@@ -230,8 +237,8 @@ export function TicketDetailDrawer() {
       {displayTicket && (
         <div className="space-y-md">
           <div>
-            <p className="text-body text-gray-500">Property</p>
-            <p className="text-body font-medium text-gray-800">{propertyName}</p>
+            <p className="text-body text-gray-500">{placeLabel}</p>
+            <p className="text-body font-medium text-gray-800">{placeValue}</p>
           </div>
 
           <div className="gap-sm grid grid-cols-2">

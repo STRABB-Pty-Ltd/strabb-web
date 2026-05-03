@@ -62,6 +62,20 @@ vi.mock("@/hooks/use-property-timezone", () => ({
   usePropertyTimezone: () => "Australia/Sydney",
 }));
 
+vi.mock("@/hooks/use-listings", () => ({
+  useListings: () => ({
+    data: { data: [{ id: "listing-1", name: "Beach House Listing" }] },
+    isLoading: false,
+  }),
+}));
+
+vi.mock("@/hooks/use-properties", () => ({
+  useProperties: () => ({
+    data: { data: [{ id: "prop-1", name: "Beach House" }] },
+    isLoading: false,
+  }),
+}));
+
 import { CleaningDetailDrawer } from "./cleaning-detail-drawer";
 
 const baseTask: CleaningTaskResponse = {

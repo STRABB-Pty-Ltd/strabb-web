@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
+import { useListings } from "@/hooks/use-listings";
 import { useTimezoneForListing } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
@@ -37,6 +38,7 @@ export function BookingDetailDrawer() {
 
   const { data: booking, isLoading } = useBooking(itemId);
   const tz = useTimezoneForListing(booking?.listingId);
+  const { data: listingsData } = useListings();
   const updateNotes = useUpdateBookingNotes();
   const dismissConflict = useDismissConflict();
 
@@ -54,6 +56,10 @@ export function BookingDetailDrawer() {
   const displayBooking = open ? booking : lastBookingRef.current;
   const isConflicted = displayBooking?.conflictStatus === "conflicted";
   const status = displayBooking?.status ?? "pending";
+  const listingName = displayBooking
+    ? ((listingsData?.data ?? []).find((l) => l.id === displayBooking.listingId)?.name ??
+      displayBooking.listingId.slice(0, 8))
+    : "";
 
   const handleSaveNotes = () => {
     if (!booking) return;
@@ -113,6 +119,11 @@ export function BookingDetailDrawer() {
               </button>
             </div>
           )}
+
+          <div>
+            <p className="text-body text-gray-500">Listing</p>
+            <p className="text-body font-medium text-gray-800">{listingName}</p>
+          </div>
 
           <div className="gap-sm grid grid-cols-2">
             <div>

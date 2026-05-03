@@ -50,6 +50,13 @@ vi.mock("@/hooks/use-properties", () => ({
   useProperties: () => propertiesMock(),
 }));
 
+vi.mock("@/hooks/use-listings", () => ({
+  useListings: () => ({
+    data: { data: [{ id: "listing-1", name: "Beach House Listing" }] },
+    isLoading: false,
+  }),
+}));
+
 vi.mock("@/hooks/use-property-timezone", () => ({
   usePropertyTimezone: () => "Australia/Sydney",
 }));

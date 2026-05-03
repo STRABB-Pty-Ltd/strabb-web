@@ -28,25 +28,59 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+const eventTypeChip: Record<string, { label: string; bg: string }> = {
+  cleaning: { label: "Clean", bg: "var(--status-success)" },
+  ticket: { label: "Ticket", bg: "var(--status-danger)" },
+  vacancy: { label: "Vacancy", bg: "var(--brand-10)" },
+};
+
 const columns: ColumnDef<CalendarEvent>[] = [
-  { key: "listing", label: "Listing", width: "144px" },
-  { key: "guest", label: "Guest", width: "144px" },
+  {
+    key: "listing",
+    label: "Listing",
+    width: "144px",
+    render: (ev) => <span className="text-body truncate text-gray-700">{ev.listingName}</span>,
+  },
+  {
+    key: "guest",
+    label: "Guest",
+    width: "144px",
+    render: (ev) =>
+      ev.guest ? (
+        <span className="text-body truncate text-gray-700">{ev.guest}</span>
+      ) : (
+        <span className="text-body text-gray-400">-</span>
+      ),
+  },
   {
     key: "channel",
-    label: "Channel",
+    label: "Source",
     width: "144px",
     render: (ev) => {
-      if (!ev.channel) return <span className="text-gray-400">-</span>;
-      return (
-        <span
-          className="px-base py-xs text-body text-text-on-color rounded-sm font-medium"
-          style={{
-            backgroundColor: channelColors[ev.channel] ?? "var(--channel-direct)",
-          }}
-        >
-          {channelLabels[ev.channel] ?? ev.channel}
-        </span>
-      );
+      if (ev.channel) {
+        return (
+          <span
+            className="px-base py-xs text-body text-text-on-color rounded-sm font-medium"
+            style={{
+              backgroundColor: channelColors[ev.channel] ?? "var(--channel-direct)",
+            }}
+          >
+            {channelLabels[ev.channel] ?? ev.channel}
+          </span>
+        );
+      }
+      const typeChip = eventTypeChip[ev.type];
+      if (typeChip) {
+        return (
+          <span
+            className="px-base py-xs text-body text-text-on-color rounded-sm font-medium"
+            style={{ backgroundColor: typeChip.bg }}
+          >
+            {typeChip.label}
+          </span>
+        );
+      }
+      return <span className="text-gray-400">-</span>;
     },
   },
   {

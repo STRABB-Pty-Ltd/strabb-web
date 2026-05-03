@@ -10,6 +10,8 @@ import {
   useResendNotification,
   useUpdateCleaningTask,
 } from "@/hooks/use-cleaning-tasks";
+import { useListings } from "@/hooks/use-listings";
+import { useProperties } from "@/hooks/use-properties";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
 import {
@@ -55,6 +57,8 @@ export function CleaningDetailDrawer() {
 
   const { data: task, isLoading } = useCleaningTask(itemId);
   const tz = usePropertyTimezone(task?.propertyId);
+  const { data: listingsData } = useListings();
+  const { data: propertiesData } = useProperties();
 
   const updateTask = useUpdateCleaningTask();
   const completeTask = useCompleteCleaningTask();
@@ -189,6 +193,14 @@ export function CleaningDetailDrawer() {
   const status = displayTask?.status ?? "pending";
   const isCompleted = status === "completed" || status === "cancelled";
   const canResend = !!task?.cleanerEmail && !isCompleted;
+  const listingName = displayTask?.listingId
+    ? ((listingsData?.data ?? []).find((l) => l.id === displayTask.listingId)?.name ?? null)
+    : null;
+  const propertyName = displayTask
+    ? ((propertiesData?.data ?? []).find((p) => p.id === displayTask.propertyId)?.name ?? null)
+    : null;
+  const placeLabel = listingName ? "Listing" : "Property";
+  const placeValue = listingName ?? propertyName ?? "-";
 
   return (
     <DrillDownPanel
@@ -201,6 +213,11 @@ export function CleaningDetailDrawer() {
       {open && !isLoading && !task && <p className="text-body text-gray-500">Task not found.</p>}
       {displayTask && (
         <div className="space-y-md">
+          <div>
+            <p className="text-body text-gray-500">{placeLabel}</p>
+            <p className="text-body font-medium text-gray-800">{placeValue}</p>
+          </div>
+
           <div>
             <p className="text-body text-gray-500">Scheduled</p>
             <p className="text-body font-medium text-gray-800">
