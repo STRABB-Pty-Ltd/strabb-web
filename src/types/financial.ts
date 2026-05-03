@@ -11,4 +11,5 @@ export interface Financial {
   occupancyRate: number;
   avgNightlyRate: number;
   bookingCount: number;
+  currency?: string;
 }

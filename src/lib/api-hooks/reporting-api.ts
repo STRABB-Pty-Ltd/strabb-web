@@ -20,6 +20,7 @@ interface RawFinancial {
   occupancyRate: number;
   avgNightlyRate: number;
   bookingCount: number;
+  currency?: string;
 }
 
 interface RawOccupancy {
@@ -31,11 +32,13 @@ interface RawRevenueBreakdown {
   listingName: string;
   channel: string;
   revenue: number;
+  currency?: string;
 }
 
 interface RawExpense {
   category: string;
   amount: number;
+  currency?: string;
 }
 
 const channelColors: Record<string, string> = {
@@ -47,6 +50,9 @@ const channelColors: Record<string, string> = {
 };
 
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
+  // TODO(currency-precision): switch to server-computed totals when path A
+  // migration ships (Stripe payouts / BAS exports). Per currency strategy
+  // in CLAUDE.md.
   const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
   const totalExpenses = rows.reduce(
     (s, r) => s + r.cleaningCost + r.ticketCost + r.suppliesCost + r.platformFees,
@@ -143,6 +149,8 @@ export function useReportingChartDataAPI(
         lm.revenue += r.revenue;
         listingMap.set(r.listingName, lm);
       }
+      // TODO(currency-precision): server-computed channel total when path A
+      // migration ships. Per currency strategy in CLAUDE.md.
       const totalChannelRevenue = [...channelMap.values()].reduce((s, c) => s + c.revenue, 0);
       const channelBreakdown = [...channelMap.entries()].map(([channel, { revenue }]) => ({
         channel,

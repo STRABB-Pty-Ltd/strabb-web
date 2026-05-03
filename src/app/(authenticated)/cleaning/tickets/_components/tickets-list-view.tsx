@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import { DEFAULT_TIMEZONE } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatCurrency } from "@/lib/format-currency";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
 
@@ -121,7 +122,11 @@ export function TicketsListView({
         label: "Cost",
         width: "100px",
         sortable: false,
-        render: (t) => <span className="font-data text-body">{t.cost ? `$${t.cost}` : "-"}</span>,
+        render: (t) => (
+          <span className="font-data text-body">
+            {t.cost != null ? formatCurrency(t.cost, t.currency) : "-"}
+          </span>
+        ),
       },
     ],
     [propertyNames, propertyTimezones],

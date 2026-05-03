@@ -71,7 +71,7 @@ export function TicketFormDialog({
         description: data.description,
         priority: data.priority,
         dateScheduled: data.dateScheduled ?? null,
-        cost: data.cost ?? null,
+        cost: data.cost ? parseFloat(data.cost) : null,
         notes: data.notes ?? null,
       });
       addToast({ type: "success", message: "Ticket created" });

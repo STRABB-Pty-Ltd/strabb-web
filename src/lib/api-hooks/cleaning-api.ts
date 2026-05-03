@@ -25,6 +25,7 @@ interface RawCleaningTask {
   checklistTotal: number;
   checklistDone: number;
   cost: string | null;
+  currency?: string;
   linkedTicketId?: string | null;
 }
 

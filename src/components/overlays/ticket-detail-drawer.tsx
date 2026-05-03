@@ -8,6 +8,7 @@ import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
 import { useDeleteTicketAPI, useTicket, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatCurrency } from "@/lib/format-currency";
 import { useAppStore } from "@/stores/app-store";
 import {
   TICKET_PRIORITY_OPTIONS,
@@ -67,7 +68,7 @@ export function TicketDetailDrawer() {
       setPriority(ticket.priority);
       setStatus(ticket.status);
       setDateScheduled(toIsoLocalInput(ticket.dateScheduled));
-      setCost(ticket.cost ?? "");
+      setCost(ticket.cost == null ? "" : String(ticket.cost));
       setNotes(ticket.notes ?? "");
       setEditing(false);
       setConfirmDelete(false);
@@ -106,7 +107,7 @@ export function TicketDetailDrawer() {
           priority,
           status,
           dateScheduled: dateScheduled ? new Date(dateScheduled).toISOString() : null,
-          cost: cost || null,
+          cost: cost ? parseFloat(cost) : null,
           notes: notes || null,
         } as Partial<Ticket>,
       },
@@ -137,7 +138,7 @@ export function TicketDetailDrawer() {
     setPriority(ticket.priority);
     setStatus(ticket.status);
     setDateScheduled(toIsoLocalInput(ticket.dateScheduled));
-    setCost(ticket.cost ?? "");
+    setCost(ticket.cost == null ? "" : String(ticket.cost));
     setNotes(ticket.notes ?? "");
     setEditing(false);
   };
@@ -262,7 +263,9 @@ export function TicketDetailDrawer() {
                 />
               ) : (
                 <p className="font-data text-body">
-                  {displayTicket.cost ? `$${displayTicket.cost}` : "-"}
+                  {displayTicket.cost != null
+                    ? formatCurrency(displayTicket.cost, displayTicket.currency)
+                    : "-"}
                 </p>
               )}
             </div>

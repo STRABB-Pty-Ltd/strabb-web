@@ -12,7 +12,8 @@ export interface Ticket {
   dateReported: string;
   dateScheduled: string | null;
   dateCompleted: string | null;
-  cost: string | null;
+  cost: number | null;
+  currency?: string;
   notes: string | null;
   createdAt: string;
   updatedAt: string;

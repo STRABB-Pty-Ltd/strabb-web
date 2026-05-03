@@ -63,7 +63,7 @@ export const mockTicketsList: Ticket[] = [
     dateReported: day(-10),
     dateScheduled: day(-8),
     dateCompleted: day(-7),
-    cost: "45.00",
+    cost: 45,
     notes: null,
   }),
   createTicket({

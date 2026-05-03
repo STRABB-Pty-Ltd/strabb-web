@@ -14,6 +14,7 @@ interface RawKPIMetrics {
   occupancyRate: number;
   avgNightlyRate: number;
   totalBookings: number;
+  currency?: string;
 }
 
 interface RawKPITrends {
