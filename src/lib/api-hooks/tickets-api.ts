@@ -55,21 +55,33 @@ export function useTicket(id: string | null) {
   });
 }
 
+export interface CreateTicketResult {
+  ticket: Ticket;
+  attemptedAutoLink: boolean;
+  linkedCleanId: string | null;
+}
+
 export function useCreateTicketAPI() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Partial<Ticket> & { autoLinkToNext?: boolean }) => {
+    mutationFn: async (
+      data: Partial<Ticket> & { autoLinkToNext?: boolean },
+    ): Promise<CreateTicketResult> => {
       const { autoLinkToNext, ...ticketData } = data;
       const response = await apiClient.post<{ data: Ticket }>("/tickets", ticketData);
       const created = response.data;
+      let linkedCleanId: string | null = null;
+      let attemptedAutoLink = false;
       if (autoLinkToNext && created?.id) {
-        await apiClient.patch(`/tickets/${created.id}/link-clean`, {
-          auto_link_to_next: true,
-        });
+        attemptedAutoLink = true;
+        const linkResp = await apiClient.patch<{
+          data: { linkedCleanId: string | null };
+        }>(`/tickets/${created.id}/link-clean`, { auto_link_to_next: true });
+        linkedCleanId = linkResp.data?.linkedCleanId ?? null;
       }
-      return created;
+      return { ticket: created, attemptedAutoLink, linkedCleanId };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });

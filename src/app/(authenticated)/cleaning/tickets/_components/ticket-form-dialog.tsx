@@ -66,7 +66,7 @@ export function TicketFormDialog({
 
   async function onSubmit(data: TicketCreateFormData) {
     try {
-      await createTicket.mutateAsync({
+      const result = await createTicket.mutateAsync({
         propertyId: data.propertyId,
         listingId: data.listingId ?? null,
         description: data.description,
@@ -76,7 +76,14 @@ export function TicketFormDialog({
         notes: data.notes ?? null,
         autoLinkToNext: data.autoLinkToNext ?? false,
       });
-      addToast({ type: "success", message: "Ticket created" });
+      if (result.attemptedAutoLink && !result.linkedCleanId) {
+        addToast({
+          type: "info",
+          message: "Ticket created - no clean found to link",
+        });
+      } else {
+        addToast({ type: "success", message: "Ticket created" });
+      }
       setOpen(false);
       reset();
     } catch (err) {
