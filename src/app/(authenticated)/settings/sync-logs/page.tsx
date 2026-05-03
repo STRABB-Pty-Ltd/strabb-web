@@ -69,14 +69,23 @@ export default function SyncLogsPage() {
     {
       key: "status",
       header: "Status",
-      render: (_v, row) => (
-        <span
-          className="px-base py-xs text-body text-text-on-color rounded-md font-medium"
-          style={{ backgroundColor: statusColors[row.status] ?? "var(--brand-10)" }}
-        >
-          {row.status}
-        </span>
-      ),
+      render: (_v, row) => {
+        // statusColors are NON-flipping (success green, danger red, etc.) so
+        // text-on-color is the right pairing. If the API returns a status we
+        // don't have a colour for, we fall back to brand-10 (FLIPPING) which
+        // needs text-white instead - same pattern as other status chips.
+        const matched = statusColors[row.status];
+        return (
+          <span
+            className={`px-base py-xs text-body rounded-md font-medium ${
+              matched ? "text-text-on-color" : "text-white"
+            }`}
+            style={{ backgroundColor: matched ?? "var(--brand-10)" }}
+          >
+            {row.status}
+          </span>
+        );
+      },
     },
     {
       key: "bookingsCreated",
