@@ -34,6 +34,16 @@ vi.mock("@/lib/api-hooks/tickets-api", () => ({
   useTicket: () => ticketMock(),
   useUpdateTicketAPI: () => ({ mutate: updateMutate, isPending: false }),
   useDeleteTicketAPI: () => ({ mutate: deleteMutate, isPending: false }),
+  useLinkCleanToTicket: () => ({ mutate: vi.fn(), isPending: false }),
+  useUnlinkCleanFromTicket: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock("@/lib/api-hooks/cleaning-api", () => ({
+  useCleaningTasksAPI: () => ({ data: [], isLoading: false }),
+}));
+
+vi.mock("@/hooks/use-cleaning-tasks", () => ({
+  useCompleteCleaningTask: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
 vi.mock("@/hooks/use-properties", () => ({

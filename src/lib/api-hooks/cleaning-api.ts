@@ -134,6 +134,34 @@ export function useUpdateCleaningTaskAPI() {
   });
 }
 
+export function useLinkTicketToClean() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ cleanId, ticketId }: { cleanId: string; ticketId: string }) =>
+      apiClient.patch(`/cleaning-tasks/${cleanId}/link-ticket`, { ticket_id: ticketId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+    },
+  });
+}
+
+export function useUnlinkTicketFromClean() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (cleanId: string) =>
+      apiClient.delete(`/cleaning-tasks/${cleanId}/link-ticket`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+    },
+  });
+}
+
 export function useCreateShoppingItemAPI() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();

@@ -3,10 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useCompleteCleaningTask } from "@/hooks/use-cleaning-tasks";
 import { useProperties } from "@/hooks/use-properties";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
-import { useDeleteTicketAPI, useTicket, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
+import { useCleaningTasksAPI } from "@/lib/api-hooks/cleaning-api";
+import {
+  useDeleteTicketAPI,
+  useLinkCleanToTicket,
+  useTicket,
+  useUnlinkCleanFromTicket,
+  useUpdateTicketAPI,
+} from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { formatCurrency } from "@/lib/format-currency";
 import { useAppStore } from "@/stores/app-store";
@@ -52,6 +61,9 @@ export function TicketDetailDrawer() {
   const { data: propertiesData } = useProperties();
   const updateTicket = useUpdateTicketAPI();
   const deleteTicket = useDeleteTicketAPI();
+  const linkClean = useLinkCleanToTicket();
+  const unlinkClean = useUnlinkCleanFromTicket();
+  const completeClean = useCompleteCleaningTask();
 
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -61,6 +73,19 @@ export function TicketDetailDrawer() {
   const [dateScheduled, setDateScheduled] = useState("");
   const [cost, setCost] = useState("");
   const [notes, setNotes] = useState("");
+  const [linkingMode, setLinkingMode] = useState(false);
+  const [selectedCleanId, setSelectedCleanId] = useState("");
+  const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
+
+  const { data: cleansForListing } = useCleaningTasksAPI(
+    [],
+    ticket?.listingId ? [ticket.listingId] : [],
+  );
+  const allCleans = cleansForListing ?? [];
+  const linkedClean = allCleans.find((c) => c.linkedTicketId === ticket?.id) ?? null;
+  const candidateCleans = allCleans.filter(
+    (c) => c.status !== "completed" && c.status !== "cancelled" && !c.linkedTicketId,
+  );
 
   useEffect(() => {
     if (ticket) {
@@ -99,6 +124,7 @@ export function TicketDetailDrawer() {
 
   const handleSave = () => {
     if (!ticket) return;
+    const wasCompleted = ticket.status === "completed";
     updateTicket.mutate(
       {
         id: ticket.id,
@@ -115,10 +141,57 @@ export function TicketDetailDrawer() {
         onSuccess: () => {
           setEditing(false);
           addToast({ type: "success", message: "Ticket updated" });
+          if (
+            status === "completed"
+            && !wasCompleted
+            && linkedClean
+            && linkedClean.status !== "completed"
+          ) {
+            setShowCompleteConfirm(true);
+          }
         },
         onError: surfaceError,
       },
     );
+  };
+
+  const handleLinkClean = () => {
+    if (!ticket || !selectedCleanId) return;
+    linkClean.mutate(
+      { ticketId: ticket.id, cleaningTaskId: selectedCleanId },
+      {
+        onSuccess: () => {
+          addToast({ type: "success", message: "Clean linked to ticket" });
+          setLinkingMode(false);
+          setSelectedCleanId("");
+        },
+        onError: surfaceError,
+      },
+    );
+  };
+
+  const handleUnlinkClean = () => {
+    if (!ticket) return;
+    unlinkClean.mutate(ticket.id, {
+      onSuccess: () => addToast({ type: "success", message: "Link removed" }),
+      onError: surfaceError,
+    });
+  };
+
+  const handleConfirmCloseLinkedClean = async () => {
+    if (!linkedClean) return;
+    await new Promise<void>((resolve, reject) => {
+      completeClean.mutate(linkedClean.id, {
+        onSuccess: () => {
+          addToast({ type: "success", message: "Linked clean marked complete" });
+          resolve();
+        },
+        onError: (err) => {
+          surfaceError(err);
+          reject(err);
+        },
+      });
+    });
   };
 
   const handleDelete = () => {
@@ -292,6 +365,80 @@ export function TicketDetailDrawer() {
             )}
           </div>
 
+          <div className="space-y-xs">
+            <p className="text-body font-semibold text-gray-700">Linked clean</p>
+            {linkedClean ? (
+              <div className="space-y-xs">
+                <p className="text-body text-gray-800">
+                  {formatInPropertyTimezone(linkedClean.scheduledTime, tz, "d MMM yyyy, HH:mm")}
+                </p>
+                <p className="text-body text-gray-500">Status: {linkedClean.status}</p>
+                <button
+                  type="button"
+                  onClick={handleUnlinkClean}
+                  disabled={unlinkClean.isPending}
+                  className="px-sm py-base text-body rounded-lg border font-medium text-gray-700 disabled:opacity-60"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  {unlinkClean.isPending ? "Removing…" : "Unlink"}
+                </button>
+              </div>
+            ) : linkingMode ? (
+              <div className="space-y-xs">
+                <select
+                  value={selectedCleanId}
+                  onChange={(e) => setSelectedCleanId(e.target.value)}
+                  className="px-sm py-base text-body w-full rounded-lg border bg-white"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <option value="">Choose a clean…</option>
+                  {candidateCleans.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {formatInPropertyTimezone(c.scheduledTime, tz, "d MMM yyyy, HH:mm")} -{" "}
+                      {c.cleanerName ?? "Unassigned"}
+                    </option>
+                  ))}
+                </select>
+                <div className="gap-xs flex">
+                  <button
+                    type="button"
+                    onClick={handleLinkClean}
+                    disabled={!selectedCleanId || linkClean.isPending}
+                    className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                    style={{ backgroundColor: "var(--strabb-secondary)" }}
+                  >
+                    {linkClean.isPending ? "Linking…" : "Confirm"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLinkingMode(false);
+                      setSelectedCleanId("");
+                    }}
+                    className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                {candidateCleans.length === 0 && (
+                  <p className="text-body text-gray-500">
+                    No open cleans for this listing.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setLinkingMode(true)}
+                className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Link to clean
+              </button>
+            )}
+          </div>
+
           <div
             className="gap-xs pt-sm flex flex-wrap border-t"
             style={{ borderColor: "var(--border)" }}
@@ -361,6 +508,15 @@ export function TicketDetailDrawer() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={showCompleteConfirm}
+        onOpenChange={setShowCompleteConfirm}
+        title="Mark linked clean complete too?"
+        description="The linked clean is still open. Close it as well?"
+        confirmLabel="Yes, mark complete"
+        cancelLabel="Leave it open"
+        onConfirm={handleConfirmCloseLinkedClean}
+      />
     </DrillDownPanel>
   );
 }

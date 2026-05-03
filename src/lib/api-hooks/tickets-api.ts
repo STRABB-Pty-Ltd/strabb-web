@@ -60,13 +60,65 @@ export function useCreateTicketAPI() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: Partial<Ticket>) => apiClient.post("/tickets", data),
+    mutationFn: async (data: Partial<Ticket> & { autoLinkToNext?: boolean }) => {
+      const { autoLinkToNext, ...ticketData } = data;
+      const response = await apiClient.post<{ data: Ticket }>("/tickets", ticketData);
+      const created = response.data;
+      if (autoLinkToNext && created?.id) {
+        await apiClient.patch(`/tickets/${created.id}/link-clean`, {
+          auto_link_to_next: true,
+        });
+      }
+      return created;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
+    },
+  });
+}
+
+export function useLinkCleanToTicket() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      ticketId,
+      cleaningTaskId,
+      autoLinkToNext = false,
+    }: {
+      ticketId: string;
+      cleaningTaskId?: string;
+      autoLinkToNext?: boolean;
+    }) =>
+      apiClient.patch<{ data: { linkedCleanId: string | null } }>(
+        `/tickets/${ticketId}/link-clean`,
+        {
+          cleaning_task_id: cleaningTaskId ?? null,
+          auto_link_to_next: autoLinkToNext,
+        },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+    },
+  });
+}
+
+export function useUnlinkCleanFromTicket() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ticketId: string) => apiClient.delete(`/tickets/${ticketId}/link-clean`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
     },
   });
 }

@@ -61,6 +61,7 @@ export function TicketFormDialog({
     dateScheduled: "",
     cost: "",
     notes: "",
+    autoLinkToNext: false,
   });
 
   async function onSubmit(data: TicketCreateFormData) {
@@ -73,6 +74,7 @@ export function TicketFormDialog({
         dateScheduled: data.dateScheduled ?? null,
         cost: data.cost ? parseFloat(data.cost) : null,
         notes: data.notes ?? null,
+        autoLinkToNext: data.autoLinkToNext ?? false,
       });
       addToast({ type: "success", message: "Ticket created" });
       setOpen(false);
@@ -171,6 +173,15 @@ export function TicketFormDialog({
             />
             {errors.notes && <p className="text-destructive text-body">{errors.notes.message}</p>}
           </div>
+
+          <label className="gap-sm flex items-center text-body text-gray-700">
+            <input
+              type="checkbox"
+              {...register("autoLinkToNext")}
+              className="h-base w-base rounded border-gray-300"
+            />
+            Auto-link to next scheduled clean for this listing
+          </label>
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
