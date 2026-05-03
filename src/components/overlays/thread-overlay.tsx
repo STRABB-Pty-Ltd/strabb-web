@@ -56,9 +56,10 @@ export function ThreadOverlay({
 
   return (
     <>
-      {/* Scrim */}
+      {/* Scrim - clicking outside the panel closes the overlay. */}
       <div
         className="fixed inset-0 z-[170]"
+        onClick={onClose}
         style={{
           backgroundColor: "var(--scrim)",
           animation: !open
