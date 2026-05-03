@@ -278,11 +278,10 @@ export function TicketDetailDrawer() {
                 </select>
               ) : (
                 <span
-                  className={`px-base py-xs text-body inline-block rounded-md font-medium ${
-                    status === "confirmed" ? "text-white" : "text-text-on-color"
-                  }`}
+                  className="px-base py-xs text-body inline-block rounded-md font-medium"
                   style={{
                     backgroundColor: statusColors[status] ?? "var(--brand-10)",
+                    color: "var(--surface-60)",
                   }}
                 >
                   {status.replace("_", " ")}

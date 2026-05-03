@@ -80,10 +80,11 @@ export function TicketsListView({
         sortable: false,
         render: (t) => (
           <span
-            className={`px-base py-xs text-body rounded-md font-medium ${
-              t.status === "confirmed" ? "text-white" : "text-text-on-color"
-            }`}
-            style={{ backgroundColor: statusColors[t.status] ?? "var(--brand-10)" }}
+            className="px-base py-xs text-body rounded-md font-medium"
+            style={{
+              backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
+              color: "var(--surface-60)",
+            }}
           >
             {t.status.replace("_", " ")}
           </span>

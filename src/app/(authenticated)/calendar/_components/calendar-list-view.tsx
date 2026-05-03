@@ -68,15 +68,20 @@ const columns: ColumnDef<CalendarEvent>[] = [
     width: "144px",
     render: (ev) => {
       if (ev.channel) {
-        // Mirror the gantt booking-bar treatment: --row-alt main fill with a
-        // 4px channel-coloured stripe down the left edge.
+        // Mirror the calendar gantt booking-bar treatment: --row-alt main
+        // fill, 0.5px brand-10 hairline top+bottom, and 4px channel-coloured
+        // stripes on BOTH ends so the highlight wraps around the chip.
+        const stripe = channelColors[ev.channel] ?? "var(--channel-direct)";
         return (
           <span
-            className="px-base py-xs text-body rounded-sm font-medium"
+            className="px-base py-xs text-body rounded-md font-medium"
             style={{
               backgroundColor: "var(--row-alt)",
-              borderLeft: `4px solid ${channelColors[ev.channel] ?? "var(--channel-direct)"}`,
               color: "var(--brand-10)",
+              borderTop: "0.5px solid var(--brand-10)",
+              borderBottom: "0.5px solid var(--brand-10)",
+              borderLeft: `4px solid ${stripe}`,
+              borderRight: `4px solid ${stripe}`,
             }}
           >
             {channelLabels[ev.channel] ?? ev.channel}
@@ -85,13 +90,13 @@ const columns: ColumnDef<CalendarEvent>[] = [
       }
       const label = eventTypeLabels[ev.type];
       if (label) {
-        const bg = ev.status
-          ? (eventStatusColors[ev.status] ?? "var(--brand-10)")
-          : "var(--brand-10)";
         return (
           <span
-            className="px-base py-xs text-body text-text-on-color rounded-sm font-medium"
-            style={{ backgroundColor: bg }}
+            className="px-base py-xs text-body rounded-sm font-medium"
+            style={{
+              backgroundColor: "var(--row-alt)",
+              color: "var(--brand-10)",
+            }}
           >
             {label}
           </span>
@@ -120,11 +125,18 @@ const columns: ColumnDef<CalendarEvent>[] = [
     key: "status",
     label: "Status",
     width: "89px",
-    render: (ev) => (
-      <span className="text-body text-gray-600 capitalize">
-        {(ev.status ?? ev.type).replace("_", " ")}
-      </span>
-    ),
+    render: (ev) => {
+      if (!ev.status) return <span className="text-body text-gray-400">-</span>;
+      const bg = eventStatusColors[ev.status] ?? "var(--brand-10)";
+      return (
+        <span
+          className="px-base py-xs text-body rounded-md font-medium capitalize"
+          style={{ backgroundColor: bg, color: "var(--surface-60)" }}
+        >
+          {ev.status.replace("_", " ")}
+        </span>
+      );
+    },
   },
   {
     key: "amount",

@@ -228,10 +228,11 @@ export function CleaningDetailDrawer() {
           <div>
             <p className="text-body text-gray-500">Status</p>
             <span
-              className={`px-base py-xs text-body inline-block rounded-md font-medium ${
-                status === "confirmed" ? "text-white" : "text-text-on-color"
-              }`}
-              style={{ backgroundColor: statusColors[status] ?? "var(--brand-10)" }}
+              className="px-base py-xs text-body inline-block rounded-md font-medium"
+              style={{
+                backgroundColor: statusColors[status] ?? "var(--brand-10)",
+                color: "var(--surface-60)",
+              }}
             >
               {status.replace("_", " ")}
             </span>
