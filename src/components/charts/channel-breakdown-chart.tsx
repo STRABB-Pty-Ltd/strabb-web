@@ -1,8 +1,9 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 import { ChartContainer } from "./chart-container";
+import { ChartTooltip } from "./chart-tooltip";
 
 // Recharts forwards numeric font sizes to internal SVG <text> elements and uses
 // getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
@@ -46,10 +47,7 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
           // 89 is on the Fibonacci ladder
           width={89}
         />
-        <Tooltip
-          formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: FONT_SIZE }}
-        />
+        <ChartTooltip formatter={(value) => [formatAUD(Number(value)), "Revenue"]} />
         <Bar
           dataKey="revenue"
           radius={[0, 3, 3, 0]}

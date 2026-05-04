@@ -1,14 +1,9 @@
 "use client";
 
-import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
+import { Cell, Legend, Pie, PieChart } from "recharts";
 
 import { ChartContainer } from "./chart-container";
-
-// Recharts forwards numeric font sizes to internal SVG <text> elements and uses
-// getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
-// these props. Mirror the token here as a plain number to keep the link
-// documented while staying compatible.
-const FONT_SIZE = 13; // mirrors var(--text-body)
+import { ChartTooltip } from "./chart-tooltip";
 
 interface ExpenseData {
   category: string;
@@ -54,10 +49,7 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip
-          formatter={(value) => formatAUD(Number(value))}
-          contentStyle={{ fontSize: FONT_SIZE }}
-        />
+        <ChartTooltip formatter={(value) => formatAUD(Number(value))} />
         <Legend
           verticalAlign="bottom"
           iconType="circle"

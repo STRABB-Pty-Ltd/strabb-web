@@ -1,8 +1,10 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
+import { format, parse } from "date-fns";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { ChartContainer } from "./chart-container";
+import { ChartTooltip } from "./chart-tooltip";
 
 // Recharts forwards numeric font sizes to internal SVG <text> elements and uses
 // getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
@@ -28,6 +30,12 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+export function formatMonthLabel(value: string): string {
+  const parsed = parse(value, "yyyy-MM", new Date());
+  if (Number.isNaN(parsed.getTime())) return value;
+  return format(parsed, "MMM yyyy");
+}
+
 export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
   return (
     <ChartContainer title="Revenue Trend" loading={loading} empty={data.length === 0}>
@@ -39,11 +47,15 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-        <XAxis dataKey="label" tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }} />
+        <XAxis
+          dataKey="label"
+          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tickFormatter={formatMonthLabel}
+        />
         <YAxis tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
-        <Tooltip
+        <ChartTooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: FONT_SIZE }}
+          labelFormatter={(label) => formatMonthLabel(String(label))}
         />
         <Area
           type="monotone"

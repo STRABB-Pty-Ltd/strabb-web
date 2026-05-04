@@ -1,8 +1,9 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 import { ChartContainer } from "./chart-container";
+import { ChartTooltip } from "./chart-tooltip";
 
 // Recharts forwards numeric font sizes to internal SVG <text> elements and uses
 // getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
@@ -45,10 +46,7 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
           domain={[0, 100]}
           tickFormatter={(v) => `${v}%`}
         />
-        <Tooltip
-          formatter={(value) => [`${value}%`, "Occupancy"]}
-          contentStyle={{ fontSize: FONT_SIZE }}
-        />
+        <ChartTooltip formatter={(value) => [`${value}%`, "Occupancy"]} />
         <Bar dataKey="occupancy" radius={[3, 3, 0, 0]}>
           {data.map((entry, i) => (
             <Cell key={i} fill={getOccupancyColor(entry.occupancy)} />

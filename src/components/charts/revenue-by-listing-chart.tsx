@@ -1,8 +1,9 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 import { ChartContainer } from "./chart-container";
+import { ChartTooltip } from "./chart-tooltip";
 
 // Recharts forwards numeric font sizes to internal SVG <text> elements and uses
 // getComputedStyle for measurement, so a `var(--text-body)` string is unsafe in
@@ -34,21 +35,21 @@ export function RevenueByListingChart({ data, loading }: RevenueByListingChartPr
   return (
     <ChartContainer title="Revenue by Listing" loading={loading} empty={data.length === 0}>
       <BarChart data={sorted}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--neutral-30)" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           dataKey="listing"
-          tick={{ fontSize: FONT_SIZE }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
           interval={0}
           angle={-20}
           textAnchor="end"
           // 55 = --space-xl
           height={55}
         />
-        <YAxis tick={{ fontSize: FONT_SIZE }} tickFormatter={formatAUD} />
-        <Tooltip
-          formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
-          contentStyle={{ fontSize: FONT_SIZE }}
+        <YAxis
+          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tickFormatter={formatAUD}
         />
+        <ChartTooltip formatter={(value) => [formatAUD(Number(value)), "Revenue"]} />
         <Bar dataKey="revenue" radius={[3, 3, 0, 0]}>
           {sorted.map((entry, i) => (
             <Cell key={i} fill={entry.color} />
