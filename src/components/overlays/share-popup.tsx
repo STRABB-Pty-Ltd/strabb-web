@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { X } from "lucide-react";
 
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 
 const defaultFields = [
@@ -54,11 +55,14 @@ export function SharePopup() {
   return (
     <>
       <div
-        className="fixed inset-0 z-[180]"
-        style={{ backgroundColor: "var(--scrim)", animation: scrimAnim }}
+        className="fixed inset-0"
+        style={{ zIndex: Z.MODAL_SCRIM, backgroundColor: "var(--scrim)", animation: scrimAnim }}
         onClick={closeSharePopup}
       />
-      <div className="fixed inset-0 z-[185] flex items-center justify-center">
+      <div
+        className="fixed inset-0 flex items-center justify-center"
+        style={{ zIndex: Z.MODAL }}
+      >
         <div
           className="w-full max-w-md rounded-xl bg-white shadow-xl"
           style={{ animation: cardAnim }}

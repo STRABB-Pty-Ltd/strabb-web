@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { Z } from "@/lib/z-index";
 import type { ThreadMessage } from "@/types/message";
 
 interface ThreadOverlayProps {
@@ -58,9 +59,10 @@ export function ThreadOverlay({
     <>
       {/* Scrim - clicking outside the panel closes the overlay. */}
       <div
-        className="fixed inset-0 z-[170]"
+        className="fixed inset-0"
         onClick={onClose}
         style={{
+          zIndex: Z.THREAD_SCRIM,
           backgroundColor: "var(--scrim)",
           animation: !open
             ? `fadeOut ${EXIT_MS}ms ease-in forwards`
@@ -70,8 +72,9 @@ export function ThreadOverlay({
 
       {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div
-        className="fixed z-[175] flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
+        className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
+          zIndex: Z.THREAD,
           top: "var(--space-md)",
           right: "var(--space-md)",
           bottom: "var(--space-md)",

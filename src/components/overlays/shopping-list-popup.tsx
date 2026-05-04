@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useShoppingList } from "@/hooks/use-cleaning";
+import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 
 const priorityBadge: Record<string, { bg: string; text: string }> = {
@@ -75,11 +76,14 @@ export function ShoppingListPopup() {
   return (
     <>
       <div
-        className="fixed inset-0 z-[180]"
-        style={{ backgroundColor: "var(--scrim)", animation: scrimAnim }}
+        className="fixed inset-0"
+        style={{ zIndex: Z.MODAL_SCRIM, backgroundColor: "var(--scrim)", animation: scrimAnim }}
         onClick={closeShoppingListPopup}
       />
-      <div className="fixed inset-0 z-[185] flex items-center justify-center">
+      <div
+        className="fixed inset-0 flex items-center justify-center"
+        style={{ zIndex: Z.MODAL }}
+      >
         <div
           className="w-full max-w-lg rounded-xl bg-white shadow-xl"
           style={{ animation: cardAnim }}

@@ -20,6 +20,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
@@ -162,10 +163,15 @@ export function TimeframePopup() {
 
   return (
     <>
-      <div className="fixed inset-0 z-[140]" onClick={closeTimeframePopup} />
       <div
-        className="fixed z-[150] rounded-xl border bg-white shadow-xl"
+        className="fixed inset-0"
+        style={{ zIndex: Z.DRAWER_SCRIM }}
+        onClick={closeTimeframePopup}
+      />
+      <div
+        className="fixed rounded-xl border bg-white shadow-xl"
         style={{
+          zIndex: Z.DRAWER,
           top: positionStyle.top,
           left: positionStyle.left,
           width: POPUP_WIDTH,

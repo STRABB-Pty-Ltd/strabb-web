@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { X } from "lucide-react";
 
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { Z } from "@/lib/z-index";
 
 interface DrillDownPanelProps {
   open: boolean;
@@ -44,12 +45,17 @@ export function DrillDownPanel({
   return (
     <>
       {/* Click-outside area */}
-      <div className="fixed inset-0 z-[140]" onClick={onClose} />
+      <div
+        className="fixed inset-0"
+        style={{ zIndex: Z.DRAWER_SCRIM }}
+        onClick={onClose}
+      />
 
       {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div
-        className="fixed z-[150] flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
+        className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
+          zIndex: Z.DRAWER,
           top: "var(--space-md)",
           right: "var(--space-md)",
           bottom: "var(--space-md)",
