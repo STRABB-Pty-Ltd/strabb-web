@@ -48,13 +48,13 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "listing",
     label: "Listing",
-    width: "144px",
+    width: "200px",
     render: (ev) => <span className="text-body truncate text-gray-700">{ev.listingName}</span>,
   },
   {
     key: "guest",
     label: "Guest",
-    width: "144px",
+    width: "160px",
     render: (ev) =>
       ev.guest ? (
         <span className="text-body truncate text-gray-700">{ev.guest}</span>
@@ -65,7 +65,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "channel",
     label: "Source",
-    width: "144px",
+    width: "128px",
     render: (ev) => {
       if (ev.channel) {
         // Mirror the calendar gantt booking-bar treatment: --row-alt main
@@ -108,7 +108,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "checkin",
     label: "Check-in",
-    width: "89px",
+    width: "112px",
     render: (ev) => (
       <span className="font-data text-body">{format(new Date(ev.start), "d MMM yyyy")}</span>
     ),
@@ -116,7 +116,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "checkout",
     label: "Check-out",
-    width: "89px",
+    width: "112px",
     render: (ev) => (
       <span className="font-data text-body">{format(new Date(ev.end), "d MMM yyyy")}</span>
     ),
@@ -124,7 +124,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "status",
     label: "Status",
-    width: "89px",
+    width: "112px",
     render: (ev) => {
       if (!ev.status) return <span className="text-body text-gray-400">-</span>;
       const bg = eventStatusColors[ev.status] ?? "var(--brand-10)";
@@ -141,7 +141,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
   {
     key: "amount",
     label: "Amount",
-    width: "89px",
+    width: "96px",
     render: (ev) => (
       <span className="font-data text-body">{ev.amount ? formatAUD(ev.amount) : "-"}</span>
     ),
