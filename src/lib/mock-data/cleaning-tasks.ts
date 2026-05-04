@@ -23,6 +23,7 @@ const defaults: CleaningTask = {
   status: "confirmed",
   type: "turnover",
   estimatedHours: 2.5,
+  cost: null,
   notes: null,
   linkedTicketId: null,
 };

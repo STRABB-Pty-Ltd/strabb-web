@@ -47,6 +47,8 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
     type: raw.taskType as CleaningTask["type"],
     estimatedHours:
       typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
+    cost: raw.cost == null ? null : parseFloat(raw.cost),
+    currency: raw.currency,
     notes: raw.notes,
     linkedTicketId: raw.linkedTicketId ?? null,
   };

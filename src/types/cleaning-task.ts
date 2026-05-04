@@ -20,6 +20,8 @@ export interface CleaningTask {
   status: CleaningStatus;
   type: CleaningType;
   estimatedHours: number;
+  cost: number | null;
+  currency?: string;
   notes: string | null;
   linkedTicketId: string | null;
 }
