@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { USE_MOCK } from "@/lib/mock-data";
-import { timeframeToDateRange } from "@/lib/timeframe-utils";
+import { timeframeToDateRange, trendDateRange } from "@/lib/timeframe-utils";
 import type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
 
-interface RawFinancial {
+export interface RawFinancial {
   month: string;
   listingId: string;
   listingName: string;
@@ -48,6 +48,18 @@ const channelColors: Record<string, string> = {
   vrbo: "var(--channel-vrbo)",
   direct: "var(--channel-direct)",
 };
+
+export function financialsToRevenueTrend(
+  rows: RawFinancial[],
+): { label: string; revenue: number }[] {
+  const monthMap = new Map<string, number>();
+  for (const r of rows) {
+    monthMap.set(r.month, (monthMap.get(r.month) ?? 0) + r.revenue);
+  }
+  return [...monthMap.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([label, revenue]) => ({ label, revenue }));
+}
 
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   // TODO(currency-precision): switch to server-computed totals when path A
@@ -116,20 +128,29 @@ export function useReportingChartDataAPI(
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
+  const { startDate: trendStart, endDate: trendEnd } = trendDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
+  const trendParams = new URLSearchParams();
+  selectedListings.forEach((id) => trendParams.append("listing_ids", id));
+  trendParams.set("start_date", trendStart);
+  trendParams.set("end_date", trendEnd);
+
   return useQuery<ChartDataSet>({
-    queryKey: ["reporting-charts", startDate, endDate, ...selectedListings],
+    queryKey: ["reporting-charts", startDate, endDate, trendStart, trendEnd, ...selectedListings],
     queryFn: async () => {
-      const [occupancyRes, revenueRes, expensesRes] = await Promise.all([
+      const [occupancyRes, revenueRes, expensesRes, trendRes] = await Promise.all([
         apiClient.get<{ data: RawOccupancy[] }>(`/reporting/occupancy?${params.toString()}`),
         apiClient.get<{ data: RawRevenueBreakdown[] }>(
           `/reporting/revenue-breakdown?${params.toString()}`,
         ),
         apiClient.get<{ data: RawExpense[] }>(`/reporting/expense-breakdown?${params.toString()}`),
+        apiClient.get<{ data: RawFinancial[] }>(
+          `/reporting/financials?${trendParams.toString()}`,
+        ),
       ]);
 
       // Build occupancy by listing
@@ -170,7 +191,7 @@ export function useReportingChartDataAPI(
       }));
 
       return {
-        revenueTrend: [],
+        revenueTrend: financialsToRevenueTrend(trendRes.data),
         channelBreakdown,
         occupancy,
         expenses,
