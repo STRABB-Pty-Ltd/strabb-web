@@ -49,6 +49,24 @@ const channelColors: Record<string, string> = {
   direct: "var(--channel-direct)",
 };
 
+export function enumerateMonths(start: string, end: string): string[] {
+  const [sy, sm] = start.split("-").map(Number);
+  const [ey, em] = end.split("-").map(Number);
+  if (!sy || !sm || !ey || !em) return [];
+  const result: string[] = [];
+  let y = sy;
+  let m = sm;
+  while (y < ey || (y === ey && m <= em)) {
+    result.push(`${y}-${String(m).padStart(2, "0")}`);
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+  }
+  return result;
+}
+
 export function financialsToRevenueTrend(
   rows: RawFinancial[],
 ): { label: string; revenue: number }[] {
@@ -56,9 +74,12 @@ export function financialsToRevenueTrend(
   for (const r of rows) {
     monthMap.set(r.month, (monthMap.get(r.month) ?? 0) + r.revenue);
   }
-  return [...monthMap.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([label, revenue]) => ({ label, revenue }));
+  if (monthMap.size === 0) return [];
+  const months = [...monthMap.keys()].sort();
+  return enumerateMonths(months[0], months[months.length - 1]).map((label) => ({
+    label,
+    revenue: monthMap.get(label) ?? 0,
+  }));
 }
 
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
