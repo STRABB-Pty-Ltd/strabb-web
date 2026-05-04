@@ -5,14 +5,8 @@ import { format } from "date-fns";
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useCalendarListSort } from "@/hooks/use-calendar";
+import { formatChannel } from "@/lib/channels";
 import { useAppStore } from "@/stores/app-store";
-
-const channelLabels: Record<string, string> = {
-  airbnb: "Airbnb",
-  booking_com: "Booking.com",
-  vrbo: "VRBO",
-  direct: "Direct",
-};
 
 const channelColors: Record<string, string> = {
   airbnb: "var(--channel-airbnb)",
@@ -84,7 +78,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
               borderRight: `4px solid ${stripe}`,
             }}
           >
-            {channelLabels[ev.channel] ?? ev.channel}
+            {formatChannel(ev.channel)}
           </span>
         );
       }

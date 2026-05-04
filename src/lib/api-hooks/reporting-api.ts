@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import { formatChannel } from "@/lib/channels";
 import { USE_MOCK } from "@/lib/mock-data";
 import { timeframeToDateRange, trendDateRange } from "@/lib/timeframe-utils";
 import type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
@@ -195,7 +196,7 @@ export function useReportingChartDataAPI(
       // migration ships. Per currency strategy in CLAUDE.md.
       const totalChannelRevenue = [...channelMap.values()].reduce((s, c) => s + c.revenue, 0);
       const channelBreakdown = [...channelMap.entries()].map(([channel, { revenue }]) => ({
-        channel,
+        channel: formatChannel(channel),
         revenue,
         percentage: totalChannelRevenue > 0 ? Math.round((revenue / totalChannelRevenue) * 100) : 0,
         color: channelColors[channel] ?? "var(--channel-direct)",

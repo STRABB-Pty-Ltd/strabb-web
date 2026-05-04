@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import { mockBookingList, mockFinancialList, mockListingList } from "./index";
+import { formatChannel } from "@/lib/channels";
 import type { Financial } from "@/types/financial";
 
 export interface ReportingKPI {
@@ -31,13 +32,6 @@ const channelColors: Record<string, string> = {
   booking_com: "var(--channel-booking)",
   vrbo: "var(--channel-vrbo)",
   direct: "var(--channel-direct)",
-};
-
-const channelLabels: Record<string, string> = {
-  airbnb: "Airbnb",
-  booking_com: "Booking.com",
-  vrbo: "VRBO",
-  direct: "Direct",
 };
 
 function computeKPIs(financials: Financial[], selectedListings: string[]): ReportingKPI[] {
@@ -131,7 +125,7 @@ function computeChartData(financials: Financial[], selectedListings: string[]): 
   }
   const totalChannelRev = Object.values(channelRevenue).reduce((s, v) => s + v, 0);
   const channelBreakdown = Object.entries(channelRevenue).map(([ch, rev]) => ({
-    channel: channelLabels[ch] ?? ch,
+    channel: formatChannel(ch),
     revenue: rev,
     percentage: totalChannelRev > 0 ? Math.round((rev / totalChannelRev) * 100) : 0,
     color: channelColors[ch] ?? "var(--channel-direct)",
