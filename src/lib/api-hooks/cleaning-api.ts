@@ -7,7 +7,8 @@ import { USE_MOCK } from "@/lib/mock-data";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { ShoppingItem } from "@/types/shopping-item";
 
-// Backend cleaning task shape after global keysToCamel
+// Backend cleaning task shape after global keysToCamel. Money fields arrive
+// as JS numbers (Pydantic Money type emits numeric JSON), not strings.
 interface RawCleaningTask {
   id: string;
   bookingId: string | null;
@@ -21,10 +22,10 @@ interface RawCleaningTask {
   notes: string | null;
   taskType: string;
   priority: string;
-  estimatedHours: string | number;
+  estimatedHours: number;
   checklistTotal: number;
   checklistDone: number;
-  cost: string | null;
+  cost: number | null;
   currency?: string;
   linkedTicketId?: string | null;
 }
@@ -45,9 +46,8 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
     priority: raw.priority as CleaningTask["priority"],
     status: raw.status as CleaningTask["status"],
     type: raw.taskType as CleaningTask["type"],
-    estimatedHours:
-      typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
-    cost: raw.cost == null ? null : parseFloat(raw.cost),
+    estimatedHours: raw.estimatedHours,
+    cost: raw.cost,
     currency: raw.currency,
     notes: raw.notes,
     linkedTicketId: raw.linkedTicketId ?? null,

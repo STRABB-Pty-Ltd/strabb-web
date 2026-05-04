@@ -15,6 +15,7 @@ export interface Ticket {
   cost: number | null;
   currency?: string;
   notes: string | null;
+  linkedCleanId: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -84,7 +84,11 @@ export function TicketDetailDrawer() {
     ticket?.listingId ? [ticket.listingId] : [],
   );
   const allCleans = cleansForListing ?? [];
-  const linkedClean = allCleans.find((c) => c.linkedTicketId === ticket?.id) ?? null;
+  // Linked clean comes from the API via ticket.linkedCleanId; allCleans is
+  // only here to populate the picker dropdown.
+  const linkedClean = ticket?.linkedCleanId
+    ? (allCleans.find((c) => c.id === ticket.linkedCleanId) ?? null)
+    : null;
   const candidateCleans = allCleans.filter(
     (c) => c.status !== "completed" && c.status !== "cancelled" && !c.linkedTicketId,
   );

@@ -21,6 +21,7 @@ const defaults: Ticket = {
   dateCompleted: null,
   cost: null,
   notes: "Discovered during turnover clean",
+  linkedCleanId: null,
   createdAt: NOW,
   updatedAt: NOW,
 };

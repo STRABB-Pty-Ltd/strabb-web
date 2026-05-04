@@ -75,6 +75,7 @@ const baseTicket: Ticket = {
   dateCompleted: null,
   cost: null,
   notes: null,
+  linkedCleanId: null,
   createdAt: "2026-04-25T00:00:00Z",
   updatedAt: "2026-04-25T00:00:00Z",
 };
