@@ -76,12 +76,12 @@ export function ShoppingListPopup() {
   return (
     <>
       <div
-        className="fixed inset-0"
+        className="canvas-overlay fixed"
         style={{ zIndex: Z.MODAL_SCRIM, backgroundColor: "var(--scrim)", animation: scrimAnim }}
         onClick={closeShoppingListPopup}
       />
       <div
-        className="fixed inset-0 flex items-center justify-center"
+        className="canvas-overlay fixed flex items-center justify-center"
         style={{ zIndex: Z.MODAL }}
       >
         <div

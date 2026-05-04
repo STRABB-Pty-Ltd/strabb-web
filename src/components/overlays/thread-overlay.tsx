@@ -57,9 +57,9 @@ export function ThreadOverlay({
 
   return (
     <>
-      {/* Scrim - clicking outside the panel closes the overlay. */}
+      {/* Scrim - canvas-bounded; clicking outside the panel closes the overlay. */}
       <div
-        className="fixed inset-0"
+        className="canvas-overlay fixed"
         onClick={onClose}
         style={{
           zIndex: Z.THREAD_SCRIM,

@@ -67,6 +67,13 @@
      a warm-white wash in dark mode. Use this instead. */
   --scrim: rgba(0, 0, 0, 0.4);
 
+  /* Layout helper for overlays: positions a scrim or centred modal so it
+     covers the canvas area only - the sidebar, top nav, and submenu bar
+     stay uncovered and interactive. Pair with `position: fixed`. */
+  --canvas-left: var(--sidebar-width);
+  --canvas-bottom: 0;
+  --canvas-right: 0;
+
   /* Shadow scale. Hand-rolled rgba so dark mode can tune them stronger. */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.15);
@@ -188,6 +195,16 @@
   --input: var(--neutral-30);
   --ring: var(--brand-10);
   --radius: 5px;
+}
+
+/* Layout helper: positions an overlay scrim or centred modal so it covers
+   the canvas region only. Sidebar, top nav, and submenu bar stay
+   uncovered and interactive. Pair with `position: fixed`. */
+.canvas-overlay {
+  left: var(--canvas-left);
+  top: var(--canvas-top);
+  right: var(--canvas-right);
+  bottom: var(--canvas-bottom);
 }
 
 .dark {

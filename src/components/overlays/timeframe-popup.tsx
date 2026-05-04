@@ -164,7 +164,7 @@ export function TimeframePopup() {
   return (
     <>
       <div
-        className="fixed inset-0"
+        className="canvas-overlay fixed"
         style={{ zIndex: Z.DRAWER_SCRIM }}
         onClick={closeTimeframePopup}
       />
