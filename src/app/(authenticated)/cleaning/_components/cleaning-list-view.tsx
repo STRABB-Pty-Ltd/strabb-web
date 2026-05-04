@@ -43,7 +43,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "listing",
         label: "Listing",
-        width: "144px",
+        width: "200px",
         render: (t) => (
           <div className="gap-base flex items-center">
             <span
@@ -57,7 +57,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "type",
         label: "Type",
-        width: "89px",
+        width: "112px",
         render: (t) => (
           <span
             className="px-base py-xs text-body rounded-sm text-gray-600"
@@ -70,7 +70,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "scheduled",
         label: "Scheduled",
-        width: "144px",
+        width: "168px",
         render: (t) => {
           const tz = listingTimezones[t.listingId] ?? DEFAULT_TIMEZONE;
           return (
@@ -83,7 +83,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "assignee",
         label: "Assignee",
-        width: "144px",
+        width: "160px",
         render: (t) => (
           <span className="text-body text-gray-600">{t.cleanerName ?? "Unassigned"}</span>
         ),
@@ -91,7 +91,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "status",
         label: "Status",
-        width: "89px",
+        width: "112px",
         render: (t) => (
           <span
             className="px-base py-xs text-body rounded-md font-medium"
@@ -107,7 +107,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "priority",
         label: "Priority",
-        width: "89px",
+        width: "112px",
         render: (t) => {
           const p = priorityColors[t.priority] ?? priorityColors.low;
           return (
@@ -123,7 +123,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "checklist",
         label: "Checklist",
-        width: "89px",
+        width: "96px",
         render: (t) => (
           <span className="font-data text-body">
             {t.checklistDone}/{t.checklistTotal}
