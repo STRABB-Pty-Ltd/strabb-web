@@ -18,11 +18,6 @@ describe("formatChannel", () => {
 
 describe("CHANNEL_LABELS", () => {
   it("has the four canonical channel keys", () => {
-    expect(Object.keys(CHANNEL_LABELS).sort()).toEqual([
-      "airbnb",
-      "booking_com",
-      "direct",
-      "vrbo",
-    ]);
+    expect(Object.keys(CHANNEL_LABELS).sort()).toEqual(["airbnb", "booking_com", "direct", "vrbo"]);
   });
 });

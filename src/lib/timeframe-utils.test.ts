@@ -257,14 +257,16 @@ describe("trendDateRange", () => {
   });
 
   it("custom range wider than 12 months → honors selected start", () => {
-    expect(
-      trendDateRange("custom", null, { start: "2024-01-01", end: "2026-04-30" }),
-    ).toEqual({ startDate: "2024-01-01", endDate: "2026-04-30" });
+    expect(trendDateRange("custom", null, { start: "2024-01-01", end: "2026-04-30" })).toEqual({
+      startDate: "2024-01-01",
+      endDate: "2026-04-30",
+    });
   });
 
   it("custom range narrower than 12 months → extends back to 12 months", () => {
-    expect(
-      trendDateRange("custom", null, { start: "2026-03-01", end: "2026-04-30" }),
-    ).toEqual({ startDate: "2025-05-01", endDate: "2026-04-30" });
+    expect(trendDateRange("custom", null, { start: "2026-03-01", end: "2026-04-30" })).toEqual({
+      startDate: "2025-05-01",
+      endDate: "2026-04-30",
+    });
   });
 });

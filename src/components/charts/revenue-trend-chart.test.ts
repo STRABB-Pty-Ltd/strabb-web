@@ -17,9 +17,7 @@ describe("formatMonthLabel", () => {
 
 describe("groupByYear", () => {
   it("groups consecutive months by year in input order", () => {
-    expect(
-      groupByYear(["2025-06", "2025-07", "2025-12", "2026-01", "2026-02"]),
-    ).toEqual([
+    expect(groupByYear(["2025-06", "2025-07", "2025-12", "2026-01", "2026-02"])).toEqual([
       { year: "2025", labels: ["2025-06", "2025-07", "2025-12"] },
       { year: "2026", labels: ["2026-01", "2026-02"] },
     ]);

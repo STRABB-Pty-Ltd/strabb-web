@@ -155,8 +155,7 @@ export function useUnlinkTicketFromClean() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (cleanId: string) =>
-      apiClient.delete(`/cleaning-tasks/${cleanId}/link-ticket`),
+    mutationFn: (cleanId: string) => apiClient.delete(`/cleaning-tasks/${cleanId}/link-ticket`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["tickets"] });

@@ -181,7 +181,7 @@ export function TicketFormDialog({
             {errors.notes && <p className="text-destructive text-body">{errors.notes.message}</p>}
           </div>
 
-          <label className="gap-sm flex items-center text-body text-gray-700">
+          <label className="gap-sm text-body flex items-center text-gray-700">
             <input
               type="checkbox"
               {...register("autoLinkToNext")}

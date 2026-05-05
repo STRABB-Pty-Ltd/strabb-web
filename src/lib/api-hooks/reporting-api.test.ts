@@ -25,11 +25,7 @@ describe("financialsToRevenueTrend", () => {
   });
 
   it("sums revenue per month across listings", () => {
-    const rows = [
-      fin("2026-03", "a", 1000),
-      fin("2026-03", "b", 500),
-      fin("2026-04", "a", 1200),
-    ];
+    const rows = [fin("2026-03", "a", 1000), fin("2026-03", "b", 500), fin("2026-04", "a", 1200)];
     expect(financialsToRevenueTrend(rows)).toEqual([
       { label: "2026-03", revenue: 1500 },
       { label: "2026-04", revenue: 1200 },

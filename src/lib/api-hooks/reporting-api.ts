@@ -170,9 +170,7 @@ export function useReportingChartDataAPI(
           `/reporting/revenue-breakdown?${params.toString()}`,
         ),
         apiClient.get<{ data: RawExpense[] }>(`/reporting/expense-breakdown?${params.toString()}`),
-        apiClient.get<{ data: RawFinancial[] }>(
-          `/reporting/financials?${trendParams.toString()}`,
-        ),
+        apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${trendParams.toString()}`),
       ]);
 
       // Build occupancy by listing

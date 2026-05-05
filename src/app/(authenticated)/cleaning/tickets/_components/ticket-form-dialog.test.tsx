@@ -51,9 +51,7 @@ describe("TicketFormDialog auto-link", () => {
     const propertySelect = await screen.findByLabelText(/property/i);
     await userEvent.selectOptions(propertySelect, "11111111-1111-1111-1111-111111111111");
     await userEvent.type(screen.getByLabelText(/description/i), "Broken tap");
-    await userEvent.click(
-      screen.getByLabelText(/auto-link to next scheduled clean/i),
-    );
+    await userEvent.click(screen.getByLabelText(/auto-link to next scheduled clean/i));
     await userEvent.click(screen.getByRole("button", { name: /create ticket/i }));
 
     await waitFor(() => expect(createTicketMutateAsync).toHaveBeenCalled());

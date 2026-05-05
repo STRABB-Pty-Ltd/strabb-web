@@ -45,11 +45,7 @@ export function DrillDownPanel({
   return (
     <>
       {/* Click-outside area - canvas-bounded so the rails stay live. */}
-      <div
-        className="canvas-overlay fixed"
-        style={{ zIndex: Z.DRAWER_SCRIM }}
-        onClick={onClose}
-      />
+      <div className="canvas-overlay fixed" style={{ zIndex: Z.DRAWER_SCRIM }} onClick={onClose} />
 
       {/* Panel - floats inset from the viewport edges with rounded corners */}
       <div

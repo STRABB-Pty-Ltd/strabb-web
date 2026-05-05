@@ -153,10 +153,10 @@ export function TicketDetailDrawer() {
           setEditing(false);
           addToast({ type: "success", message: "Ticket updated" });
           if (
-            status === "completed"
-            && !wasCompleted
-            && linkedClean
-            && linkedClean.status !== "completed"
+            status === "completed" &&
+            !wasCompleted &&
+            linkedClean &&
+            linkedClean.status !== "completed"
           ) {
             setShowCompleteConfirm(true);
           }
@@ -415,7 +415,10 @@ export function TicketDetailDrawer() {
                     onClick={handleLinkClean}
                     disabled={!selectedCleanId || linkClean.isPending}
                     className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                    style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+                    style={{
+                      backgroundColor: "var(--strabb-secondary)",
+                      color: "var(--surface-60)",
+                    }}
                   >
                     {linkClean.isPending ? "Linking…" : "Confirm"}
                   </button>
@@ -432,9 +435,7 @@ export function TicketDetailDrawer() {
                   </button>
                 </div>
                 {candidateCleans.length === 0 && (
-                  <p className="text-body text-gray-500">
-                    No open cleans for this listing.
-                  </p>
+                  <p className="text-body text-gray-500">No open cleans for this listing.</p>
                 )}
               </div>
             ) : (

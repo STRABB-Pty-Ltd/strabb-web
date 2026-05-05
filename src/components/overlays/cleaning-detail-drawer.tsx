@@ -14,15 +14,8 @@ import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
-import {
-  useLinkTicketToClean,
-  useUnlinkTicketFromClean,
-} from "@/lib/api-hooks/cleaning-api";
-import {
-  useTicket,
-  useTicketsAPI,
-  useUpdateTicketAPI,
-} from "@/lib/api-hooks/tickets-api";
+import { useLinkTicketToClean, useUnlinkTicketFromClean } from "@/lib/api-hooks/cleaning-api";
+import { useTicket, useTicketsAPI, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
@@ -350,7 +343,10 @@ export function CleaningDetailDrawer() {
                     onClick={handleLink}
                     disabled={!selectedTicketId || linkTicket.isPending}
                     className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                    style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+                    style={{
+                      backgroundColor: "var(--strabb-secondary)",
+                      color: "var(--surface-60)",
+                    }}
                   >
                     {linkTicket.isPending ? "Linking…" : "Confirm"}
                   </button>
@@ -367,9 +363,7 @@ export function CleaningDetailDrawer() {
                   </button>
                 </div>
                 {candidateTickets.length === 0 && (
-                  <p className="text-body text-gray-500">
-                    No open tickets for this listing.
-                  </p>
+                  <p className="text-body text-gray-500">No open tickets for this listing.</p>
                 )}
               </div>
             ) : (

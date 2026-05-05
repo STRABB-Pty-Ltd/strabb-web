@@ -5,10 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApiClient } from "./use-api-client";
 import { useAuthenticatedQuery } from "./use-authenticated-query";
 import { keysToCamel, keysToSnake } from "@/lib/case-utils";
-import type {
-  CleaningTaskListResponse,
-  CleaningTaskResponse,
-} from "@/lib/schemas/cleaning-task";
+import type { CleaningTaskListResponse, CleaningTaskResponse } from "@/lib/schemas/cleaning-task";
 
 const TASKS_KEY = ["cleaning-tasks"];
 
