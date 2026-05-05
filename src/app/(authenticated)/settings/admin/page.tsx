@@ -161,11 +161,12 @@ function SyncErrorsSection() {
       ),
     },
     {
-      key: "bookingsCreated",
+      key: "metrics",
       header: "Bookings",
       render: (_v, row) => (
         <span className="font-data text-body">
-          {row.bookingsCreated}+/{row.bookingsUpdated}~/{row.bookingsUnchanged}=
+          {row.metrics.bookingsCreated}+/{row.metrics.bookingsUpdated}~/
+          {row.metrics.bookingsUnchanged}=
         </span>
       ),
     },

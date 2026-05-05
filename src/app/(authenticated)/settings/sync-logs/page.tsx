@@ -14,11 +14,14 @@ import { useAppStore } from "@/stores/app-store";
 const PAGE_SIZE = 20;
 const RATE_LIMIT_TOOLTIP = "Limited to 3 syncs per 5 minutes";
 
+// Status enum aligned with strabb-api PR #3 (shared primitives):
+// synced | failed | in_progress | skipped (replacing the old
+// success / error / running set).
 const statusColors: Record<string, string> = {
-  success: "var(--status-completed)",
-  partial: "var(--status-issues)",
+  synced: "var(--status-completed)",
+  skipped: "var(--status-issues)",
   failed: "var(--status-danger)",
-  running: "var(--status-in-progress)",
+  in_progress: "var(--status-in-progress)",
 };
 
 export default function SyncLogsPage() {
@@ -85,11 +88,12 @@ export default function SyncLogsPage() {
       },
     },
     {
-      key: "bookingsCreated",
+      key: "metrics",
       header: "Bookings (new / updated / unchanged)",
       render: (_v, row) => (
         <span className="font-data text-body">
-          {row.bookingsCreated} / {row.bookingsUpdated} / {row.bookingsUnchanged}
+          {row.metrics.bookingsCreated} / {row.metrics.bookingsUpdated} /{" "}
+          {row.metrics.bookingsUnchanged}
         </span>
       ),
     },
