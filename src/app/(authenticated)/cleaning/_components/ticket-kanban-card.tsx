@@ -14,8 +14,8 @@ const priorityColors: Record<string, { bg: string; text: string }> = {
 };
 
 const statusColors: Record<string, string> = {
-  reported: "var(--status-pending)",
-  scheduled: "var(--status-confirmed)",
+  pending: "var(--status-pending)",
+  confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
   cancelled: "var(--status-cancelled)",
@@ -51,8 +51,11 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
             {ticket.priority}
           </span>
           <span
-            className="px-xs py-xs text-body rounded-sm font-medium text-white"
-            style={{ backgroundColor: statusColors[ticket.status] ?? "var(--brand-10)" }}
+            className="px-xs py-xs text-body rounded-sm font-medium"
+            style={{
+              backgroundColor: statusColors[ticket.status] ?? "var(--brand-10)",
+              color: "var(--surface-60)",
+            }}
           >
             {ticket.status}
           </span>

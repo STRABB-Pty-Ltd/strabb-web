@@ -187,8 +187,8 @@ describe("ticketUpdateSchema", () => {
 
   it("accepts every status value from the enum", () => {
     for (const status of [
-      "reported",
-      "scheduled",
+      "pending",
+      "confirmed",
       "in_progress",
       "completed",
       "cancelled",

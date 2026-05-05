@@ -17,14 +17,17 @@ import {
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const WEEK_OPTS = { weekStartsOn: 1 as const };
-const AUTO_CONFIRM_SECONDS = 7;
+const AUTO_CONFIRM_SECONDS = 3;
+const EXIT_MS = 200;
 
 type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
 
@@ -66,7 +69,14 @@ export function TimeframePopup() {
 
   useEffect(() => {
     cancelledRef.current = false;
-    if (!tfPopup.open || !tfPopup.autoSelect || windowSize === "custom") {
+    // Skip auto-confirm entirely when the user prefers reduced motion - the
+    // draining bar wouldn't animate and a silent timer firing on its own
+    // contradicts the spirit of the preference. Reduced-motion users dismiss
+    // manually via Esc, click-outside, or selecting an option.
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (!tfPopup.open || !tfPopup.autoSelect || windowSize === "custom" || prefersReduced) {
       setProgressActive(false);
       return;
     }
@@ -117,9 +127,12 @@ export function TimeframePopup() {
     }
   }, [tfPopup.open]);
 
-  if (!tfPopup.open || !isTimeframePage(currentPage)) return null;
+  const open = tfPopup.open && isTimeframePage(currentPage);
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
+  if (!shouldRender) return null;
 
   const writeAnchor = (next: string) => {
+    if (!isTimeframePage(currentPage)) return;
     setTimeframeAnchor(currentPage, next);
     closeTimeframePopup();
   };
@@ -128,6 +141,9 @@ export function TimeframePopup() {
   // fall back to the legacy fixed spot below the rail for any caller that
   // doesn't pass one. Right-edge clamping keeps the popup on-screen when the
   // trigger sits near the viewport edge.
+  // POPUP_WIDTH mirrors --drilldown-width; VIEWPORT_MARGIN mirrors --space-base.
+  // Kept as JS literals because reading CSS vars in layout math via getComputedStyle
+  // is awkward (and the values are design-locked anyway).
   const POPUP_WIDTH = 377;
   const VIEWPORT_MARGIN = 8;
   const positionStyle: { top: number | string; left: number | string } = tfPopup.anchor
@@ -141,16 +157,26 @@ export function TimeframePopup() {
       })()
     : { top: 144, left: "calc(var(--sidebar-width) + 8px)" };
 
+  const cardAnim = !open
+    ? `scaleOut ${EXIT_MS}ms ease-in forwards`
+    : `scaleIn ${EXIT_MS}ms ease-out`;
+
   return (
     <>
-      <div className="fixed inset-0 z-[140]" onClick={closeTimeframePopup} />
       <div
-        className="fixed z-[150] rounded-xl border bg-white shadow-xl"
+        className="canvas-overlay fixed"
+        style={{ zIndex: Z.DRAWER_SCRIM }}
+        onClick={closeTimeframePopup}
+      />
+      <div
+        className="fixed rounded-xl border bg-white shadow-xl"
         style={{
+          zIndex: Z.DRAWER,
           top: positionStyle.top,
           left: positionStyle.left,
           width: POPUP_WIDTH,
           borderColor: "var(--border)",
+          animation: cardAnim,
         }}
         onMouseDown={cancelAutoConfirm}
       >
@@ -162,7 +188,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
+            className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
             aria-label="Close"
             data-no-elevate
           >
@@ -176,7 +202,10 @@ export function TimeframePopup() {
             className="overflow-hidden"
             style={{ height: 3, backgroundColor: "var(--neutral-30)" }}
           >
-            <div className="drain-progress h-full" />
+            <div
+              className="drain-progress h-full"
+              style={{ "--drain-duration": `${AUTO_CONFIRM_SECONDS}s` } as CSSProperties}
+            />
           </div>
         )}
 
@@ -248,7 +277,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -257,7 +286,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -304,7 +333,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -313,7 +342,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -399,7 +428,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(subMonths(viewDate, 1))}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Previous month"
         >
           <ChevronLeft size={16} />
@@ -408,7 +437,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(addMonths(viewDate, 1))}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
           aria-label="Next month"
         >
           <ChevronRight size={16} />
@@ -605,7 +634,7 @@ function CustomRangeForm({
         disabled={!valid}
         onClick={() => onApply(start, end)}
         className="mt-base py-xs text-body w-full rounded-lg text-white disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Apply
       </button>

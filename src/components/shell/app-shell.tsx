@@ -32,24 +32,46 @@ const validPages: PageId[] = [
   "settings",
 ];
 
+const pageLabels: Record<PageId, string> = {
+  dashboard: "Dashboard",
+  calendar: "Calendar",
+  messaging: "Messaging",
+  cleaning: "Cleaning",
+  reporting: "Reporting",
+  settings: "Settings",
+};
+
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const currentPage = useAppStore((s) => s.currentPage);
   const setCurrentPage = useAppStore((s) => s.setCurrentPage);
+  const resetPageDefaults = useAppStore((s) => s.resetPageDefaults);
   const pathname = usePathname();
   const { helpOpen, setHelpOpen } = useKeyboardShortcuts();
 
-  // Sync store's currentPage with URL on mount and navigation
+  // Sync store's currentPage with URL on mount and navigation. Every
+  // top-level page change also resets that page's chip + view to defaults
+  // so each entry feels fresh (no leaked filter from the last visit).
   useEffect(() => {
     const segment = pathname.split("/")[1] as PageId;
     if (segment && validPages.includes(segment) && segment !== currentPage) {
       setCurrentPage(segment);
+      if (segment !== "settings") resetPageDefaults(segment);
     }
-  }, [pathname, currentPage, setCurrentPage]);
+  }, [pathname, currentPage, setCurrentPage, resetPageDefaults]);
 
   const showSidebarSeparator = currentPage !== "settings";
 
   return (
     <div className="relative flex h-screen overflow-hidden">
+      {/* Skip-link for keyboard users. Visually hidden until focused, then
+          jumps the user past the persistent rails (sidebar + top nav +
+          submenu) straight to the main canvas content. */}
+      <a
+        href="#main-content"
+        className="focus:px-sm focus:py-base focus:text-body focus:bg-primary focus:text-primary-foreground sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[1000] focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
       {/* Persistent logo overlay - pinned to top-left of the sidebar column.
           pointer-events-none so the bottom of the logo (which overflows
           --logo-area-height into the listings header by design) doesn't
@@ -66,7 +88,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             left: "calc(var(--sidebar-width) + 4px)",
             top: "var(--canvas-top)",
             bottom: "var(--space-xl)",
-            width: "2px",
+            width: "var(--hairline)",
             backgroundColor: "var(--neutral-30)",
           }}
         />
@@ -89,19 +111,19 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             <div
               aria-hidden="true"
               className="pointer-events-none flex shrink-0 items-center justify-center"
-              style={{ height: 12 }}
+              style={{ height: 12 }} // 12px track = --space-sm minus the 2px hairline that paints inside
             >
               <div
                 style={{
-                  width: 385,
-                  height: 2,
+                  width: 385, // design-locked magic value; not on the Fibonacci ladder
+                  height: "var(--hairline)",
                   marginLeft: "calc(0px - var(--sidebar-width) / 2)",
                   backgroundColor: "var(--neutral-30)",
                 }}
               />
             </div>
           ) : (
-            <div style={{ height: 12 }} />
+            <div style={{ height: 12 }} /> // 12px track = --space-sm minus the 2px hairline that paints inside
           )}
           <SubmenuBar />
         </div>
@@ -113,15 +135,18 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         <div
           aria-hidden="true"
           className="relative shrink-0"
-          style={{ height: 2, backgroundColor: "var(--neutral-30)", zIndex: 25 }}
+          style={{ height: "var(--hairline)", backgroundColor: "var(--neutral-30)", zIndex: 25 }}
         />
         <ErrorBoundary>
           <Suspense fallback={<PageLoading />}>
-            <Canvas>{children}</Canvas>
+            <h1 className="sr-only">{pageLabels[currentPage]}</h1>
+            <main id="main-content" className="contents">
+              <Canvas>{children}</Canvas>
+            </main>
           </Suspense>
         </ErrorBoundary>
       </div>
-      {helpOpen && <KeyboardHelpModal onClose={() => setHelpOpen(false)} />}
+      <KeyboardHelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
       <BookingDetailDrawer />
       <CleaningDetailDrawer />
       <TicketDetailDrawer />

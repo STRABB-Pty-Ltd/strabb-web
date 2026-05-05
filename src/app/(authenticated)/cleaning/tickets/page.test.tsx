@@ -40,12 +40,13 @@ const item: Ticket = {
   listingId: null,
   description: "Leaking tap in main bathroom",
   priority: "high",
-  status: "reported",
+  status: "pending",
   dateReported: "2026-04-25T00:00:00Z",
   dateScheduled: null,
   dateCompleted: null,
   cost: null,
   notes: null,
+  linkedCleanId: null,
   createdAt: "2026-04-25T00:00:00Z",
   updatedAt: "2026-04-25T00:00:00Z",
 };
@@ -80,10 +81,10 @@ describe("TicketsPage", () => {
     render(<TicketsPage />);
 
     const statusSelect = screen.getByRole("combobox", { name: /status/i });
-    await userEvent.selectOptions(statusSelect, "reported");
+    await userEvent.selectOptions(statusSelect, "pending");
 
     const lastCall = ticketsMock.mock.calls.at(-1)?.[0];
-    expect(lastCall).toEqual(expect.objectContaining({ status: "reported", page: 1 }));
+    expect(lastCall).toEqual(expect.objectContaining({ status: "pending", page: 1 }));
   });
 
   it("clicking a row opens the drill-down panel for that ticket", async () => {

@@ -56,7 +56,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
     >
       <div className="mb-sm gap-base flex items-center">
         <div
-          className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg"
+          className="h-lg flex w-lg shrink-0 items-center justify-center rounded-lg"
           style={{ backgroundColor: "var(--icon-bg)" }}
         >
           <Icon size={21} style={{ color: "var(--icon-color)" }} />

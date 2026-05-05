@@ -49,8 +49,13 @@ export function GanttBar({
         top: 0,
         backgroundColor: color,
         color: textColor ?? "var(--surface-60)",
-        borderLeft: accentColor ? `4px solid ${accentColor}` : undefined,
+        borderLeft: accentColor ? `var(--stripe-width) solid ${accentColor}` : undefined,
+        // Sub-token vertical hairline + --space-xs horizontal: kept numeric so
+        // the chip stays compact at narrow widths without extra padding from
+        // upgrading the vertical to the next ladder step.
         padding: "2px 5px",
+        // Matches --text-subheading--line-height: tightens text inside the
+        // chip without wrapping when widthPx is short.
         lineHeight: 1.25,
         // Multi-row bars need to sit above the next rows' day cells (which
         // would otherwise paint over them via document order). Today line

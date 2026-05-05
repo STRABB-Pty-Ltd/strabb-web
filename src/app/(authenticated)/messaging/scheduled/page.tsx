@@ -1,11 +1,14 @@
 "use client";
 
 import { format } from "date-fns";
-import { ChevronDown, ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronDown, ChevronRight, Inbox, RefreshCw } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { type Column, DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMessageLogs, useResendMessage, useScheduledMessages } from "@/hooks/use-messages";
 import { ApiError } from "@/lib/api-client";
 import type { MessageLogResponse, ScheduledMessageResponse } from "@/lib/schemas/message";
@@ -21,6 +24,7 @@ const tabs: { id: Tab; label: string }[] = [
 ];
 
 const PAGE_SIZE = 20;
+const VALID_TABS: Tab[] = ["pending", "sent", "failed", "logs"];
 
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
@@ -30,12 +34,20 @@ const statusColors: Record<string, string> = {
 };
 
 export default function ScheduledMessagesPage() {
-  const [tab, setTab] = useState<Tab>("pending");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const initialTab: Tab = VALID_TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "pending";
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [page, setPage] = useState(1);
 
   const handleTabChange = (next: Tab) => {
     setTab(next);
     setPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", next);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
@@ -57,7 +69,7 @@ export default function ScheduledMessagesPage() {
               className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors"
               style={{
                 borderColor: active ? "var(--strabb-secondary)" : "transparent",
-                color: active ? "var(--strabb-secondary)" : "var(--neutral-50)",
+                color: active ? "var(--strabb-secondary)" : "var(--brand-10)",
               }}
             >
               {t.label}
@@ -135,7 +147,7 @@ function ScheduledTab({
       header: "Status",
       render: (_v, m) => (
         <span
-          className="px-base py-xs text-body rounded-full font-medium text-white"
+          className="px-base py-xs text-body rounded-md font-medium text-[var(--text-on-color)]"
           style={{ backgroundColor: statusColors[m.status] ?? "var(--brand-10)" }}
         >
           {m.status}
@@ -173,18 +185,42 @@ function ScheduledTab({
   ];
 
   if (isLoading) {
-    return <p className="text-body text-gray-400">Loading messages…</p>;
+    return (
+      <div className="space-y-xs" aria-busy="true">
+        <span className="sr-only">Loading messages</span>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} h={55} />
+        ))}
+      </div>
+    );
   }
 
   const messages = data?.data ?? [];
   const meta = data?.meta;
+
+  const emptyCopy: Record<typeof status, { title: string; description?: string }> = {
+    pending: {
+      title: "No scheduled messages",
+      description: "Queued messages will appear here once a template fires.",
+    },
+    sent: {
+      title: "No sent messages yet",
+      description: "Delivered messages will appear here once a send succeeds.",
+    },
+    failed: {
+      title: "No failures - all good",
+      description: "Failed deliveries will land here so you can retry them.",
+    },
+  };
+  const empty = emptyCopy[status];
 
   return (
     <div className="space-y-sm">
       <DataTable<ScheduledMessageResponse>
         columns={columns}
         data={messages}
-        emptyMessage="No messages in this view"
+        emptyMessage={empty.title}
+        emptyDescription={empty.description}
       />
       {meta && <Pagination meta={meta} page={page} onChange={setPage} />}
     </div>
@@ -212,7 +248,15 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
   const meta = data?.meta;
 
   if (logs.length === 0) {
-    return <p className="text-body text-gray-500">No log entries.</p>;
+    return (
+      <div className="rounded-md border">
+        <EmptyState
+          icon={Inbox}
+          title="No log entries yet"
+          description="Provider responses and lifecycle events for scheduled messages will land here."
+        />
+      </div>
+    );
   }
 
   return (
@@ -237,16 +281,19 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
                 ) : (
                   <ChevronRight size={14} className="shrink-0" />
                 )}
-                <span className="font-medium text-gray-800" style={{ minWidth: 140 }}>
+                <span className="font-medium text-gray-800" style={{ minWidth: 144 }}>
                   {log.event}
                 </span>
-                <span className="font-data text-gray-500" style={{ minWidth: 160 }}>
+                <span className="font-data text-gray-500" style={{ minWidth: 144 }}>
                   {format(new Date(log.createdAt), "d MMM yyyy, HH:mm:ss")}
                 </span>
                 <span className="flex-1 truncate text-gray-500">{log.details ?? ""}</span>
               </button>
               {isOpen && (
-                <div className="px-sm pb-base space-y-xs" style={{ paddingLeft: 36 }}>
+                <div
+                  className="px-sm pb-base space-y-xs"
+                  style={{ paddingLeft: "var(--space-lg)" }}
+                >
                   {log.details && (
                     <div>
                       <p className="text-body font-semibold text-gray-700">Details</p>

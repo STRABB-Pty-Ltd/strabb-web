@@ -1,11 +1,52 @@
 "use client";
 
-import { ChannelBreakdownChart } from "@/components/charts/channel-breakdown-chart";
-import { ExpenseChart } from "@/components/charts/expense-chart";
-import { OccupancyChart } from "@/components/charts/occupancy-chart";
-import { RevenueByListingChart } from "@/components/charts/revenue-by-listing-chart";
-import { RevenueTrendChart } from "@/components/charts/revenue-trend-chart";
+import dynamic from "next/dynamic";
+
+import { Skeleton } from "@/components/ui/skeleton";
 import type { ChartDataSet } from "@/hooks/use-reporting";
+
+// Lazy-load recharts-backed charts so the ~50KB recharts bundle only ships
+// when /reporting is actually rendered. Each chart pulls its own slice.
+// ssr: false because charts depend on window measurements via
+// ResponsiveContainer; a Skeleton at the same height reserves space to
+// avoid CLS while the chunk is fetched.
+const chartLoading = <Skeleton className="w-full" h={377} />;
+
+const RevenueTrendChart = dynamic(
+  () =>
+    import("@/components/charts/revenue-trend-chart").then((m) => ({
+      default: m.RevenueTrendChart,
+    })),
+  { ssr: false, loading: () => chartLoading },
+);
+const ChannelBreakdownChart = dynamic(
+  () =>
+    import("@/components/charts/channel-breakdown-chart").then((m) => ({
+      default: m.ChannelBreakdownChart,
+    })),
+  { ssr: false, loading: () => chartLoading },
+);
+const OccupancyChart = dynamic(
+  () =>
+    import("@/components/charts/occupancy-chart").then((m) => ({
+      default: m.OccupancyChart,
+    })),
+  { ssr: false, loading: () => chartLoading },
+);
+const ExpenseChart = dynamic(
+  () =>
+    import("@/components/charts/expense-chart").then((m) => ({
+      default: m.ExpenseChart,
+    })),
+  { ssr: false, loading: () => chartLoading },
+);
+const RevenueByListingChart = dynamic(
+  () =>
+    import("@/components/charts/revenue-by-listing-chart").then((m) => ({
+      default: m.RevenueByListingChart,
+    })),
+  { ssr: false, loading: () => chartLoading },
+);
 
 interface ReportingChartGridProps {
   activeSubmenu: string[];

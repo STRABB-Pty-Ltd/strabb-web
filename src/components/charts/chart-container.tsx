@@ -1,6 +1,9 @@
 "use client";
 
+import { BarChart3 } from "lucide-react";
 import { ResponsiveContainer } from "recharts";
+
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface ChartContainerProps {
   title?: string;
@@ -17,21 +20,17 @@ export function ChartContainer({
   error = null,
   empty = false,
   children,
+  // 377 sits on the Fibonacci ladder (--space-Fib-377 territory)
   minHeight = 377,
 }: ChartContainerProps) {
   if (loading) {
     return (
       <div
-        className="flex items-center justify-center rounded-xl"
-        style={{
-          minHeight,
-          backgroundColor: "var(--surface-card)",
-          color: "var(--brand-10)",
-          opacity: 0.7,
-        }}
-      >
-        <p className="text-body">Loading chart...</p>
-      </div>
+        className="animate-pulse rounded-xl"
+        role="presentation"
+        aria-busy="true"
+        style={{ minHeight, backgroundColor: "var(--neutral-30)" }}
+      />
     );
   }
 
@@ -52,14 +51,13 @@ export function ChartContainer({
     return (
       <div
         className="flex items-center justify-center rounded-xl"
-        style={{
-          minHeight,
-          backgroundColor: "var(--surface-card)",
-          color: "var(--brand-10)",
-          opacity: 0.7,
-        }}
+        style={{ minHeight, backgroundColor: "var(--surface-card)" }}
       >
-        <p className="text-body">No data available</p>
+        <EmptyState
+          icon={BarChart3}
+          title="No data available"
+          description="Try adjusting the timeframe or filters."
+        />
       </div>
     );
   }

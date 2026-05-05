@@ -1,3 +1,7 @@
+import { Inbox, type LucideIcon } from "lucide-react";
+
+import { EmptyState } from "@/components/ui/empty-state";
+
 export interface Column<T> {
   key: keyof T;
   header: string;
@@ -10,17 +14,21 @@ interface DataTableProps<T> {
   columns: Column<any>[];
   data: T[];
   emptyMessage?: string;
+  emptyDescription?: string;
+  emptyIcon?: LucideIcon;
 }
 
 export function DataTable<T>({
   columns,
   data,
   emptyMessage = "No data available",
+  emptyDescription,
+  emptyIcon = Inbox,
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="text-muted-foreground py-xl flex items-center justify-center rounded-md border">
-        {emptyMessage}
+      <div className="rounded-md border">
+        <EmptyState icon={emptyIcon} title={emptyMessage} description={emptyDescription} />
       </div>
     );
   }

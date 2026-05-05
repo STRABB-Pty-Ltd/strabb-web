@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { ReportingChartGrid } from "./_components/reporting-chart-grid";
 import { ReportingKPIRow } from "./_components/reporting-kpi-row";
 import { SavedReportsDrawer } from "./_components/saved-reports-drawer";
@@ -26,8 +27,17 @@ export default function ReportingPage() {
 
   if (kpisLoading || chartsLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading reports...</p>
+      <div className="space-y-lg" aria-busy="true">
+        <span className="sr-only">Loading reports</span>
+        <div className="gap-sm grid grid-cols-2 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} h={89} />
+          ))}
+        </div>
+        <div className="gap-md grid grid-cols-1 lg:grid-cols-2">
+          <Skeleton h={377} />
+          <Skeleton h={377} />
+        </div>
       </div>
     );
   }

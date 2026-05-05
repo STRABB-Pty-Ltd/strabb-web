@@ -1,0 +1,27 @@
+import { describe, expect, it } from "vitest";
+
+import { formatCurrency } from "./format-currency";
+
+describe("formatCurrency", () => {
+  it("defaults to AUD with the en-AU locale", () => {
+    expect(formatCurrency(123.45)).toBe("$123.45");
+  });
+
+  it("respects an explicit currency override", () => {
+    const result = formatCurrency(99.99, "USD");
+    expect(result).toContain("99.99");
+    expect(result).toContain("US");
+  });
+
+  it("formats large numbers with thousands separators", () => {
+    expect(formatCurrency(1234567.89)).toBe("$1,234,567.89");
+  });
+
+  it("formats zero", () => {
+    expect(formatCurrency(0)).toBe("$0.00");
+  });
+
+  it("formats negative numbers with a minus sign", () => {
+    expect(formatCurrency(-50.5)).toBe("-$50.50");
+  });
+});

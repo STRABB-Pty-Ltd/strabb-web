@@ -12,7 +12,7 @@ export function CleaningSection() {
   const [defaultCleanerEmail, setDefaultCleanerEmail] = useState("maria.s@cleanteam.com");
 
   const handleSave = () => {
-    addToast({ type: "success", message: "Cleaning settings saved" });
+    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
   };
 
   return (
@@ -27,6 +27,7 @@ export function CleaningSection() {
           <label className="mb-xs text-body block font-medium text-gray-700">
             Default Duration (hours)
           </label>
+          {/* w-[144px] is on the Fibonacci ladder (5/8/13/21/34/55/89/144/...), kept as an arbitrary value. */}
           <input
             type="number"
             value={defaultDuration}
@@ -56,6 +57,7 @@ export function CleaningSection() {
               backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
             }}
           >
+            {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
             <span
               className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
               style={{ left: autoAssign ? 18 : 2 }}
@@ -77,11 +79,16 @@ export function CleaningSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">
+          <label
+            htmlFor="default-cleaner-email"
+            className="mb-xs text-body block font-medium text-gray-700"
+          >
             Default Cleaner Email
           </label>
           <input
+            id="default-cleaner-email"
             type="email"
+            autoComplete="email"
             value={defaultCleanerEmail}
             onChange={(e) => setDefaultCleanerEmail(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
@@ -112,7 +119,7 @@ export function CleaningSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body rounded-lg font-medium text-white"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

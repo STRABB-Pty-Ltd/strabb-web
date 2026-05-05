@@ -2,6 +2,7 @@
 
 import { Monitor } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCalendarEvents } from "@/hooks/use-calendar";
 import { useMobileViewOverride } from "@/hooks/use-responsive-view";
 import { useAppStore } from "@/stores/app-store";
@@ -27,8 +28,11 @@ export default function CalendarPage() {
 
   if (isLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading calendar...</p>
+      <div className="space-y-xs" aria-busy="true">
+        <span className="sr-only">Loading calendar</span>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} h={55} />
+        ))}
       </div>
     );
   }

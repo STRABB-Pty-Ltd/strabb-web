@@ -48,8 +48,8 @@ export function NotificationsSection() {
 
   const handleSave = () => {
     addToast({
-      type: "success",
-      message: "Notification preferences saved",
+      type: "warning",
+      message: "Settings save is coming soon, not wired up yet",
     });
   };
 
@@ -79,6 +79,7 @@ export function NotificationsSection() {
                 backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
               }}
             >
+              {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
               <span
                 className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
                 style={{
@@ -94,7 +95,7 @@ export function NotificationsSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body rounded-lg font-medium text-white"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Preferences
       </button>

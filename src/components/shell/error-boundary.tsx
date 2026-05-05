@@ -40,7 +40,7 @@ export class ErrorBoundary extends React.Component<
               An unexpected error occurred. Try reloading this section.
             </p>
             {process.env.NODE_ENV === "development" && this.state.error && (
-              <details className="mb-md p-sm text-body rounded border text-left">
+              <details className="mb-md p-sm text-body rounded-md border text-left">
                 <summary className="cursor-pointer font-medium">Error details</summary>
                 <pre className="mt-base overflow-auto whitespace-pre-wrap text-red-600">
                   {this.state.error.message}
@@ -52,7 +52,7 @@ export class ErrorBoundary extends React.Component<
             <button
               type="button"
               onClick={this.handleReload}
-              className="gap-base px-sm py-base text-body inline-flex items-center rounded-lg bg-gray-900 font-medium text-white hover:bg-gray-800"
+              className="gap-base px-sm py-base text-body bg-primary text-primary-foreground hover:bg-primary/80 inline-flex items-center rounded-lg font-medium"
             >
               <RefreshCw size={13} />
               Reload

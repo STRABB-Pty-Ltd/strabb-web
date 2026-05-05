@@ -92,8 +92,25 @@ export function CalendarEventChip({
       style={{
         backgroundColor: color,
         color: textColor ?? "var(--surface-60)",
-        borderLeft: accentColor && isEventStart ? `4px solid ${accentColor}` : undefined,
-        borderRight: accentColor && isEventEnd ? `4px solid ${accentColor}` : undefined,
+        // 1px --brand-10 outline on top/bottom always, plus on left/right
+        // only at the actual event ends. Continuation segments skip the
+        // left/right brand-10 so the multi-day bar reads as one continuous
+        // outlined shape across day cells. The 4px channel accent (when
+        // present) takes over the start/end edge - it's the chip's "cap".
+        borderTop: "0.5px solid var(--brand-10)",
+        borderBottom: "0.5px solid var(--brand-10)",
+        borderLeft:
+          accentColor && isEventStart
+            ? `4px solid ${accentColor}`
+            : isEventStart
+              ? "0.5px solid var(--brand-10)"
+              : undefined,
+        borderRight:
+          accentColor && isEventEnd
+            ? `4px solid ${accentColor}`
+            : isEventEnd
+              ? "0.5px solid var(--brand-10)"
+              : undefined,
         // Pad on the side that's actually a chip edge so the label has
         // breathing room from the bg edge. Mid-row continuation chips
         // skip padding-left so their label sits flush with yesterday's
@@ -102,11 +119,8 @@ export function CalendarEventChip({
         // padding back so its label doesn't kiss the chip's left bg edge.
         paddingLeft: isEventStart || clampLeftEdge ? "var(--space-xs)" : 0,
         paddingRight: isEventEnd ? "var(--space-xs)" : 0,
-        // Tight vertical padding so 5+ rows of cells fit a typical canvas
-        // without scrolling - the body line-height already provides
-        // breathing space around the text.
-        paddingTop: 1,
-        paddingBottom: 1,
+        // Vertical padding moved into the borderTop/Bottom hairlines above
+        // (border-box keeps total chip height the same).
         left: startEdge,
         right: endEdge,
         top: 0,

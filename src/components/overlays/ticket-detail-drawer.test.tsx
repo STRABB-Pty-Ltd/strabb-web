@@ -34,10 +34,27 @@ vi.mock("@/lib/api-hooks/tickets-api", () => ({
   useTicket: () => ticketMock(),
   useUpdateTicketAPI: () => ({ mutate: updateMutate, isPending: false }),
   useDeleteTicketAPI: () => ({ mutate: deleteMutate, isPending: false }),
+  useLinkCleanToTicket: () => ({ mutate: vi.fn(), isPending: false }),
+  useUnlinkCleanFromTicket: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock("@/lib/api-hooks/cleaning-api", () => ({
+  useCleaningTasksAPI: () => ({ data: [], isLoading: false }),
+}));
+
+vi.mock("@/hooks/use-cleaning-tasks", () => ({
+  useCompleteCleaningTask: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
 vi.mock("@/hooks/use-properties", () => ({
   useProperties: () => propertiesMock(),
+}));
+
+vi.mock("@/hooks/use-listings", () => ({
+  useListings: () => ({
+    data: { data: [{ id: "listing-1", name: "Beach House Listing" }] },
+    isLoading: false,
+  }),
 }));
 
 vi.mock("@/hooks/use-property-timezone", () => ({
@@ -52,12 +69,13 @@ const baseTicket: Ticket = {
   listingId: null,
   description: "Leaking tap",
   priority: "high",
-  status: "reported",
+  status: "pending",
   dateReported: "2026-04-25T00:00:00Z",
   dateScheduled: null,
   dateCompleted: null,
   cost: null,
   notes: null,
+  linkedCleanId: null,
   createdAt: "2026-04-25T00:00:00Z",
   updatedAt: "2026-04-25T00:00:00Z",
 };

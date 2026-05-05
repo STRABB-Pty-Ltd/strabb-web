@@ -67,7 +67,7 @@ export function ChannelsSection() {
   };
 
   const handleSave = () => {
-    addToast({ type: "success", message: "Channel settings saved" });
+    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
   };
 
   return (
@@ -84,7 +84,7 @@ export function ChannelsSection() {
             className="px-sm py-sm rounded-lg border"
             style={{
               borderColor: "var(--border)",
-              borderLeftWidth: 4,
+              borderLeftWidth: "var(--stripe-width)",
               borderLeftColor: ch.color,
             }}
           >
@@ -135,7 +135,7 @@ export function ChannelsSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body rounded-lg font-medium text-white"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

@@ -93,12 +93,12 @@ export function CalendarDayCell({
         // Tight top + bottom so the date number and +N more line don't
         // burn vertical space; horizontal padding stays at the xs token
         // so chips' negative-margin extensions still hit the right edge.
-        paddingTop: 2,
+        paddingTop: "var(--hairline)",
         paddingRight: "var(--space-xs)",
-        paddingBottom: 2,
+        paddingBottom: "var(--hairline)",
         paddingLeft: "var(--space-xs)",
-        borderRight: isLastColumn ? undefined : "2px solid var(--neutral-30)",
-        borderBottom: isLastRow ? undefined : "2px solid var(--neutral-30)",
+        borderRight: isLastColumn ? undefined : "var(--hairline) solid var(--neutral-30)",
+        borderBottom: isLastRow ? undefined : "var(--hairline) solid var(--neutral-30)",
         // Today gets a 3 px brand outline on all four sides - including
         // the outer edges (breaking the no-outside-border rule). Drawn
         // inside the cell via outline-offset so it doesn't shift layout,
@@ -111,17 +111,16 @@ export function CalendarDayCell({
       }}
     >
       <span
-        className="text-body font-medium"
+        className={`text-body ${today ? "font-bold" : "font-medium"}`}
         style={{
           color: today
             ? "var(--strabb-secondary)"
             : isCurrentMonth
               ? "var(--brand-10)"
               : "var(--brand-10)",
-          fontWeight: today ? 700 : 500,
           opacity: isCurrentMonth ? 1 : 0.4,
           // Tight margin between date and first track row.
-          marginBottom: 2,
+          marginBottom: "var(--hairline)",
         }}
       >
         {date.getDate()}
@@ -150,7 +149,7 @@ export function CalendarDayCell({
           </div>
         ))}
         {overflowEvents.length > 0 && (
-          <div ref={overflowRef} style={{ position: "relative", marginTop: 2 }}>
+          <div ref={overflowRef} style={{ position: "relative", marginTop: "var(--hairline)" }}>
             <button
               type="button"
               onClick={(e) => {
@@ -158,7 +157,7 @@ export function CalendarDayCell({
                 setOverflowOpen((v) => !v);
               }}
               className="text-body text-left text-gray-500 hover:text-gray-700"
-              style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
+              style={{ background: "none", border: "none", padding: 0 }}
             >
               +{overflowEvents.length} more
             </button>
@@ -173,7 +172,7 @@ export function CalendarDayCell({
                   minWidth: 200,
                   maxWidth: 280,
                   backgroundColor: "var(--surface-60)",
-                  boxShadow: "0 6px 24px rgba(0, 0, 0, 0.15)",
+                  boxShadow: "var(--shadow-md)",
                   border: "1px solid var(--neutral-30)",
                 }}
                 role="dialog"
@@ -181,7 +180,7 @@ export function CalendarDayCell({
               >
                 <p
                   className="text-body font-semibold"
-                  style={{ color: "var(--brand-10)", marginBottom: 2 }}
+                  style={{ color: "var(--brand-10)", marginBottom: "var(--hairline)" }}
                 >
                   {format(date, "EEE d MMM")}
                 </p>
@@ -200,8 +199,8 @@ export function CalendarDayCell({
                     <span
                       className="shrink-0 rounded-full"
                       style={{
-                        width: 8,
-                        height: 8,
+                        width: "var(--space-base)",
+                        height: "var(--space-base)",
                         backgroundColor: ev.color,
                       }}
                     />

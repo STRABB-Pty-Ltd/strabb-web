@@ -69,14 +69,20 @@ export default function SyncLogsPage() {
     {
       key: "status",
       header: "Status",
-      render: (_v, row) => (
-        <span
-          className="px-base py-xs text-body rounded-full font-medium text-white"
-          style={{ backgroundColor: statusColors[row.status] ?? "var(--brand-10)" }}
-        >
-          {row.status}
-        </span>
-      ),
+      render: (_v, row) => {
+        const matched = statusColors[row.status];
+        return (
+          <span
+            className="px-base py-xs text-body rounded-md font-medium"
+            style={{
+              backgroundColor: matched ?? "var(--brand-10)",
+              color: "var(--surface-60)",
+            }}
+          >
+            {row.status}
+          </span>
+        );
+      },
     },
     {
       key: "bookingsCreated",
@@ -120,7 +126,7 @@ export default function SyncLogsPage() {
             disabled={trigger.isPending}
             title={RATE_LIMIT_TOOLTIP}
             className="gap-xs px-sm py-base text-body inline-flex items-center rounded-lg font-medium text-white disabled:opacity-60"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <RefreshCw size={14} className={trigger.isPending ? "animate-spin" : undefined} />
             {trigger.isPending ? "Syncing…" : "Trigger sync"}

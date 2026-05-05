@@ -65,8 +65,22 @@ export function SubmenuBar() {
   const handleChipClick = (chip: SubmenuChip) => {
     const page = currentPage as Exclude<PageId, "settings">;
 
+    // Each chip on a viewable page snaps the page to its default view.
+    // Forced on every click - the user cannot stick on a non-default view
+    // for a given chip; this is intentional per the chip-driven layout
+    // (Overview = wide-zoom view, filtered chips = focused list/grid).
     if ((page === "messaging" || page === "cleaning") && chip.behavior !== "nav") {
       setView(page, chip.id === "overview" ? "kanban" : "list");
+    }
+    if (page === "calendar" && chip.behavior !== "nav") {
+      const calendarViewByChip: Record<string, "gantt" | "calendar" | "list"> = {
+        overview: "gantt",
+        bookings: "calendar",
+        cleaning: "list",
+        vacancy: "calendar",
+        ticket: "gantt",
+      };
+      setView(page, calendarViewByChip[chip.id] ?? "gantt");
     }
 
     // If we're on a nav-chip sub-route (e.g. /cleaning/tickets) and the user
@@ -146,7 +160,7 @@ export function SubmenuBar() {
         {currentPage === "messaging" ? (
           <Link
             href="/messaging/scheduled"
-            className="gap-xs px-xs py-xs text-body inline-flex items-center rounded-sm font-semibold hover:bg-gray-100"
+            className="gap-xs px-base py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold hover:bg-gray-100"
           >
             <CalendarClock size={16} />
             Scheduled messages
@@ -172,8 +186,8 @@ export function SubmenuBar() {
           const chipClass =
             "gap-xs px-sm py-base text-body inline-flex shrink-0 cursor-pointer items-center justify-center border-0 font-medium whitespace-nowrap outline-none transition-all hover:opacity-80 active:scale-95 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
           const chipStyle = {
-            width: 95,
-            borderRadius: 5,
+            width: "var(--btn-pill-width)",
+            borderRadius: "var(--radius-md)",
             backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
             color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
           };
@@ -211,7 +225,7 @@ export function SubmenuBar() {
                 {moreOpen && (
                   <div
                     className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
-                    style={{ minWidth: 144 }}
+                    style={{ minWidth: 144 }} // = --space-xl + --space-xl + --space-lg (Fibonacci 144)
                   >
                     <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
                   </div>

@@ -38,8 +38,8 @@ export function TopNav() {
               aria-current={isActive ? "page" : undefined}
               className="px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
-                width: 95,
-                borderRadius: 5,
+                width: "var(--btn-pill-width)",
+                borderRadius: "var(--radius-md)",
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
               }}
@@ -62,8 +62,8 @@ export function TopNav() {
         aria-current={currentPage === "settings" ? "page" : undefined}
         className="mr-sm px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
         style={{
-          width: 95,
-          borderRadius: 5,
+          width: "var(--btn-pill-width)",
+          borderRadius: "var(--radius-md)",
           backgroundColor:
             currentPage === "settings" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
           color: currentPage === "settings" ? "var(--btn-active-text)" : "var(--btn-inactive-text)",

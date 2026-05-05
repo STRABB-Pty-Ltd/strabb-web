@@ -7,7 +7,8 @@ import { USE_MOCK } from "@/lib/mock-data";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { ShoppingItem } from "@/types/shopping-item";
 
-// Backend cleaning task shape after global keysToCamel
+// Backend cleaning task shape after global keysToCamel. Money fields arrive
+// as JS numbers (Pydantic Money type emits numeric JSON), not strings.
 interface RawCleaningTask {
   id: string;
   bookingId: string | null;
@@ -21,10 +22,11 @@ interface RawCleaningTask {
   notes: string | null;
   taskType: string;
   priority: string;
-  estimatedHours: string | number;
+  estimatedHours: number;
   checklistTotal: number;
   checklistDone: number;
-  cost: string | null;
+  cost: number | null;
+  currency?: string;
   linkedTicketId?: string | null;
 }
 
@@ -35,8 +37,8 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
     listingName: "",
     listingColor: "",
     bookingId: raw.bookingId,
-    assigneeName: raw.cleanerName,
-    assigneeEmail: raw.cleanerEmail,
+    cleanerName: raw.cleanerName,
+    cleanerEmail: raw.cleanerEmail,
     scheduledTime: raw.scheduledTime ?? raw.scheduledDate ?? "",
     completedTime: null,
     checklistTotal: raw.checklistTotal,
@@ -44,8 +46,9 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
     priority: raw.priority as CleaningTask["priority"],
     status: raw.status as CleaningTask["status"],
     type: raw.taskType as CleaningTask["type"],
-    estimatedHours:
-      typeof raw.estimatedHours === "string" ? parseFloat(raw.estimatedHours) : raw.estimatedHours,
+    estimatedHours: raw.estimatedHours,
+    cost: raw.cost,
+    currency: raw.currency,
     notes: raw.notes,
     linkedTicketId: raw.linkedTicketId ?? null,
   };
@@ -108,6 +111,10 @@ export function useCreateCleaningTaskAPI() {
     mutationFn: (data: Partial<CleaningTask>) => apiClient.post("/cleaning-tasks", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
     },
   });
 }
@@ -121,6 +128,37 @@ export function useUpdateCleaningTaskAPI() {
       apiClient.patch(`/cleaning-tasks/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
+    },
+  });
+}
+
+export function useLinkTicketToClean() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ cleanId, ticketId }: { cleanId: string; ticketId: string }) =>
+      apiClient.patch(`/cleaning-tasks/${cleanId}/link-ticket`, { ticket_id: ticketId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+    },
+  });
+}
+
+export function useUnlinkTicketFromClean() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (cleanId: string) => apiClient.delete(`/cleaning-tasks/${cleanId}/link-ticket`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
     },
   });
 }

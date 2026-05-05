@@ -49,7 +49,7 @@ export function TimeframeStepper() {
         <button
           type="button"
           onClick={() => handleStep(-1)}
-          className="inline-flex min-h-[37px] min-w-[37px] items-center justify-center rounded-sm hover:bg-gray-100"
+          className="min-h-lg inline-flex min-w-lg items-center justify-center rounded-sm hover:bg-gray-100"
           aria-label="Previous period"
         >
           <ChevronLeft size={18} />
@@ -68,7 +68,7 @@ export function TimeframeStepper() {
             },
           });
         }}
-        className="text-body px-base inline-flex min-h-[37px] items-center rounded-sm font-semibold hover:bg-gray-100"
+        className="text-body px-base min-h-lg inline-flex items-center rounded-sm font-semibold hover:bg-gray-100"
       >
         {label}
       </button>
@@ -76,7 +76,7 @@ export function TimeframeStepper() {
         <button
           type="button"
           onClick={() => handleStep(1)}
-          className="inline-flex min-h-[37px] min-w-[37px] items-center justify-center rounded-sm hover:bg-gray-100"
+          className="min-h-lg inline-flex min-w-lg items-center justify-center rounded-sm hover:bg-gray-100"
           aria-label="Next period"
         >
           <ChevronRight size={18} />

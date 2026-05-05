@@ -31,6 +31,13 @@ vi.mock("@/hooks/use-property-timezone", () => ({
   useTimezoneForListing: () => "Australia/Sydney",
 }));
 
+vi.mock("@/hooks/use-listings", () => ({
+  useListings: () => ({
+    data: { data: [{ id: "listing-1", name: "Beach House Listing" }] },
+    isLoading: false,
+  }),
+}));
+
 import { BookingDetailDrawer } from "./booking-detail-drawer";
 
 const baseBooking: BookingResponse = {

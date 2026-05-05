@@ -21,11 +21,9 @@ const listingNamesById: Record<string, string> = Object.fromEntries(
 
 export type CalendarEventType = "booking" | "vacancy" | "ticket" | "cleaning";
 
-// Cleaning task types that get rendered on the calendar gantt as a turnover-
-// style middle-50% bar. checkout and checkin cleanings are folded into the
-// same "turnover" presentation since they all sit in the gap between guests.
-// Mid-stay / deep-clean / inspection cleanings stay on the Cleaning page only.
-const TURNOVER_LIKE_TYPES: ReadonlySet<string> = new Set(["turnover", "checkout", "checkin"]);
+// Only turnover cleanings render on the calendar gantt as a middle-50% bar.
+// deep_clean and ad_hoc cleanings stay on the Cleaning page only.
+const TURNOVER_LIKE_TYPES: ReadonlySet<string> = new Set(["turnover"]);
 
 export interface CalendarEvent {
   id: string;
@@ -88,7 +86,7 @@ function cleaningToEvent(t: CleaningTask): CalendarEvent | null {
     type: "cleaning",
     listingId: t.listingId,
     listingName: t.listingName,
-    label: t.assigneeName ? `Turnover - ${t.assigneeName}` : "Turnover",
+    label: t.cleanerName ? `Turnover - ${t.cleanerName}` : "Turnover",
     start: start.toISOString(),
     end: end.toISOString(),
     color: "var(--status-success)",

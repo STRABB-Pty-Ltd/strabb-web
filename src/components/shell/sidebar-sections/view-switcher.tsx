@@ -47,11 +47,10 @@ export function ViewSwitcher({ page }: { page: PageId }) {
               key={opt.id}
               type="button"
               onClick={() => setView(page as "calendar" | "messaging" | "cleaning", opt.id)}
-              className="gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors"
+              className={`gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors ${isActive ? "font-semibold" : "font-medium"}`}
               style={{
                 backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
                 color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
-                fontWeight: isActive ? 600 : 500,
               }}
             >
               <Icon size={13} />

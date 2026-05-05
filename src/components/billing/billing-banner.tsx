@@ -42,11 +42,22 @@ export function BillingBanner() {
 
   return (
     <div
-      className="px-sm py-base border-b border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950"
-      style={{ borderLeftWidth: 4, borderLeftColor: "var(--status-danger)" }}
+      className="px-sm py-base border-b"
+      style={{
+        backgroundColor: "var(--status-warning-tint)",
+        borderColor: "var(--status-warning)",
+        borderLeftWidth: "var(--stripe-width)",
+        borderLeftColor: "var(--status-warning)",
+      }}
     >
-      <div className="gap-base text-body flex items-center text-yellow-800 dark:text-yellow-200">
-        <AlertTriangleIcon className="size-sm shrink-0" style={{ color: "var(--status-danger)" }} />
+      <div
+        className="gap-base text-body flex items-center"
+        style={{ color: "var(--status-warning)" }}
+      >
+        <AlertTriangleIcon
+          className="size-sm shrink-0"
+          style={{ color: "var(--status-warning)" }}
+        />
         <p>
           {message}{" "}
           <Link

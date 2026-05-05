@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
+import { useListings } from "@/hooks/use-listings";
 import { useTimezoneForListing } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
@@ -32,11 +33,12 @@ export function BookingDetailDrawer() {
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
   const addToast = useAppStore((s) => s.addToast);
 
-  const open = drillDownPanel?.open && drillDownPanel.type === "booking";
+  const open = !!drillDownPanel?.open && drillDownPanel.type === "booking";
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: booking, isLoading } = useBooking(itemId);
   const tz = useTimezoneForListing(booking?.listingId);
+  const { data: listingsData } = useListings();
   const updateNotes = useUpdateBookingNotes();
   const dismissConflict = useDismissConflict();
 
@@ -46,11 +48,18 @@ export function BookingDetailDrawer() {
     if (booking) setNotes(booking.notes ?? "");
   }, [booking?.id, booking]);
 
-  if (!open) return null;
-
   const showError = toastError(addToast);
-  const isConflicted = booking?.conflictStatus === "conflicted";
-  const status = booking?.status ?? "pending";
+  // Cache the last-seen booking so accent bar + body content stay populated
+  // through the 300ms close animation. Only fall back during close.
+  const lastBookingRef = useRef<typeof booking | null>(null);
+  if (booking) lastBookingRef.current = booking;
+  const displayBooking = open ? booking : lastBookingRef.current;
+  const isConflicted = displayBooking?.conflictStatus === "conflicted";
+  const status = displayBooking?.status ?? "pending";
+  const listingName = displayBooking
+    ? ((listingsData?.data ?? []).find((l) => l.id === displayBooking.listingId)?.name ??
+      displayBooking.listingId.slice(0, 8))
+    : "";
 
   const handleSaveNotes = () => {
     if (!booking) return;
@@ -81,9 +90,11 @@ export function BookingDetailDrawer() {
       title="Booking"
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {isLoading && <p className="text-body text-gray-400">Loading booking…</p>}
-      {!isLoading && !booking && <p className="text-body text-gray-500">Booking not found.</p>}
-      {booking && (
+      {open && isLoading && <p className="text-body text-gray-400">Loading booking…</p>}
+      {open && !isLoading && !booking && (
+        <p className="text-body text-gray-500">Booking not found.</p>
+      )}
+      {displayBooking && (
         <div className="space-y-md">
           {isConflicted && (
             <div className="p-sm rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
@@ -98,25 +109,33 @@ export function BookingDetailDrawer() {
                 type="button"
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
-                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-red-800 disabled:opacity-60"
-                style={{ borderColor: "rgb(252 165 165)", backgroundColor: "white" }}
+                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-red-800 disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  borderColor: "var(--status-danger)",
+                  backgroundColor: "var(--surface-60)",
+                }}
               >
                 {dismissConflict.isPending ? "Dismissing…" : "Dismiss conflict"}
               </button>
             </div>
           )}
 
+          <div>
+            <p className="text-body text-gray-500">Listing</p>
+            <p className="text-body font-medium text-gray-800">{listingName}</p>
+          </div>
+
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-gray-500">Check-in</p>
               <p className="text-body font-medium text-gray-800">
-                {formatInPropertyTimezone(booking.checkIn, tz)}
+                {formatInPropertyTimezone(displayBooking.checkIn, tz)}
               </p>
             </div>
             <div>
               <p className="text-body text-gray-500">Check-out</p>
               <p className="text-body font-medium text-gray-800">
-                {formatInPropertyTimezone(booking.checkOut, tz)}
+                {formatInPropertyTimezone(displayBooking.checkOut, tz)}
               </p>
             </div>
           </div>
@@ -124,37 +143,39 @@ export function BookingDetailDrawer() {
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-gray-500">Platform</p>
-              <p className="text-body text-gray-800">{booking.source}</p>
+              <p className="text-body text-gray-800">{displayBooking.source}</p>
             </div>
             <div>
               <p className="text-body text-gray-500">Status</p>
-              <p className="text-body text-gray-800 capitalize">{booking.status}</p>
+              <p className="text-body text-gray-800 capitalize">{displayBooking.status}</p>
             </div>
           </div>
 
-          {(booking.guestName || booking.guestEmail) && (
+          {(displayBooking.guestName || displayBooking.guestEmail) && (
             <div>
               <p className="text-body text-gray-500">Guest</p>
               <p className="text-body text-gray-800">
-                {booking.guestName ?? "-"}
-                {booking.guestEmail && (
-                  <span className="ml-xs text-gray-500">({booking.guestEmail})</span>
+                {displayBooking.guestName ?? "-"}
+                {displayBooking.guestEmail && (
+                  <span className="ml-xs text-gray-500">({displayBooking.guestEmail})</span>
                 )}
               </p>
             </div>
           )}
 
-          {booking.externalBookingId && (
+          {displayBooking.externalBookingId && (
             <div>
               <p className="text-body text-gray-500">External ID</p>
-              <p className="font-data text-body text-gray-700">{booking.externalBookingId}</p>
+              <p className="font-data text-body text-gray-700">
+                {displayBooking.externalBookingId}
+              </p>
             </div>
           )}
 
-          {booking.rawSummary && (
+          {displayBooking.rawSummary && (
             <div>
               <p className="text-body text-gray-500">iCal summary</p>
-              <p className="text-body text-gray-700">{booking.rawSummary}</p>
+              <p className="text-body text-gray-700">{displayBooking.rawSummary}</p>
             </div>
           )}
 
@@ -175,9 +196,9 @@ export function BookingDetailDrawer() {
               <button
                 type="button"
                 onClick={handleSaveNotes}
-                disabled={updateNotes.isPending || notes === (booking.notes ?? "")}
+                disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
                 className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                style={{ backgroundColor: "var(--strabb-secondary)" }}
+                style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
               >
                 {updateNotes.isPending ? "Saving…" : "Save notes"}
               </button>

@@ -2,9 +2,10 @@
 
 import { useMemo } from "react";
 import { addDays, format, parseISO } from "date-fns";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarDays, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { EmptyState } from "@/components/ui/empty-state";
 import type { PreviewData } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
@@ -197,12 +198,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
     >
       <PanelHeader title="Upcoming Bookings" onView={handleViewAll} />
       {data.length === 0 ? (
-        <p
-          className="py-sm text-body text-center"
-          style={{ color: "var(--brand-10)", opacity: 0.55 }}
-        >
-          No upcoming bookings
-        </p>
+        <EmptyState compact icon={CalendarDays} title="No upcoming bookings" />
       ) : (
         <div className="flex flex-col">
           {data.map((b) => (
@@ -241,12 +237,7 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
     >
       <PanelHeader title="Cleans and Tickets" onView={handleViewAll} />
       {data.length === 0 ? (
-        <p
-          className="py-sm text-body text-center"
-          style={{ color: "var(--brand-10)", opacity: 0.55 }}
-        >
-          No upcoming cleans or tickets
-        </p>
+        <EmptyState compact icon={Sparkles} title="No upcoming cleans or tickets" />
       ) : (
         <div className="flex flex-col">
           {data.map((item) => (

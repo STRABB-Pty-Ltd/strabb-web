@@ -3,6 +3,8 @@
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
+
 const shortcuts = [
   { keys: ["1"], description: "Go to Dashboard" },
   { keys: ["2"], description: "Go to Calendar" },
@@ -13,16 +15,29 @@ const shortcuts = [
   { keys: ["?"], description: "Toggle this help" },
 ];
 
-export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
+const EXIT_MS = 200;
+
+export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   useEffect(() => {
-    closeRef.current?.focus();
-  }, []);
+    if (open) closeRef.current?.focus();
+  }, [open]);
+
+  if (!shouldRender) return null;
+
+  const scrimAnim = !open
+    ? `fadeOut ${EXIT_MS}ms ease-in forwards`
+    : `fadeIn ${EXIT_MS}ms ease-out`;
+  const cardAnim = !open
+    ? `scaleOut ${EXIT_MS}ms ease-in forwards`
+    : `scaleIn ${EXIT_MS}ms ease-out`;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ backgroundColor: "var(--scrim)", animation: scrimAnim }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -30,6 +45,7 @@ export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
     >
       <div
         className="p-md w-full max-w-sm rounded-xl bg-white shadow-xl"
+        style={{ animation: cardAnim }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-md flex items-center justify-between">
@@ -38,7 +54,7 @@ export function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="p-xs rounded hover:bg-gray-100"
+            className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
             aria-label="Close shortcuts help"
             data-no-elevate
           >

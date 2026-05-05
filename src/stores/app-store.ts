@@ -26,12 +26,26 @@ const viewDefaultWindowSize: Record<string, Record<string, string>> = {
   cleaning: { calendar: "month" },
 };
 
+// Default view per page when freshly entered (Overview chip). Pages
+// without a view picker (dashboard, reporting) are absent.
+const pageDefaultView: Partial<Record<ViewablePage, string>> = {
+  calendar: "gantt",
+  messaging: "kanban",
+  cleaning: "kanban",
+};
+
 export interface CrossCuttingActions {
   setView: (page: ViewablePage, view: string) => void;
   setTimeframe: (page: TimeframePage, windowSize: string, anchor?: string | null) => void;
   setTimeframeAnchor: (page: TimeframePage, anchor: string | null) => void;
   toggleSubmenuChip: (page: SubmenuPage, chip: string) => void;
   setSubmenu: (page: SubmenuPage, chips: string[]) => void;
+  /**
+   * Reset a page's submenu (back to ["overview"]) and view (back to its
+   * pageDefaultView entry). Called from the app shell on every top-level
+   * page change so each entry feels fresh.
+   */
+  resetPageDefaults: (page: SubmenuPage) => void;
 }
 
 export type AppState = NavigationSlice &
@@ -103,6 +117,15 @@ export const useAppStore = create<AppState>()((...a) => {
     setSubmenu: (page: SubmenuPage, chips: string[]) => {
       const pageState = { ...get()[page] };
       (pageState as { submenu: string[] }).submenu = chips;
+      set({ [page]: pageState } as Partial<AppState>);
+    },
+
+    // Cross-cutting: reset chip + view to defaults for a page.
+    resetPageDefaults: (page: SubmenuPage) => {
+      const pageState = { ...get()[page] } as Record<string, unknown>;
+      pageState.submenu = ["overview"];
+      const defaultView = pageDefaultView[page as ViewablePage];
+      if (defaultView) pageState.view = defaultView;
       set({ [page]: pageState } as Partial<AppState>);
     },
   };

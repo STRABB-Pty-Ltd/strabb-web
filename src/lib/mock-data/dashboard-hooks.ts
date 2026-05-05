@@ -97,6 +97,14 @@ function computeKPIs(financials: Financial[], selectedListings: string[]): KPIDa
           currentFinancials.reduce((s, f) => s + f.avgNightlyRate, 0) / currentFinancials.length,
         )
       : 0;
+  const prevAvgNightlyRate =
+    prevFinancials.length > 0
+      ? Math.round(prevFinancials.reduce((s, f) => s + f.avgNightlyRate, 0) / prevFinancials.length)
+      : 0;
+  const nightlyRateTrend =
+    prevAvgNightlyRate > 0
+      ? Math.round(((avgNightlyRate - prevAvgNightlyRate) / prevAvgNightlyRate) * 1000) / 10
+      : 0;
 
   return [
     {
@@ -124,7 +132,7 @@ function computeKPIs(financials: Financial[], selectedListings: string[]): KPIDa
       label: "Avg Nightly Rate",
       value: avgNightlyRate,
       icon: "bed",
-      trend: 3.5,
+      trend: nightlyRateTrend,
       type: "currency",
     },
   ];
@@ -165,7 +173,7 @@ function computeAlerts(
   const needsScheduling = filteredTasks.filter(
     (t) =>
       t.status === "pending" &&
-      t.assigneeName === null &&
+      t.cleanerName === null &&
       new Date(t.scheduledTime) >= REFERENCE_NOW,
   );
   alerts.push({

@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
+import { formatChannel } from "@/lib/channels";
 import type { Message } from "@/types/message";
 
 const channelColors: Record<string, string> = {
@@ -10,13 +11,6 @@ const channelColors: Record<string, string> = {
   booking_com: "var(--channel-booking)",
   vrbo: "var(--channel-vrbo)",
   direct: "var(--channel-direct)",
-};
-
-const channelLabels: Record<string, string> = {
-  airbnb: "Airbnb",
-  booking_com: "Booking.com",
-  vrbo: "VRBO",
-  direct: "Direct",
 };
 
 const priorityDot: Record<string, string> = {
@@ -51,12 +45,12 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
 
         <div className="gap-base flex items-center">
           <span
-            className="px-xs py-xs text-body shrink-0 rounded-sm font-medium text-white"
+            className="px-xs py-xs text-body text-text-on-color shrink-0 rounded-sm font-medium"
             style={{
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
-            {channelLabels[message.channel] ?? message.channel}
+            {formatChannel(message.channel)}
           </span>
           <span className="text-body truncate text-gray-600">{message.subject}</span>
         </div>

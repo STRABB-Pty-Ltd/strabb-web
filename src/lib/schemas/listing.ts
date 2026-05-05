@@ -23,6 +23,8 @@ export const listingUpdateSchema = listingCreateSchema.omit({ propertyId: true }
 
 export type ListingUpdateFormData = z.infer<typeof listingUpdateSchema>;
 
+export type ListingType = "parent" | "child" | "standalone";
+
 export interface ListingResponse {
   id: string;
   propertyId: string;
@@ -34,6 +36,9 @@ export interface ListingResponse {
   lastSyncedAt: string | null;
   lastSyncError: string | null;
   isActive: boolean;
+  listingType: ListingType;
+  parentId: string | null;
+  children: string[];
   createdAt: string;
   updatedAt: string;
 }

@@ -1,9 +1,22 @@
 import { z } from "zod";
 
+const isValidTimezone = (tz: string): boolean => {
+  try {
+    new Intl.DateTimeFormat(undefined, { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const propertyCreateSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
   address: z.string().max(500).optional().or(z.literal("")),
-  timezone: z.string().min(1, "Timezone is required").max(100),
+  timezone: z
+    .string()
+    .min(1, "Timezone is required")
+    .max(100)
+    .refine(isValidTimezone, "Invalid timezone"),
   cleaningDurationMinutes: z.coerce
     .number()
     .int()

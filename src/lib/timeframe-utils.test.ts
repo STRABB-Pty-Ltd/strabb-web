@@ -5,6 +5,7 @@ import {
   ganttDateRange,
   stepAnchor,
   timeframeToDateRange,
+  trendDateRange,
 } from "./timeframe-utils";
 
 // Wed 15 April 2026, 12:00 local - used to anchor "current" tests
@@ -215,5 +216,57 @@ describe("formatPeriodLabel", () => {
 
   it("custom without range → 'Custom range'", () => {
     expect(formatPeriodLabel("custom", null)).toBe("Custom range");
+  });
+});
+
+describe("trendDateRange", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FROZEN_NOW);
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("month → trailing 12 months ending at month end", () => {
+    expect(trendDateRange("month", "2026-04-15")).toEqual({
+      startDate: "2025-05-01",
+      endDate: "2026-04-30",
+    });
+  });
+
+  it("week → trailing 12 months ending at week end (extends well past selected start)", () => {
+    expect(trendDateRange("week", "2026-04-13")).toEqual({
+      startDate: "2025-05-01",
+      endDate: "2026-04-19",
+    });
+  });
+
+  it("quarter → trailing 12 months ending at quarter end", () => {
+    expect(trendDateRange("quarter", "2026-04-01")).toEqual({
+      startDate: "2025-07-01",
+      endDate: "2026-06-30",
+    });
+  });
+
+  it("year → matches selected year (already 12 months wide)", () => {
+    expect(trendDateRange("year", "2026-01-01")).toEqual({
+      startDate: "2026-01-01",
+      endDate: "2026-12-31",
+    });
+  });
+
+  it("custom range wider than 12 months → honors selected start", () => {
+    expect(trendDateRange("custom", null, { start: "2024-01-01", end: "2026-04-30" })).toEqual({
+      startDate: "2024-01-01",
+      endDate: "2026-04-30",
+    });
+  });
+
+  it("custom range narrower than 12 months → extends back to 12 months", () => {
+    expect(trendDateRange("custom", null, { start: "2026-03-01", end: "2026-04-30" })).toEqual({
+      startDate: "2025-05-01",
+      endDate: "2026-04-30",
+    });
   });
 });

@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { X } from "lucide-react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useShoppingList } from "@/hooks/use-cleaning";
+import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 
 const priorityBadge: Record<string, { bg: string; text: string }> = {
@@ -12,6 +14,8 @@ const priorityBadge: Record<string, { bg: string; text: string }> = {
   low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
 };
 
+const EXIT_MS = 200;
+
 export function ShoppingListPopup() {
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
@@ -19,6 +23,8 @@ export function ShoppingListPopup() {
   const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { data: shoppingItemList = [] } = useShoppingList(selectedListings);
+  const open = shoppingListPopup.open;
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   const [showAll, setShowAll] = useState(true);
 
@@ -30,13 +36,13 @@ export function ShoppingListPopup() {
   );
 
   useEffect(() => {
-    if (shoppingListPopup.open) {
+    if (open) {
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [shoppingListPopup.open, handleKeyDown]);
+  }, [open, handleKeyDown]);
 
-  if (!shoppingListPopup.open) return null;
+  if (!shouldRender) return null;
 
   const items = showAll
     ? shoppingItemList
@@ -60,11 +66,28 @@ export function ShoppingListPopup() {
     navigator.clipboard.writeText(text);
   };
 
+  const scrimAnim = !open
+    ? `fadeOut ${EXIT_MS}ms ease-in forwards`
+    : `fadeIn ${EXIT_MS}ms ease-out`;
+  const cardAnim = !open
+    ? `scaleOut ${EXIT_MS}ms ease-in forwards`
+    : `scaleIn ${EXIT_MS}ms ease-out`;
+
   return (
     <>
-      <div className="fixed inset-0 z-[180] bg-black/30" onClick={closeShoppingListPopup} />
-      <div className="fixed inset-0 z-[185] flex items-center justify-center">
-        <div className="w-full max-w-lg rounded-xl bg-white shadow-xl">
+      <div
+        className="canvas-overlay fixed"
+        style={{ zIndex: Z.MODAL_SCRIM, backgroundColor: "var(--scrim)", animation: scrimAnim }}
+        onClick={closeShoppingListPopup}
+      />
+      <div
+        className="canvas-overlay fixed flex items-center justify-center"
+        style={{ zIndex: Z.MODAL }}
+      >
+        <div
+          className="w-full max-w-lg rounded-xl bg-white shadow-xl"
+          style={{ animation: cardAnim }}
+        >
           <div
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
@@ -81,7 +104,8 @@ export function ShoppingListPopup() {
               <button
                 type="button"
                 onClick={closeShoppingListPopup}
-                className="p-xs rounded text-gray-400 hover:bg-gray-100"
+                aria-label="Close shopping list"
+                className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
                 data-no-elevate
               >
                 <X size={18} />
@@ -119,7 +143,7 @@ export function ShoppingListPopup() {
                         </span>
                         <span className="font-data text-body text-gray-500">x{item.quantity}</span>
                         <span
-                          className="px-base py-xs text-body rounded-full"
+                          className="px-base py-xs text-body rounded-md"
                           style={{ backgroundColor: badge.bg, color: badge.text }}
                         >
                           {item.priority}
@@ -154,7 +178,7 @@ export function ShoppingListPopup() {
               type="button"
               onClick={handleCopyList}
               className="px-sm py-base text-body rounded-lg text-white"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy List
             </button>

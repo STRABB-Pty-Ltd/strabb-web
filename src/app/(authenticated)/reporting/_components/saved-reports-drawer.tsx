@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Bookmark, Plus, Trash2 } from "lucide-react";
 
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useSavedReports } from "@/hooks/use-reporting";
 
 export function SavedReportsDrawer() {
   const { savedReports, loadReport, saveCurrentReport, deleteReport } = useSavedReports();
   const [newName, setNewName] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  const pendingDelete = pendingDeleteId
+    ? (savedReports.find((r) => r.id === pendingDeleteId) ?? null)
+    : null;
 
   const handleSave = () => {
     if (!newName.trim()) return;
@@ -47,7 +54,7 @@ export function SavedReportsDrawer() {
             type="button"
             onClick={handleSave}
             className="px-sm py-xs text-body rounded-sm text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Save
           </button>
@@ -65,7 +72,12 @@ export function SavedReportsDrawer() {
       )}
 
       {savedReports.length === 0 ? (
-        <p className="py-sm text-body text-center text-gray-400">No saved reports yet</p>
+        <EmptyState
+          compact
+          icon={Bookmark}
+          title="No saved reports yet"
+          description="Save your current view to revisit it later."
+        />
       ) : (
         <div className="space-y-base">
           {savedReports.map((report) => (
@@ -89,7 +101,8 @@ export function SavedReportsDrawer() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => deleteReport(report.id)}
+                  onClick={() => setPendingDeleteId(report.id)}
+                  aria-label="Delete saved report"
                   className="p-xs rounded-sm text-gray-400 hover:text-red-500"
                   data-no-elevate
                 >
@@ -100,6 +113,22 @@ export function SavedReportsDrawer() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        onOpenChange={(o) => !o && setPendingDeleteId(null)}
+        title="Delete saved report"
+        description={
+          pendingDelete
+            ? `"${pendingDelete.name}" will be removed. This can't be undone.`
+            : undefined
+        }
+        confirmLabel="Delete report"
+        destructive
+        onConfirm={() => {
+          if (pendingDeleteId) deleteReport(pendingDeleteId);
+        }}
+      />
     </div>
   );
 }

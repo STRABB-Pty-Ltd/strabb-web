@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
@@ -58,15 +59,29 @@ export default function MessagingPage() {
     };
   }, [viewingMessageId, viewingStatus]);
 
-  const threadMsg = threadOverlay
+  // Cache the live thread message so the overlay keeps rendering with the
+  // last conversation through its 300ms close animation. Without this the
+  // parent stops passing threadMsg the moment the user clicks close, which
+  // unmounts ThreadOverlay before its slide-out fires.
+  const liveThreadMsg = threadOverlay
     ? (messages ?? []).find((m) => m.id === threadOverlay.messageId)
     : null;
-  const { data: threadMessages } = useMessageThread(threadOverlay?.messageId ?? null);
+  const lastThreadMsgRef = useRef(liveThreadMsg ?? null);
+  if (liveThreadMsg) lastThreadMsgRef.current = liveThreadMsg;
+  const threadMsg = liveThreadMsg ?? lastThreadMsgRef.current;
+
+  const { data: liveThreadMessages } = useMessageThread(threadOverlay?.messageId ?? null);
+  const lastThreadMessagesRef = useRef(liveThreadMessages);
+  if (liveThreadMessages) lastThreadMessagesRef.current = liveThreadMessages;
+  const threadMessages = liveThreadMessages ?? lastThreadMessagesRef.current;
 
   if (isLoading) {
     return (
-      <div className="py-xl flex items-center justify-center">
-        <p className="text-body text-gray-400">Loading messages...</p>
+      <div className="space-y-xs" aria-busy="true">
+        <span className="sr-only">Loading messages</span>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} h={55} />
+        ))}
       </div>
     );
   }
@@ -76,9 +91,9 @@ export default function MessagingPage() {
       {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
       {view === "list" && <MessagingListView messages={messages ?? []} />}
 
-      {threadMsg && threadOverlay?.open && (
+      {threadMsg && (
         <ThreadOverlay
-          open
+          open={!!threadOverlay?.open}
           onClose={closeThreadOverlay}
           guestName={threadMsg.guestName}
           listingName={threadMsg.listingName}

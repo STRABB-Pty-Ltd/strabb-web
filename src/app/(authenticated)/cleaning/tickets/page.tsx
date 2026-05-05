@@ -1,12 +1,14 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, Wrench } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { TicketFormDialog } from "./_components/ticket-form-dialog";
 import { TicketsListView } from "./_components/tickets-list-view";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useProperties } from "@/hooks/use-properties";
 import { type TicketFilters, useTicketsAPI } from "@/lib/api-hooks/tickets-api";
 import { TICKET_PRIORITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@/types/ticket";
@@ -14,6 +16,7 @@ import { TICKET_PRIORITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@/types/ticket";
 const PAGE_SIZE = 20;
 
 export default function TicketsPage() {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [filters, setFilters] = useState<TicketFilters>({
     page: 1,
     pageSize: PAGE_SIZE,
@@ -48,6 +51,8 @@ export default function TicketsPage() {
         description="Track tickets across all your properties."
         actions={
           <TicketFormDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
             trigger={
               <Button>
                 <Plus className="size-sm mr-xs" />
@@ -83,7 +88,24 @@ export default function TicketsPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-body text-gray-400">Loading tickets…</p>
+        <div className="space-y-xs" aria-busy="true">
+          <span className="sr-only">Loading tickets</span>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} h={55} />
+          ))}
+        </div>
+      ) : items.length === 0 ? (
+        <div className="rounded-md border" style={{ borderColor: "var(--border)" }}>
+          <EmptyState
+            icon={Wrench}
+            title="No tickets yet"
+            description="Log maintenance issues against any property and track them through to completion."
+            action={{
+              label: "Create a ticket",
+              onClick: () => setDialogOpen(true),
+            }}
+          />
+        </div>
       ) : (
         <>
           <TicketsListView

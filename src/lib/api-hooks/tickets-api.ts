@@ -55,14 +55,82 @@ export function useTicket(id: string | null) {
   });
 }
 
+export interface CreateTicketResult {
+  ticket: Ticket;
+  attemptedAutoLink: boolean;
+  linkedCleanId: string | null;
+}
+
 export function useCreateTicketAPI() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: Partial<Ticket>) => apiClient.post("/tickets", data),
+    mutationFn: async (
+      data: Partial<Ticket> & { autoLinkToNext?: boolean },
+    ): Promise<CreateTicketResult> => {
+      const { autoLinkToNext, ...ticketData } = data;
+      const response = await apiClient.post<{ data: Ticket }>("/tickets", ticketData);
+      const created = response.data;
+      let linkedCleanId: string | null = null;
+      let attemptedAutoLink = false;
+      if (autoLinkToNext && created?.id) {
+        attemptedAutoLink = true;
+        const linkResp = await apiClient.patch<{
+          data: { linkedCleanId: string | null };
+        }>(`/tickets/${created.id}/link-clean`, { auto_link_to_next: true });
+        linkedCleanId = linkResp.data?.linkedCleanId ?? null;
+      }
+      return { ticket: created, attemptedAutoLink, linkedCleanId };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
+    },
+  });
+}
+
+export function useLinkCleanToTicket() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      ticketId,
+      cleaningTaskId,
+      autoLinkToNext = false,
+    }: {
+      ticketId: string;
+      cleaningTaskId?: string;
+      autoLinkToNext?: boolean;
+    }) =>
+      apiClient.patch<{ data: { linkedCleanId: string | null } }>(
+        `/tickets/${ticketId}/link-clean`,
+        {
+          cleaning_task_id: cleaningTaskId ?? null,
+          auto_link_to_next: autoLinkToNext,
+        },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
+    },
+  });
+}
+
+export function useUnlinkCleanFromTicket() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ticketId: string) => apiClient.delete(`/tickets/${ticketId}/link-clean`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
     },
   });
 }
@@ -76,6 +144,10 @@ export function useUpdateTicketAPI() {
       apiClient.put(`/tickets/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
     },
   });
 }
@@ -88,6 +160,10 @@ export function useDeleteTicketAPI() {
     mutationFn: (id: string) => apiClient.delete(`/tickets/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
     },
   });
 }

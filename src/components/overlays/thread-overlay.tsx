@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
+import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { Z } from "@/lib/z-index";
 import type { ThreadMessage } from "@/types/message";
 
 interface ThreadOverlayProps {
@@ -23,6 +25,8 @@ const channelColors: Record<string, string> = {
   direct: "var(--channel-direct)",
 };
 
+const EXIT_MS = 200;
+
 export function ThreadOverlay({
   open,
   onClose,
@@ -34,44 +38,75 @@ export function ThreadOverlay({
   messages,
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
+
+  // Cache the props that drive header + body so the panel keeps showing
+  // the conversation that was just open through the slide-out animation.
+  // While open we trust the live props; only fall back during close.
+  const lastDataRef = useRef({ guestName, listingName, checkIn, checkOut, channel, messages });
+  if (open) {
+    lastDataRef.current = { guestName, listingName, checkIn, checkOut, channel, messages };
+  }
+  const data = open
+    ? { guestName, listingName, checkIn, checkOut, channel, messages }
+    : lastDataRef.current;
 
   // Escape key is handled by the global keyboard shortcuts in app-shell.tsx
 
-  if (!open) return null;
+  if (!shouldRender) return null;
 
   return (
     <>
-      {/* Scrim */}
-      <div className="fixed inset-0 z-[170] bg-black/30" />
-
-      {/* Panel */}
+      {/* Scrim - canvas-bounded; clicking outside the panel closes the overlay. */}
       <div
-        className="fixed top-0 right-0 z-[175] flex h-full flex-col bg-white shadow-xl"
+        className="canvas-overlay fixed"
+        onClick={onClose}
         style={{
+          zIndex: Z.THREAD_SCRIM,
+          backgroundColor: "var(--scrim)",
+          animation: !open
+            ? `fadeOut ${EXIT_MS}ms ease-in forwards`
+            : `fadeIn ${EXIT_MS}ms ease-out`,
+        }}
+      />
+
+      {/* Panel - floats inset from the viewport edges with rounded corners */}
+      <div
+        className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
+        style={{
+          zIndex: Z.THREAD,
+          top: "var(--space-md)",
+          right: "var(--space-md)",
+          bottom: "var(--space-md)",
           width: "var(--thread-width)",
-          animation: "slideInRight 300ms ease",
+          animation: !open
+            ? `slideOutRight ${EXIT_MS}ms ease-in forwards`
+            : `slideInRight ${EXIT_MS}ms ease-out`,
         }}
       >
         {/* Booking context header */}
         <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-body font-semibold text-gray-800">{guestName}</h2>
-              <p className="text-body text-gray-500">{listingName}</p>
+              <h2 className="text-body font-semibold text-gray-800">{data.guestName}</h2>
+              <p className="text-body text-gray-500">{data.listingName}</p>
               <p className="text-body text-gray-400">
-                {checkIn} &ndash; {checkOut}
+                {data.checkIn} - {data.checkOut}
               </p>
             </div>
             <div className="gap-base flex items-center">
               <span
-                className="px-base py-xs text-body rounded font-medium text-white"
-                style={{ backgroundColor: channelColors[channel] ?? "var(--channel-direct)" }}
+                className="px-base py-xs text-body text-text-on-color rounded font-medium"
+                style={{
+                  backgroundColor: channelColors[data.channel] ?? "var(--channel-direct)",
+                }}
               >
-                {channel.replace("_", ".")}
+                {data.channel.replace("_", ".")}
               </span>
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Close thread"
                 className="p-xs rounded text-gray-400 hover:bg-gray-100"
                 data-no-elevate
               >
@@ -83,14 +118,16 @@ export function ThreadOverlay({
 
         {/* Thread body */}
         <div className="space-y-sm p-sm flex-1 overflow-y-auto">
-          {messages.map((msg) => (
+          {data.messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.isGuest ? "justify-start" : "justify-end"}`}>
               <div
                 className="px-sm py-base max-w-[80%]"
                 style={{
                   backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
-                  color: msg.isGuest ? "var(--brand-10)" : "white",
-                  borderRadius: msg.isGuest ? "8px 8px 8px 0" : "8px 8px 0 8px",
+                  color: msg.isGuest ? "var(--brand-10)" : "var(--surface-60)",
+                  borderRadius: msg.isGuest
+                    ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
+                    : "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)",
                 }}
               >
                 <p className="text-body font-medium opacity-70">{msg.senderName}</p>
@@ -113,21 +150,21 @@ export function ThreadOverlay({
         >
           <button
             type="button"
-            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
           >
             <Flag size={12} />
             Flag
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
           >
             <TicketPlus size={12} />
             Create Ticket
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
           >
             <Archive size={12} />
             Archive
@@ -143,13 +180,15 @@ export function ThreadOverlay({
             value={compose}
             onChange={(e) => setCompose(e.target.value)}
             placeholder="Type a message..."
+            aria-label="Compose reply"
             className="p-base text-body flex-1 resize-none rounded-lg border"
             rows={2}
           />
           <button
             type="button"
-            className="p-base self-end rounded-lg text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            aria-label="Send reply"
+            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <Send size={18} />
           </button>

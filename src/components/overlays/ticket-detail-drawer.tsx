@@ -1,13 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useCompleteCleaningTask } from "@/hooks/use-cleaning-tasks";
+import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
-import { useDeleteTicketAPI, useTicket, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
+import { useCleaningTasksAPI } from "@/lib/api-hooks/cleaning-api";
+import {
+  useDeleteTicketAPI,
+  useLinkCleanToTicket,
+  useTicket,
+  useUnlinkCleanFromTicket,
+  useUpdateTicketAPI,
+} from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatCurrency } from "@/lib/format-currency";
 import { useAppStore } from "@/stores/app-store";
 import {
   TICKET_PRIORITY_OPTIONS,
@@ -18,8 +29,8 @@ import {
 } from "@/types/ticket";
 
 const statusColors: Record<string, string> = {
-  reported: "var(--status-pending)",
-  scheduled: "var(--status-confirmed)",
+  pending: "var(--status-pending)",
+  confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
   cancelled: "var(--status-cancelled)",
@@ -43,23 +54,44 @@ export function TicketDetailDrawer() {
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
   const addToast = useAppStore((s) => s.addToast);
 
-  const open = drillDownPanel?.open && drillDownPanel.type === "ticket";
+  const open = !!drillDownPanel?.open && drillDownPanel.type === "ticket";
   const itemId = open ? drillDownPanel.itemId : null;
 
   const { data: ticket, isLoading } = useTicket(itemId);
   const tz = usePropertyTimezone(ticket?.propertyId);
   const { data: propertiesData } = useProperties();
+  const { data: listingsData } = useListings();
   const updateTicket = useUpdateTicketAPI();
   const deleteTicket = useDeleteTicketAPI();
+  const linkClean = useLinkCleanToTicket();
+  const unlinkClean = useUnlinkCleanFromTicket();
+  const completeClean = useCompleteCleaningTask();
 
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TicketPriority>("medium");
-  const [status, setStatus] = useState<TicketStatus>("reported");
+  const [status, setStatus] = useState<TicketStatus>("pending");
   const [dateScheduled, setDateScheduled] = useState("");
   const [cost, setCost] = useState("");
   const [notes, setNotes] = useState("");
+  const [linkingMode, setLinkingMode] = useState(false);
+  const [selectedCleanId, setSelectedCleanId] = useState("");
+  const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
+
+  const { data: cleansForListing } = useCleaningTasksAPI(
+    [],
+    ticket?.listingId ? [ticket.listingId] : [],
+  );
+  const allCleans = cleansForListing ?? [];
+  // Linked clean comes from the API via ticket.linkedCleanId; allCleans is
+  // only here to populate the picker dropdown.
+  const linkedClean = ticket?.linkedCleanId
+    ? (allCleans.find((c) => c.id === ticket.linkedCleanId) ?? null)
+    : null;
+  const candidateCleans = allCleans.filter(
+    (c) => c.status !== "completed" && c.status !== "cancelled" && !c.linkedTicketId,
+  );
 
   useEffect(() => {
     if (ticket) {
@@ -67,19 +99,29 @@ export function TicketDetailDrawer() {
       setPriority(ticket.priority);
       setStatus(ticket.status);
       setDateScheduled(toIsoLocalInput(ticket.dateScheduled));
-      setCost(ticket.cost ?? "");
+      setCost(ticket.cost == null ? "" : String(ticket.cost));
       setNotes(ticket.notes ?? "");
       setEditing(false);
       setConfirmDelete(false);
     }
   }, [ticket?.id, ticket]);
 
-  if (!open) return null;
+  // Cache the last-seen ticket so the drawer body stays populated through
+  // the 300ms close animation. Only fall back during close - while open we
+  // trust the live `ticket` so loading states fire correctly on re-open.
+  const lastTicketRef = useRef<typeof ticket | null>(null);
+  if (ticket) lastTicketRef.current = ticket;
+  const displayTicket = open ? ticket : lastTicketRef.current;
 
-  const propertyName = ticket
-    ? ((propertiesData?.data ?? []).find((p) => p.id === ticket.propertyId)?.name ??
-      ticket.propertyId.slice(0, 8))
+  const propertyName = displayTicket
+    ? ((propertiesData?.data ?? []).find((p) => p.id === displayTicket.propertyId)?.name ??
+      displayTicket.propertyId.slice(0, 8))
     : "";
+  const listingName = displayTicket?.listingId
+    ? ((listingsData?.data ?? []).find((l) => l.id === displayTicket.listingId)?.name ?? null)
+    : null;
+  const placeLabel = listingName ? "Listing" : "Property";
+  const placeValue = listingName ?? propertyName;
 
   const surfaceError = (err: unknown) => {
     const message =
@@ -93,6 +135,7 @@ export function TicketDetailDrawer() {
 
   const handleSave = () => {
     if (!ticket) return;
+    const wasCompleted = ticket.status === "completed";
     updateTicket.mutate(
       {
         id: ticket.id,
@@ -101,7 +144,7 @@ export function TicketDetailDrawer() {
           priority,
           status,
           dateScheduled: dateScheduled ? new Date(dateScheduled).toISOString() : null,
-          cost: cost || null,
+          cost: cost ? parseFloat(cost) : null,
           notes: notes || null,
         } as Partial<Ticket>,
       },
@@ -109,10 +152,57 @@ export function TicketDetailDrawer() {
         onSuccess: () => {
           setEditing(false);
           addToast({ type: "success", message: "Ticket updated" });
+          if (
+            status === "completed" &&
+            !wasCompleted &&
+            linkedClean &&
+            linkedClean.status !== "completed"
+          ) {
+            setShowCompleteConfirm(true);
+          }
         },
         onError: surfaceError,
       },
     );
+  };
+
+  const handleLinkClean = () => {
+    if (!ticket || !selectedCleanId) return;
+    linkClean.mutate(
+      { ticketId: ticket.id, cleaningTaskId: selectedCleanId },
+      {
+        onSuccess: () => {
+          addToast({ type: "success", message: "Clean linked to ticket" });
+          setLinkingMode(false);
+          setSelectedCleanId("");
+        },
+        onError: surfaceError,
+      },
+    );
+  };
+
+  const handleUnlinkClean = () => {
+    if (!ticket) return;
+    unlinkClean.mutate(ticket.id, {
+      onSuccess: () => addToast({ type: "success", message: "Link removed" }),
+      onError: surfaceError,
+    });
+  };
+
+  const handleConfirmCloseLinkedClean = async () => {
+    if (!linkedClean) return;
+    await new Promise<void>((resolve, reject) => {
+      completeClean.mutate(linkedClean.id, {
+        onSuccess: () => {
+          addToast({ type: "success", message: "Linked clean marked complete" });
+          resolve();
+        },
+        onError: (err) => {
+          surfaceError(err);
+          reject(err);
+        },
+      });
+    });
   };
 
   const handleDelete = () => {
@@ -132,7 +222,7 @@ export function TicketDetailDrawer() {
     setPriority(ticket.priority);
     setStatus(ticket.status);
     setDateScheduled(toIsoLocalInput(ticket.dateScheduled));
-    setCost(ticket.cost ?? "");
+    setCost(ticket.cost == null ? "" : String(ticket.cost));
     setNotes(ticket.notes ?? "");
     setEditing(false);
   };
@@ -142,15 +232,17 @@ export function TicketDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Ticket"
-      accentColor={statusColors[ticket?.status ?? "reported"] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
-      {!isLoading && !ticket && <p className="text-body text-gray-500">Ticket not found.</p>}
-      {ticket && (
+      {open && isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
+      {open && !isLoading && !ticket && (
+        <p className="text-body text-gray-500">Ticket not found.</p>
+      )}
+      {displayTicket && (
         <div className="space-y-md">
           <div>
-            <p className="text-body text-gray-500">Property</p>
-            <p className="text-body font-medium text-gray-800">{propertyName}</p>
+            <p className="text-body text-gray-500">{placeLabel}</p>
+            <p className="text-body font-medium text-gray-800">{placeValue}</p>
           </div>
 
           <div className="gap-sm grid grid-cols-2">
@@ -190,9 +282,10 @@ export function TicketDetailDrawer() {
                 </select>
               ) : (
                 <span
-                  className="px-base py-xs text-body inline-block rounded-full font-medium text-white"
+                  className="px-base py-xs text-body inline-block rounded-md font-medium"
                   style={{
                     backgroundColor: statusColors[status] ?? "var(--brand-10)",
+                    color: "var(--surface-60)",
                   }}
                 >
                   {status.replace("_", " ")}
@@ -204,7 +297,7 @@ export function TicketDetailDrawer() {
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-gray-500">Reported</p>
-              <p className="font-data text-body">{fmtDate(ticket.dateReported, tz)}</p>
+              <p className="font-data text-body">{fmtDate(displayTicket.dateReported, tz)}</p>
             </div>
             <div>
               <p className="text-body text-gray-500">Scheduled</p>
@@ -217,7 +310,7 @@ export function TicketDetailDrawer() {
                   style={{ borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">{fmtDate(ticket.dateScheduled, tz)}</p>
+                <p className="font-data text-body">{fmtDate(displayTicket.dateScheduled, tz)}</p>
               )}
             </div>
           </div>
@@ -233,7 +326,9 @@ export function TicketDetailDrawer() {
                 style={{ borderColor: "var(--border)" }}
               />
             ) : (
-              <p className="text-body whitespace-pre-wrap text-gray-800">{ticket.description}</p>
+              <p className="text-body whitespace-pre-wrap text-gray-800">
+                {displayTicket.description}
+              </p>
             )}
           </div>
 
@@ -250,12 +345,16 @@ export function TicketDetailDrawer() {
                   style={{ borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">{ticket.cost ? `$${ticket.cost}` : "-"}</p>
+                <p className="font-data text-body">
+                  {displayTicket.cost != null
+                    ? formatCurrency(displayTicket.cost, displayTicket.currency)
+                    : "-"}
+                </p>
               )}
             </div>
             <div>
               <p className="text-body text-gray-500">Completed</p>
-              <p className="font-data text-body">{fmtDate(ticket.dateCompleted, tz)}</p>
+              <p className="font-data text-body">{fmtDate(displayTicket.dateCompleted, tz)}</p>
             </div>
           </div>
 
@@ -271,8 +370,83 @@ export function TicketDetailDrawer() {
               />
             ) : (
               <p className="text-body whitespace-pre-wrap text-gray-800">
-                {ticket.notes || <span className="text-gray-400">None</span>}
+                {displayTicket.notes || <span className="text-gray-400">None</span>}
               </p>
+            )}
+          </div>
+
+          <div className="space-y-xs">
+            <p className="text-body font-semibold text-gray-700">Linked clean</p>
+            {linkedClean ? (
+              <div className="space-y-xs">
+                <p className="text-body text-gray-800">
+                  {formatInPropertyTimezone(linkedClean.scheduledTime, tz, "d MMM yyyy, HH:mm")}
+                </p>
+                <p className="text-body text-gray-500">Status: {linkedClean.status}</p>
+                <button
+                  type="button"
+                  onClick={handleUnlinkClean}
+                  disabled={unlinkClean.isPending}
+                  className="px-sm py-base text-body rounded-lg border font-medium text-gray-700 disabled:opacity-60"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  {unlinkClean.isPending ? "Removing…" : "Unlink"}
+                </button>
+              </div>
+            ) : linkingMode ? (
+              <div className="space-y-xs">
+                <select
+                  value={selectedCleanId}
+                  onChange={(e) => setSelectedCleanId(e.target.value)}
+                  className="px-sm py-base text-body w-full rounded-lg border bg-white"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <option value="">Choose a clean…</option>
+                  {candidateCleans.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {formatInPropertyTimezone(c.scheduledTime, tz, "d MMM yyyy, HH:mm")} -{" "}
+                      {c.cleanerName ?? "Unassigned"}
+                    </option>
+                  ))}
+                </select>
+                <div className="gap-xs flex">
+                  <button
+                    type="button"
+                    onClick={handleLinkClean}
+                    disabled={!selectedCleanId || linkClean.isPending}
+                    className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                    style={{
+                      backgroundColor: "var(--strabb-secondary)",
+                      color: "var(--surface-60)",
+                    }}
+                  >
+                    {linkClean.isPending ? "Linking…" : "Confirm"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLinkingMode(false);
+                      setSelectedCleanId("");
+                    }}
+                    className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                {candidateCleans.length === 0 && (
+                  <p className="text-body text-gray-500">No open cleans for this listing.</p>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setLinkingMode(true)}
+                className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Link to clean
+              </button>
             )}
           </div>
 
@@ -294,7 +468,7 @@ export function TicketDetailDrawer() {
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(true)}
-                    className="px-sm py-base text-body rounded-lg font-medium text-white"
+                    className="px-sm py-base text-body text-text-on-color rounded-lg font-medium"
                     style={{ backgroundColor: "var(--status-danger)" }}
                   >
                     Delete
@@ -305,7 +479,7 @@ export function TicketDetailDrawer() {
                       type="button"
                       onClick={handleDelete}
                       disabled={deleteTicket.isPending}
-                      className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                      className="px-sm py-base text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
                       style={{ backgroundColor: "var(--status-danger)" }}
                     >
                       {deleteTicket.isPending ? "Deleting…" : "Yes, delete"}
@@ -328,7 +502,7 @@ export function TicketDetailDrawer() {
                   onClick={handleSave}
                   disabled={updateTicket.isPending}
                   className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-                  style={{ backgroundColor: "var(--strabb-secondary)" }}
+                  style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
                 >
                   {updateTicket.isPending ? "Saving…" : "Save"}
                 </button>
@@ -345,6 +519,15 @@ export function TicketDetailDrawer() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={showCompleteConfirm}
+        onOpenChange={setShowCompleteConfirm}
+        title="Mark linked clean complete too?"
+        description="The linked clean is still open. Close it as well?"
+        confirmLabel="Yes, mark complete"
+        cancelLabel="Leave it open"
+        onConfirm={handleConfirmCloseLinkedClean}
+      />
     </DrillDownPanel>
   );
 }

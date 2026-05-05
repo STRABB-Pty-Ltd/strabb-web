@@ -1,8 +1,9 @@
 "use client";
 
-import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
+import { Cell, Legend, Pie, PieChart } from "recharts";
 
 import { ChartContainer } from "./chart-container";
+import { ChartTooltip } from "./chart-tooltip";
 
 interface ExpenseData {
   category: string;
@@ -38,6 +39,7 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
           nameKey="category"
           cx="50%"
           cy="50%"
+          // 55 = --space-xl, 89 is on the Fibonacci ladder
           innerRadius={55}
           outerRadius={89}
           paddingAngle={2}
@@ -47,7 +49,7 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
             <Cell key={i} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip formatter={(value) => formatAUD(Number(value))} contentStyle={{ fontSize: 13 }} />
+        <ChartTooltip formatter={(value) => formatAUD(Number(value))} />
         <Legend
           verticalAlign="bottom"
           iconType="circle"

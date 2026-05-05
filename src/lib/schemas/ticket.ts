@@ -41,6 +41,7 @@ export const ticketCreateSchema = z.object({
     .max(5000, "Notes must be 5000 characters or fewer")
     .optional()
     .transform((v) => (v ? v : undefined)),
+  autoLinkToNext: z.boolean().optional(),
 });
 
 export type TicketCreateFormData = z.infer<typeof ticketCreateSchema>;

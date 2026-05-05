@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
+import { EmptyState } from "@/components/ui/empty-state";
 import { useMessageActions, useMessageThread } from "@/hooks/use-messaging";
 import type { Message } from "@/types/message";
 import { useAppStore } from "@/stores/app-store";
@@ -32,7 +33,11 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
   return (
     <div
       className="flex rounded-lg border"
-      style={{ borderColor: "var(--border)", height: "calc(100vh - 144px)" }}
+      style={{
+        borderColor: "var(--border)",
+        // canvas-top is the offset of fixed top-nav + submenu-bar
+        height: "calc(100vh - var(--canvas-top))",
+      }}
     >
       {/* Left pane - message list */}
       <div
@@ -44,7 +49,11 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
         }}
       >
         {messages.length === 0 && (
-          <p className="py-lg text-body text-center text-gray-400">No messages</p>
+          <EmptyState
+            icon={MessageSquare}
+            title="No messages"
+            description="New conversations from connected channels will land here."
+          />
         )}
         {messages.map((msg) => {
           const isSelected = selectedMessage === msg.id;
@@ -56,9 +65,9 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
               onClick={() => setSelectedMessage(msg.id)}
               className="gap-sm px-md py-sm flex w-full items-center rounded-lg bg-white text-left transition-shadow hover:shadow-sm"
               style={{
-                borderLeft: `4px solid ${channelColor}`,
-                outline: isSelected ? `2px solid ${channelColor}` : "none",
-                outlineOffset: isSelected ? "-2px" : undefined,
+                borderLeft: `var(--stripe-width) solid ${channelColor}`,
+                outline: isSelected ? `var(--hairline) solid ${channelColor}` : undefined,
+                outlineOffset: isSelected ? "calc(-1 * var(--hairline))" : undefined,
               }}
             >
               {/* Unread dot */}

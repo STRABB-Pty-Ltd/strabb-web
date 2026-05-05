@@ -97,7 +97,7 @@ export function TeamSection() {
           type="button"
           onClick={() => setShowInvite(true)}
           className="gap-xs px-sm py-base text-body flex items-center rounded-lg font-medium text-white"
-          style={{ backgroundColor: "var(--strabb-secondary)" }}
+          style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
         >
           <Plus size={16} />
           Invite Member
@@ -115,6 +115,7 @@ export function TeamSection() {
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
+              autoComplete="email"
               className="px-sm py-base text-body w-full rounded-sm border bg-white"
               style={{ borderColor: "var(--border)" }}
               placeholder="email@example.com"
@@ -138,13 +139,14 @@ export function TeamSection() {
             type="button"
             onClick={handleInvite}
             className="px-sm py-base text-body rounded-lg font-medium text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Send Invite
           </button>
           <button
             type="button"
             onClick={() => setShowInvite(false)}
+            aria-label="Cancel invitation"
             className="p-base rounded-lg text-gray-400 hover:text-gray-600"
           >
             <X size={16} />
@@ -152,6 +154,9 @@ export function TeamSection() {
         </div>
       )}
 
+      {/* Column widths w-[233px] and w-[89px] are arbitrary values on the Fibonacci ladder
+          (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
+          tracking-wide on the header row: known design exception, no project letter-spacing token. */}
       <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <div className="text-body flex border-b bg-gray-50 font-semibold tracking-wide text-gray-500 uppercase">
           <div className="px-sm py-sm flex-1">Name</div>
@@ -172,7 +177,7 @@ export function TeamSection() {
               <div className="px-sm py-sm w-[233px] text-gray-500">{member.email}</div>
               <div className="px-sm py-sm w-[89px]">
                 <span
-                  className="px-base py-xs text-body rounded-full font-medium capitalize"
+                  className="px-base py-xs text-body rounded-md font-medium capitalize"
                   style={{ backgroundColor: badge.bg, color: badge.text }}
                 >
                   {member.role}

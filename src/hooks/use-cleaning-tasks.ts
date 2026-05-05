@@ -5,11 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApiClient } from "./use-api-client";
 import { useAuthenticatedQuery } from "./use-authenticated-query";
 import { keysToCamel, keysToSnake } from "@/lib/case-utils";
-import type {
-  CleaningTaskListResponse,
-  CleaningTaskResponse,
-  CleaningTaskSummaryResponse,
-} from "@/lib/schemas/cleaning-task";
+import type { CleaningTaskListResponse, CleaningTaskResponse } from "@/lib/schemas/cleaning-task";
 
 const TASKS_KEY = ["cleaning-tasks"];
 
@@ -37,14 +33,6 @@ export function useCleaningTasks({
     [...TASKS_KEY, propertyId ?? "all", status ?? "all", String(page)],
     `/cleaning-tasks?${params.toString()}`,
     { select: (raw) => keysToCamel<CleaningTaskListResponse>(raw) },
-  );
-}
-
-export function useCleaningTaskSummary() {
-  return useAuthenticatedQuery<CleaningTaskSummaryResponse>(
-    [...TASKS_KEY, "summary"],
-    "/cleaning-tasks/summary",
-    { select: (raw) => keysToCamel<CleaningTaskSummaryResponse>(raw) },
   );
 }
 
@@ -76,6 +64,10 @@ export function useUpdateCleaningTask() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASKS_KEY });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
     },
   });
 }
@@ -94,6 +86,10 @@ export function useCompleteCleaningTask() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASKS_KEY });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
     },
   });
 }
@@ -112,6 +108,10 @@ export function useResendNotification() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASKS_KEY });
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-preview"] });
     },
   });
 }

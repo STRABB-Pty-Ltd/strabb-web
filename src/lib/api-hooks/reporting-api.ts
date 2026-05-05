@@ -3,11 +3,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import { formatChannel } from "@/lib/channels";
 import { USE_MOCK } from "@/lib/mock-data";
-import { timeframeToDateRange } from "@/lib/timeframe-utils";
+import { timeframeToDateRange, trendDateRange } from "@/lib/timeframe-utils";
 import type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
 
-interface RawFinancial {
+export interface RawFinancial {
   month: string;
   listingId: string;
   listingName: string;
@@ -20,6 +21,7 @@ interface RawFinancial {
   occupancyRate: number;
   avgNightlyRate: number;
   bookingCount: number;
+  currency?: string;
 }
 
 interface RawOccupancy {
@@ -31,11 +33,13 @@ interface RawRevenueBreakdown {
   listingName: string;
   channel: string;
   revenue: number;
+  currency?: string;
 }
 
 interface RawExpense {
   category: string;
   amount: number;
+  currency?: string;
 }
 
 const channelColors: Record<string, string> = {
@@ -46,7 +50,43 @@ const channelColors: Record<string, string> = {
   direct: "var(--channel-direct)",
 };
 
+export function enumerateMonths(start: string, end: string): string[] {
+  const [sy, sm] = start.split("-").map(Number);
+  const [ey, em] = end.split("-").map(Number);
+  if (!sy || !sm || !ey || !em) return [];
+  const result: string[] = [];
+  let y = sy;
+  let m = sm;
+  while (y < ey || (y === ey && m <= em)) {
+    result.push(`${y}-${String(m).padStart(2, "0")}`);
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+  }
+  return result;
+}
+
+export function financialsToRevenueTrend(
+  rows: RawFinancial[],
+): { label: string; revenue: number }[] {
+  const monthMap = new Map<string, number>();
+  for (const r of rows) {
+    monthMap.set(r.month, (monthMap.get(r.month) ?? 0) + r.revenue);
+  }
+  if (monthMap.size === 0) return [];
+  const months = [...monthMap.keys()].sort();
+  return enumerateMonths(months[0], months[months.length - 1]).map((label) => ({
+    label,
+    revenue: monthMap.get(label) ?? 0,
+  }));
+}
+
 function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
+  // TODO(currency-precision): switch to server-computed totals when path A
+  // migration ships (Stripe payouts / BAS exports). Per currency strategy
+  // in CLAUDE.md.
   const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
   const totalExpenses = rows.reduce(
     (s, r) => s + r.cleaningCost + r.ticketCost + r.suppliesCost + r.platformFees,
@@ -110,20 +150,27 @@ export function useReportingChartDataAPI(
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
+  const { startDate: trendStart, endDate: trendEnd } = trendDateRange(windowSize, anchor);
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
   params.set("start_date", startDate);
   params.set("end_date", endDate);
 
+  const trendParams = new URLSearchParams();
+  selectedListings.forEach((id) => trendParams.append("listing_ids", id));
+  trendParams.set("start_date", trendStart);
+  trendParams.set("end_date", trendEnd);
+
   return useQuery<ChartDataSet>({
-    queryKey: ["reporting-charts", startDate, endDate, ...selectedListings],
+    queryKey: ["reporting-charts", startDate, endDate, trendStart, trendEnd, ...selectedListings],
     queryFn: async () => {
-      const [occupancyRes, revenueRes, expensesRes] = await Promise.all([
+      const [occupancyRes, revenueRes, expensesRes, trendRes] = await Promise.all([
         apiClient.get<{ data: RawOccupancy[] }>(`/reporting/occupancy?${params.toString()}`),
         apiClient.get<{ data: RawRevenueBreakdown[] }>(
           `/reporting/revenue-breakdown?${params.toString()}`,
         ),
         apiClient.get<{ data: RawExpense[] }>(`/reporting/expense-breakdown?${params.toString()}`),
+        apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${trendParams.toString()}`),
       ]);
 
       // Build occupancy by listing
@@ -143,9 +190,11 @@ export function useReportingChartDataAPI(
         lm.revenue += r.revenue;
         listingMap.set(r.listingName, lm);
       }
+      // TODO(currency-precision): server-computed channel total when path A
+      // migration ships. Per currency strategy in CLAUDE.md.
       const totalChannelRevenue = [...channelMap.values()].reduce((s, c) => s + c.revenue, 0);
       const channelBreakdown = [...channelMap.entries()].map(([channel, { revenue }]) => ({
-        channel,
+        channel: formatChannel(channel),
         revenue,
         percentage: totalChannelRevenue > 0 ? Math.round((revenue / totalChannelRevenue) * 100) : 0,
         color: channelColors[channel] ?? "var(--channel-direct)",
@@ -162,7 +211,7 @@ export function useReportingChartDataAPI(
       }));
 
       return {
-        revenueTrend: [],
+        revenueTrend: financialsToRevenueTrend(trendRes.data),
         channelBreakdown,
         occupancy,
         expenses,

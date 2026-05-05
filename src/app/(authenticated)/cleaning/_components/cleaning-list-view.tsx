@@ -13,24 +13,20 @@ const statusColors: Record<string, string> = {
   confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
-  ticket: "var(--status-issues)",
   cancelled: "var(--status-cancelled)",
 };
 
 const typeLabels: Record<string, string> = {
-  checkout: "Checkout",
-  checkin: "Check-in",
-  deep_clean: "Deep Clean",
-  mid_stay: "Mid-Stay",
-  inspection: "Inspection",
   turnover: "Turnover",
+  deep_clean: "Deep Clean",
+  ad_hoc: "Ad Hoc",
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
-  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  urgent: { bg: "var(--row-alt)", text: "var(--status-danger)" },
+  high: { bg: "var(--row-alt)", text: "var(--status-danger)" },
+  medium: { bg: "var(--row-alt)", text: "var(--brand-10)" },
+  low: { bg: "var(--row-alt)", text: "var(--brand-10)" },
 };
 
 interface CleaningListViewProps {
@@ -47,7 +43,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "listing",
         label: "Listing",
-        width: "144px",
+        width: "200px",
         render: (t) => (
           <div className="gap-base flex items-center">
             <span
@@ -61,9 +57,12 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "type",
         label: "Type",
-        width: "89px",
+        width: "112px",
         render: (t) => (
-          <span className="px-base py-xs text-body rounded-sm bg-gray-100 text-gray-600">
+          <span
+            className="px-base py-xs text-body rounded-sm text-gray-600"
+            style={{ backgroundColor: "var(--row-alt)" }}
+          >
             {typeLabels[t.type] ?? t.type}
           </span>
         ),
@@ -71,7 +70,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "scheduled",
         label: "Scheduled",
-        width: "144px",
+        width: "168px",
         render: (t) => {
           const tz = listingTimezones[t.listingId] ?? DEFAULT_TIMEZONE;
           return (
@@ -84,20 +83,21 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "assignee",
         label: "Assignee",
-        width: "144px",
+        width: "160px",
         render: (t) => (
-          <span className="text-body text-gray-600">{t.assigneeName ?? "Unassigned"}</span>
+          <span className="text-body text-gray-600">{t.cleanerName ?? "Unassigned"}</span>
         ),
       },
       {
         key: "status",
         label: "Status",
-        width: "89px",
+        width: "112px",
         render: (t) => (
           <span
-            className="px-base py-xs text-body rounded-full font-medium text-white"
+            className="px-base py-xs text-body rounded-md font-medium"
             style={{
               backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
+              color: "var(--surface-60)",
             }}
           >
             {t.status.replace("_", " ")}
@@ -107,7 +107,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "priority",
         label: "Priority",
-        width: "89px",
+        width: "112px",
         render: (t) => {
           const p = priorityColors[t.priority] ?? priorityColors.low;
           return (
@@ -123,7 +123,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
       {
         key: "checklist",
         label: "Checklist",
-        width: "89px",
+        width: "96px",
         render: (t) => (
           <span className="font-data text-body">
             {t.checklistDone}/{t.checklistTotal}
@@ -163,7 +163,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
           cmp = new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime();
           break;
         case "assignee":
-          cmp = (a.assigneeName ?? "").localeCompare(b.assigneeName ?? "");
+          cmp = (a.cleanerName ?? "").localeCompare(b.cleanerName ?? "");
           break;
         case "status":
           cmp = a.status.localeCompare(b.status);

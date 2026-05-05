@@ -38,10 +38,75 @@
   --semantic-destructive: var(--status-danger);
   --semantic-in-progress: var(--brand-10);
 
-  /* Cleaning status colors */
-  --status-pending: var(--brand-10);
+  /* Status warning + tinted backgrounds. Used by trial banners, connect
+     pills, integration success notes - anywhere we want a coloured panel
+     bg without committing the whole surface to the bright accent colour. */
+  --status-warning: #ca8a04;
+  --status-success-tint: rgba(21, 128, 61, 0.1);
+  --status-warning-tint: rgba(202, 138, 4, 0.1);
+  --status-danger-tint: rgba(185, 28, 28, 0.08);
+
+  /* Light text for the few surfaces that stay dark in both modes
+     (channel-airbnb red, channel-booking blue, etc - tones that don't
+     invert). text-white can't be used there because surface-60 inverts
+     in dark mode and renders dark on those still-coloured surfaces.
+     IMPORTANT: do NOT use this token on FLIPPING backgrounds. The full
+     list of flipping bgs:
+       - --brand-10 / --strabb-secondary (dark navy -> off-white)
+       - --neutral-30 (light gray -> dark gray)
+       - --surface-60 (light -> dark)
+       - --status-pending / --status-danger (dark red -> light pink)
+       - --status-success / --status-completed / --status-in-progress
+         (dark green -> medium green; light text fails in dark mode)
+     For all flipping bgs use var(--surface-60) directly so the text
+     inverts OPPOSITE to the bg in both modes. */
+  --text-on-color: var(--surface-60);
+
+  /* Modal/drawer scrim. Fixed black overlay regardless of theme - black IS
+     remapped to brand-10 via @theme inline, so `bg-black/30` would become
+     a warm-white wash in dark mode. Use this instead. */
+  --scrim: rgba(0, 0, 0, 0.4);
+
+  /* Layout helper for overlays: positions a scrim or centred modal so it
+     covers the canvas area only - the sidebar, top nav, and submenu bar
+     stay uncovered and interactive. Pair with `position: fixed`. */
+  --canvas-left: var(--sidebar-width);
+  --canvas-bottom: 0;
+  --canvas-right: 0;
+
+  /* Shadow scale. Hand-rolled rgba so dark mode can tune them stronger. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+  /* Channel-accent stripe width. Used by booking bars, message cards,
+     billing banner. Off-Fibonacci (4px) but design-locked. */
+  --stripe-width: 4px;
+
+  /* Hairline separator and minimum touch-target. Off-Fibonacci but
+     design/a11y-locked: 2px is the visual hairline used between sections,
+     and 44px is the WCAG-recommended minimum tap area. */
+  --hairline: 2px;
+  --touch-target-min: 44px;
+
+  /* Top-nav and submenu pill button width. 95px is design-locked off-ladder. */
+  --btn-pill-width: 95px;
+
+  /* Aliases for legacy ghost-token references that found their way into
+     billing + scheduled-messaging. Resolve to existing palette so no
+     style breaks if a stray reference remains. */
+  --neutral-20: var(--neutral-30);
+  --neutral-50: var(--brand-10);
+  --neutral-90: var(--brand-10);
+
+  /* Cleaning + ticket status colors. Same mapping for both - cleans and
+     tickets share the unified status set, so a "pending" reads the same
+     across the app. confirmed = neutral foreground (work acknowledged but
+     not yet started); in_progress + completed both green (active or done);
+     pending = red (needs attention); cancelled = gray (deprioritized). */
+  --status-pending: var(--status-danger);
   --status-confirmed: var(--brand-10);
-  --status-in-progress: var(--brand-10);
+  --status-in-progress: var(--status-success);
   --status-completed: var(--status-success);
   --status-issues: var(--status-danger);
   --status-cancelled: #6b7280;
@@ -132,14 +197,38 @@
   --radius: 5px;
 }
 
+/* Layout helper: positions an overlay scrim or centred modal so it covers
+   the canvas region only. Sidebar, top nav, and submenu bar stay
+   uncovered and interactive. Pair with `position: fixed`. */
+.canvas-overlay {
+  left: var(--canvas-left);
+  top: var(--canvas-top);
+  right: var(--canvas-right);
+  bottom: var(--canvas-bottom);
+}
+
 .dark {
   /* 60/30/10 Palette - dark mode */
-  --surface-60: #0c123c;
-  --neutral-30: #0f164b;
-  --brand-10: #eeeeee;
-  --status-success: #4ade80;
+  --surface-60: #1f1f1e;
+  --neutral-30: #262626;
+  --brand-10: #faf9f5;
+  --status-success: #059669;
   --status-danger: #f87171;
-  --chart-grid: rgba(238, 238, 238, 0.12);
+  --chart-grid: rgba(250, 249, 245, 0.12);
+
+  /* Tints get retuned for dark mode so they read against the dark surface. */
+  --status-warning: #fbbf24;
+  --status-success-tint: rgba(5, 150, 105, 0.18);
+  --status-warning-tint: rgba(251, 191, 36, 0.16);
+  --status-danger-tint: rgba(248, 113, 113, 0.14);
+
+  /* Always-light text - in dark mode brand-10 IS the warm off-white. */
+  --text-on-color: var(--brand-10);
+
+  /* Shadows pop harder against the dark surface. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
@@ -222,12 +311,18 @@
   /* Pure aliases: the underlying --xxx vars above remain the single source of truth. */
   --color-status-success: var(--status-success);
   --color-status-danger: var(--status-danger);
+  --color-status-warning: var(--status-warning);
   --color-status-pending: var(--status-pending);
   --color-status-confirmed: var(--status-confirmed);
   --color-status-in-progress: var(--status-in-progress);
   --color-status-completed: var(--status-completed);
   --color-status-issues: var(--status-issues);
   --color-status-cancelled: var(--status-cancelled);
+  --color-status-success-tint: var(--status-success-tint);
+  --color-status-warning-tint: var(--status-warning-tint);
+  --color-status-danger-tint: var(--status-danger-tint);
+  --color-text-on-color: var(--text-on-color);
+  --color-scrim: var(--scrim);
 
   --color-booking-checked-out: var(--booking-checked-out);
   --color-booking-checked-in: var(--booking-checked-in);
@@ -359,6 +454,9 @@
   --color-yellow-500: var(--brand-10);
   --color-yellow-600: var(--brand-10);
   --color-yellow-700: var(--brand-10);
+  --color-yellow-800: var(--brand-10);
+  --color-yellow-900: var(--brand-10);
+  --color-yellow-950: var(--brand-10);
   --color-amber-50: var(--neutral-30);
   --color-amber-100: var(--neutral-30);
   --color-amber-200: var(--neutral-30);
@@ -443,6 +541,55 @@
   }
 }
 
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
 @keyframes drainProgress {
   from {
     transform: scaleX(1);
@@ -452,19 +599,32 @@
   }
 }
 
-/* Auto-confirm progress bar in the timeframe popup. Keep the duration in
-   sync with AUTO_CONFIRM_SECONDS in src/components/overlays/timeframe-popup.tsx.
-   When the user prefers reduced motion the animation is suppressed; the bar
-   stays full while the timer still elapses. */
+/* Auto-confirm progress bar in the timeframe popup. Duration is set inline
+   from AUTO_CONFIRM_SECONDS in src/components/overlays/timeframe-popup.tsx
+   via the --drain-duration custom property; the 3s here is just a fallback
+   if the JS fails to inject one. When the user prefers reduced motion the
+   popup skips auto-confirm entirely (handled in JS) so the bar never
+   renders for those users. */
 .drain-progress {
   width: 100%;
   transform-origin: left;
   background-color: var(--strabb-secondary);
-  animation: drainProgress 7s linear forwards;
+  animation: drainProgress var(--drain-duration, 3s) linear forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .drain-progress {
     animation: none;
+  }
+  /* Disable non-essential transforms (panel slide, dialog zoom) when the
+     user has requested reduced motion. Opacity-only transitions still run
+     so dismissals don't appear instant; only the spatial movement is cut. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

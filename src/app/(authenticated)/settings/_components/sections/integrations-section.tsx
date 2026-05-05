@@ -57,7 +57,7 @@ export function IntegrationsSection() {
 
   const handleAddIcal = () => {
     if (!icalUrl.trim()) return;
-    addToast({ type: "success", message: "iCal feed added" });
+    addToast({ type: "warning", message: "iCal feed save is coming soon, not wired up yet" });
     setIcalUrl("");
   };
 
@@ -76,7 +76,7 @@ export function IntegrationsSection() {
             style={{ borderColor: "var(--border)" }}
           >
             <div
-              className="h-lg text-subheading flex w-lg items-center justify-center rounded-lg font-bold text-white"
+              className="h-lg text-subheading text-text-on-color flex w-lg items-center justify-center rounded-lg font-bold"
               style={{ backgroundColor: platform.color }}
             >
               {platform.logo}
@@ -94,9 +94,9 @@ export function IntegrationsSection() {
             <div className="gap-base flex items-center">
               {platform.connected && (
                 <span
-                  className="px-base py-xs text-body rounded-full font-medium"
+                  className="px-base py-xs text-body rounded-md font-medium"
                   style={{
-                    backgroundColor: "rgba(22, 163, 74, 0.1)",
+                    backgroundColor: "var(--status-success-tint)",
                     color: "var(--status-success)",
                   }}
                 >
@@ -134,7 +134,7 @@ export function IntegrationsSection() {
             type="button"
             onClick={handleAddIcal}
             className="px-sm py-base text-body rounded-lg font-medium text-white"
-            style={{ backgroundColor: "var(--strabb-secondary)" }}
+            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Add Feed
           </button>

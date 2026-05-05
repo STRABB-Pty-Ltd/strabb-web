@@ -34,7 +34,9 @@ export function GeneralSection() {
   useEffect(() => setMounted(true), []);
 
   const handleSave = () => {
-    addToast({ type: "success", message: "General settings saved" });
+    // Settings persistence isn't wired to the API yet; surface that honestly
+    // instead of pretending the save worked.
+    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
   };
 
   return (
@@ -126,7 +128,7 @@ export function GeneralSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body rounded-lg font-medium text-white"
-        style={{ backgroundColor: "var(--strabb-secondary)" }}
+        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

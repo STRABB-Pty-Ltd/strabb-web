@@ -5,20 +5,23 @@ import { useMemo } from "react";
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import { DEFAULT_TIMEZONE } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatCurrency } from "@/lib/format-currency";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
 
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
   confirmed: "var(--status-confirmed)",
+  in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
+  cancelled: "var(--status-cancelled)",
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
-  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  urgent: { bg: "var(--row-alt)", text: "var(--status-danger)" },
+  high: { bg: "var(--row-alt)", text: "var(--status-danger)" },
+  medium: { bg: "var(--row-alt)", text: "var(--brand-10)" },
+  low: { bg: "var(--row-alt)", text: "var(--brand-10)" },
 };
 
 interface TicketsListViewProps {
@@ -77,8 +80,11 @@ export function TicketsListView({
         sortable: false,
         render: (t) => (
           <span
-            className="px-base py-xs text-body rounded-full font-medium text-white"
-            style={{ backgroundColor: statusColors[t.status] ?? "var(--brand-10)" }}
+            className="px-base py-xs text-body rounded-md font-medium"
+            style={{
+              backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
+              color: "var(--surface-60)",
+            }}
           >
             {t.status.replace("_", " ")}
           </span>
@@ -117,7 +123,11 @@ export function TicketsListView({
         label: "Cost",
         width: "100px",
         sortable: false,
-        render: (t) => <span className="font-data text-body">{t.cost ? `$${t.cost}` : "-"}</span>,
+        render: (t) => (
+          <span className="font-data text-body">
+            {t.cost != null ? formatCurrency(t.cost, t.currency) : "-"}
+          </span>
+        ),
       },
     ],
     [propertyNames, propertyTimezones],

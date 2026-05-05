@@ -111,10 +111,10 @@ export function BillingSection() {
           </div>
           {status === "trial" && daysLeft !== null && daysLeft >= 0 && (
             <span
-              className="px-sm py-xs text-body rounded-full font-medium"
+              className="px-sm py-xs text-body rounded-md font-medium"
               style={{
-                backgroundColor: daysLeft <= 3 ? "rgb(254 252 232)" : "var(--neutral-20)",
-                color: daysLeft <= 3 ? "rgb(133 77 14)" : "var(--neutral-90)",
+                backgroundColor: daysLeft <= 3 ? "var(--status-warning-tint)" : "var(--neutral-30)",
+                color: daysLeft <= 3 ? "var(--status-warning)" : "var(--brand-10)",
               }}
             >
               {daysLeft === 0
@@ -150,7 +150,7 @@ export function BillingSection() {
               onClick={handleStartTrial}
               disabled={startTrial.isPending}
               className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {startTrial.isPending ? "Starting…" : "Start free trial"}
             </button>
@@ -162,7 +162,7 @@ export function BillingSection() {
               onClick={handleCheckout}
               disabled={createCheckout.isPending}
               className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createCheckout.isPending ? "Redirecting…" : "Add payment details"}
             </button>
@@ -174,7 +174,7 @@ export function BillingSection() {
               onClick={handlePortal}
               disabled={createPortal.isPending}
               className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createPortal.isPending ? "Redirecting…" : "Manage subscription"}
             </button>
@@ -186,7 +186,7 @@ export function BillingSection() {
               onClick={handleCheckout}
               disabled={createCheckout.isPending}
               className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)" }}
+              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createCheckout.isPending ? "Redirecting…" : "Reactivate subscription"}
             </button>

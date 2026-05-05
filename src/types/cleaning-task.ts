@@ -1,20 +1,8 @@
-export type CleaningStatus =
-  | "pending"
-  | "confirmed"
-  | "in_progress"
-  | "completed"
-  | "ticket"
-  | "cancelled";
+export type CleaningStatus = "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
 
 export type CleaningPriority = "low" | "medium" | "high" | "urgent";
 
-export type CleaningType =
-  | "checkout"
-  | "checkin"
-  | "deep_clean"
-  | "mid_stay"
-  | "inspection"
-  | "turnover";
+export type CleaningType = "turnover" | "deep_clean" | "ad_hoc";
 
 export interface CleaningTask {
   id: string;
@@ -22,8 +10,8 @@ export interface CleaningTask {
   listingName: string;
   listingColor: string;
   bookingId: string | null;
-  assigneeName: string | null;
-  assigneeEmail: string | null;
+  cleanerName: string | null;
+  cleanerEmail: string | null;
   scheduledTime: string;
   completedTime: string | null;
   checklistTotal: number;
@@ -32,6 +20,8 @@ export interface CleaningTask {
   status: CleaningStatus;
   type: CleaningType;
   estimatedHours: number;
+  cost: number | null;
+  currency?: string;
   notes: string | null;
   linkedTicketId: string | null;
 }

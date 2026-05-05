@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormWithSchema } from "@/hooks/use-form-with-schema";
@@ -25,11 +26,19 @@ import { useAppStore } from "@/stores/app-store";
 import { TICKET_PRIORITY_OPTIONS } from "@/types/ticket";
 
 interface TicketFormDialogProps {
-  trigger: React.ReactElement;
+  trigger?: React.ReactElement;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
-  const [open, setOpen] = useState(false);
+export function TicketFormDialog({
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
+}: TicketFormDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const addToast = useAppStore((s) => s.addToast);
   const createTicket = useCreateTicketAPI();
   const { data: propertiesData } = useProperties();
@@ -52,20 +61,29 @@ export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
     dateScheduled: "",
     cost: "",
     notes: "",
+    autoLinkToNext: false,
   });
 
   async function onSubmit(data: TicketCreateFormData) {
     try {
-      await createTicket.mutateAsync({
+      const result = await createTicket.mutateAsync({
         propertyId: data.propertyId,
         listingId: data.listingId ?? null,
         description: data.description,
         priority: data.priority,
         dateScheduled: data.dateScheduled ?? null,
-        cost: data.cost ?? null,
+        cost: data.cost ? parseFloat(data.cost) : null,
         notes: data.notes ?? null,
+        autoLinkToNext: data.autoLinkToNext ?? false,
       });
-      addToast({ type: "success", message: "Ticket created" });
+      if (result.attemptedAutoLink && !result.linkedCleanId) {
+        addToast({
+          type: "info",
+          message: "Ticket created - no clean found to link",
+        });
+      } else {
+        addToast({ type: "success", message: "Ticket created" });
+      }
       setOpen(false);
       reset();
     } catch (err) {
@@ -87,7 +105,7 @@ export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
         if (!nextOpen) reset();
       }}
     >
-      <DialogTrigger render={trigger} />
+      {trigger && <DialogTrigger render={trigger} />}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>New ticket</DialogTitle>
@@ -163,9 +181,25 @@ export function TicketFormDialog({ trigger }: TicketFormDialogProps) {
             {errors.notes && <p className="text-destructive text-body">{errors.notes.message}</p>}
           </div>
 
+          <label className="gap-sm text-body flex items-center text-gray-700">
+            <input
+              type="checkbox"
+              {...register("autoLinkToNext")}
+              className="h-base w-base rounded border-gray-300"
+            />
+            Auto-link to next scheduled clean for this listing
+          </label>
+
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating…" : "Create ticket"}
+              {isSubmitting ? (
+                <>
+                  <LoadingSpinner className="border-primary-foreground h-sm w-sm border-t-transparent" />
+                  Creating…
+                </>
+              ) : (
+                "Create ticket"
+              )}
             </Button>
           </DialogFooter>
         </form>

@@ -15,6 +15,7 @@ import {
   startOfQuarter,
   startOfWeek,
   startOfYear,
+  subMonths,
 } from "date-fns";
 
 export interface DateRange {
@@ -235,6 +236,25 @@ export function ganttDateRange(
       end = addDays(start, 13);
   }
   return { startDate: fmt(start), endDate: fmt(end) };
+}
+
+/**
+ * Date range for the reporting Revenue Trend chart. Always covers at least
+ * 12 months so the chart never collapses to a single point when the stepper
+ * is on a narrow window. End is the selected window's end; start is the
+ * earlier of the selected start and 11 months before the end.
+ */
+export function trendDateRange(
+  windowSize: string,
+  anchor?: string | null,
+  customRange?: { start: string; end: string } | null,
+): DateRange {
+  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor, customRange);
+  const end = parseISO(endDate);
+  const trailingStart = startOfMonth(subMonths(end, 11));
+  const selectedStart = parseISO(startDate);
+  const start = selectedStart < trailingStart ? selectedStart : trailingStart;
+  return { startDate: fmt(start), endDate };
 }
 
 function formatRange(start: Date, end: Date): string {
