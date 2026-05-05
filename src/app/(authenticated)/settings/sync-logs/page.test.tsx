@@ -27,10 +27,12 @@ function logFor(overrides: Partial<SyncLogResponse> = {}): SyncLogResponse {
     listingId: "01234567-89ab-cdef-0123-456789abcdef",
     startedAt: "2026-04-25T10:00:00Z",
     completedAt: "2026-04-25T10:00:30Z",
-    status: "success",
-    bookingsCreated: 2,
-    bookingsUpdated: 1,
-    bookingsUnchanged: 5,
+    status: "synced",
+    metrics: {
+      bookingsCreated: 2,
+      bookingsUpdated: 1,
+      bookingsUnchanged: 5,
+    },
     errorMessage: null,
     createdAt: "2026-04-25T10:00:00Z",
     ...overrides,
@@ -72,7 +74,7 @@ describe("SyncLogsPage", () => {
       isLoading: false,
     });
     render(<SyncLogsPage />);
-    expect(screen.getByText("success")).toBeInTheDocument();
+    expect(screen.getByText("synced")).toBeInTheDocument();
     expect(screen.getByText("2 / 1 / 5")).toBeInTheDocument();
   });
 

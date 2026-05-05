@@ -38,9 +38,11 @@ const aSyncError: SyncLogResponse = {
   startedAt: "2026-04-25T00:00:00Z",
   completedAt: "2026-04-25T00:01:00Z",
   status: "failed",
-  bookingsCreated: 0,
-  bookingsUpdated: 0,
-  bookingsUnchanged: 5,
+  metrics: {
+    bookingsCreated: 0,
+    bookingsUpdated: 0,
+    bookingsUnchanged: 5,
+  },
   errorMessage: "Timeout reaching feed",
   createdAt: "2026-04-25T00:00:00Z",
 };
