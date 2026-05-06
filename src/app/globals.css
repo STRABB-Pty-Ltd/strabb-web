@@ -7,24 +7,29 @@
 :root {
   /* === STRABB Design Tokens === */
 
-  /* 60/30/10 Palette */
+  /* 60/30/10 Palette + brand + statuses */
   --surface-60: #fafafa;
   --neutral-30: #eeeeee;
-  --brand-10: #15206b;
+  --highlight-10: #15206b;
+  --brand: #15206b;
   --status-success: #15803d;
+  --status-warning: #ca8a04;
   --status-danger: #b91c1c;
+
+  /* Deprecated alias - will be removed after consumer sweep. */
+  --brand-10: var(--highlight-10);
 
   /* Surfaces */
   --surface-page: var(--surface-60);
   --surface-card: var(--neutral-30);
   --surface-sidebar: var(--surface-60);
   --surface-submenu: var(--surface-60);
-  --surface-topnav: var(--brand-10);
+  --surface-topnav: var(--highlight-10);
 
   /* Primary palette */
-  --strabb-primary: var(--brand-10);
-  --strabb-secondary: var(--brand-10);
-  --strabb-accent: var(--brand-10);
+  --strabb-primary: var(--highlight-10);
+  --strabb-secondary: var(--highlight-10);
+  --strabb-accent: var(--highlight-10);
 
   /* Channel colors - Airbnb/Booking/VRBO keep brand identity; Direct goes neutral (no amber) */
   --channel-airbnb: #ff5a5f;
@@ -34,14 +39,13 @@
 
   /* Semantic colors - only green + red are accent; warning/in-progress collapse to navy */
   --semantic-success: var(--status-success);
-  --semantic-warning: var(--brand-10);
+  --semantic-warning: var(--highlight-10);
   --semantic-destructive: var(--status-danger);
-  --semantic-in-progress: var(--brand-10);
+  --semantic-in-progress: var(--highlight-10);
 
-  /* Status warning + tinted backgrounds. Used by trial banners, connect
-     pills, integration success notes - anywhere we want a coloured panel
-     bg without committing the whole surface to the bright accent colour. */
-  --status-warning: #ca8a04;
+  /* Tinted backgrounds for trial banners, connect pills, integration success
+     notes; coloured panel bg without committing the whole surface to the
+     bright accent. */
   --status-success-tint: rgba(21, 128, 61, 0.1);
   --status-warning-tint: rgba(202, 138, 4, 0.1);
   --status-danger-tint: rgba(185, 28, 28, 0.08);
@@ -52,7 +56,7 @@
      in dark mode and renders dark on those still-coloured surfaces.
      IMPORTANT: do NOT use this token on FLIPPING backgrounds. The full
      list of flipping bgs:
-       - --brand-10 / --strabb-secondary (dark navy -> off-white)
+       - --highlight-10 / --strabb-secondary (dark navy -> off-white)
        - --neutral-30 (light gray -> dark gray)
        - --surface-60 (light -> dark)
        - --status-pending / --status-danger (dark red -> light pink)
@@ -63,7 +67,7 @@
   --text-on-color: var(--surface-60);
 
   /* Modal/drawer scrim. Fixed black overlay regardless of theme - black IS
-     remapped to brand-10 via @theme inline, so `bg-black/30` would become
+     remapped to highlight-10 via @theme inline, so `bg-black/30` would become
      a warm-white wash in dark mode. Use this instead. */
   --scrim: rgba(0, 0, 0, 0.4);
 
@@ -96,8 +100,8 @@
      billing + scheduled-messaging. Resolve to existing palette so no
      style breaks if a stray reference remains. */
   --neutral-20: var(--neutral-30);
-  --neutral-50: var(--brand-10);
-  --neutral-90: var(--brand-10);
+  --neutral-50: var(--highlight-10);
+  --neutral-90: var(--highlight-10);
 
   /* Cleaning + ticket status colors. Same mapping for both - cleans and
      tickets share the unified status set, so a "pending" reads the same
@@ -105,7 +109,7 @@
      not yet started); in_progress + completed both green (active or done);
      pending = red (needs attention); cancelled = gray (deprioritized). */
   --status-pending: var(--status-danger);
-  --status-confirmed: var(--brand-10);
+  --status-confirmed: var(--highlight-10);
   --status-in-progress: var(--status-success);
   --status-completed: var(--status-success);
   --status-issues: var(--status-danger);
@@ -114,24 +118,24 @@
   /* Booking status colors */
   --booking-checked-out: #6b7280;
   --booking-checked-in: var(--status-success);
-  --booking-confirmed: var(--brand-10);
-  --booking-pending: var(--brand-10);
+  --booking-confirmed: var(--highlight-10);
+  --booking-pending: var(--highlight-10);
   --booking-cancelled: var(--status-danger);
 
   /* Chart */
-  --chart-bar: var(--brand-10);
-  --chart-bar-hover: var(--brand-10);
+  --chart-bar: var(--highlight-10);
+  --chart-bar-hover: var(--highlight-10);
   --chart-grid: rgba(30, 30, 133, 0.08);
 
   /* Interactive - pill buttons */
-  --btn-active-bg: var(--brand-10);
+  --btn-active-bg: var(--highlight-10);
   --btn-active-text: var(--surface-60);
   --btn-inactive-bg: var(--neutral-30);
-  --btn-inactive-text: var(--brand-10);
+  --btn-inactive-text: var(--highlight-10);
   --btn-inactive-border: transparent;
 
   /* Icon tiles - solid navy tile with neutral-30 symbol */
-  --icon-bg: var(--brand-10);
+  --icon-bg: var(--highlight-10);
   --icon-color: var(--neutral-30);
 
   /* Border tokens (no visible borders anywhere) */
@@ -177,23 +181,23 @@
 
   /* === shadcn overrides === all chain through the 60/30/10 palette */
   --background: var(--surface-60);
-  --foreground: var(--brand-10);
+  --foreground: var(--highlight-10);
   --card: var(--neutral-30);
-  --card-foreground: var(--brand-10);
+  --card-foreground: var(--highlight-10);
   --popover: var(--surface-60);
-  --popover-foreground: var(--brand-10);
-  --primary: var(--brand-10);
+  --popover-foreground: var(--highlight-10);
+  --primary: var(--highlight-10);
   --primary-foreground: var(--surface-60);
   --secondary: var(--neutral-30);
-  --secondary-foreground: var(--brand-10);
+  --secondary-foreground: var(--highlight-10);
   --muted: var(--neutral-30);
   --muted-foreground: oklch(0.556 0 0);
   --accent: var(--neutral-30);
-  --accent-foreground: var(--brand-10);
+  --accent-foreground: var(--highlight-10);
   --destructive: var(--status-danger);
   --border: transparent;
   --input: var(--neutral-30);
-  --ring: var(--brand-10);
+  --ring: var(--highlight-10);
   --radius: 5px;
 }
 
@@ -208,22 +212,23 @@
 }
 
 .dark {
-  /* 60/30/10 Palette - dark mode */
+  /* 60/30/10 Palette + brand + statuses - dark mode */
   --surface-60: #1f1f1e;
   --neutral-30: #262626;
-  --brand-10: #faf9f5;
+  --highlight-10: #faf9f5;
+  --brand: #15206b;
   --status-success: #059669;
+  --status-warning: #fbbf24;
   --status-danger: #f87171;
   --chart-grid: rgba(250, 249, 245, 0.12);
 
   /* Tints get retuned for dark mode so they read against the dark surface. */
-  --status-warning: #fbbf24;
   --status-success-tint: rgba(5, 150, 105, 0.18);
   --status-warning-tint: rgba(251, 191, 36, 0.16);
   --status-danger-tint: rgba(248, 113, 113, 0.14);
 
   /* Always-light text - in dark mode brand-10 IS the warm off-white. */
-  --text-on-color: var(--brand-10);
+  --text-on-color: var(--highlight-10);
 
   /* Shadows pop harder against the dark surface. */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -232,23 +237,23 @@
 
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
-  --foreground: var(--brand-10);
+  --foreground: var(--highlight-10);
   --card: var(--neutral-30);
-  --card-foreground: var(--brand-10);
+  --card-foreground: var(--highlight-10);
   --popover: var(--surface-60);
-  --popover-foreground: var(--brand-10);
-  --primary: var(--brand-10);
+  --popover-foreground: var(--highlight-10);
+  --primary: var(--highlight-10);
   --primary-foreground: var(--surface-60);
   --secondary: var(--neutral-30);
-  --secondary-foreground: var(--brand-10);
+  --secondary-foreground: var(--highlight-10);
   --muted: var(--neutral-30);
   --muted-foreground: oklch(0.708 0 0);
   --accent: var(--neutral-30);
-  --accent-foreground: var(--brand-10);
+  --accent-foreground: var(--highlight-10);
   --destructive: var(--status-danger);
   --border: transparent;
   --input: var(--neutral-30);
-  --ring: var(--brand-10);
+  --ring: var(--highlight-10);
 }
 
 @theme inline {
@@ -345,6 +350,9 @@
   --color-strabb-secondary: var(--strabb-secondary);
   --color-strabb-accent: var(--strabb-accent);
 
+  --color-highlight-10: var(--highlight-10);
+  --color-brand: var(--brand);
+
   --color-btn-active-bg: var(--btn-active-bg);
   --color-btn-active-text: var(--btn-active-text);
   --color-btn-inactive-bg: var(--btn-inactive-bg);
@@ -360,70 +368,70 @@
   /* Remap Tailwind default colors to 60/30/10 palette so hardcoded utility */
   /* classes (bg-white, bg-gray-*, text-gray-*, etc.) inherit dark-mode overrides */
   --color-white: var(--surface-60);
-  --color-black: var(--brand-10);
+  --color-black: var(--highlight-10);
   --color-gray-50: var(--neutral-30);
   --color-gray-100: var(--neutral-30);
   --color-gray-200: var(--neutral-30);
   --color-gray-300: var(--neutral-30);
-  --color-gray-400: var(--brand-10);
-  --color-gray-500: var(--brand-10);
-  --color-gray-600: var(--brand-10);
-  --color-gray-700: var(--brand-10);
-  --color-gray-800: var(--brand-10);
-  --color-gray-900: var(--brand-10);
+  --color-gray-400: var(--highlight-10);
+  --color-gray-500: var(--highlight-10);
+  --color-gray-600: var(--highlight-10);
+  --color-gray-700: var(--highlight-10);
+  --color-gray-800: var(--highlight-10);
+  --color-gray-900: var(--highlight-10);
   --color-slate-50: var(--neutral-30);
   --color-slate-100: var(--neutral-30);
   --color-slate-200: var(--neutral-30);
   --color-slate-300: var(--neutral-30);
-  --color-slate-400: var(--brand-10);
-  --color-slate-500: var(--brand-10);
-  --color-slate-600: var(--brand-10);
-  --color-slate-700: var(--brand-10);
-  --color-slate-800: var(--brand-10);
-  --color-slate-900: var(--brand-10);
+  --color-slate-400: var(--highlight-10);
+  --color-slate-500: var(--highlight-10);
+  --color-slate-600: var(--highlight-10);
+  --color-slate-700: var(--highlight-10);
+  --color-slate-800: var(--highlight-10);
+  --color-slate-900: var(--highlight-10);
   --color-zinc-50: var(--neutral-30);
   --color-zinc-100: var(--neutral-30);
   --color-zinc-200: var(--neutral-30);
   --color-zinc-300: var(--neutral-30);
-  --color-zinc-400: var(--brand-10);
-  --color-zinc-500: var(--brand-10);
-  --color-zinc-600: var(--brand-10);
-  --color-zinc-700: var(--brand-10);
-  --color-zinc-800: var(--brand-10);
-  --color-zinc-900: var(--brand-10);
+  --color-zinc-400: var(--highlight-10);
+  --color-zinc-500: var(--highlight-10);
+  --color-zinc-600: var(--highlight-10);
+  --color-zinc-700: var(--highlight-10);
+  --color-zinc-800: var(--highlight-10);
+  --color-zinc-900: var(--highlight-10);
   --color-neutral-50: var(--neutral-30);
   --color-neutral-100: var(--neutral-30);
   --color-neutral-200: var(--neutral-30);
   --color-neutral-300: var(--neutral-30);
-  --color-neutral-400: var(--brand-10);
-  --color-neutral-500: var(--brand-10);
-  --color-neutral-600: var(--brand-10);
-  --color-neutral-700: var(--brand-10);
-  --color-neutral-800: var(--brand-10);
-  --color-neutral-900: var(--brand-10);
+  --color-neutral-400: var(--highlight-10);
+  --color-neutral-500: var(--highlight-10);
+  --color-neutral-600: var(--highlight-10);
+  --color-neutral-700: var(--highlight-10);
+  --color-neutral-800: var(--highlight-10);
+  --color-neutral-900: var(--highlight-10);
   --color-stone-50: var(--neutral-30);
   --color-stone-100: var(--neutral-30);
   --color-stone-200: var(--neutral-30);
   --color-stone-300: var(--neutral-30);
-  --color-stone-400: var(--brand-10);
-  --color-stone-500: var(--brand-10);
-  --color-stone-600: var(--brand-10);
-  --color-stone-700: var(--brand-10);
-  --color-stone-800: var(--brand-10);
-  --color-stone-900: var(--brand-10);
+  --color-stone-400: var(--highlight-10);
+  --color-stone-500: var(--highlight-10);
+  --color-stone-600: var(--highlight-10);
+  --color-stone-700: var(--highlight-10);
+  --color-stone-800: var(--highlight-10);
+  --color-stone-900: var(--highlight-10);
   --color-blue-50: var(--neutral-30);
   --color-blue-100: var(--neutral-30);
   --color-blue-200: var(--neutral-30);
-  --color-blue-300: var(--brand-10);
-  --color-blue-400: var(--brand-10);
-  --color-blue-500: var(--brand-10);
-  --color-blue-600: var(--brand-10);
-  --color-blue-700: var(--brand-10);
-  --color-blue-800: var(--brand-10);
-  --color-blue-900: var(--brand-10);
-  --color-indigo-500: var(--brand-10);
-  --color-indigo-600: var(--brand-10);
-  --color-indigo-700: var(--brand-10);
+  --color-blue-300: var(--highlight-10);
+  --color-blue-400: var(--highlight-10);
+  --color-blue-500: var(--highlight-10);
+  --color-blue-600: var(--highlight-10);
+  --color-blue-700: var(--highlight-10);
+  --color-blue-800: var(--highlight-10);
+  --color-blue-900: var(--highlight-10);
+  --color-indigo-500: var(--highlight-10);
+  --color-indigo-600: var(--highlight-10);
+  --color-indigo-700: var(--highlight-10);
   --color-red-50: var(--neutral-30);
   --color-red-100: var(--neutral-30);
   --color-red-200: var(--neutral-30);
@@ -449,28 +457,28 @@
   --color-yellow-50: var(--neutral-30);
   --color-yellow-100: var(--neutral-30);
   --color-yellow-200: var(--neutral-30);
-  --color-yellow-300: var(--brand-10);
-  --color-yellow-400: var(--brand-10);
-  --color-yellow-500: var(--brand-10);
-  --color-yellow-600: var(--brand-10);
-  --color-yellow-700: var(--brand-10);
-  --color-yellow-800: var(--brand-10);
-  --color-yellow-900: var(--brand-10);
-  --color-yellow-950: var(--brand-10);
+  --color-yellow-300: var(--highlight-10);
+  --color-yellow-400: var(--highlight-10);
+  --color-yellow-500: var(--highlight-10);
+  --color-yellow-600: var(--highlight-10);
+  --color-yellow-700: var(--highlight-10);
+  --color-yellow-800: var(--highlight-10);
+  --color-yellow-900: var(--highlight-10);
+  --color-yellow-950: var(--highlight-10);
   --color-amber-50: var(--neutral-30);
   --color-amber-100: var(--neutral-30);
   --color-amber-200: var(--neutral-30);
-  --color-amber-300: var(--brand-10);
-  --color-amber-400: var(--brand-10);
-  --color-amber-500: var(--brand-10);
-  --color-amber-600: var(--brand-10);
-  --color-amber-700: var(--brand-10);
-  --color-orange-500: var(--brand-10);
-  --color-orange-600: var(--brand-10);
-  --color-purple-500: var(--brand-10);
-  --color-purple-600: var(--brand-10);
-  --color-pink-500: var(--brand-10);
-  --color-pink-600: var(--brand-10);
+  --color-amber-300: var(--highlight-10);
+  --color-amber-400: var(--highlight-10);
+  --color-amber-500: var(--highlight-10);
+  --color-amber-600: var(--highlight-10);
+  --color-amber-700: var(--highlight-10);
+  --color-orange-500: var(--highlight-10);
+  --color-orange-600: var(--highlight-10);
+  --color-purple-500: var(--highlight-10);
+  --color-purple-600: var(--highlight-10);
+  --color-pink-500: var(--highlight-10);
+  --color-pink-600: var(--highlight-10);
   /* Radius ladder - Fibonacci (3 → 5 → 8 → 13 → 21 → 34 → 55) */
   --radius-sm: 3px;
   --radius-md: 5px;
