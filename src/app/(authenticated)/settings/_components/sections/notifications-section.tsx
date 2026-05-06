@@ -56,8 +56,8 @@ export function NotificationsSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-gray-900">Notifications</h2>
-        <p className="text-body text-gray-500">Choose which email notifications you receive.</p>
+        <h2 className="text-subheading font-semibold text-highlight-10">Notifications</h2>
+        <p className="text-body text-highlight-10">Choose which email notifications you receive.</p>
       </div>
 
       <div className="space-y-sm">
@@ -68,8 +68,8 @@ export function NotificationsSection() {
             style={{ borderColor: "var(--border)" }}
           >
             <div>
-              <p className="text-body font-medium text-gray-800">{t.label}</p>
-              <p className="text-body text-gray-500">{t.description}</p>
+              <p className="text-body font-medium text-highlight-10">{t.label}</p>
+              <p className="text-body text-highlight-10">{t.description}</p>
             </div>
             <button
               type="button"
@@ -81,7 +81,7 @@ export function NotificationsSection() {
             >
               {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
               <span
-                className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
+                className="top-xs h-md absolute w-md rounded-full bg-surface-60 shadow transition-transform"
                 style={{
                   left: settings[t.id] ? 18 : 2,
                 }}
@@ -94,7 +94,7 @@ export function NotificationsSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="px-sm py-base text-body rounded-lg font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-surface-60"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Preferences

@@ -18,7 +18,7 @@ const today = new Date();
 const dateRange = { start: today, end: addDays(today, 13) };
 
 const rows = [
-  { id: "row-1", label: "Listing A", color: "var(--brand-10)" },
+  { id: "row-1", label: "Listing A", color: "var(--highlight-10)" },
   { id: "row-2", label: "Listing B", color: "var(--status-success)" },
   { id: "row-3", label: "Listing C", color: "var(--status-danger)" },
 ];

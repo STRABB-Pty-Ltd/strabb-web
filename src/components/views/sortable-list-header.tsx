@@ -32,7 +32,7 @@ export function SortableListHeader<T>({
 }: SortableListHeaderProps<T>) {
   return (
     <div
-      className="flex border-b bg-gray-50"
+      className="flex border-b bg-neutral-30"
       style={{ borderColor: "var(--border)", minHeight: "var(--space-lg)" }}
     >
       {columns.map((col) => {
@@ -50,7 +50,7 @@ export function SortableListHeader<T>({
             key={col.key}
             role="columnheader"
             aria-sort={ariaSort}
-            className="px-sm py-sm text-body flex min-w-0 items-center font-semibold tracking-wide text-gray-500 uppercase"
+            className="px-sm py-sm text-body flex min-w-0 items-center font-semibold tracking-wide text-highlight-10 uppercase"
             style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
           >
             {col.filter ? (
@@ -59,7 +59,7 @@ export function SortableListHeader<T>({
               <button
                 type="button"
                 onClick={() => onSort(col.key)}
-                className="gap-xs flex items-center hover:text-gray-700"
+                className="gap-xs flex items-center hover:text-highlight-10"
               >
                 {col.label}
                 {isActive ? (

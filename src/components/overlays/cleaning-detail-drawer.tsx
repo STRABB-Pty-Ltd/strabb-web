@@ -202,28 +202,28 @@ export function CleaningDetailDrawer() {
       title="Cleaning task"
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {open && isLoading && <p className="text-body text-gray-400">Loading task…</p>}
-      {open && !isLoading && !task && <p className="text-body text-gray-500">Task not found.</p>}
+      {open && isLoading && <p className="text-body text-highlight-10">Loading task…</p>}
+      {open && !isLoading && !task && <p className="text-body text-highlight-10">Task not found.</p>}
       {displayTask && (
         <div className="space-y-md">
           <div>
-            <p className="text-body text-gray-500">{placeLabel}</p>
-            <p className="text-body font-medium text-gray-800">{placeValue}</p>
+            <p className="text-body text-highlight-10">{placeLabel}</p>
+            <p className="text-body font-medium text-highlight-10">{placeValue}</p>
           </div>
 
           <div>
-            <p className="text-body text-gray-500">Scheduled</p>
-            <p className="text-body font-medium text-gray-800">
+            <p className="text-body text-highlight-10">Scheduled</p>
+            <p className="text-body font-medium text-highlight-10">
               {formatInPropertyTimezone(displayTask.scheduledDate, tz, "d MMM yyyy, HH:mm")}
             </p>
           </div>
 
           <div>
-            <p className="text-body text-gray-500">Status</p>
+            <p className="text-body text-highlight-10">Status</p>
             <span
               className="px-base py-xs text-body inline-block rounded-md font-medium"
               style={{
-                backgroundColor: statusColors[status] ?? "var(--brand-10)",
+                backgroundColor: statusColors[status] ?? "var(--highlight-10)",
                 color: "var(--surface-60)",
               }}
             >
@@ -233,12 +233,12 @@ export function CleaningDetailDrawer() {
 
           <div className="space-y-xs">
             <div className="flex items-center justify-between">
-              <p className="text-body font-semibold text-gray-700">Cleaner</p>
+              <p className="text-body font-semibold text-highlight-10">Cleaner</p>
               {!editing && !isCompleted && (
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
-                  className="text-body font-medium text-gray-500 hover:text-gray-700"
+                  className="text-body font-medium text-highlight-10 hover:text-highlight-10"
                 >
                   Edit
                 </button>
@@ -247,12 +247,12 @@ export function CleaningDetailDrawer() {
 
             {!editing ? (
               <div className="text-body space-y-xs">
-                <p className="text-gray-800">{displayTask.cleanerName || "Unassigned"}</p>
+                <p className="text-highlight-10">{displayTask.cleanerName || "Unassigned"}</p>
                 {displayTask.cleanerEmail && (
-                  <p className="text-gray-500">{displayTask.cleanerEmail}</p>
+                  <p className="text-highlight-10">{displayTask.cleanerEmail}</p>
                 )}
                 {displayTask.cleanerPhone && (
-                  <p className="text-gray-500">{displayTask.cleanerPhone}</p>
+                  <p className="text-highlight-10">{displayTask.cleanerPhone}</p>
                 )}
               </div>
             ) : (
@@ -289,10 +289,10 @@ export function CleaningDetailDrawer() {
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body font-semibold text-gray-700">Notes</p>
+            <p className="text-body font-semibold text-highlight-10">Notes</p>
             {!editing ? (
-              <p className="text-body whitespace-pre-wrap text-gray-800">
-                {displayTask.notes || <span className="text-gray-400">None</span>}
+              <p className="text-body whitespace-pre-wrap text-highlight-10">
+                {displayTask.notes || <span className="text-highlight-10">None</span>}
               </p>
             ) : (
               <textarea
@@ -307,16 +307,16 @@ export function CleaningDetailDrawer() {
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body font-semibold text-gray-700">Linked ticket</p>
+            <p className="text-body font-semibold text-highlight-10">Linked ticket</p>
             {displayTask.linkedTicketId && linkedTicket ? (
               <div className="space-y-xs">
-                <p className="text-body text-gray-800">{linkedTicket.description}</p>
-                <p className="text-body text-gray-500">Status: {linkedTicket.status}</p>
+                <p className="text-body text-highlight-10">{linkedTicket.description}</p>
+                <p className="text-body text-highlight-10">Status: {linkedTicket.status}</p>
                 <button
                   type="button"
                   onClick={handleUnlink}
                   disabled={unlinkTicket.isPending}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-gray-700 disabled:opacity-60"
+                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10 disabled:opacity-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {unlinkTicket.isPending ? "Removing…" : "Unlink"}
@@ -327,7 +327,7 @@ export function CleaningDetailDrawer() {
                 <select
                   value={selectedTicketId}
                   onChange={(e) => setSelectedTicketId(e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-white"
+                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <option value="">Choose a ticket…</option>
@@ -342,7 +342,7 @@ export function CleaningDetailDrawer() {
                     type="button"
                     onClick={handleLink}
                     disabled={!selectedTicketId || linkTicket.isPending}
-                    className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                    className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
                     style={{
                       backgroundColor: "var(--strabb-secondary)",
                       color: "var(--surface-60)",
@@ -356,21 +356,21 @@ export function CleaningDetailDrawer() {
                       setLinkingMode(false);
                       setSelectedTicketId("");
                     }}
-                    className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                    className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                     style={{ borderColor: "var(--border)" }}
                   >
                     Cancel
                   </button>
                 </div>
                 {candidateTickets.length === 0 && (
-                  <p className="text-body text-gray-500">No open tickets for this listing.</p>
+                  <p className="text-body text-highlight-10">No open tickets for this listing.</p>
                 )}
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => setLinkingMode(true)}
-                className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                 style={{ borderColor: "var(--border)" }}
               >
                 Link to ticket
@@ -384,7 +384,7 @@ export function CleaningDetailDrawer() {
                 type="button"
                 onClick={handleSave}
                 disabled={updateTask.isPending}
-                className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
                 style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
               >
                 {updateTask.isPending ? "Saving…" : "Save"}
@@ -398,7 +398,7 @@ export function CleaningDetailDrawer() {
                   setCleanerPhone(displayTask.cleanerPhone ?? "");
                   setNotes(displayTask.notes ?? "");
                 }}
-                className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                 style={{ borderColor: "var(--border)" }}
               >
                 Cancel
@@ -419,7 +419,7 @@ export function CleaningDetailDrawer() {
                 type="button"
                 onClick={handleResend}
                 disabled={!canResend || resendNotification.isPending}
-                className="px-sm py-base text-body rounded-lg border font-medium text-gray-700 disabled:opacity-60"
+                className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10 disabled:opacity-60"
                 style={{ borderColor: "var(--border)" }}
                 title={!canResend ? "Needs a cleaner email" : undefined}
               >

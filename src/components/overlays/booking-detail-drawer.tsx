@@ -90,18 +90,18 @@ export function BookingDetailDrawer() {
       title="Booking"
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {open && isLoading && <p className="text-body text-gray-400">Loading booking…</p>}
+      {open && isLoading && <p className="text-body text-highlight-10">Loading booking…</p>}
       {open && !isLoading && !booking && (
-        <p className="text-body text-gray-500">Booking not found.</p>
+        <p className="text-body text-highlight-10">Booking not found.</p>
       )}
       {displayBooking && (
         <div className="space-y-md">
           {isConflicted && (
-            <div className="p-sm rounded-lg border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
-              <p className="text-body font-medium text-red-800 dark:text-red-200">
+            <div className="p-sm rounded-lg border border-neutral-30 bg-neutral-30 dark:border-status-danger dark:bg-status-danger">
+              <p className="text-body font-medium text-status-danger dark:text-neutral-30">
                 Date conflict detected
               </p>
-              <p className="text-body mt-xs text-red-700 dark:text-red-300">
+              <p className="text-body mt-xs text-status-danger dark:text-status-danger">
                 This booking overlaps with another booking on a different listing for the same
                 property. Resolve the conflict on the booking platform, then dismiss it here.
               </p>
@@ -109,7 +109,7 @@ export function BookingDetailDrawer() {
                 type="button"
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
-                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-red-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-status-danger disabled:cursor-not-allowed disabled:opacity-60"
                 style={{
                   borderColor: "var(--status-danger)",
                   backgroundColor: "var(--surface-60)",
@@ -121,20 +121,20 @@ export function BookingDetailDrawer() {
           )}
 
           <div>
-            <p className="text-body text-gray-500">Listing</p>
-            <p className="text-body font-medium text-gray-800">{listingName}</p>
+            <p className="text-body text-highlight-10">Listing</p>
+            <p className="text-body font-medium text-highlight-10">{listingName}</p>
           </div>
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-gray-500">Check-in</p>
-              <p className="text-body font-medium text-gray-800">
+              <p className="text-body text-highlight-10">Check-in</p>
+              <p className="text-body font-medium text-highlight-10">
                 {formatInPropertyTimezone(displayBooking.checkIn, tz)}
               </p>
             </div>
             <div>
-              <p className="text-body text-gray-500">Check-out</p>
-              <p className="text-body font-medium text-gray-800">
+              <p className="text-body text-highlight-10">Check-out</p>
+              <p className="text-body font-medium text-highlight-10">
                 {formatInPropertyTimezone(displayBooking.checkOut, tz)}
               </p>
             </div>
@@ -142,22 +142,22 @@ export function BookingDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-gray-500">Platform</p>
-              <p className="text-body text-gray-800">{displayBooking.source}</p>
+              <p className="text-body text-highlight-10">Platform</p>
+              <p className="text-body text-highlight-10">{displayBooking.source}</p>
             </div>
             <div>
-              <p className="text-body text-gray-500">Status</p>
-              <p className="text-body text-gray-800 capitalize">{displayBooking.status}</p>
+              <p className="text-body text-highlight-10">Status</p>
+              <p className="text-body text-highlight-10 capitalize">{displayBooking.status}</p>
             </div>
           </div>
 
           {(displayBooking.guestName || displayBooking.guestEmail) && (
             <div>
-              <p className="text-body text-gray-500">Guest</p>
-              <p className="text-body text-gray-800">
+              <p className="text-body text-highlight-10">Guest</p>
+              <p className="text-body text-highlight-10">
                 {displayBooking.guestName ?? "-"}
                 {displayBooking.guestEmail && (
-                  <span className="ml-xs text-gray-500">({displayBooking.guestEmail})</span>
+                  <span className="ml-xs text-highlight-10">({displayBooking.guestEmail})</span>
                 )}
               </p>
             </div>
@@ -165,8 +165,8 @@ export function BookingDetailDrawer() {
 
           {displayBooking.externalBookingId && (
             <div>
-              <p className="text-body text-gray-500">External ID</p>
-              <p className="font-data text-body text-gray-700">
+              <p className="text-body text-highlight-10">External ID</p>
+              <p className="font-data text-body text-highlight-10">
                 {displayBooking.externalBookingId}
               </p>
             </div>
@@ -174,13 +174,13 @@ export function BookingDetailDrawer() {
 
           {displayBooking.rawSummary && (
             <div>
-              <p className="text-body text-gray-500">iCal summary</p>
-              <p className="text-body text-gray-700">{displayBooking.rawSummary}</p>
+              <p className="text-body text-highlight-10">iCal summary</p>
+              <p className="text-body text-highlight-10">{displayBooking.rawSummary}</p>
             </div>
           )}
 
           <div className="space-y-xs">
-            <label htmlFor="booking-notes" className="text-body font-semibold text-gray-700">
+            <label htmlFor="booking-notes" className="text-body font-semibold text-highlight-10">
               Notes
             </label>
             <textarea
@@ -197,7 +197,7 @@ export function BookingDetailDrawer() {
                 type="button"
                 onClick={handleSaveNotes}
                 disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
-                className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
                 style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
               >
                 {updateNotes.isPending ? "Saving…" : "Save notes"}

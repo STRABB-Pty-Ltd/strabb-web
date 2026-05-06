@@ -23,7 +23,7 @@ const formatValue = (value: string | number, type: KPIData["type"]) => {
 export function ComparePanel({ current, comparison }: ComparePanelProps) {
   return (
     <div className="p-md rounded-xl" style={{ backgroundColor: "var(--surface-card)" }}>
-      <h3 className="mb-sm text-subheading font-semibold" style={{ color: "var(--brand-10)" }}>
+      <h3 className="mb-sm text-subheading font-semibold" style={{ color: "var(--highlight-10)" }}>
         Period Comparison
       </h3>
       <div className="space-y-base">
@@ -39,7 +39,7 @@ export function ComparePanel({ current, comparison }: ComparePanelProps) {
             <div
               key={kpi.label}
               className="px-sm py-base text-body flex items-center justify-between rounded-lg"
-              style={{ backgroundColor: "var(--surface-60)", color: "var(--brand-10)" }}
+              style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
             >
               <span>{kpi.label}</span>
               <div className="gap-sm flex items-center">

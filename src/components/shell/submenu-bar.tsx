@@ -160,7 +160,7 @@ export function SubmenuBar() {
         {currentPage === "messaging" ? (
           <Link
             href="/messaging/scheduled"
-            className="gap-xs px-base py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold hover:bg-gray-100"
+            className="gap-xs px-base py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold hover:bg-neutral-30"
           >
             <CalendarClock size={16} />
             Scheduled messages
@@ -224,10 +224,10 @@ export function SubmenuBar() {
                 </button>
                 {moreOpen && (
                   <div
-                    className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-white shadow-md"
+                    className="mt-xs py-xs absolute top-full left-0 z-50 rounded-lg bg-surface-60 shadow-md"
                     style={{ minWidth: 144 }} // = --space-xl + --space-xl + --space-lg (Fibonacci 144)
                   >
-                    <div className="px-sm py-base text-body text-gray-400">Coming soon</div>
+                    <div className="px-sm py-base text-body text-highlight-10">Coming soon</div>
                   </div>
                 )}
               </div>

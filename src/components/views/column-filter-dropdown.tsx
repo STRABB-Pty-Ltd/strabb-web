@@ -57,7 +57,15 @@ export function ColumnFilterDropdown({ label, filter }: ColumnFilterDropdownProp
         </span>
       </Menu.Trigger>
       <Menu.Portal>
-        <Menu.Positioner sideOffset={4} align="start" style={{ zIndex: 60 }}>
+        <Menu.Positioner
+          sideOffset={4}
+          align="start"
+          // Keep the popup inside the canvas content area: top=canvas-top+space-md
+          // (114+21=135), sides=space-md (21). Numeric literals mirror design-locked
+          // CSS values so the popup never protrudes into the topnav/submenu rail.
+          collisionPadding={{ top: 135, right: 21, bottom: 21, left: 21 }}
+          style={{ zIndex: 60 }}
+        >
           <Menu.Popup
             className="py-xs rounded-lg shadow-md outline-none"
             style={{

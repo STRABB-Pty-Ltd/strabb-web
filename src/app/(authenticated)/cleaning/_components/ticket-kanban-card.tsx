@@ -9,8 +9,8 @@ import type { Ticket } from "@/types/ticket";
 const priorityColors: Record<string, { bg: string; text: string }> = {
   urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
   high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
-  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  medium: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
+  low: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
 };
 
 const statusColors: Record<string, string> = {
@@ -35,13 +35,13 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
     <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-xs flex items-center">
-          <Wrench size={12} className="shrink-0 text-gray-500" />
-          <span className="text-body truncate font-medium text-gray-800">
+          <Wrench size={12} className="shrink-0 text-highlight-10" />
+          <span className="text-body truncate font-medium text-highlight-10">
             {propertyName ?? ticket.propertyId.slice(0, 8)}
           </span>
         </div>
 
-        <p className="text-body line-clamp-2 text-gray-700">{ticket.description}</p>
+        <p className="text-body line-clamp-2 text-highlight-10">{ticket.description}</p>
 
         <div className="gap-base flex items-center">
           <span
@@ -53,7 +53,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
           <span
             className="px-xs py-xs text-body rounded-sm font-medium"
             style={{
-              backgroundColor: statusColors[ticket.status] ?? "var(--brand-10)",
+              backgroundColor: statusColors[ticket.status] ?? "var(--highlight-10)",
               color: "var(--surface-60)",
             }}
           >
@@ -61,7 +61,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
           </span>
         </div>
 
-        <div className="text-body text-gray-500">
+        <div className="text-body text-highlight-10">
           Reported {formatInPropertyTimezone(ticket.dateReported, tz, "d MMM")}
         </div>
       </div>

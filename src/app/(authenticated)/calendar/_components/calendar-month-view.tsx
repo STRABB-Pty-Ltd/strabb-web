@@ -22,8 +22,8 @@ const typeColors: Record<string, string> = {
 };
 
 const typeTextColors: Record<string, string> = {
-  booking: "var(--brand-10)",
-  vacancy: "var(--brand-10)",
+  booking: "var(--highlight-10)",
+  vacancy: "var(--highlight-10)",
 };
 
 // Cleaning events on the calendar grid adopt the same status-driven palette

@@ -234,25 +234,25 @@ export function TicketDetailDrawer() {
       title="Ticket"
       accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
     >
-      {open && isLoading && <p className="text-body text-gray-400">Loading ticket…</p>}
+      {open && isLoading && <p className="text-body text-highlight-10">Loading ticket…</p>}
       {open && !isLoading && !ticket && (
-        <p className="text-body text-gray-500">Ticket not found.</p>
+        <p className="text-body text-highlight-10">Ticket not found.</p>
       )}
       {displayTicket && (
         <div className="space-y-md">
           <div>
-            <p className="text-body text-gray-500">{placeLabel}</p>
-            <p className="text-body font-medium text-gray-800">{placeValue}</p>
+            <p className="text-body text-highlight-10">{placeLabel}</p>
+            <p className="text-body font-medium text-highlight-10">{placeValue}</p>
           </div>
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-gray-500">Priority</p>
+              <p className="text-body text-highlight-10">Priority</p>
               {editing ? (
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-white"
+                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {TICKET_PRIORITY_OPTIONS.map((o) => (
@@ -262,16 +262,16 @@ export function TicketDetailDrawer() {
                   ))}
                 </select>
               ) : (
-                <p className="text-body font-medium text-gray-800">{priority}</p>
+                <p className="text-body font-medium text-highlight-10">{priority}</p>
               )}
             </div>
             <div>
-              <p className="text-body text-gray-500">Status</p>
+              <p className="text-body text-highlight-10">Status</p>
               {editing ? (
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TicketStatus)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-white"
+                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {TICKET_STATUS_OPTIONS.map((o) => (
@@ -284,7 +284,7 @@ export function TicketDetailDrawer() {
                 <span
                   className="px-base py-xs text-body inline-block rounded-md font-medium"
                   style={{
-                    backgroundColor: statusColors[status] ?? "var(--brand-10)",
+                    backgroundColor: statusColors[status] ?? "var(--highlight-10)",
                     color: "var(--surface-60)",
                   }}
                 >
@@ -296,11 +296,11 @@ export function TicketDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-gray-500">Reported</p>
+              <p className="text-body text-highlight-10">Reported</p>
               <p className="font-data text-body">{fmtDate(displayTicket.dateReported, tz)}</p>
             </div>
             <div>
-              <p className="text-body text-gray-500">Scheduled</p>
+              <p className="text-body text-highlight-10">Scheduled</p>
               {editing ? (
                 <input
                   type="datetime-local"
@@ -316,7 +316,7 @@ export function TicketDetailDrawer() {
           </div>
 
           <div>
-            <p className="text-body text-gray-500">Description</p>
+            <p className="text-body text-highlight-10">Description</p>
             {editing ? (
               <textarea
                 value={description}
@@ -326,7 +326,7 @@ export function TicketDetailDrawer() {
                 style={{ borderColor: "var(--border)" }}
               />
             ) : (
-              <p className="text-body whitespace-pre-wrap text-gray-800">
+              <p className="text-body whitespace-pre-wrap text-highlight-10">
                 {displayTicket.description}
               </p>
             )}
@@ -334,7 +334,7 @@ export function TicketDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-gray-500">Cost</p>
+              <p className="text-body text-highlight-10">Cost</p>
               {editing ? (
                 <input
                   type="number"
@@ -353,13 +353,13 @@ export function TicketDetailDrawer() {
               )}
             </div>
             <div>
-              <p className="text-body text-gray-500">Completed</p>
+              <p className="text-body text-highlight-10">Completed</p>
               <p className="font-data text-body">{fmtDate(displayTicket.dateCompleted, tz)}</p>
             </div>
           </div>
 
           <div>
-            <p className="text-body text-gray-500">Notes</p>
+            <p className="text-body text-highlight-10">Notes</p>
             {editing ? (
               <textarea
                 value={notes}
@@ -369,25 +369,25 @@ export function TicketDetailDrawer() {
                 style={{ borderColor: "var(--border)" }}
               />
             ) : (
-              <p className="text-body whitespace-pre-wrap text-gray-800">
-                {displayTicket.notes || <span className="text-gray-400">None</span>}
+              <p className="text-body whitespace-pre-wrap text-highlight-10">
+                {displayTicket.notes || <span className="text-highlight-10">None</span>}
               </p>
             )}
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body font-semibold text-gray-700">Linked clean</p>
+            <p className="text-body font-semibold text-highlight-10">Linked clean</p>
             {linkedClean ? (
               <div className="space-y-xs">
-                <p className="text-body text-gray-800">
+                <p className="text-body text-highlight-10">
                   {formatInPropertyTimezone(linkedClean.scheduledTime, tz, "d MMM yyyy, HH:mm")}
                 </p>
-                <p className="text-body text-gray-500">Status: {linkedClean.status}</p>
+                <p className="text-body text-highlight-10">Status: {linkedClean.status}</p>
                 <button
                   type="button"
                   onClick={handleUnlinkClean}
                   disabled={unlinkClean.isPending}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-gray-700 disabled:opacity-60"
+                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10 disabled:opacity-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {unlinkClean.isPending ? "Removing…" : "Unlink"}
@@ -398,7 +398,7 @@ export function TicketDetailDrawer() {
                 <select
                   value={selectedCleanId}
                   onChange={(e) => setSelectedCleanId(e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-white"
+                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <option value="">Choose a clean…</option>
@@ -414,7 +414,7 @@ export function TicketDetailDrawer() {
                     type="button"
                     onClick={handleLinkClean}
                     disabled={!selectedCleanId || linkClean.isPending}
-                    className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                    className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
                     style={{
                       backgroundColor: "var(--strabb-secondary)",
                       color: "var(--surface-60)",
@@ -428,21 +428,21 @@ export function TicketDetailDrawer() {
                       setLinkingMode(false);
                       setSelectedCleanId("");
                     }}
-                    className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                    className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                     style={{ borderColor: "var(--border)" }}
                   >
                     Cancel
                   </button>
                 </div>
                 {candidateCleans.length === 0 && (
-                  <p className="text-body text-gray-500">No open cleans for this listing.</p>
+                  <p className="text-body text-highlight-10">No open cleans for this listing.</p>
                 )}
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => setLinkingMode(true)}
-                className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                 style={{ borderColor: "var(--border)" }}
               >
                 Link to clean
@@ -459,7 +459,7 @@ export function TicketDetailDrawer() {
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                   style={{ borderColor: "var(--border)" }}
                 >
                   Edit
@@ -487,7 +487,7 @@ export function TicketDetailDrawer() {
                     <button
                       type="button"
                       onClick={() => setConfirmDelete(false)}
-                      className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                      className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                       style={{ borderColor: "var(--border)" }}
                     >
                       Cancel
@@ -501,7 +501,7 @@ export function TicketDetailDrawer() {
                   type="button"
                   onClick={handleSave}
                   disabled={updateTicket.isPending}
-                  className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+                  className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
                   style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
                 >
                   {updateTicket.isPending ? "Saving…" : "Save"}
@@ -509,7 +509,7 @@ export function TicketDetailDrawer() {
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-gray-700"
+                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
                   style={{ borderColor: "var(--border)" }}
                 >
                   Cancel

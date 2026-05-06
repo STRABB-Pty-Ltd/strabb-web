@@ -23,12 +23,12 @@ export function EmptyState({ icon: Icon, title, description, action, compact }: 
       }`}
     >
       {!compact && Icon && (
-        <Icon size={34} className="opacity-40" style={{ color: "var(--brand-10)" }} />
+        <Icon size={34} className="opacity-40" style={{ color: "var(--highlight-10)" }} />
       )}
-      <p className="text-body font-medium" style={{ color: "var(--brand-10)" }}>
+      <p className="text-body font-medium" style={{ color: "var(--highlight-10)" }}>
         {title}
       </p>
-      {description && <p className="text-body max-w-xs text-gray-500">{description}</p>}
+      {description && <p className="text-body max-w-xs text-highlight-10">{description}</p>}
       {action && (
         <Button onClick={action.onClick} className="mt-xs" size="sm">
           {action.label}

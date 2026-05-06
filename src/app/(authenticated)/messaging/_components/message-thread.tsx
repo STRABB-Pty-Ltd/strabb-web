@@ -41,9 +41,9 @@ export function MessageThread({
       <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-body font-semibold text-gray-800">{message.guestName}</h3>
-            <p className="text-body text-gray-500">{message.listingName}</p>
-            <p className="text-body text-gray-400">
+            <h3 className="text-body font-semibold text-highlight-10">{message.guestName}</h3>
+            <p className="text-body text-highlight-10">{message.listingName}</p>
+            <p className="text-body text-highlight-10">
               {message.checkIn} &ndash; {message.checkOut}
             </p>
           </div>
@@ -66,7 +66,7 @@ export function MessageThread({
               className="px-sm py-base max-w-[80%]"
               style={{
                 backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
-                color: msg.isGuest ? "var(--brand-10)" : "var(--surface-60)",
+                color: msg.isGuest ? "var(--highlight-10)" : "var(--surface-60)",
                 borderRadius: msg.isGuest
                   ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
                   : "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)",
@@ -93,14 +93,14 @@ export function MessageThread({
         <button
           type="button"
           onClick={onFlag}
-          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-neutral-30 text-highlight-10 hover:bg-neutral-30"
         >
           Flag
         </button>
         <button
           type="button"
           onClick={onConvertTicket}
-          className="px-sm py-xs text-body rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"
+          className="px-sm py-xs text-body rounded-full border border-neutral-30 text-highlight-10 hover:bg-neutral-30"
         >
           Create Ticket
         </button>

@@ -78,7 +78,7 @@ export default function SyncLogsPage() {
           <span
             className="px-base py-xs text-body rounded-md font-medium"
             style={{
-              backgroundColor: matched ?? "var(--brand-10)",
+              backgroundColor: matched ?? "var(--highlight-10)",
               color: "var(--surface-60)",
             }}
           >
@@ -101,7 +101,7 @@ export default function SyncLogsPage() {
       key: "completedAt",
       header: "Completed",
       render: (_v, row) => (
-        <span className="font-data text-body text-gray-500">
+        <span className="font-data text-body text-highlight-10">
           {row.completedAt ? format(new Date(row.completedAt), "HH:mm:ss") : "-"}
         </span>
       ),
@@ -110,7 +110,7 @@ export default function SyncLogsPage() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "-"}</span>
+        <span className="text-body truncate text-highlight-10">{row.errorMessage ?? "-"}</span>
       ),
     },
   ];
@@ -129,7 +129,7 @@ export default function SyncLogsPage() {
             onClick={handleTrigger}
             disabled={trigger.isPending}
             title={RATE_LIMIT_TOOLTIP}
-            className="gap-xs px-sm py-base text-body inline-flex items-center rounded-lg font-medium text-white disabled:opacity-60"
+            className="gap-xs px-sm py-base text-body inline-flex items-center rounded-lg font-medium text-surface-60 disabled:opacity-60"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <RefreshCw size={14} className={trigger.isPending ? "animate-spin" : undefined} />
@@ -138,10 +138,10 @@ export default function SyncLogsPage() {
         }
       />
 
-      <p className="text-body text-gray-500">{RATE_LIMIT_TOOLTIP}.</p>
+      <p className="text-body text-highlight-10">{RATE_LIMIT_TOOLTIP}.</p>
 
       {isLoading ? (
-        <p className="text-body text-gray-400">Loading sync logs…</p>
+        <p className="text-body text-highlight-10">Loading sync logs…</p>
       ) : (
         <div className="space-y-sm">
           <DataTable<SyncLogResponse>
@@ -165,7 +165,7 @@ interface PaginationProps {
 function Pagination({ meta, page, onChange }: PaginationProps) {
   if (meta.totalPages <= 1) return null;
   return (
-    <div className="gap-base text-body flex items-center justify-end text-gray-500">
+    <div className="gap-base text-body flex items-center justify-end text-highlight-10">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}

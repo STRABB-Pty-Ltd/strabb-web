@@ -42,13 +42,13 @@ export function GeneralSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-gray-900">General</h2>
-        <p className="text-body text-gray-500">Basic account and display settings.</p>
+        <h2 className="text-subheading font-semibold text-highlight-10">General</h2>
+        <p className="text-body text-highlight-10">Basic account and display settings.</p>
       </div>
 
       <div className="space-y-sm">
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">Company Name</label>
+          <label className="mb-xs text-body block font-medium text-highlight-10">Company Name</label>
           <input
             type="text"
             value={companyName}
@@ -59,7 +59,7 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">
+          <label className="mb-xs text-body block font-medium text-highlight-10">
             Default Timezone
           </label>
           <select
@@ -77,7 +77,7 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">
+          <label className="mb-xs text-body block font-medium text-highlight-10">
             Default Currency
           </label>
           <select
@@ -95,7 +95,7 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">Appearance</label>
+          <label className="mb-xs text-body block font-medium text-highlight-10">Appearance</label>
           <div
             className="p-xs inline-flex rounded-lg border"
             style={{ borderColor: "var(--border)" }}
@@ -111,7 +111,7 @@ export function GeneralSection() {
                   className="gap-xs px-sm py-xs text-body flex items-center rounded-sm font-medium transition-colors"
                   style={{
                     backgroundColor: active ? "var(--strabb-secondary)" : "transparent",
-                    color: active ? "var(--surface-60)" : "var(--brand-10)",
+                    color: active ? "var(--surface-60)" : "var(--highlight-10)",
                   }}
                   aria-pressed={active}
                 >
@@ -127,7 +127,7 @@ export function GeneralSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="px-sm py-base text-body rounded-lg font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-surface-60"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Changes

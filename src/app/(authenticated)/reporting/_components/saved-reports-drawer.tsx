@@ -25,9 +25,9 @@ export function SavedReportsDrawer() {
   };
 
   return (
-    <div className="p-sm rounded-lg border bg-white" style={{ borderColor: "var(--border)" }}>
+    <div className="p-sm rounded-lg border bg-surface-60" style={{ borderColor: "var(--border)" }}>
       <div className="mb-sm flex items-center justify-between">
-        <h3 className="text-body font-semibold text-gray-700">Saved Reports</h3>
+        <h3 className="text-body font-semibold text-highlight-10">Saved Reports</h3>
         <button
           type="button"
           onClick={() => setShowInput(true)}
@@ -53,7 +53,7 @@ export function SavedReportsDrawer() {
           <button
             type="button"
             onClick={handleSave}
-            className="px-sm py-xs text-body rounded-sm text-white"
+            className="px-sm py-xs text-body rounded-sm text-surface-60"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Save
@@ -64,7 +64,7 @@ export function SavedReportsDrawer() {
               setShowInput(false);
               setNewName("");
             }}
-            className="px-sm py-xs text-body rounded-sm text-gray-500 hover:bg-gray-100"
+            className="px-sm py-xs text-body rounded-sm text-highlight-10 hover:bg-neutral-30"
           >
             Cancel
           </button>
@@ -83,11 +83,11 @@ export function SavedReportsDrawer() {
           {savedReports.map((report) => (
             <div
               key={report.id}
-              className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-gray-50"
+              className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-neutral-30"
             >
               <div>
-                <p className="text-body font-medium text-gray-700">{report.name}</p>
-                <p className="text-body text-gray-400">{report.timeframe.replace("_", " ")}</p>
+                <p className="text-body font-medium text-highlight-10">{report.name}</p>
+                <p className="text-body text-highlight-10">{report.timeframe.replace("_", " ")}</p>
               </div>
               <div className="gap-xs flex">
                 <button
@@ -103,7 +103,7 @@ export function SavedReportsDrawer() {
                   type="button"
                   onClick={() => setPendingDeleteId(report.id)}
                   aria-label="Delete saved report"
-                  className="p-xs rounded-sm text-gray-400 hover:text-red-500"
+                  className="p-xs rounded-sm text-highlight-10 hover:text-status-danger"
                   data-no-elevate
                 >
                   <Trash2 size={12} />

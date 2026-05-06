@@ -111,8 +111,8 @@ export function PhoneSection() {
 
   const header = (
     <div>
-      <h2 className="text-subheading font-semibold text-gray-900">Phone</h2>
-      <p className="text-body text-gray-500">
+      <h2 className="text-subheading font-semibold text-highlight-10">Phone</h2>
+      <p className="text-body text-highlight-10">
         Verify a mobile number to receive and send SMS for guest messaging.
       </p>
     </div>
@@ -122,7 +122,7 @@ export function PhoneSection() {
     return (
       <div className="space-y-md">
         {header}
-        <p className="text-body text-gray-400">Loading…</p>
+        <p className="text-body text-highlight-10">Loading…</p>
       </div>
     );
   }
@@ -144,8 +144,8 @@ export function PhoneSection() {
                 style={{ color: "var(--semantic-success)", marginTop: "var(--hairline)" }}
               />
               <div>
-                <p className="text-body font-medium text-gray-800">{status?.phoneNumber}</p>
-                <p className="text-body text-gray-500">
+                <p className="text-body font-medium text-highlight-10">{status?.phoneNumber}</p>
+                <p className="text-body text-highlight-10">
                   Verified {formatVerifiedAt(status?.phoneVerifiedAt ?? null)}
                 </p>
               </div>
@@ -154,7 +154,7 @@ export function PhoneSection() {
               <button
                 type="button"
                 onClick={() => setConfirmRemove(true)}
-                className="px-sm py-xs text-body rounded-lg border font-medium text-gray-700 hover:bg-gray-50"
+                className="px-sm py-xs text-body rounded-lg border font-medium text-highlight-10 hover:bg-neutral-30"
                 style={{ borderColor: "var(--border)" }}
               >
                 Remove phone
@@ -173,7 +173,7 @@ export function PhoneSection() {
                 <button
                   type="button"
                   onClick={() => setConfirmRemove(false)}
-                  className="px-sm py-xs text-body rounded-lg border font-medium text-gray-700"
+                  className="px-sm py-xs text-body rounded-lg border font-medium text-highlight-10"
                   style={{ borderColor: "var(--border)" }}
                 >
                   Cancel
@@ -186,11 +186,11 @@ export function PhoneSection() {
 
       {isPending && (
         <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-          <p className="mb-sm text-body text-gray-700">
+          <p className="mb-sm text-body text-highlight-10">
             We sent a verification code to your phone. Enter it below to confirm.
           </p>
           <div className="space-y-xs">
-            <label className="text-body block font-medium text-gray-700" htmlFor="otp-input">
+            <label className="text-body block font-medium text-highlight-10" htmlFor="otp-input">
               Verification code
             </label>
             <input
@@ -220,7 +220,7 @@ export function PhoneSection() {
               type="button"
               onClick={handleConfirm}
               disabled={confirmVerification.isPending || otpInput.length === 0}
-              className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {confirmVerification.isPending ? "Verifying…" : "Verify"}
@@ -229,7 +229,7 @@ export function PhoneSection() {
               type="button"
               onClick={handleClear}
               disabled={clearPhone.isPending}
-              className="px-sm py-base text-body font-medium text-gray-500 hover:text-gray-700"
+              className="px-sm py-base text-body font-medium text-highlight-10 hover:text-highlight-10"
             >
               Cancel
             </button>
@@ -244,7 +244,7 @@ export function PhoneSection() {
                 Could round to 13 (--space-sm) if visually acceptable. Left as-is to preserve icon alignment. */}
             <Phone size={18} style={{ color: "var(--strabb-secondary)", marginTop: 10 }} />
             <div className="space-y-xs flex-1">
-              <label className="text-body block font-medium text-gray-700" htmlFor="phone-input">
+              <label className="text-body block font-medium text-highlight-10" htmlFor="phone-input">
                 Mobile number
               </label>
               <input
@@ -265,7 +265,7 @@ export function PhoneSection() {
                   {phoneError}
                 </p>
               )}
-              <p className="text-body text-gray-500">
+              <p className="text-body text-highlight-10">
                 Include your country code, e.g. +61 for Australia.
               </p>
             </div>
@@ -275,7 +275,7 @@ export function PhoneSection() {
               type="button"
               onClick={handleRequest}
               disabled={requestVerification.isPending || cooldown > 0}
-              className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {requestVerification.isPending
@@ -290,17 +290,17 @@ export function PhoneSection() {
 
       {usage && (
         <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-          <h3 className="mb-sm text-body font-semibold text-gray-700">SMS usage today</h3>
+          <h3 className="mb-sm text-body font-semibold text-highlight-10">SMS usage today</h3>
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-gray-500">You</p>
-              <p className="font-data text-subheading font-semibold text-gray-900">
+              <p className="text-body text-highlight-10">You</p>
+              <p className="font-data text-subheading font-semibold text-highlight-10">
                 {usage.userTodayCount} / {usage.userDailyCap}
               </p>
             </div>
             <div>
-              <p className="text-body text-gray-500">Your team</p>
-              <p className="font-data text-subheading font-semibold text-gray-900">
+              <p className="text-body text-highlight-10">Your team</p>
+              <p className="font-data text-subheading font-semibold text-highlight-10">
                 {usage.tenantTodayCount} / {usage.tenantDailyCap}
               </p>
             </div>

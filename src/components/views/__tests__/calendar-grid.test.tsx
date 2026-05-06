@@ -56,7 +56,7 @@ describe("CalendarGrid", () => {
       label: `Event ${i}`,
       start: today,
       end: today,
-      color: "var(--brand-10)",
+      color: "var(--highlight-10)",
     }));
     render(<CalendarGrid {...defaultProps} events={events} maxEventsPerCell={3} />);
     expect(screen.getAllByText("+2 more").length).toBeGreaterThan(0);

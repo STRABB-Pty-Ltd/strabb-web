@@ -22,8 +22,8 @@ const statusColors: Record<string, string> = {
 const priorityColors: Record<string, { bg: string; text: string }> = {
   urgent: { bg: "var(--row-alt)", text: "var(--status-danger)" },
   high: { bg: "var(--row-alt)", text: "var(--status-danger)" },
-  medium: { bg: "var(--row-alt)", text: "var(--brand-10)" },
-  low: { bg: "var(--row-alt)", text: "var(--brand-10)" },
+  medium: { bg: "var(--row-alt)", text: "var(--highlight-10)" },
+  low: { bg: "var(--row-alt)", text: "var(--highlight-10)" },
 };
 
 interface TicketsListViewProps {
@@ -58,7 +58,7 @@ export function TicketsListView({
           onChange: (v) => onFilterChange("propertyId", v || undefined),
         },
         render: (t) => (
-          <span className="text-body truncate text-gray-800">
+          <span className="text-body truncate text-highlight-10">
             {propertyNames[t.propertyId] ?? t.propertyId.slice(0, 8)}
           </span>
         ),
@@ -67,7 +67,7 @@ export function TicketsListView({
         key: "description",
         label: "Description",
         sortable: false,
-        render: (t) => <span className="text-body truncate text-gray-700">{t.description}</span>,
+        render: (t) => <span className="text-body truncate text-highlight-10">{t.description}</span>,
       },
       {
         key: "priority",
@@ -105,7 +105,7 @@ export function TicketsListView({
           <span
             className="px-base py-xs text-body rounded-md font-medium"
             style={{
-              backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
+              backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
               color: "var(--surface-60)",
             }}
           >

@@ -64,7 +64,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         <p
           title={kpi.label}
           className="text-subheading min-w-0 flex-1 truncate font-medium"
-          style={{ color: "var(--brand-10)" }}
+          style={{ color: "var(--highlight-10)" }}
         >
           {kpi.label}
         </p>
@@ -82,14 +82,14 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         )}
       </div>
 
-      <p className="font-data text-heading" style={{ color: "var(--brand-10)" }}>
+      <p className="font-data text-heading" style={{ color: "var(--highlight-10)" }}>
         {formatValue(kpi.value, kpi.type)}
       </p>
 
       {compareValue != null && (
         <p
           className="font-data mt-xs text-body"
-          style={{ color: "var(--brand-10)", opacity: 0.55 }}
+          style={{ color: "var(--highlight-10)", opacity: 0.55 }}
         >
           vs {formatValue(compareValue, kpi.type)}
         </p>

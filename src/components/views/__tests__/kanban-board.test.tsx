@@ -14,7 +14,7 @@ const columns = [
     id: "todo",
     label: "To Do",
     items: [
-      { id: "t-1", title: "Task 1", color: "var(--brand-10)" },
+      { id: "t-1", title: "Task 1", color: "var(--highlight-10)" },
       { id: "t-2", title: "Task 2", color: "var(--status-success)" },
     ],
   },

@@ -132,7 +132,7 @@ interface PaginationProps {
 
 function Pagination({ page, totalPages, total, onChange }: PaginationProps) {
   return (
-    <div className="gap-base text-body flex items-center justify-end text-gray-500">
+    <div className="gap-base text-body flex items-center justify-end text-highlight-10">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}

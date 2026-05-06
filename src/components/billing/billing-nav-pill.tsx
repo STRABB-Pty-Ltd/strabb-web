@@ -13,7 +13,7 @@ type Tone = "neutral" | "warning" | "danger" | "cta";
 const toneStyles: Record<Tone, { bg: string; text: string; border: string }> = {
   neutral: {
     bg: "var(--neutral-30)",
-    text: "var(--brand-10)",
+    text: "var(--highlight-10)",
     border: "var(--border)",
   },
   warning: {
@@ -27,11 +27,11 @@ const toneStyles: Record<Tone, { bg: string; text: string; border: string }> = {
     border: "var(--status-danger)",
   },
   cta: {
-    // Filled brand pill. The bg is --strabb-secondary which IS --brand-10
+    // Filled brand pill. The bg is --strabb-secondary which IS --highlight-10
     // (a flipping token), so text uses --surface-60 directly - it inverts
-    // OPPOSITE to brand-10 and stays readable in both themes.
+    // OPPOSITE to highlight-10 and stays readable in both themes.
     // Don't switch to --text-on-color here: that token flips the same way
-    // as brand-10 and would render warm-white-on-warm-white in dark mode.
+    // as highlight-10 and would render warm-white-on-warm-white in dark mode.
     bg: "var(--strabb-secondary)",
     text: "var(--surface-60)",
     border: "var(--strabb-secondary)",

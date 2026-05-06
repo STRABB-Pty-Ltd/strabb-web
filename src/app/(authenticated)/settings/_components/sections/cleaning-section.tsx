@@ -18,13 +18,13 @@ export function CleaningSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-gray-900">Cleaning</h2>
-        <p className="text-body text-gray-500">Default cleaning task configuration.</p>
+        <h2 className="text-subheading font-semibold text-highlight-10">Cleaning</h2>
+        <p className="text-body text-highlight-10">Default cleaning task configuration.</p>
       </div>
 
       <div className="space-y-sm">
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">
+          <label className="mb-xs text-body block font-medium text-highlight-10">
             Default Duration (hours)
           </label>
           {/* w-[144px] is on the Fibonacci ladder (5/8/13/21/34/55/89/144/...), kept as an arbitrary value. */}
@@ -44,8 +44,8 @@ export function CleaningSection() {
           style={{ borderColor: "var(--border)" }}
         >
           <div>
-            <p className="text-body font-medium text-gray-800">Auto-assign Tasks</p>
-            <p className="text-body text-gray-500">
+            <p className="text-body font-medium text-highlight-10">Auto-assign Tasks</p>
+            <p className="text-body text-highlight-10">
               Automatically assign cleaning tasks to the default cleaner
             </p>
           </div>
@@ -59,14 +59,14 @@ export function CleaningSection() {
           >
             {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
             <span
-              className="top-xs h-md absolute w-md rounded-full bg-white shadow transition-transform"
+              className="top-xs h-md absolute w-md rounded-full bg-surface-60 shadow transition-transform"
               style={{ left: autoAssign ? 18 : 2 }}
             />
           </button>
         </div>
 
         <div>
-          <label className="mb-xs text-body block font-medium text-gray-700">
+          <label className="mb-xs text-body block font-medium text-highlight-10">
             Default Cleaner Name
           </label>
           <input
@@ -81,7 +81,7 @@ export function CleaningSection() {
         <div>
           <label
             htmlFor="default-cleaner-email"
-            className="mb-xs text-body block font-medium text-gray-700"
+            className="mb-xs text-body block font-medium text-highlight-10"
           >
             Default Cleaner Email
           </label>
@@ -98,19 +98,19 @@ export function CleaningSection() {
       </div>
 
       <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <h3 className="mb-sm text-body font-semibold text-gray-700">Checklist Templates</h3>
-        <div className="space-y-base text-body text-gray-500">
-          <div className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-gray-50">
+        <h3 className="mb-sm text-body font-semibold text-highlight-10">Checklist Templates</h3>
+        <div className="space-y-base text-body text-highlight-10">
+          <div className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-neutral-30">
             <span>Standard Checkout Clean</span>
-            <span className="text-body text-gray-400">12 items</span>
+            <span className="text-body text-highlight-10">12 items</span>
           </div>
-          <div className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-gray-50">
+          <div className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-neutral-30">
             <span>Deep Clean</span>
-            <span className="text-body text-gray-400">18 items</span>
+            <span className="text-body text-highlight-10">18 items</span>
           </div>
-          <div className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-gray-50">
+          <div className="px-sm py-base flex items-center justify-between rounded-sm hover:bg-neutral-30">
             <span>Quick Inspection</span>
-            <span className="text-body text-gray-400">5 items</span>
+            <span className="text-body text-highlight-10">5 items</span>
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ export function CleaningSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="px-sm py-base text-body rounded-lg font-medium text-white"
+        className="px-sm py-base text-body rounded-lg font-medium text-surface-60"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Changes

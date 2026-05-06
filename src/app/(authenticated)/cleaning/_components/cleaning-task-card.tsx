@@ -15,8 +15,8 @@ const typeLabels: Record<string, string> = {
 const priorityColors: Record<string, { bg: string; text: string }> = {
   urgent: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
   high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  medium: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
-  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  medium: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
+  low: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
 };
 
 interface CleaningTaskCardProps {
@@ -36,7 +36,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
             className="h-base w-base shrink-0 rounded-full"
             style={{ backgroundColor: task.listingColor }}
           />
-          <span className="text-body truncate font-medium text-gray-800">{task.listingName}</span>
+          <span className="text-body truncate font-medium text-highlight-10">{task.listingName}</span>
         </div>
 
         <div className="gap-base flex items-center">
@@ -46,25 +46,25 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
           >
             {task.priority}
           </span>
-          <span className="px-xs py-xs text-body rounded-sm bg-gray-100 font-medium text-gray-600">
+          <span className="px-xs py-xs text-body rounded-sm bg-neutral-30 font-medium text-highlight-10">
             {typeLabels[task.type] ?? task.type}
           </span>
         </div>
 
-        <div className="gap-xs text-body flex items-center text-gray-500">
+        <div className="gap-xs text-body flex items-center text-highlight-10">
           <Clock size={10} />
           <span>{formatInPropertyTimezone(task.scheduledTime, tz, "d MMM, HH:mm")}</span>
         </div>
 
         {task.cleanerName && (
-          <div className="gap-xs text-body flex items-center text-gray-500">
+          <div className="gap-xs text-body flex items-center text-highlight-10">
             <User size={10} />
             <span>{task.cleanerName}</span>
           </div>
         )}
 
         <div className="gap-base flex items-center">
-          <div className="h-xs flex-1 rounded-full bg-gray-200">
+          <div className="h-xs flex-1 rounded-full bg-neutral-30">
             <div
               className="h-xs rounded-full"
               style={{
@@ -73,7 +73,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
               }}
             />
           </div>
-          <span className="font-data text-body text-gray-500">
+          <span className="font-data text-body text-highlight-10">
             {task.checklistDone}/{task.checklistTotal}
           </span>
         </div>

@@ -17,7 +17,7 @@ interface PreviewGridProps {
 function PanelHeader({ title, onView }: { title: string; onView?: () => void }) {
   return (
     <div className="mb-sm flex items-center justify-between">
-      <h3 className="text-subheading font-semibold" style={{ color: "var(--brand-10)" }}>
+      <h3 className="text-subheading font-semibold" style={{ color: "var(--highlight-10)" }}>
         {title}
       </h3>
       {onView && (
@@ -25,7 +25,7 @@ function PanelHeader({ title, onView }: { title: string; onView?: () => void }) 
           type="button"
           onClick={onView}
           className="gap-xs text-body flex items-center font-medium"
-          style={{ color: "var(--brand-10)" }}
+          style={{ color: "var(--highlight-10)" }}
           data-no-elevate
         >
           View All <ArrowRight size={12} />
@@ -65,17 +65,17 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
           const hasBookings = day.bookings > 0;
           return (
             <div key={day.date} className="text-center">
-              <p className="text-body" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
+              <p className="text-body" style={{ color: "var(--highlight-10)", opacity: 0.55 }}>
                 {format(d, "EEE")}
               </p>
-              <p className="text-body font-medium" style={{ color: "var(--brand-10)" }}>
+              <p className="text-body font-medium" style={{ color: "var(--highlight-10)" }}>
                 {format(d, "d")}
               </p>
               <div
                 className="mt-xs h-md text-body mx-auto w-md rounded-full text-center leading-5"
                 style={{
-                  backgroundColor: hasBookings ? "var(--brand-10)" : "var(--surface-60)",
-                  color: hasBookings ? "var(--surface-60)" : "var(--brand-10)",
+                  backgroundColor: hasBookings ? "var(--highlight-10)" : "var(--surface-60)",
+                  color: hasBookings ? "var(--surface-60)" : "var(--highlight-10)",
                 }}
               >
                 {day.bookings}
@@ -161,7 +161,7 @@ function RevenueSparkline({
                 backgroundColor: "var(--chart-bar)",
               }}
             />
-            <span className="text-body" style={{ color: "var(--brand-10)", opacity: 0.55 }}>
+            <span className="text-body" style={{ color: "var(--highlight-10)", opacity: 0.55 }}>
               {formatBarLabel(d.label)}
             </span>
           </div>
@@ -205,12 +205,12 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
             <div
               key={b.id}
               className="gap-sm py-base text-body flex items-center"
-              style={{ color: "var(--brand-10)" }}
+              style={{ color: "var(--highlight-10)" }}
             >
               <span
                 className="h-base w-base shrink-0 rounded-full"
                 style={{
-                  backgroundColor: channelColors[b.channel] ?? "var(--brand-10)",
+                  backgroundColor: channelColors[b.channel] ?? "var(--highlight-10)",
                 }}
               />
               <span className="flex-1 truncate">{b.guest}</span>
@@ -244,13 +244,13 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
             <div
               key={`${item.kind}-${item.id}`}
               className="gap-sm py-base text-body flex items-center"
-              style={{ color: "var(--brand-10)" }}
+              style={{ color: "var(--highlight-10)" }}
             >
               <span
                 className="h-base w-base shrink-0 rounded-full"
                 style={{
                   backgroundColor:
-                    item.kind === "ticket" ? "var(--status-issues)" : "var(--brand-10)",
+                    item.kind === "ticket" ? "var(--status-issues)" : "var(--highlight-10)",
                 }}
               />
               <span className="flex-1 truncate">{item.listing || "Unassigned"}</span>
