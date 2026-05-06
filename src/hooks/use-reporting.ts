@@ -1,23 +1,16 @@
 "use client";
 
-import { USE_MOCK } from "@/lib/mock-data";
-import { useReportingKPIsMock, useReportingChartDataMock } from "@/lib/mock-data/reporting-hooks";
 import { useReportingKPIsAPI, useReportingChartDataAPI } from "@/lib/api-hooks/reporting-api";
 import { useAppStore } from "@/stores/app-store";
 
-export type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
+export type { ReportingKPI, ChartDataSet } from "@/lib/api-hooks/reporting-api";
 
 export function useReportingKPIs(
   selectedListings: string[],
   windowSize: string,
   anchor: string | null,
 ) {
-  const mockResult = useReportingKPIsMock(selectedListings);
   const apiResult = useReportingKPIsAPI(selectedListings, windowSize, anchor);
-
-  if (USE_MOCK) {
-    return { data: mockResult, isLoading: false, error: null };
-  }
 
   return {
     data: apiResult.data,
@@ -31,12 +24,7 @@ export function useReportingChartData(
   windowSize: string,
   anchor: string | null,
 ) {
-  const mockResult = useReportingChartDataMock(selectedListings);
   const apiResult = useReportingChartDataAPI(selectedListings, windowSize, anchor);
-
-  if (USE_MOCK) {
-    return { data: mockResult, isLoading: false, error: null };
-  }
 
   return {
     data: apiResult.data,

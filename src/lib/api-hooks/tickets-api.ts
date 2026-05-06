@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import { USE_MOCK } from "@/lib/mock-data";
 import type { Ticket, TicketListResponse } from "@/types/ticket";
 
 export interface TicketFilters {
@@ -36,7 +35,7 @@ export function useTicketsAPI(filters?: TicketFilters) {
       const response = await apiClient.get<TicketListResponse>(`/tickets?${params.toString()}`);
       return response;
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -51,7 +50,7 @@ export function useTicket(id: string | null) {
       const response = await apiClient.get<{ data: Ticket }>(`/tickets/${id}`);
       return response.data;
     },
-    enabled: !USE_MOCK && isReady && !!id,
+    enabled: isReady && !!id,
   });
 }
 

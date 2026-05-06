@@ -20,8 +20,6 @@ vi.mock("@/hooks/use-api-client", () => ({
   useAuthReady: () => true,
 }));
 
-vi.mock("@/lib/mock-data", () => ({ USE_MOCK: false }));
-
 import {
   useCreateTicketAPI,
   useDeleteTicketAPI,

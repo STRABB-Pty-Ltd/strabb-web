@@ -4,9 +4,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import { formatChannel } from "@/lib/channels";
-import { USE_MOCK } from "@/lib/mock-data";
 import { timeframeToDateRange, trendDateRange } from "@/lib/timeframe-utils";
-import type { ReportingKPI, ChartDataSet } from "@/lib/mock-data/reporting-hooks";
+
+export interface ReportingKPI {
+  label: string;
+  value: number;
+  type: "currency" | "number" | "percentage";
+  trend: number;
+  icon: string;
+}
+
+export interface ChartDataSet {
+  revenueTrend: { label: string; revenue: number }[];
+  channelBreakdown: {
+    channel: string;
+    revenue: number;
+    percentage: number;
+    color: string;
+  }[];
+  occupancy: { listing: string; occupancy: number }[];
+  expenses: { category: string; amount: number }[];
+  revenueByListing: { listing: string; revenue: number; color: string }[];
+}
 
 export interface RawFinancial {
   month: string;
@@ -138,7 +157,7 @@ export function useReportingKPIsAPI(
       );
       return rawFinancialsToKPIs(response.data);
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -202,7 +221,7 @@ export function useReportingChartDataAPI(
       const revenueByListing = [...listingMap.entries()].map(([listing, { revenue }]) => ({
         listing,
         revenue,
-        color: "var(--brand-10)",
+        color: "var(--highlight-10)",
       }));
 
       const expenses = expensesRes.data.map((e) => ({
@@ -218,7 +237,7 @@ export function useReportingChartDataAPI(
         revenueByListing,
       } as ChartDataSet;
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -238,7 +257,7 @@ export function useSavedReportsAPI() {
       const response = await apiClient.get<{ data: SavedReportPayload[] }>("/saved-reports");
       return response.data;
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 

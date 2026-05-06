@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import { USE_MOCK } from "@/lib/mock-data";
 import type { Vacancy } from "@/types/vacancy";
 
 export function useVacancyAPI(
@@ -26,6 +25,6 @@ export function useVacancyAPI(
       const response = await apiClient.get<{ data: Vacancy[] }>(`/vacancy?${params.toString()}`);
       return response.data;
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }

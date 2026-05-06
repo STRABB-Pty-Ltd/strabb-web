@@ -2,14 +2,10 @@
 
 import { useMemo } from "react";
 
-import { USE_MOCK } from "@/lib/mock-data";
-import { useCalendarEventsMock } from "@/lib/mock-data/calendar-hooks";
 import { useCalendarEventsAPI } from "@/lib/api-hooks/calendar-api";
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
 
-import type { CalendarEvent } from "@/lib/mock-data/calendar-hooks";
-
-export type { CalendarEvent, CalendarEventType } from "@/lib/mock-data/calendar-hooks";
+export type { CalendarEvent, CalendarEventType } from "@/lib/api-hooks/calendar-api";
 
 export function useCalendarEvents(
   selectedListings: string[],
@@ -18,12 +14,7 @@ export function useCalendarEvents(
   anchor: string | null = null,
 ) {
   const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
-  const mockResult = useCalendarEventsMock(selectedListings, submenuFilters);
   const apiResult = useCalendarEventsAPI(selectedListings, submenuFilters, startDate, endDate);
-
-  if (USE_MOCK) {
-    return { data: mockResult, isLoading: false, error: null };
-  }
 
   return {
     data: apiResult.data,
@@ -33,12 +24,12 @@ export function useCalendarEvents(
 }
 
 export function useCalendarListSort(
-  events: CalendarEvent[],
+  events: ReturnType<typeof useCalendarEvents>["data"],
   sortKey: string,
   sortDirection: "asc" | "desc",
 ) {
   return useMemo(() => {
-    const sorted = [...events].sort((a, b) => {
+    const sorted = [...(events ?? [])].sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
         case "listing":
