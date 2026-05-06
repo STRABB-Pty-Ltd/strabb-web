@@ -6,8 +6,10 @@ import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import { DEFAULT_TIMEZONE } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { formatCurrency } from "@/lib/format-currency";
+import type { TicketFilters } from "@/lib/api-hooks/tickets-api";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
+import { TICKET_PRIORITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@/types/ticket";
 
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
@@ -28,12 +30,18 @@ interface TicketsListViewProps {
   items: Ticket[];
   propertyNames?: Record<string, string>;
   propertyTimezones?: Record<string, string>;
+  filters: TicketFilters;
+  onFilterChange: <K extends keyof TicketFilters>(key: K, value: TicketFilters[K]) => void;
+  propertyOptions: { value: string; label: string }[];
 }
 
 export function TicketsListView({
   items,
   propertyNames = {},
   propertyTimezones = {},
+  filters,
+  onFilterChange,
+  propertyOptions,
 }: TicketsListViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
 
@@ -42,8 +50,13 @@ export function TicketsListView({
       {
         key: "property",
         label: "Property",
-        width: "180px",
+        width: "200px",
         sortable: false,
+        filter: {
+          value: filters.propertyId ?? "",
+          options: [{ value: "", label: "All properties" }, ...propertyOptions],
+          onChange: (v) => onFilterChange("propertyId", v || undefined),
+        },
         render: (t) => (
           <span className="text-body truncate text-gray-800">
             {propertyNames[t.propertyId] ?? t.propertyId.slice(0, 8)}
@@ -59,8 +72,13 @@ export function TicketsListView({
       {
         key: "priority",
         label: "Priority",
-        width: "100px",
+        width: "140px",
         sortable: false,
+        filter: {
+          value: filters.priority ?? "",
+          options: [{ value: "", label: "All priorities" }, ...TICKET_PRIORITY_OPTIONS],
+          onChange: (v) => onFilterChange("priority", v || undefined),
+        },
         render: (t) => {
           const p = priorityColors[t.priority] ?? priorityColors.low;
           return (
@@ -76,8 +94,13 @@ export function TicketsListView({
       {
         key: "status",
         label: "Status",
-        width: "120px",
+        width: "140px",
         sortable: false,
+        filter: {
+          value: filters.status ?? "",
+          options: [{ value: "", label: "All statuses" }, ...TICKET_STATUS_OPTIONS],
+          onChange: (v) => onFilterChange("status", v || undefined),
+        },
         render: (t) => (
           <span
             className="px-base py-xs text-body rounded-md font-medium"
@@ -130,7 +153,7 @@ export function TicketsListView({
         ),
       },
     ],
-    [propertyNames, propertyTimezones],
+    [propertyNames, propertyTimezones, filters, onFilterChange, propertyOptions],
   );
 
   return (

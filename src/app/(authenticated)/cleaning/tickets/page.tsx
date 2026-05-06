@@ -11,7 +11,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProperties } from "@/hooks/use-properties";
 import { type TicketFilters, useTicketsAPI } from "@/lib/api-hooks/tickets-api";
-import { TICKET_PRIORITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@/types/ticket";
 
 const PAGE_SIZE = 20;
 
@@ -41,8 +40,17 @@ export default function TicketsPage() {
     return tz;
   }, [propertiesData]);
 
+  const propertyOptions = useMemo(
+    () => (propertiesData?.data ?? []).map((p) => ({ value: p.id, label: p.name })),
+    [propertiesData],
+  );
+
   const items = data?.data ?? [];
   const meta = data?.meta;
+  const hasActiveFilter = !!(filters.status || filters.priority || filters.propertyId);
+
+  const clearFilters = () =>
+    setFilters({ page: 1, pageSize: PAGE_SIZE });
 
   return (
     <div className="p-md space-y-md">
@@ -63,30 +71,6 @@ export default function TicketsPage() {
         }
       />
 
-      <div className="gap-sm flex flex-wrap">
-        <FilterSelect
-          label="Status"
-          value={filters.status ?? ""}
-          options={[{ value: "", label: "All statuses" }, ...TICKET_STATUS_OPTIONS]}
-          onChange={(v) => updateFilter("status", v || undefined)}
-        />
-        <FilterSelect
-          label="Priority"
-          value={filters.priority ?? ""}
-          options={[{ value: "", label: "All priorities" }, ...TICKET_PRIORITY_OPTIONS]}
-          onChange={(v) => updateFilter("priority", v || undefined)}
-        />
-        <FilterSelect
-          label="Property"
-          value={filters.propertyId ?? ""}
-          options={[
-            { value: "", label: "All properties" },
-            ...(propertiesData?.data ?? []).map((p) => ({ value: p.id, label: p.name })),
-          ]}
-          onChange={(v) => updateFilter("propertyId", v || undefined)}
-        />
-      </div>
-
       {isLoading ? (
         <div className="space-y-xs" aria-busy="true">
           <span className="sr-only">Loading tickets</span>
@@ -96,15 +80,24 @@ export default function TicketsPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="rounded-md border" style={{ borderColor: "var(--border)" }}>
-          <EmptyState
-            icon={Wrench}
-            title="No tickets yet"
-            description="Log maintenance issues against any property and track them through to completion."
-            action={{
-              label: "Create a ticket",
-              onClick: () => setDialogOpen(true),
-            }}
-          />
+          {hasActiveFilter ? (
+            <EmptyState
+              icon={Wrench}
+              title="No tickets match your filters"
+              description="Try clearing filters to see all tickets."
+              action={{ label: "Clear filters", onClick: clearFilters }}
+            />
+          ) : (
+            <EmptyState
+              icon={Wrench}
+              title="No tickets yet"
+              description="Log maintenance issues against any property and track them through to completion."
+              action={{
+                label: "Create a ticket",
+                onClick: () => setDialogOpen(true),
+              }}
+            />
+          )}
         </div>
       ) : (
         <>
@@ -112,6 +105,9 @@ export default function TicketsPage() {
             items={items}
             propertyNames={propertyNames}
             propertyTimezones={propertyTimezones}
+            filters={filters}
+            onFilterChange={updateFilter}
+            propertyOptions={propertyOptions}
           />
           {meta && meta.totalPages > 1 && (
             <Pagination
@@ -124,33 +120,6 @@ export default function TicketsPage() {
         </>
       )}
     </div>
-  );
-}
-
-interface FilterSelectProps {
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-}
-
-function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
-  return (
-    <label className="gap-xs text-body flex items-center text-gray-600">
-      <span>{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="px-sm py-xs text-body rounded-lg border bg-white"
-        style={{ borderColor: "var(--border)" }}
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }
 
