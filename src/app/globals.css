@@ -107,16 +107,17 @@
      tickets share the unified status set, so a "pending" reads the same
      across the app. confirmed = neutral foreground (work acknowledged but
      not yet started); in_progress + completed both green (active or done);
-     pending = red (needs attention); cancelled = gray (deprioritized). */
+     pending = red (needs attention); cancelled = neutral gray (matches
+     channel-direct, which is the single source of truth for the gray). */
   --status-pending: var(--status-danger);
   --status-confirmed: var(--highlight-10);
   --status-in-progress: var(--status-success);
   --status-completed: var(--status-success);
   --status-issues: var(--status-danger);
-  --status-cancelled: #6b7280;
+  --status-cancelled: var(--channel-direct);
 
   /* Booking status colors */
-  --booking-checked-out: #6b7280;
+  --booking-checked-out: var(--channel-direct);
   --booking-checked-in: var(--status-success);
   --booking-confirmed: var(--highlight-10);
   --booking-pending: var(--highlight-10);
@@ -125,7 +126,7 @@
   /* Chart */
   --chart-bar: var(--highlight-10);
   --chart-bar-hover: var(--highlight-10);
-  --chart-grid: rgba(30, 30, 133, 0.08);
+  --chart-grid: color-mix(in srgb, var(--highlight-10) 8%, transparent);
 
   /* Interactive - pill buttons */
   --btn-active-bg: var(--highlight-10);
@@ -191,7 +192,7 @@
   --secondary: var(--neutral-30);
   --secondary-foreground: var(--highlight-10);
   --muted: var(--neutral-30);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: color-mix(in srgb, var(--highlight-10) 70%, transparent);
   --accent: var(--neutral-30);
   --accent-foreground: var(--highlight-10);
   --destructive: var(--status-danger);
@@ -220,7 +221,7 @@
   --status-success: #059669;
   --status-warning: #fbbf24;
   --status-danger: #f87171;
-  --chart-grid: rgba(250, 249, 245, 0.12);
+  --chart-grid: color-mix(in srgb, var(--highlight-10) 12%, transparent);
 
   /* Tints get retuned for dark mode so they read against the dark surface. */
   --status-success-tint: rgba(5, 150, 105, 0.18);
@@ -247,7 +248,7 @@
   --secondary: var(--neutral-30);
   --secondary-foreground: var(--highlight-10);
   --muted: var(--neutral-30);
-  --muted-foreground: oklch(0.708 0 0);
+  --muted-foreground: color-mix(in srgb, var(--highlight-10) 70%, transparent);
   --accent: var(--neutral-30);
   --accent-foreground: var(--highlight-10);
   --destructive: var(--status-danger);
