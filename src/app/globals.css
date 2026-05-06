@@ -78,9 +78,9 @@
   --canvas-right: 0;
 
   /* Shadow scale. Hand-rolled rgba so dark mode can tune them stronger. */
-  --shadow-sm: 0 1px 2px var(--highlight-10);
-  --shadow-md: 0 6px 24px var(--highlight-10);
-  --shadow-lg: 0 10px 40px var(--highlight-10);
+  --shadow-sm: 0 1px 2px var(--neutral-30);
+  --shadow-md: 0 6px 24px var(--neutral-30);
+  --shadow-lg: 0 10px 40px var(--neutral-30);
 
   /* Channel-accent stripe width. Used by booking bars, message cards,
      billing banner. Off-Fibonacci (4px) but design-locked. */
@@ -224,9 +224,9 @@
   --text-on-color: var(--highlight-10);
 
   /* Shadows pop harder against the dark surface. */
-  --shadow-sm: 0 1px 2px var(--highlight-10);
-  --shadow-md: 0 6px 24px var(--highlight-10);
-  --shadow-lg: 0 10px 40px var(--highlight-10);
+  --shadow-sm: 0 1px 2px var(--neutral-30);
+  --shadow-md: 0 6px 24px var(--neutral-30);
+  --shadow-lg: 0 10px 40px var(--neutral-30);
 
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
@@ -403,8 +403,8 @@
   button:where(:not(:disabled):not([aria-disabled="true"]):not([data-no-elevate])):hover,
   a:where(:not([aria-disabled="true"]):not([data-no-elevate])):hover {
     box-shadow:
-      0 4px 6px -1px var(--highlight-10),
-      0 2px 4px -2px var(--highlight-10);
+      0 4px 6px -1px var(--neutral-30),
+      0 2px 4px -2px var(--neutral-30);
   }
 }
 

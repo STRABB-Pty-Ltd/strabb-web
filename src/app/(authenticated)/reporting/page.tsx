@@ -43,12 +43,20 @@ export default function ReportingPage() {
   }
 
   return (
-    <div className="space-y-lg">
+    <div>
       <ReportingKPIRow kpis={kpis ?? []} />
 
-      {chartData && <ReportingChartGrid activeSubmenu={submenu} data={chartData} />}
+      {chartData && (
+        <div className="mt-md">
+          <ReportingChartGrid activeSubmenu={submenu} data={chartData} />
+        </div>
+      )}
 
-      {savedReportsOpen && <SavedReportsDrawer />}
+      {savedReportsOpen && (
+        <div className="mt-lg">
+          <SavedReportsDrawer />
+        </div>
+      )}
     </div>
   );
 }

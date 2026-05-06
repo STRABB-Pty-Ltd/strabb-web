@@ -95,7 +95,7 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
       type: "percentage",
     },
     {
-      label: "Avg Nightly Rate",
+      label: "Avg $/night",
       value: Math.round(raw.avgNightlyRate),
       icon: "bed",
       trend: t?.avgNightlyRate,

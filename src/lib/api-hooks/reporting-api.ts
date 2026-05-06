@@ -131,7 +131,7 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
     { label: "Net Income", value: totalNet, icon: "trending-up", trend: 0, type: "currency" },
     { label: "Total Expenses", value: totalExpenses, icon: "receipt", trend: 0, type: "currency" },
     { label: "Avg Occupancy", value: avgOccupancy, icon: "percent", trend: 0, type: "percentage" },
-    { label: "Avg Nightly Rate", value: avgRate, icon: "bed", trend: 0, type: "currency" },
+    { label: "Avg $/night", value: avgRate, icon: "bed", trend: 0, type: "currency" },
     { label: "Total Bookings", value: totalBookings, icon: "calendar", trend: 0, type: "number" },
   ];
 }
