@@ -3,7 +3,9 @@
 import { useRef, useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import type { ThreadMessage } from "@/types/message";
 
@@ -38,7 +40,10 @@ export function ThreadOverlay({
   messages,
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
+  const panelRef = useRef<HTMLDivElement>(null);
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
+
+  useClickOutside(panelRef, onClose, open);
 
   // Cache the props that drive header + body so the panel keeps showing
   // the conversation that was just open through the slide-out animation.
@@ -59,9 +64,9 @@ export function ThreadOverlay({
     <>
       {/* Scrim - canvas-bounded; clicking outside the panel closes the overlay. */}
       <div
-        className="canvas-overlay fixed"
         onClick={onClose}
         style={{
+          ...canvasOverlayStyle,
           zIndex: Z.THREAD_SCRIM,
           backgroundColor: "var(--scrim)",
           animation: !open
@@ -70,12 +75,15 @@ export function ThreadOverlay({
         }}
       />
 
-      {/* Panel - floats inset from the viewport edges with rounded corners */}
+      {/* Panel - canvas-bounded: top aligns with canvas content top so the
+          panel never protrudes into the topnav/submenu. Right + bottom
+          inset by --space-md to match canvas content padding from screen edges. */}
       <div
+        ref={panelRef}
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.THREAD,
-          top: "var(--space-md)",
+          top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
           right: "var(--space-md)",
           bottom: "var(--space-md)",
           width: "var(--thread-width)",
@@ -88,9 +96,9 @@ export function ThreadOverlay({
         <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-body font-semibold text-gray-800">{data.guestName}</h2>
-              <p className="text-body text-gray-500">{data.listingName}</p>
-              <p className="text-body text-gray-400">
+              <h2 className="text-body font-semibold text-highlight-10">{data.guestName}</h2>
+              <p className="text-body text-highlight-10">{data.listingName}</p>
+              <p className="text-body text-highlight-10">
                 {data.checkIn} - {data.checkOut}
               </p>
             </div>
@@ -107,7 +115,7 @@ export function ThreadOverlay({
                 type="button"
                 onClick={onClose}
                 aria-label="Close thread"
-                className="p-xs rounded text-gray-400 hover:bg-gray-100"
+                className="p-xs rounded text-highlight-10 hover:bg-neutral-30"
                 data-no-elevate
               >
                 <X size={18} />
@@ -124,7 +132,7 @@ export function ThreadOverlay({
                 className="px-sm py-base max-w-[80%]"
                 style={{
                   backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
-                  color: msg.isGuest ? "var(--brand-10)" : "var(--surface-60)",
+                  color: msg.isGuest ? "var(--highlight-10)" : "var(--surface-60)",
                   borderRadius: msg.isGuest
                     ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
                     : "var(--radius-lg) var(--radius-lg) 0 var(--radius-lg)",
@@ -150,21 +158,21 @@ export function ThreadOverlay({
         >
           <button
             type="button"
-            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-neutral-30 text-highlight-10 transition-colors hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10"
           >
             <Flag size={12} />
             Flag
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-neutral-30 text-highlight-10 transition-colors hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10"
           >
             <TicketPlus size={12} />
             Create Ticket
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-800"
+            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-neutral-30 text-highlight-10 transition-colors hover:bg-neutral-30 hover:text-highlight-10"
           >
             <Archive size={12} />
             Archive

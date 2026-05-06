@@ -21,6 +21,11 @@ interface GanttBarProps {
    *  anchor row's container, so it needs a higher z-index to paint over the
    *  day cells of subsequent rows below. Default 1. */
   spans?: number;
+  /** When true the bar renders as a non-interactive "implicit block": muted
+   *  fill, diagonal stripe overlay, no label, no click. Used by the calendar
+   *  gantt to show that a parent booking blocks its children (and vice
+   *  versa) on rows that don't carry the booking itself. */
+  isBlocked?: boolean;
   onClick: () => void;
 }
 
@@ -34,34 +39,50 @@ export function GanttBar({
   widthPx,
   rowHeight,
   spans = 1,
+  isBlocked = false,
   onClick,
 }: GanttBarProps) {
+  const baseStyle = {
+    left: leftPx,
+    width: widthPx,
+    height: rowHeight,
+    top: 0,
+    backgroundColor: color,
+    color: textColor ?? "var(--surface-60)",
+    borderLeft: accentColor && !isBlocked ? `var(--stripe-width) solid ${accentColor}` : undefined,
+    padding: "2px 5px",
+    lineHeight: 1.25,
+    // Multi-row bars sit above adjacent day cells. Blocked shadows sit at
+    // z-index 0 so any real booking/cleaning on the same row (auto stack,
+    // rendered later in DOM order) paints on top.
+    zIndex: spans > 1 ? 6 : isBlocked ? 0 : undefined,
+  };
+
+  if (isBlocked) {
+    return (
+      <div
+        aria-hidden="true"
+        className="absolute overflow-hidden rounded-lg"
+        style={{
+          ...baseStyle,
+          backgroundColor: "var(--neutral-30)",
+          backgroundImage:
+            "repeating-linear-gradient(45deg, var(--highlight-10) 0, var(--highlight-10) 4px, transparent 4px, transparent 10px)",
+          opacity: 0.6,
+          pointerEvents: "none",
+          cursor: "default",
+        }}
+      />
+    );
+  }
+
   return (
     <button
       type="button"
       onClick={onClick}
       className="text-body gap-xs absolute flex items-center justify-center overflow-hidden rounded-lg text-center break-words"
       title={label}
-      style={{
-        left: leftPx,
-        width: widthPx,
-        height: rowHeight,
-        top: 0,
-        backgroundColor: color,
-        color: textColor ?? "var(--surface-60)",
-        borderLeft: accentColor ? `var(--stripe-width) solid ${accentColor}` : undefined,
-        // Sub-token vertical hairline + --space-xs horizontal: kept numeric so
-        // the chip stays compact at narrow widths without extra padding from
-        // upgrading the vertical to the next ladder step.
-        padding: "2px 5px",
-        // Matches --text-subheading--line-height: tightens text inside the
-        // chip without wrapping when widthPx is short.
-        lineHeight: 1.25,
-        // Multi-row bars need to sit above the next rows' day cells (which
-        // would otherwise paint over them via document order). Today line
-        // uses z-index 8 so stay below that.
-        zIndex: spans > 1 ? 6 : undefined,
-      }}
+      style={baseStyle}
     >
       {icon && <span className="shrink-0 leading-none">{icon}</span>}
       {label && <span>{label}</span>}

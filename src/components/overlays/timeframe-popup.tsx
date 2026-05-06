@@ -19,7 +19,9 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -35,6 +37,7 @@ const isTimeframePage = (p: PageId): p is TimeframePage =>
   p === "dashboard" || p === "calendar" || p === "cleaning" || p === "reporting";
 
 export function TimeframePopup() {
+  const popupRef = useRef<HTMLDivElement>(null);
   const tfPopup = useAppStore((s) => s.tfPopup);
   const closeTimeframePopup = useAppStore((s) => s.closeTimeframePopup);
   const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
@@ -106,6 +109,8 @@ export function TimeframePopup() {
     }
   }, [tfPopup.open, handleKeyDown]);
 
+  useClickOutside(popupRef, closeTimeframePopup, tfPopup.open);
+
   // Anchor rect is captured at click time; if the user resizes the window the
   // saved coords go stale, so close rather than render in the wrong place.
   useEffect(() => {
@@ -138,24 +143,28 @@ export function TimeframePopup() {
   };
 
   // Position relative to the trigger element when an anchor was captured;
-  // fall back to the legacy fixed spot below the rail for any caller that
-  // doesn't pass one. Right-edge clamping keeps the popup on-screen when the
-  // trigger sits near the viewport edge.
-  // POPUP_WIDTH mirrors --drilldown-width; VIEWPORT_MARGIN mirrors --space-base.
-  // Kept as JS literals because reading CSS vars in layout math via getComputedStyle
-  // is awkward (and the values are design-locked anyway).
+  // fall back to the canvas content top-left when no anchor is provided.
+  // POPUP_WIDTH mirrors --drilldown-width; CANVAS_PAD mirrors --space-md so the
+  // popup keeps the same gap from the canvas top as it has from the screen
+  // sides. CSS max() in `top` clamps so the popup never protrudes above the
+  // canvas content area, even if the trigger sits right under the submenu.
   const POPUP_WIDTH = 377;
-  const VIEWPORT_MARGIN = 8;
+  const CANVAS_PAD = 21;
   const positionStyle: { top: number | string; left: number | string } = tfPopup.anchor
     ? (() => {
         const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920;
-        const maxLeft = viewportWidth - POPUP_WIDTH - VIEWPORT_MARGIN;
+        const sidebarWidth = viewportWidth * 0.16;
+        const minLeft = sidebarWidth + CANVAS_PAD;
+        const maxLeft = viewportWidth - POPUP_WIDTH - CANVAS_PAD;
         return {
-          top: tfPopup.anchor.bottom + VIEWPORT_MARGIN,
-          left: Math.max(VIEWPORT_MARGIN, Math.min(tfPopup.anchor.left, maxLeft)),
+          top: `max(calc(var(--canvas-top) + var(--space-md) - 2px), ${tfPopup.anchor.bottom + CANVAS_PAD}px)`,
+          left: Math.max(minLeft, Math.min(tfPopup.anchor.left, maxLeft)),
         };
       })()
-    : { top: 144, left: "calc(var(--sidebar-width) + 8px)" };
+    : {
+        top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
+        left: "calc(var(--sidebar-width) + var(--space-md))",
+      };
 
   const cardAnim = !open
     ? `scaleOut ${EXIT_MS}ms ease-in forwards`
@@ -164,12 +173,12 @@ export function TimeframePopup() {
   return (
     <>
       <div
-        className="canvas-overlay fixed"
-        style={{ zIndex: Z.DRAWER_SCRIM }}
+        style={{ ...canvasOverlayStyle, zIndex: Z.DRAWER_SCRIM }}
         onClick={closeTimeframePopup}
       />
       <div
-        className="fixed rounded-xl border bg-white shadow-xl"
+        ref={popupRef}
+        className="fixed rounded-xl border bg-surface-60 shadow-xl"
         style={{
           zIndex: Z.DRAWER,
           top: positionStyle.top,
@@ -188,7 +197,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
+            className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-highlight-10 hover:bg-neutral-30"
             aria-label="Close"
             data-no-elevate
           >
@@ -217,7 +226,7 @@ export function TimeframePopup() {
             <DayPicker windowSize={windowSize} anchor={anchor} onPick={writeAnchor} />
           )}
           {windowSize === "ytd" && (
-            <p className="text-body text-gray-600">
+            <p className="text-body text-highlight-10">
               Year-to-date is always relative to today. Switch to <strong>Year</strong> to pick a
               specific year.
             </p>
@@ -277,7 +286,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -286,7 +295,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -333,7 +342,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -342,7 +351,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -428,7 +437,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(subMonths(viewDate, 1))}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
           aria-label="Previous month"
         >
           <ChevronLeft size={16} />
@@ -437,7 +446,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(addMonths(viewDate, 1))}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
           aria-label="Next month"
         >
           <ChevronRight size={16} />
@@ -445,7 +454,7 @@ function MonthGrid({
       </div>
       <div className="mb-xs gap-xs grid grid-cols-7">
         {DAY_LABELS.map((d) => (
-          <div key={d} className="text-body text-center text-gray-400">
+          <div key={d} className="text-body text-center text-highlight-10">
             {d}
           </div>
         ))}
@@ -463,10 +472,10 @@ function MonthGrid({
             fg = "var(--surface-60)";
           } else if (soft) {
             bg = "var(--neutral-30)";
-            fg = "var(--brand-10)";
+            fg = "var(--highlight-10)";
           } else {
             bg = undefined;
-            fg = inMonth ? "var(--brand-10)" : "var(--neutral-30)";
+            fg = inMonth ? "var(--highlight-10)" : "var(--neutral-30)";
           }
 
           return (
@@ -475,7 +484,7 @@ function MonthGrid({
               type="button"
               onClick={() => onDayClick(day)}
               onMouseEnter={() => onDayHover?.(day)}
-              className="h-lg text-body flex items-center justify-center rounded transition-colors hover:bg-blue-50"
+              className="h-lg text-body flex items-center justify-center rounded transition-colors hover:bg-neutral-30"
               style={{ color: fg, backgroundColor: bg }}
             >
               {day.getDate()}
@@ -600,7 +609,7 @@ function CustomRangeForm({
             style={{ borderColor: "var(--border)" }}
           />
         </label>
-        <span className="text-body text-gray-400">to</span>
+        <span className="text-body text-highlight-10">to</span>
         <label className="flex-1">
           <span className="sr-only">End date</span>
           <input
@@ -633,7 +642,7 @@ function CustomRangeForm({
         type="button"
         disabled={!valid}
         onClick={() => onApply(start, end)}
-        className="mt-base py-xs text-body w-full rounded-lg text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-base py-xs text-body w-full rounded-lg text-surface-60 disabled:cursor-not-allowed disabled:opacity-50"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Apply

@@ -36,6 +36,10 @@ export interface GanttViewProps<T> {
    *  used by the calendar gantt to render a parent-listing booking as a
    *  single chip across all its children's rows. Default 1. */
   getRowSpan?: (item: T) => number;
+  /** Optional: when true, the bar is rendered as a non-interactive "implicit
+   *  block" (muted fill, diagonal stripes, no label). Used to flag rows that
+   *  are blocked by a related booking elsewhere in the hierarchy. */
+  getIsBlocked?: (item: T) => boolean;
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
@@ -66,6 +70,7 @@ export function GanttView<T>({
   getAccentColor,
   getIcon,
   getRowSpan,
+  getIsBlocked,
   dateRange,
   onItemClick,
   todayLineColor = "var(--status-danger)",
@@ -172,6 +177,7 @@ export function GanttView<T>({
                     widthPx={widthPx}
                     rowHeight={heightPx}
                     spans={span}
+                    isBlocked={getIsBlocked?.(item) ?? false}
                     onClick={() => onItemClick(item)}
                   />
                 );

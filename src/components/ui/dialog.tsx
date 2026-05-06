@@ -4,6 +4,7 @@ import * as React from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 
 import { cn } from "@/lib/utils";
+import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 
@@ -23,14 +24,15 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
+function DialogOverlay({ className, style, ...props }: DialogPrimitive.Backdrop.Props) {
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "canvas-overlay data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 fixed isolate z-50 bg-black/10 duration-150 supports-backdrop-filter:backdrop-blur-xs",
+        "data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 isolate z-50 duration-150 supports-backdrop-filter:backdrop-blur-xs",
         className,
       )}
+      style={{ ...canvasOverlayStyle, backgroundColor: "var(--scrim)", ...style }}
       {...props}
     />
   );

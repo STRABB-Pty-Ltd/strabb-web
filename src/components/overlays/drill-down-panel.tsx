@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 
 interface DrillDownPanelProps {
@@ -23,8 +25,11 @@ export function DrillDownPanel({
   accentColor = "var(--strabb-secondary)",
   children,
 }: DrillDownPanelProps) {
+  const panelRef = useRef<HTMLDivElement>(null);
   // Keep the panel mounted briefly after close so slideOutRight can play.
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
+
+  useClickOutside(panelRef, onClose, open);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -44,15 +49,26 @@ export function DrillDownPanel({
 
   return (
     <>
-      {/* Click-outside area - canvas-bounded so the rails stay live. */}
-      <div className="canvas-overlay fixed" style={{ zIndex: Z.DRAWER_SCRIM }} onClick={onClose} />
-
-      {/* Panel - floats inset from the viewport edges with rounded corners */}
+      {/* Scrim - canvas-bounded so the rails stay live. Click anywhere on
+          the wash to dismiss. */}
       <div
+        style={{
+          ...canvasOverlayStyle,
+          zIndex: Z.DRAWER_SCRIM,
+          backgroundColor: "var(--scrim)",
+        }}
+        onClick={onClose}
+      />
+
+      {/* Panel - canvas-bounded: top aligns with canvas content top so the
+          panel never protrudes into the topnav/submenu. Right + bottom
+          inset by --space-md to match canvas content padding from screen edges. */}
+      <div
+        ref={panelRef}
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.DRAWER,
-          top: "var(--space-md)",
+          top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
           right: "var(--space-md)",
           bottom: "var(--space-md)",
           width: "var(--drilldown-width)",
@@ -72,12 +88,12 @@ export function DrillDownPanel({
           className="px-sm py-sm flex items-center justify-between border-b"
           style={{ borderColor: "var(--border)" }}
         >
-          <h2 className="text-body font-semibold text-gray-800">{title}</h2>
+          <h2 className="text-body font-semibold text-highlight-10">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close panel"
-            className="p-xs rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="p-xs rounded text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10"
             data-no-elevate
           >
             <X size={18} />

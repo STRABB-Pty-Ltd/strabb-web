@@ -1,22 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useShoppingList } from "@/hooks/use-cleaning";
+import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 
 const priorityBadge: Record<string, { bg: string; text: string }> = {
   high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
   medium: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
-  low: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  low: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
 };
 
 const EXIT_MS = 200;
 
 export function ShoppingListPopup() {
+  const popupRef = useRef<HTMLDivElement>(null);
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
   const boughtItems = useAppStore((s) => s.cleaning.boughtItems);
@@ -41,6 +44,8 @@ export function ShoppingListPopup() {
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
   }, [open, handleKeyDown]);
+
+  useClickOutside(popupRef, closeShoppingListPopup, open);
 
   if (!shouldRender) return null;
 
@@ -76,17 +81,22 @@ export function ShoppingListPopup() {
   return (
     <>
       <div
-        className="canvas-overlay fixed"
-        style={{ zIndex: Z.MODAL_SCRIM, backgroundColor: "var(--scrim)", animation: scrimAnim }}
+        style={{
+          ...canvasOverlayStyle,
+          zIndex: Z.MODAL,
+          backgroundColor: "var(--scrim)",
+          animation: scrimAnim,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         onClick={closeShoppingListPopup}
-      />
-      <div
-        className="canvas-overlay fixed flex items-center justify-center"
-        style={{ zIndex: Z.MODAL }}
       >
         <div
-          className="w-full max-w-lg rounded-xl bg-white shadow-xl"
+          ref={popupRef}
+          className="w-full max-w-lg rounded-xl bg-surface-60 shadow-xl"
           style={{ animation: cardAnim }}
+          onClick={(e) => e.stopPropagation()}
         >
           <div
             className="px-sm py-sm flex items-center justify-between border-b"
@@ -97,7 +107,7 @@ export function ShoppingListPopup() {
               <button
                 type="button"
                 onClick={() => setShowAll(!showAll)}
-                className="text-body text-gray-500 hover:underline"
+                className="text-body text-highlight-10 hover:underline"
               >
                 {showAll ? "Show needed only" : "Show all"}
               </button>
@@ -105,7 +115,7 @@ export function ShoppingListPopup() {
                 type="button"
                 onClick={closeShoppingListPopup}
                 aria-label="Close shopping list"
-                className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-gray-400 hover:bg-gray-100"
+                className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-highlight-10 hover:bg-neutral-30"
                 data-no-elevate
               >
                 <X size={18} />
@@ -116,7 +126,7 @@ export function ShoppingListPopup() {
           <div className="p-sm max-h-[377px] overflow-y-auto">
             {Object.entries(grouped).map(([listing, listItems]) => (
               <div key={listing} className="mb-sm">
-                <h3 className="mb-xs text-body font-semibold text-gray-500 uppercase">{listing}</h3>
+                <h3 className="mb-xs text-body font-semibold text-highlight-10 uppercase">{listing}</h3>
                 <div className="space-y-xs">
                   {listItems.map((item) => {
                     const isBought = boughtItems.includes(item.id);
@@ -124,24 +134,24 @@ export function ShoppingListPopup() {
                     return (
                       <label
                         key={item.id}
-                        className="gap-base px-base py-xs flex items-center rounded hover:bg-gray-50"
+                        className="gap-base px-base py-xs flex items-center rounded hover:bg-neutral-30"
                       >
                         <input
                           type="checkbox"
                           checked={isBought}
                           onChange={() => toggleBoughtItem(item.id)}
-                          className="h-sm w-sm rounded border-gray-300"
+                          className="h-sm w-sm rounded border-neutral-30"
                         />
                         <span
                           className="text-body flex-1"
                           style={{
                             textDecoration: isBought ? "line-through" : "none",
-                            color: isBought ? "var(--brand-10)" : "var(--brand-10)",
+                            color: isBought ? "var(--highlight-10)" : "var(--highlight-10)",
                           }}
                         >
                           {item.item}
                         </span>
-                        <span className="font-data text-body text-gray-500">x{item.quantity}</span>
+                        <span className="font-data text-body text-highlight-10">x{item.quantity}</span>
                         <span
                           className="px-base py-xs text-body rounded-md"
                           style={{ backgroundColor: badge.bg, color: badge.text }}
@@ -163,21 +173,21 @@ export function ShoppingListPopup() {
             <button
               type="button"
               onClick={closeShoppingListPopup}
-              className="px-sm py-base text-body rounded-lg text-gray-600 hover:bg-gray-100"
+              className="px-sm py-base text-body rounded-lg text-highlight-10 hover:bg-neutral-30"
             >
               Close
             </button>
             <button
               type="button"
               disabled
-              className="px-sm py-base text-body rounded-lg text-gray-400"
+              className="px-sm py-base text-body rounded-lg text-highlight-10"
             >
               Share Link
             </button>
             <button
               type="button"
               onClick={handleCopyList}
-              className="px-sm py-base text-body rounded-lg text-white"
+              className="px-sm py-base text-body rounded-lg text-surface-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy List

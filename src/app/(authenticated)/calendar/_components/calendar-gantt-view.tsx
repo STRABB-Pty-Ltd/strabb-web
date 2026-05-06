@@ -26,8 +26,8 @@ const cleaningStatusColors: Record<string, string> = {
 };
 
 const typeTextColors: Record<string, string> = {
-  booking: "var(--brand-10)",
-  vacancy: "var(--brand-10)",
+  booking: "var(--highlight-10)",
+  vacancy: "var(--highlight-10)",
 };
 
 // Channel accent stripe colours for booking bars. Same palette and meaning
@@ -42,6 +42,10 @@ const channelColors: Record<string, string> = {
 interface CalendarGanttViewProps {
   events: CalendarEvent[];
 }
+
+// Locally-augmented event used for synthetic "implicit block" shadows
+// generated from parent/child relationships - never shipped from the API.
+type GanttEvent = CalendarEvent & { isImplicitBlock?: boolean };
 
 export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
@@ -77,47 +81,120 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const visible =
     selectedListings.length > 0 ? allListings.filter((l) => expandedIds.has(l.id)) : allListings;
 
-  // Order children + standalones in a stable display sequence. Each visible
-  // parent's children are kept contiguous so a parent booking can render as
-  // a single chip spanning all of them. Parents themselves do NOT get their
-  // own row in this view (option B): instead, parent bookings are anchored
-  // to their first child's row and span downward across the children. The
-  // trailing pass catches any child whose parent is not visible.
+  // Order rows in a stable display sequence: each visible parent gets its
+  // own row, with its children placed contiguously beneath it; standalone
+  // listings come after. Parent bookings render in the parent's own row;
+  // bidirectional blocking (parent booked → children unavailable, and vice
+  // versa) is enforced by conflict-detection on the API side. The trailing
+  // pass catches any child whose parent isn't visible in the current
+  // selection.
   const visibleParents = visible.filter((l) => l.relationship === "parent");
   const ganttListings: Listing[] = [];
   const seen = new Set<string>();
   const place = (l: Listing) => {
-    if (l.relationship === "parent") return;
     if (!seen.has(l.id)) {
       ganttListings.push(l);
       seen.add(l.id);
     }
   };
   for (const parent of visibleParents) {
+    place(parent);
     visible.filter((l) => l.parentId === parent.id).forEach(place);
   }
   visible.filter((l) => l.relationship === "standalone").forEach(place);
   visible.forEach(place);
 
-  // Map parent listing id -> ordered list of child listings actually showing
-  // in the gantt. Used to anchor parent-listing bookings to the first child
-  // and to size the spanning chip.
-  const childrenInGantt = new Map<string, Listing[]>();
-  for (const parent of visibleParents) {
-    childrenInGantt.set(
-      parent.id,
-      ganttListings.filter((l) => l.parentId === parent.id),
-    );
-  }
-
-  // Look up a listing by id from the full set so we can resolve a booking's
-  // listing relationship even when the parent itself isn't in the rows.
-  const listingById = new Map(allListings.map((l) => [l.id, l]));
-
   const rows = ganttListings.map((l) => ({
     id: l.id,
     label: l.name,
   }));
+
+  // Build implicit-block shadow events to visualise bidirectional blocking:
+  // a parent booking blocks each child's row, and a child booking blocks the
+  // parent's row, even though only one side carries the actual booking.
+  // Shadows only render on rows that are visible in the gantt; if a parent
+  // isn't selected, no shadow is generated for it (and vice versa).
+  // Cancelled / checked_out bookings don't occupy a slot and so don't
+  // block - skip them. Mirrors the API's INACTIVE_STATUSES rule.
+  const INACTIVE_BOOKING_STATUSES = new Set(["cancelled", "checked_out"]);
+  const visibleListingIds = new Set(ganttListings.map((l) => l.id));
+  const childrenByParent = new Map<string, string[]>();
+  for (const l of allListings) {
+    if (l.parentId) {
+      const list = childrenByParent.get(l.parentId) ?? [];
+      list.push(l.id);
+      childrenByParent.set(l.parentId, list);
+    }
+  }
+
+  // First pass: collect raw shadow ranges per target row.
+  type ShadowRange = { start: number; end: number; sourceId: string };
+  const rangesByRow = new Map<string, ShadowRange[]>();
+  const pushRange = (rowId: string, event: CalendarEvent) => {
+    const list = rangesByRow.get(rowId) ?? [];
+    list.push({
+      start: new Date(event.start).getTime(),
+      end: new Date(event.end).getTime(),
+      sourceId: event.id,
+    });
+    rangesByRow.set(rowId, list);
+  };
+
+  for (const event of filteredEvents) {
+    if (event.type !== "booking") continue;
+    if (event.status && INACTIVE_BOOKING_STATUSES.has(event.status)) continue;
+    const listing = allListings.find((l) => l.id === event.listingId);
+    if (!listing) continue;
+
+    if (listing.relationship === "parent") {
+      const childIds = childrenByParent.get(listing.id) ?? [];
+      for (const childId of childIds) {
+        if (!visibleListingIds.has(childId)) continue;
+        pushRange(childId, event);
+      }
+    } else if (listing.parentId && visibleListingIds.has(listing.parentId)) {
+      pushRange(listing.parentId, event);
+    }
+  }
+
+  // Second pass: merge overlapping/adjacent ranges per row into one chip.
+  // Without merging, two children booked across a turnover paint two
+  // 60%-opacity shadows that compound to ~84% in the overlap region,
+  // visible as a darker band. One merged chip per occupied window keeps
+  // the shading uniform.
+  const shadowEvents: GanttEvent[] = [];
+  for (const [rowId, ranges] of rangesByRow) {
+    if (ranges.length === 0) continue;
+    ranges.sort((a, b) => a.start - b.start);
+    let curStart = ranges[0].start;
+    let curEnd = ranges[0].end;
+    let curSourceId = ranges[0].sourceId;
+    const flush = () => {
+      shadowEvents.push({
+        id: `shadow-${rowId}-${curSourceId}-${curStart}`,
+        type: "booking",
+        listingId: rowId,
+        listingName: "",
+        label: "",
+        start: new Date(curStart).toISOString(),
+        end: new Date(curEnd).toISOString(),
+        color: "var(--neutral-30)",
+        isImplicitBlock: true,
+      });
+    };
+    for (let i = 1; i < ranges.length; i++) {
+      const r = ranges[i];
+      if (r.start <= curEnd) {
+        if (r.end > curEnd) curEnd = r.end;
+      } else {
+        flush();
+        curStart = r.start;
+        curEnd = r.end;
+        curSourceId = r.sourceId;
+      }
+    }
+    flush();
+  }
 
   const range = ganttDateRange(windowSize, anchor, customRange);
   const dateRange = {
@@ -125,40 +202,29 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
     end: new Date(range.endDate),
   };
 
-  // Tickets render first in DOM order so booking bars on the same row paint
-  // over them. Visually the ticket sits "behind" any overlapping booking.
-  const orderedEvents = [...filteredEvents].sort((a, b) => {
+  // Render order: shadows first (so they paint behind real events), then
+  // tickets (so booking/cleaning bars paint over them), then everything else.
+  const orderedEvents: GanttEvent[] = [...filteredEvents, ...shadowEvents].sort((a, b) => {
+    if (a.isImplicitBlock && !b.isImplicitBlock) return -1;
+    if (!a.isImplicitBlock && b.isImplicitBlock) return 1;
     if (a.type === "ticket" && b.type !== "ticket") return -1;
     if (a.type !== "ticket" && b.type === "ticket") return 1;
     return 0;
   });
 
   return (
-    <GanttView<CalendarEvent>
+    <GanttView<GanttEvent>
       rows={rows}
       items={orderedEvents}
-      getRowId={(item) => {
-        // Parent-listing bookings anchor to their first child's row so the
-        // bar can visually span across all children.
-        const listing = listingById.get(item.listingId);
-        if (listing?.relationship === "parent") {
-          const children = childrenInGantt.get(listing.id);
-          if (children && children.length > 0) return children[0].id;
-        }
-        return item.listingId;
-      }}
-      getRowSpan={(item) => {
-        const listing = listingById.get(item.listingId);
-        if (listing?.relationship === "parent") {
-          return childrenInGantt.get(listing.id)?.length ?? 1;
-        }
-        return 1;
-      }}
+      getRowId={(item) => item.listingId}
+      getRowSpan={() => 1}
+      getIsBlocked={(item) => item.isImplicitBlock === true}
       getDateRange={(item) => ({
         start: new Date(item.start),
         end: new Date(item.end),
       })}
       getColor={(item) => {
+        if (item.isImplicitBlock) return "var(--neutral-30)";
         if (item.type === "cleaning") {
           return cleaningStatusColors[item.status ?? ""] ?? "var(--status-success)";
         }
@@ -168,26 +234,37 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       // Cleaning bars: replace the word "Turnover" with the broom icon below.
       // Strip the "Turnover" / "Turnover - " prefix so only the assignee
       // name (or nothing) remains as text alongside the icon.
-      getLabel={(item) =>
-        item.type === "cleaning" ? item.label.replace(/^Turnover\s*-?\s*/i, "") : item.label
-      }
-      getIcon={(item) => (item.type === "cleaning" ? <BrushCleaning size={13} /> : undefined)}
+      getLabel={(item) => {
+        if (item.isImplicitBlock) return "";
+        return item.type === "cleaning" ? item.label.replace(/^Turnover\s*-?\s*/i, "") : item.label;
+      }}
+      getIcon={(item) => {
+        if (item.isImplicitBlock) return undefined;
+        return item.type === "cleaning" ? <BrushCleaning size={13} /> : undefined;
+      }}
       // Bookings: 75–100 % of check-in day → middle days → 0–25 % of checkout
       // day, leaving the middle 50 % of any turnover day open.
       // Cleaning turnovers fill that gap (25–75 % of their day).
-      // Vacancy / ticket events stay full-day.
+      // Vacancy / ticket events stay full-day. Shadows mirror their source
+      // booking's pattern (same 75/25 inset) so the implicit-block shading
+      // tracks exactly when the related row is actually unavailable.
       getPartialDay={(item) => {
-        if (item.type === "booking") return { insetStart: 0.75, insetEnd: 0.25 };
+        if (item.type === "booking" || item.isImplicitBlock)
+          return { insetStart: 0.75, insetEnd: 0.25 };
         if (item.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.75 };
         return {};
       }}
-      getAccentColor={(item) =>
-        item.type === "booking"
+      getAccentColor={(item) => {
+        if (item.isImplicitBlock) return undefined;
+        return item.type === "booking"
           ? (channelColors[item.channel ?? "direct"] ?? "var(--channel-direct)")
-          : undefined
-      }
+          : undefined;
+      }}
       dateRange={dateRange}
-      onItemClick={(item) => openDrillDownPanel(item.type, item.id)}
+      onItemClick={(item) => {
+        if (item.isImplicitBlock) return;
+        openDrillDownPanel(item.type, item.id);
+      }}
     />
   );
 }
