@@ -26,8 +26,8 @@ export const BILLING_STATUS_LABELS: Record<string, string> = {
 };
 
 export const BILLING_STATUS_COLORS: Record<string, string> = {
-  trial: "text-blue-600 dark:text-blue-400",
-  active: "text-green-700 dark:text-green-400",
-  past_due: "text-red-600 dark:text-red-400",
+  trial: "text-highlight-10 dark:text-highlight-10",
+  active: "text-status-success dark:text-status-success",
+  past_due: "text-status-danger dark:text-status-danger",
   cancelled: "text-muted-foreground",
 };

@@ -80,8 +80,15 @@ describe("TicketsPage", () => {
   it("status filter change refetches with status filter applied", async () => {
     render(<TicketsPage />);
 
-    const statusSelect = screen.getByRole("combobox", { name: /status/i });
-    await userEvent.selectOptions(statusSelect, "pending");
+    // Status filter is now a column-header menu trigger (Base UI Menu), not
+    // a <select>. The trigger renders the column label + active-value text;
+    // anchor on /^status\b/i so we don't accidentally hit other columns
+    // whose value text contains "statuses".
+    const statusTrigger = screen.getByRole("button", { name: /^status\b/i });
+    await userEvent.click(statusTrigger);
+
+    const pendingItem = await screen.findByRole("menuitem", { name: /^pending$/i });
+    await userEvent.click(pendingItem);
 
     const lastCall = ticketsMock.mock.calls.at(-1)?.[0];
     expect(lastCall).toEqual(expect.objectContaining({ status: "pending", page: 1 }));

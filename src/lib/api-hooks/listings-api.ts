@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import { USE_MOCK } from "@/lib/mock-data";
 
 export interface ListingHierarchy {
   properties: {
@@ -29,7 +28,7 @@ export function useListingsHierarchyAPI() {
       const response = await apiClient.get<{ data: ListingHierarchy }>("/listings/hierarchy");
       return response.data;
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -43,7 +42,7 @@ export function useListingGroupsAPI() {
       const response = await apiClient.get<{ data: ListingGroup[] }>("/listing-groups");
       return response.data;
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 

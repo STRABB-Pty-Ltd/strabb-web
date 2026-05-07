@@ -43,7 +43,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     key: "listing",
     label: "Listing",
     width: "200px",
-    render: (ev) => <span className="text-body truncate text-gray-700">{ev.listingName}</span>,
+    render: (ev) => <span className="text-body text-highlight-10 truncate">{ev.listingName}</span>,
   },
   {
     key: "guest",
@@ -51,9 +51,9 @@ const columns: ColumnDef<CalendarEvent>[] = [
     width: "160px",
     render: (ev) =>
       ev.guest ? (
-        <span className="text-body truncate text-gray-700">{ev.guest}</span>
+        <span className="text-body text-highlight-10 truncate">{ev.guest}</span>
       ) : (
-        <span className="text-body text-gray-400">-</span>
+        <span className="text-body text-highlight-10">-</span>
       ),
   },
   {
@@ -63,7 +63,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     render: (ev) => {
       if (ev.channel) {
         // Mirror the calendar gantt booking-bar treatment: --row-alt main
-        // fill, 0.5px brand-10 hairline top+bottom, and 4px channel-coloured
+        // fill, 0.5px highlight-10 hairline top+bottom, and 4px channel-coloured
         // stripes on BOTH ends so the highlight wraps around the chip.
         const stripe = channelColors[ev.channel] ?? "var(--channel-direct)";
         return (
@@ -71,9 +71,9 @@ const columns: ColumnDef<CalendarEvent>[] = [
             className="px-base py-xs text-body rounded-md font-medium"
             style={{
               backgroundColor: "var(--row-alt)",
-              color: "var(--brand-10)",
-              borderTop: "0.5px solid var(--brand-10)",
-              borderBottom: "0.5px solid var(--brand-10)",
+              color: "var(--highlight-10)",
+              borderTop: "0.5px solid var(--highlight-10)",
+              borderBottom: "0.5px solid var(--highlight-10)",
               borderLeft: `4px solid ${stripe}`,
               borderRight: `4px solid ${stripe}`,
             }}
@@ -89,14 +89,14 @@ const columns: ColumnDef<CalendarEvent>[] = [
             className="px-base py-xs text-body rounded-sm font-medium"
             style={{
               backgroundColor: "var(--row-alt)",
-              color: "var(--brand-10)",
+              color: "var(--highlight-10)",
             }}
           >
             {label}
           </span>
         );
       }
-      return <span className="text-gray-400">-</span>;
+      return <span className="text-highlight-10">-</span>;
     },
   },
   {
@@ -120,8 +120,8 @@ const columns: ColumnDef<CalendarEvent>[] = [
     label: "Status",
     width: "112px",
     render: (ev) => {
-      if (!ev.status) return <span className="text-body text-gray-400">-</span>;
-      const bg = eventStatusColors[ev.status] ?? "var(--brand-10)";
+      if (!ev.status) return <span className="text-body text-highlight-10">-</span>;
+      const bg = eventStatusColors[ev.status] ?? "var(--highlight-10)";
       return (
         <span
           className="px-base py-xs text-body rounded-md font-medium capitalize"

@@ -58,16 +58,16 @@ const mockMembers: TeamMember[] = [
 ];
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
-  admin: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
-  manager: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  admin: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
+  manager: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
   cleaner: { bg: "var(--neutral-30)", text: "var(--status-success)" },
-  viewer: { bg: "var(--neutral-30)", text: "var(--brand-10)" },
+  viewer: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
 };
 
 const statusColors: Record<string, string> = {
   active: "var(--status-success)",
   invited: "var(--status-danger)",
-  inactive: "var(--brand-10)",
+  inactive: "var(--highlight-10)",
 };
 
 export function TeamSection() {
@@ -90,13 +90,13 @@ export function TeamSection() {
     <div className="space-y-md">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-subheading font-semibold text-gray-900">Team</h2>
-          <p className="text-body text-gray-500">Manage team members and roles.</p>
+          <h2 className="text-subheading text-highlight-10 font-semibold">Team</h2>
+          <p className="text-body text-highlight-10">Manage team members and roles.</p>
         </div>
         <button
           type="button"
           onClick={() => setShowInvite(true)}
-          className="gap-xs px-sm py-base text-body flex items-center rounded-lg font-medium text-white"
+          className="gap-xs px-sm py-base text-body text-surface-60 flex items-center rounded-lg font-medium"
           style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
         >
           <Plus size={16} />
@@ -106,27 +106,27 @@ export function TeamSection() {
 
       {showInvite && (
         <div
-          className="gap-sm p-sm flex items-end rounded-lg border bg-gray-50"
+          className="gap-sm p-sm bg-neutral-30 flex items-end rounded-lg border"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex-1">
-            <label className="mb-xs text-body block font-medium text-gray-600">Email</label>
+            <label className="mb-xs text-body text-highlight-10 block font-medium">Email</label>
             <input
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               autoComplete="email"
-              className="px-sm py-base text-body w-full rounded-sm border bg-white"
+              className="px-sm py-base text-body bg-surface-60 w-full rounded-sm border"
               style={{ borderColor: "var(--border)" }}
               placeholder="email@example.com"
             />
           </div>
           <div>
-            <label className="mb-xs text-body block font-medium text-gray-600">Role</label>
+            <label className="mb-xs text-body text-highlight-10 block font-medium">Role</label>
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              className="px-sm py-base text-body rounded-sm border bg-white"
+              className="px-sm py-base text-body bg-surface-60 rounded-sm border"
               style={{ borderColor: "var(--border)" }}
             >
               <option value="admin">Admin</option>
@@ -138,7 +138,7 @@ export function TeamSection() {
           <button
             type="button"
             onClick={handleInvite}
-            className="px-sm py-base text-body rounded-lg font-medium text-white"
+            className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Send Invite
@@ -147,7 +147,7 @@ export function TeamSection() {
             type="button"
             onClick={() => setShowInvite(false)}
             aria-label="Cancel invitation"
-            className="p-base rounded-lg text-gray-400 hover:text-gray-600"
+            className="p-base text-highlight-10 hover:text-highlight-10 rounded-lg"
           >
             <X size={16} />
           </button>
@@ -158,7 +158,7 @@ export function TeamSection() {
           (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
           tracking-wide on the header row: known design exception, no project letter-spacing token. */}
       <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <div className="text-body flex border-b bg-gray-50 font-semibold tracking-wide text-gray-500 uppercase">
+        <div className="text-body bg-neutral-30 text-highlight-10 flex border-b font-semibold tracking-wide uppercase">
           <div className="px-sm py-sm flex-1">Name</div>
           <div className="px-sm py-sm w-[233px]">Email</div>
           <div className="px-sm py-sm w-[89px]">Role</div>
@@ -173,8 +173,8 @@ export function TeamSection() {
               className="text-body flex items-center border-b"
               style={{ borderColor: "var(--border)" }}
             >
-              <div className="px-sm py-sm flex-1 font-medium text-gray-800">{member.name}</div>
-              <div className="px-sm py-sm w-[233px] text-gray-500">{member.email}</div>
+              <div className="px-sm py-sm text-highlight-10 flex-1 font-medium">{member.name}</div>
+              <div className="px-sm py-sm text-highlight-10 w-[233px]">{member.email}</div>
               <div className="px-sm py-sm w-[89px]">
                 <span
                   className="px-base py-xs text-body rounded-md font-medium capitalize"
@@ -183,7 +183,9 @@ export function TeamSection() {
                   {member.role}
                 </span>
               </div>
-              <div className="px-sm py-sm text-body w-[89px] text-gray-400">{member.lastLogin}</div>
+              <div className="px-sm py-sm text-body text-highlight-10 w-[89px]">
+                {member.lastLogin}
+              </div>
               <div className="px-sm py-sm w-[89px]">
                 <span
                   className="gap-xs text-body flex items-center"

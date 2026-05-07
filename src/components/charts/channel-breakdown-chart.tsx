@@ -37,13 +37,13 @@ export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartPr
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           type="number"
-          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           tickFormatter={formatAUD}
         />
         <YAxis
           dataKey="channel"
           type="category"
-          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           // 89 is on the Fibonacci ladder
           width={89}
         />

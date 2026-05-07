@@ -2,11 +2,15 @@
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
+import { ColumnFilterDropdown, type ColumnFilterConfig } from "./column-filter-dropdown";
+
 export interface ColumnDef<T> {
   key: string;
   label: string;
   width?: string;
   sortable?: boolean;
+  /** When provided, the column header becomes a filter dropdown trigger. */
+  filter?: ColumnFilterConfig;
   render?: (item: T) => React.ReactNode;
 }
 
@@ -25,11 +29,11 @@ export function SortableListHeader<T>({
 }: SortableListHeaderProps<T>) {
   return (
     <div
-      className="flex border-b bg-gray-50"
+      className="bg-neutral-30 flex border-b"
       style={{ borderColor: "var(--border)", minHeight: "var(--space-lg)" }}
     >
       {columns.map((col) => {
-        const isSortable = col.sortable !== false;
+        const isSortable = col.sortable !== false && !col.filter;
         const isActive = isSortable && sortKey === col.key;
         const ariaSort: "ascending" | "descending" | "none" | undefined = isSortable
           ? isActive
@@ -43,14 +47,16 @@ export function SortableListHeader<T>({
             key={col.key}
             role="columnheader"
             aria-sort={ariaSort}
-            className="px-sm text-body flex items-center font-semibold tracking-wide text-gray-500 uppercase"
+            className="px-sm py-sm text-body text-highlight-10 flex min-w-0 items-center font-semibold tracking-wide uppercase"
             style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
           >
-            {isSortable ? (
+            {col.filter ? (
+              <ColumnFilterDropdown label={col.label} filter={col.filter} />
+            ) : isSortable ? (
               <button
                 type="button"
                 onClick={() => onSort(col.key)}
-                className="gap-xs flex items-center hover:text-gray-700"
+                className="gap-xs hover:text-highlight-10 flex items-center"
               >
                 {col.label}
                 {isActive ? (

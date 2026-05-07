@@ -35,16 +35,16 @@ function HealthCard({
   const hasIssue = count > 0;
   const content = (
     <div
-      className={`p-sm rounded-xl border ${hasIssue ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950" : "bg-card"}`}
+      className={`p-sm rounded-xl border ${hasIssue ? "border-neutral-30 bg-neutral-30 dark:border-status-danger dark:bg-status-danger" : "bg-card"}`}
     >
       <div className="gap-sm flex items-center">
         <Icon
-          className={`size-md ${hasIssue ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}
+          className={`size-md ${hasIssue ? "text-status-danger dark:text-status-danger" : "text-status-success dark:text-status-success"}`}
         />
         <div>
           <p className="text-muted-foreground text-body">{label}</p>
           <p
-            className={`text-subheading font-semibold ${hasIssue ? "text-red-700 dark:text-red-300" : ""}`}
+            className={`text-subheading font-semibold ${hasIssue ? "text-status-danger dark:text-status-danger" : ""}`}
           >
             {count}
           </p>
@@ -82,9 +82,9 @@ export default function AdminPage() {
       {data && (
         <>
           {!data.hasIssues && (
-            <div className="gap-base p-sm flex items-center rounded-xl border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
-              <CheckCircleIcon className="size-md text-green-600 dark:text-green-400" />
-              <p className="text-body font-medium text-green-800 dark:text-green-200">
+            <div className="gap-base p-sm border-neutral-30 bg-neutral-30 dark:border-status-success dark:bg-status-success flex items-center rounded-xl border">
+              <CheckCircleIcon className="size-md text-status-success dark:text-status-success" />
+              <p className="text-body text-status-success dark:text-neutral-30 font-medium">
                 All systems healthy - no failures detected.
               </p>
             </div>
@@ -174,7 +174,7 @@ function SyncErrorsSection() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "-"}</span>
+        <span className="text-body text-highlight-10 truncate">{row.errorMessage ?? "-"}</span>
       ),
     },
   ];
@@ -183,7 +183,7 @@ function SyncErrorsSection() {
     <section className="space-y-sm">
       <h2 className="text-subheading font-semibold">Recent sync errors</h2>
       {isLoading ? (
-        <p className="text-body text-gray-400">Loading…</p>
+        <p className="text-body text-highlight-10">Loading…</p>
       ) : (
         <DataTable<SyncLogResponse>
           columns={columns}
@@ -224,12 +224,14 @@ function FailedMessagesSection() {
     {
       key: "recipientEmail",
       header: "Recipient",
-      render: (_v, row) => <span className="text-body text-gray-800">{row.recipientEmail}</span>,
+      render: (_v, row) => (
+        <span className="text-body text-highlight-10">{row.recipientEmail}</span>
+      ),
     },
     {
       key: "templateName",
       header: "Template",
-      render: (_v, row) => <span className="text-body text-gray-600">{row.templateName}</span>,
+      render: (_v, row) => <span className="text-body text-highlight-10">{row.templateName}</span>,
     },
     {
       key: "scheduledFor",
@@ -249,7 +251,7 @@ function FailedMessagesSection() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-gray-600">{row.errorMessage ?? "-"}</span>
+        <span className="text-body text-highlight-10 truncate">{row.errorMessage ?? "-"}</span>
       ),
     },
     {
@@ -260,7 +262,7 @@ function FailedMessagesSection() {
           type="button"
           onClick={() => handleResend(row.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-lg border font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
           <RefreshCw size={12} />
@@ -274,7 +276,7 @@ function FailedMessagesSection() {
     <section className="space-y-sm">
       <h2 className="text-subheading font-semibold">Failed messages</h2>
       {isLoading ? (
-        <p className="text-body text-gray-400">Loading…</p>
+        <p className="text-body text-highlight-10">Loading…</p>
       ) : (
         <DataTable<ScheduledMessageResponse>
           columns={columns}

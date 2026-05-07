@@ -65,7 +65,7 @@ export function ChartContainer({
   return (
     <div className="p-md rounded-xl" style={{ backgroundColor: "var(--surface-card)" }}>
       {title && (
-        <h3 className="mb-sm text-body font-semibold" style={{ color: "var(--brand-10)" }}>
+        <h3 className="mb-sm text-body font-semibold" style={{ color: "var(--highlight-10)" }}>
           {title}
         </h3>
       )}

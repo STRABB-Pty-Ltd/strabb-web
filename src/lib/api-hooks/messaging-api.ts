@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import { USE_MOCK } from "@/lib/mock-data";
 import type { Message, ThreadMessage } from "@/types/message";
 
 // Backend conversation shape after global keysToCamel
@@ -90,7 +89,7 @@ export function useMessagesAPI(
       );
       return response.data.map(mapConversation);
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 
   const filtered = useMemo(() => {
@@ -118,7 +117,7 @@ export function useMessageThreadAPI(messageId: string | null) {
       );
       return response.data.map(mapThreadMessage);
     },
-    enabled: !USE_MOCK && isReady && !!messageId,
+    enabled: isReady && !!messageId,
   });
 }
 

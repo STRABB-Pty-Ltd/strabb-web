@@ -2,8 +2,6 @@
 
 import { useCallback, useState } from "react";
 
-import { USE_MOCK } from "@/lib/mock-data";
-import { useMessagesMock, useMessageThreadMock } from "@/lib/mock-data/messaging-hooks";
 import {
   useMessagesAPI,
   useMessageThreadAPI,
@@ -18,12 +16,7 @@ export function useMessages(
   submenuFilters: string[],
   selectedListings: string[],
 ) {
-  const mockResult = useMessagesMock(channels, submenuFilters, selectedListings);
   const apiResult = useMessagesAPI(channels, submenuFilters, selectedListings);
-
-  if (USE_MOCK) {
-    return { data: mockResult, isLoading: false, error: null };
-  }
 
   return {
     data: apiResult.data,
@@ -33,12 +26,7 @@ export function useMessages(
 }
 
 export function useMessageThread(messageId: string | null) {
-  const mockResult = useMessageThreadMock(messageId);
   const apiResult = useMessageThreadAPI(messageId);
-
-  if (USE_MOCK) {
-    return { data: mockResult, isLoading: false, error: null };
-  }
 
   return {
     data: apiResult.data,
@@ -59,9 +47,7 @@ export function useMessageActions() {
         ...prev,
         [id]: { ...prev[id], status: "read" as MessageStatus },
       }));
-      if (!USE_MOCK) {
-        updateStatusMutation.mutate({ id, status: "read" });
-      }
+      updateStatusMutation.mutate({ id, status: "read" });
     },
     [updateStatusMutation],
   );
@@ -71,9 +57,7 @@ export function useMessageActions() {
       setLocalUpdates((prev) => {
         const current = prev[id]?.status;
         const newStatus: MessageStatus = current === "flagged" ? "read" : "flagged";
-        if (!USE_MOCK) {
-          updateStatusMutation.mutate({ id, status: newStatus });
-        }
+        updateStatusMutation.mutate({ id, status: newStatus });
         return { ...prev, [id]: { ...prev[id], status: newStatus } };
       });
     },
@@ -86,27 +70,21 @@ export function useMessageActions() {
         ...prev,
         [id]: { ...prev[id], status: "archived" as MessageStatus },
       }));
-      if (!USE_MOCK) {
-        updateStatusMutation.mutate({ id, status: "archived" });
-      }
+      updateStatusMutation.mutate({ id, status: "archived" });
     },
     [updateStatusMutation],
   );
 
   const sendReply = useCallback(
     (conversationId: string, content: string) => {
-      if (!USE_MOCK) {
-        sendMessageMutation.mutate({ conversationId, content });
-      }
+      sendMessageMutation.mutate({ conversationId, content });
     },
     [sendMessageMutation],
   );
 
   const convertToTicket = useCallback(
     (conversationId: string) => {
-      if (!USE_MOCK) {
-        convertMutation.mutate(conversationId);
-      }
+      convertMutation.mutate(conversationId);
     },
     [convertMutation],
   );

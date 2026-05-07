@@ -99,15 +99,12 @@ export function CalendarDayCell({
         paddingLeft: "var(--space-xs)",
         borderRight: isLastColumn ? undefined : "var(--hairline) solid var(--neutral-30)",
         borderBottom: isLastRow ? undefined : "var(--hairline) solid var(--neutral-30)",
-        // Today gets a 3 px brand outline on all four sides - including
-        // the outer edges (breaking the no-outside-border rule). Drawn
-        // inside the cell via outline-offset so it doesn't shift layout,
-        // and lifted with position/z-index so it paints above the grey
-        // grid lines and any chips extending in from neighbouring cells.
-        outline: today ? "3px solid var(--brand-10)" : undefined,
+        // Today gets a 3 px brand outline on all four sides, drawn inside
+        // the cell via outline-offset so it doesn't shift layout. No
+        // stacking context boost: chips spanning from neighbouring cells
+        // paint over the outline cleanly (the date number stays legible).
+        outline: today ? "3px solid var(--highlight-10)" : undefined,
         outlineOffset: today ? "-3px" : undefined,
-        position: today ? "relative" : undefined,
-        zIndex: today ? 100 : undefined,
       }}
     >
       <span
@@ -116,8 +113,8 @@ export function CalendarDayCell({
           color: today
             ? "var(--strabb-secondary)"
             : isCurrentMonth
-              ? "var(--brand-10)"
-              : "var(--brand-10)",
+              ? "var(--highlight-10)"
+              : "var(--highlight-10)",
           opacity: isCurrentMonth ? 1 : 0.4,
           // Tight margin between date and first track row.
           marginBottom: "var(--hairline)",
@@ -156,7 +153,7 @@ export function CalendarDayCell({
                 e.stopPropagation();
                 setOverflowOpen((v) => !v);
               }}
-              className="text-body text-left text-gray-500 hover:text-gray-700"
+              className="text-body text-highlight-10 hover:text-highlight-10 text-left"
               style={{ background: "none", border: "none", padding: 0 }}
             >
               +{overflowEvents.length} more
@@ -180,7 +177,7 @@ export function CalendarDayCell({
               >
                 <p
                   className="text-body font-semibold"
-                  style={{ color: "var(--brand-10)", marginBottom: "var(--hairline)" }}
+                  style={{ color: "var(--highlight-10)", marginBottom: "var(--hairline)" }}
                 >
                   {format(date, "EEE d MMM")}
                 </p>
@@ -193,8 +190,8 @@ export function CalendarDayCell({
                       setOverflowOpen(false);
                       ev.onClick();
                     }}
-                    className="gap-xs px-xs py-xs text-body flex items-center rounded-md text-left hover:bg-gray-100"
-                    style={{ color: "var(--brand-10)", background: "none", border: "none" }}
+                    className="gap-xs px-xs py-xs text-body hover:bg-neutral-30 flex items-center rounded-md text-left"
+                    style={{ color: "var(--highlight-10)", background: "none", border: "none" }}
                   >
                     <span
                       className="shrink-0 rounded-full"

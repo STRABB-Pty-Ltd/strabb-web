@@ -1,26 +1,8 @@
 "use client";
 
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Bed,
-  Calendar,
-  DollarSign,
-  LogIn,
-  Percent,
-  Sparkles,
-} from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
 import type { KPIData } from "@/hooks/use-dashboard";
-
-const iconMap: Record<string, React.ElementType> = {
-  "dollar-sign": DollarSign,
-  calendar: Calendar,
-  percent: Percent,
-  bed: Bed,
-  "log-in": LogIn,
-  sparkles: Sparkles,
-};
 
 const formatValue = (value: string | number, type: KPIData["type"]) => {
   const num = typeof value === "string" ? parseFloat(value) : value;
@@ -42,7 +24,6 @@ interface KPICardProps {
 }
 
 export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
-  const Icon = iconMap[kpi.icon] ?? DollarSign;
   const hasTrend = typeof kpi.trend === "number" && kpi.trend !== 0;
   const trendPositive = (kpi.trend ?? 0) > 0;
 
@@ -55,16 +36,10 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
       data-no-elevate
     >
       <div className="mb-sm gap-base flex items-center">
-        <div
-          className="h-lg flex w-lg shrink-0 items-center justify-center rounded-lg"
-          style={{ backgroundColor: "var(--icon-bg)" }}
-        >
-          <Icon size={21} style={{ color: "var(--icon-color)" }} />
-        </div>
         <p
           title={kpi.label}
           className="text-subheading min-w-0 flex-1 truncate font-medium"
-          style={{ color: "var(--brand-10)" }}
+          style={{ color: "var(--highlight-10)" }}
         >
           {kpi.label}
         </p>
@@ -82,14 +57,14 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         )}
       </div>
 
-      <p className="font-data text-heading" style={{ color: "var(--brand-10)" }}>
+      <p className="font-data text-heading" style={{ color: "var(--highlight-10)" }}>
         {formatValue(kpi.value, kpi.type)}
       </p>
 
       {compareValue != null && (
         <p
           className="font-data mt-xs text-body"
-          style={{ color: "var(--brand-10)", opacity: 0.55 }}
+          style={{ color: "var(--highlight-10)", opacity: 0.55 }}
         >
           vs {formatValue(compareValue, kpi.type)}
         </p>

@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 
 const shortcuts = [
@@ -12,18 +13,21 @@ const shortcuts = [
   { keys: ["4"], description: "Go to Cleaning" },
   { keys: ["5"], description: "Go to Reporting" },
   { keys: ["Esc"], description: "Close current overlay" },
-  { keys: ["?"], description: "Toggle this help" },
+  { keys: ["Shift", "?"], description: "Toggle this help" },
 ];
 
 const EXIT_MS = 200;
 
 export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   useEffect(() => {
     if (open) closeRef.current?.focus();
   }, [open]);
+
+  useClickOutside(panelRef, onClose, open);
 
   if (!shouldRender) return null;
 
@@ -44,7 +48,8 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
       aria-label="Keyboard shortcuts"
     >
       <div
-        className="p-md w-full max-w-sm rounded-xl bg-white shadow-xl"
+        ref={panelRef}
+        className="p-md bg-surface-60 w-full max-w-sm rounded-xl shadow-xl"
         style={{ animation: cardAnim }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -54,7 +59,7 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-gray-100"
+            className="hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
             aria-label="Close shortcuts help"
             data-no-elevate
           >
@@ -64,12 +69,12 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
         <div className="space-y-base">
           {shortcuts.map((s) => (
             <div key={s.keys.join("+")} className="text-body flex items-center justify-between">
-              <span className="text-gray-600">{s.description}</span>
+              <span className="text-highlight-10">{s.description}</span>
               <div className="gap-xs flex">
                 {s.keys.map((k) => (
                   <kbd
                     key={k}
-                    className="px-base py-xs text-body rounded border border-gray-200 bg-gray-50 font-mono"
+                    className="px-base py-xs text-body border-neutral-30 bg-neutral-30 rounded border font-mono"
                   >
                     {k}
                   </kbd>

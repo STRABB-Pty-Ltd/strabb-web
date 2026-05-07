@@ -68,7 +68,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
     <div style={{ padding: "var(--space-sm)" }}>
       <h3
         className="mb-base text-body font-semibold tracking-wide uppercase"
-        style={{ color: "var(--brand-10)", opacity: 0.7 }}
+        style={{ color: "var(--highlight-10)", opacity: 0.7 }}
       >
         Timeframe
       </h3>

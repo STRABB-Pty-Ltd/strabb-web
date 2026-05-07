@@ -3,9 +3,41 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import { USE_MOCK } from "@/lib/mock-data";
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
-import type { KPIData, AlertItem, PreviewData } from "@/lib/mock-data/dashboard-hooks";
+
+export interface KPIData {
+  label: string;
+  value: string | number;
+  icon: string;
+  trend?: number | null;
+  type: "currency" | "number" | "percentage";
+}
+
+export interface AlertItem {
+  id: string;
+  type: "message" | "unscheduled" | "ticket" | "sync";
+  severity: "red" | "amber" | "blue";
+  description: string;
+  count: number;
+}
+
+export interface PreviewData {
+  miniCalendar: { date: string; bookings: number }[];
+  revenueSparkline: { label: string; revenue: number }[];
+  upcomingBookings: {
+    id: string;
+    guest: string;
+    listing: string;
+    checkIn: string;
+    channel: string;
+  }[];
+  cleansAndTickets: {
+    id: string;
+    kind: "clean" | "ticket";
+    listing: string;
+    date: string;
+  }[];
+}
 
 interface RawKPIMetrics {
   revenue: number;
@@ -63,7 +95,7 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
       type: "percentage",
     },
     {
-      label: "Avg Nightly Rate",
+      label: "Avg $/night",
       value: Math.round(raw.avgNightlyRate),
       icon: "bed",
       trend: t?.avgNightlyRate,
@@ -131,7 +163,7 @@ export function useDashboardKPIsAPI(
       );
       return rawKPIsToKPIData(response.data);
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -145,7 +177,7 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
       const response = await apiClient.get<{ data: RawAlertResponse }>("/dashboard/alerts");
       return rawAlertsToAlertItems(response.data);
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -207,7 +239,7 @@ export function useDashboardPreviewAPI(
       );
       return rawPreviewToPreviewData(response.data);
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }
 
@@ -232,6 +264,6 @@ export function useDashboardCompareAPI(
       );
       return response.data;
     },
-    enabled: !USE_MOCK && isReady && selectedListings.length > 0,
+    enabled: isReady && selectedListings.length > 0,
   });
 }

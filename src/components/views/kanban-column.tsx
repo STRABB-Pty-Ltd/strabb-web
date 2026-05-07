@@ -17,8 +17,8 @@ export function KanbanColumn({ label, count, children }: KanbanColumnProps) {
         className="gap-base px-sm py-base flex items-center border-b"
         style={{ borderColor: "var(--border)" }}
       >
-        <span className="text-body font-semibold text-gray-700">{label}</span>
-        <span className="px-base py-xs text-body rounded-full bg-gray-200 font-medium text-gray-600">
+        <span className="text-body text-highlight-10 font-semibold">{label}</span>
+        <span className="px-base py-xs text-body bg-neutral-30 text-highlight-10 rounded-full font-medium">
           {count}
         </span>
       </div>

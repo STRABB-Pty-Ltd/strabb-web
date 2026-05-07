@@ -23,7 +23,7 @@ interface OccupancyChartProps {
 
 function getOccupancyColor(rate: number): string {
   if (rate < 50) return "var(--status-danger)";
-  if (rate < 80) return "var(--brand-10)";
+  if (rate < 80) return "var(--highlight-10)";
   return "var(--status-success)";
 }
 
@@ -34,7 +34,7 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           dataKey="listing"
-          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           interval={0}
           angle={-20}
           textAnchor="end"
@@ -42,7 +42,7 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
           height={55}
         />
         <YAxis
-          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           domain={[0, 100]}
           tickFormatter={(v) => `${v}%`}
         />

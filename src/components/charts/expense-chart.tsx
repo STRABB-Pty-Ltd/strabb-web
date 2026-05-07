@@ -16,7 +16,7 @@ interface ExpenseChartProps {
 }
 
 const COLORS = [
-  "var(--brand-10)",
+  "var(--highlight-10)",
   "var(--channel-direct)",
   "var(--status-success)",
   "var(--status-danger)",

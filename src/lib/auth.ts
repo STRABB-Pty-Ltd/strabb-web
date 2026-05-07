@@ -5,7 +5,7 @@ import type { CurrentUser, CurrentUserResponse, DataResponse, TokenPair } from "
 
 import { decodeJwtPayload, isTokenExpiringSoon } from "./auth-utils";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = process.env.INTERNAL_API_URL ?? "http://localhost:8000";
 
 async function refreshAccessToken(refreshToken: string) {
   const response = await fetch(`${API_URL}/auth/refresh`, {

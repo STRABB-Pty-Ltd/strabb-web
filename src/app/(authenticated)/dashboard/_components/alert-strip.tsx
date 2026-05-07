@@ -16,7 +16,7 @@ const severityBg: Record<string, string> = {
 const severityAccent: Record<string, string> = {
   red: "var(--status-issues)",
   amber: "var(--status-issues)",
-  blue: "var(--brand-10)",
+  blue: "var(--highlight-10)",
 };
 
 const typeIcon: Record<string, React.ElementType> = {
@@ -62,7 +62,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
       {visible.map((alert) => {
         const Icon = typeIcon[alert.type] ?? AlertTriangle;
         const bg = severityBg[alert.severity] ?? "var(--neutral-30)";
-        const accent = severityAccent[alert.severity] ?? "var(--brand-10)";
+        const accent = severityAccent[alert.severity] ?? "var(--highlight-10)";
         return (
           <div
             key={alert.id}
@@ -70,7 +70,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
             style={{ backgroundColor: bg }}
           >
             <Icon size={16} style={{ color: accent }} />
-            <span className="text-body flex-1" style={{ color: "var(--brand-10)" }}>
+            <span className="text-body flex-1" style={{ color: "var(--highlight-10)" }}>
               {alert.description}
             </span>
             <button
@@ -86,7 +86,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               type="button"
               onClick={() => setDismissed((d) => [...d, alert.id])}
               aria-label="Dismiss alert"
-              style={{ color: "var(--brand-10)", opacity: 0.6 }}
+              style={{ color: "var(--highlight-10)", opacity: 0.6 }}
               data-no-elevate
             >
               <X size={14} />

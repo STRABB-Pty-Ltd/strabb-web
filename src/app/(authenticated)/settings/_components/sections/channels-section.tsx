@@ -73,8 +73,8 @@ export function ChannelsSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-gray-900">Channels</h2>
-        <p className="text-body text-gray-500">Per-platform sync and pricing settings.</p>
+        <h2 className="text-subheading text-highlight-10 font-semibold">Channels</h2>
+        <p className="text-body text-highlight-10">Per-platform sync and pricing settings.</p>
       </div>
 
       <div className="space-y-sm">
@@ -89,11 +89,11 @@ export function ChannelsSection() {
             }}
           >
             <div className="mb-sm gap-base flex items-center">
-              <h3 className="text-body font-semibold text-gray-800">{ch.name}</h3>
+              <h3 className="text-body text-highlight-10 font-semibold">{ch.name}</h3>
             </div>
             <div className="gap-sm grid grid-cols-2">
               <div>
-                <label className="mb-xs text-body block font-medium text-gray-600">
+                <label className="mb-xs text-body text-highlight-10 block font-medium">
                   Sync Frequency
                 </label>
                 <select
@@ -110,7 +110,7 @@ export function ChannelsSection() {
                 </select>
               </div>
               <div>
-                <label className="mb-xs text-body block font-medium text-gray-600">
+                <label className="mb-xs text-body text-highlight-10 block font-medium">
                   Default Pricing Rule
                 </label>
                 <select
@@ -134,7 +134,7 @@ export function ChannelsSection() {
       <button
         type="button"
         onClick={handleSave}
-        className="px-sm py-base text-body rounded-lg font-medium text-white"
+        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Save Changes

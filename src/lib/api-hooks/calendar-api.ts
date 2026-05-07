@@ -3,8 +3,24 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import { USE_MOCK } from "@/lib/mock-data";
-import type { CalendarEvent } from "@/lib/mock-data/calendar-hooks";
+
+export type CalendarEventType = "booking" | "vacancy" | "ticket" | "cleaning";
+
+export interface CalendarEvent {
+  id: string;
+  type: CalendarEventType;
+  listingId: string;
+  listingName: string;
+  label: string;
+  start: string;
+  end: string;
+  color: string;
+  channel?: string;
+  guest?: string;
+  status?: string;
+  amount?: number;
+  isImplicitBlock?: boolean;
+}
 
 // Backend calendar event shape after global keysToCamel
 interface RawCalendarEvent {
@@ -93,6 +109,6 @@ export function useCalendarEventsAPI(
       );
       return response.data.map(mapCalendarEvent);
     },
-    enabled: !USE_MOCK && isReady,
+    enabled: isReady,
   });
 }

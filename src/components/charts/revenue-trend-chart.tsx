@@ -86,7 +86,7 @@ function YearBrackets(props: YearBracketsProps & Record<string, unknown>) {
               x2={lastX}
               y1={bracketY}
               y2={bracketY}
-              stroke="var(--brand-10)"
+              stroke="var(--highlight-10)"
               strokeOpacity={0.35}
             />
             <line
@@ -94,7 +94,7 @@ function YearBrackets(props: YearBracketsProps & Record<string, unknown>) {
               x2={firstX}
               y1={bracketY}
               y2={bracketY - 4}
-              stroke="var(--brand-10)"
+              stroke="var(--highlight-10)"
               strokeOpacity={0.35}
             />
             <line
@@ -102,14 +102,14 @@ function YearBrackets(props: YearBracketsProps & Record<string, unknown>) {
               x2={lastX}
               y1={bracketY}
               y2={bracketY - 4}
-              stroke="var(--brand-10)"
+              stroke="var(--highlight-10)"
               strokeOpacity={0.35}
             />
             <text
               x={midX}
               y={textY}
               textAnchor="middle"
-              fill="var(--brand-10)"
+              fill="var(--highlight-10)"
               fontSize={FONT_SIZE}
             >
               {year}
@@ -127,17 +127,20 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
       <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 28 }}>
         <defs>
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--brand-10)" stopOpacity={0.25} />
-            <stop offset="95%" stopColor="var(--brand-10)" stopOpacity={0} />
+            <stop offset="5%" stopColor="var(--highlight-10)" stopOpacity={0.25} />
+            <stop offset="95%" stopColor="var(--highlight-10)" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }}
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           tickFormatter={formatMonthOnly}
         />
-        <YAxis tick={{ fontSize: FONT_SIZE, fill: "var(--brand-10)" }} tickFormatter={formatAUD} />
+        <YAxis
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
+          tickFormatter={formatAUD}
+        />
         <ChartTooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
           labelFormatter={(label) => formatMonthLabel(String(label))}
@@ -145,7 +148,7 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
         <Area
           type="monotone"
           dataKey="revenue"
-          stroke="var(--brand-10)"
+          stroke="var(--highlight-10)"
           strokeWidth={2}
           fill="url(#revenueGradient)"
         />

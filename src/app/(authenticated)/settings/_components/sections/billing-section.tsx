@@ -28,7 +28,7 @@ function trialDaysLeft(sub: SubscriptionResponse): number | null {
 
 function statusToneClass(status: string | undefined): string {
   if (!status) return BILLING_STATUS_COLORS.cancelled;
-  return BILLING_STATUS_COLORS[status] ?? "text-gray-700";
+  return BILLING_STATUS_COLORS[status] ?? "text-highlight-10";
 }
 
 function statusLabel(status: string | undefined): string {
@@ -82,10 +82,12 @@ export function BillingSection() {
     return (
       <div className="space-y-md">
         <div>
-          <h2 className="text-subheading font-semibold text-gray-900">Billing</h2>
-          <p className="text-body text-gray-500">Manage your subscription and payment details.</p>
+          <h2 className="text-subheading text-highlight-10 font-semibold">Billing</h2>
+          <p className="text-body text-highlight-10">
+            Manage your subscription and payment details.
+          </p>
         </div>
-        <p className="text-body text-gray-400">Loading…</p>
+        <p className="text-body text-highlight-10">Loading…</p>
       </div>
     );
   }
@@ -97,14 +99,14 @@ export function BillingSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-gray-900">Billing</h2>
-        <p className="text-body text-gray-500">Manage your subscription and payment details.</p>
+        <h2 className="text-subheading text-highlight-10 font-semibold">Billing</h2>
+        <p className="text-body text-highlight-10">Manage your subscription and payment details.</p>
       </div>
 
       <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <div className="mb-sm flex items-center justify-between">
           <div>
-            <p className="text-body font-medium text-gray-800">Current plan</p>
+            <p className="text-body text-highlight-10 font-medium">Current plan</p>
             <p className={`text-body font-semibold ${statusToneClass(status)}`}>
               {statusLabel(status)}
             </p>
@@ -114,7 +116,7 @@ export function BillingSection() {
               className="px-sm py-xs text-body rounded-md font-medium"
               style={{
                 backgroundColor: daysLeft <= 3 ? "var(--status-warning-tint)" : "var(--neutral-30)",
-                color: daysLeft <= 3 ? "var(--status-warning)" : "var(--brand-10)",
+                color: daysLeft <= 3 ? "var(--status-warning)" : "var(--highlight-10)",
               }}
             >
               {daysLeft === 0
@@ -126,17 +128,17 @@ export function BillingSection() {
 
         <div className="mb-sm gap-sm grid grid-cols-2">
           <div>
-            <p className="text-body text-gray-500">Billable listings</p>
-            <p className="font-data text-subheading font-semibold text-gray-900">
+            <p className="text-body text-highlight-10">Billable listings</p>
+            <p className="font-data text-subheading text-highlight-10 font-semibold">
               {data.billableListingCount}
             </p>
           </div>
           {sub && (
             <div>
-              <p className="text-body text-gray-500">
+              <p className="text-body text-highlight-10">
                 {status === "trial" ? "Trial ends" : "Next billing date"}
               </p>
-              <p className="text-body text-gray-700">
+              <p className="text-body text-highlight-10">
                 {formatDate(status === "trial" ? sub.trialEndsAt : sub.currentPeriodEnd)}
               </p>
             </div>
@@ -149,7 +151,7 @@ export function BillingSection() {
               type="button"
               onClick={handleStartTrial}
               disabled={startTrial.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {startTrial.isPending ? "Starting…" : "Start free trial"}
@@ -161,7 +163,7 @@ export function BillingSection() {
               type="button"
               onClick={handleCheckout}
               disabled={createCheckout.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createCheckout.isPending ? "Redirecting…" : "Add payment details"}
@@ -173,7 +175,7 @@ export function BillingSection() {
               type="button"
               onClick={handlePortal}
               disabled={createPortal.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createPortal.isPending ? "Redirecting…" : "Manage subscription"}
@@ -185,7 +187,7 @@ export function BillingSection() {
               type="button"
               onClick={handleCheckout}
               disabled={createCheckout.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-white disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createCheckout.isPending ? "Redirecting…" : "Reactivate subscription"}

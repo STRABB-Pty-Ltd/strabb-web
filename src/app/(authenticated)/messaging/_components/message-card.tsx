@@ -16,7 +16,7 @@ const channelColors: Record<string, string> = {
 const priorityDot: Record<string, string> = {
   high: "var(--status-danger)",
   medium: "var(--status-danger)",
-  low: "var(--brand-10)",
+  low: "var(--highlight-10)",
 };
 
 interface MessageCardProps {
@@ -30,7 +30,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
       <div className="space-y-xs">
         <div className="gap-base flex items-center justify-between">
           <div className="gap-base flex min-w-0 items-center">
-            <span className="text-body truncate font-medium text-gray-800">
+            <span className="text-body text-highlight-10 truncate font-medium">
               {message.guestName}
             </span>
             {message.priority !== "low" && (
@@ -40,7 +40,9 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
               />
             )}
           </div>
-          <span className="text-body shrink-0 truncate text-gray-500">{message.listingName}</span>
+          <span className="text-body text-highlight-10 shrink-0 truncate">
+            {message.listingName}
+          </span>
         </div>
 
         <div className="gap-base flex items-center">
@@ -52,12 +54,12 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
           >
             {formatChannel(message.channel)}
           </span>
-          <span className="text-body truncate text-gray-600">{message.subject}</span>
+          <span className="text-body text-highlight-10 truncate">{message.subject}</span>
         </div>
 
-        <p className="text-body truncate text-gray-400">{message.previewText}</p>
+        <p className="text-body text-highlight-10 truncate">{message.previewText}</p>
 
-        <div className="gap-base text-body flex items-center text-gray-400">
+        <div className="gap-base text-body text-highlight-10 flex items-center">
           <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
           <span className="gap-xs flex items-center">
             <MessageSquare size={10} />

@@ -92,24 +92,24 @@ export function CalendarEventChip({
       style={{
         backgroundColor: color,
         color: textColor ?? "var(--surface-60)",
-        // 1px --brand-10 outline on top/bottom always, plus on left/right
+        // 1px --highlight-10 outline on top/bottom always, plus on left/right
         // only at the actual event ends. Continuation segments skip the
-        // left/right brand-10 so the multi-day bar reads as one continuous
+        // left/right highlight-10 so the multi-day bar reads as one continuous
         // outlined shape across day cells. The 4px channel accent (when
         // present) takes over the start/end edge - it's the chip's "cap".
-        borderTop: "0.5px solid var(--brand-10)",
-        borderBottom: "0.5px solid var(--brand-10)",
+        borderTop: "0.5px solid var(--highlight-10)",
+        borderBottom: "0.5px solid var(--highlight-10)",
         borderLeft:
           accentColor && isEventStart
             ? `4px solid ${accentColor}`
             : isEventStart
-              ? "0.5px solid var(--brand-10)"
+              ? "0.5px solid var(--highlight-10)"
               : undefined,
         borderRight:
           accentColor && isEventEnd
             ? `4px solid ${accentColor}`
             : isEventEnd
-              ? "0.5px solid var(--brand-10)"
+              ? "0.5px solid var(--highlight-10)"
               : undefined,
         // Pad on the side that's actually a chip edge so the label has
         // breathing room from the bg edge. Mid-row continuation chips

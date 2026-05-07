@@ -69,7 +69,7 @@ export function ListingFilterTree() {
       <div className="mb-base flex items-center justify-between">
         <h3
           className="text-body font-semibold tracking-wide uppercase"
-          style={{ color: "var(--brand-10)", opacity: 0.7 }}
+          style={{ color: "var(--highlight-10)", opacity: 0.7 }}
         >
           Listings
         </h3>
@@ -175,7 +175,7 @@ export function ListingFilterTree() {
             className="px-sm py-base text-body rounded-lg"
             style={{
               backgroundColor: "var(--neutral-30)",
-              color: "var(--brand-10)",
+              color: "var(--highlight-10)",
             }}
             autoFocus
           />

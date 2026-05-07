@@ -4,8 +4,6 @@ import { useMemo } from "react";
 
 import { KanbanBoard } from "@/components/views/kanban-board";
 import { useTicketsAPI } from "@/lib/api-hooks/tickets-api";
-import { USE_MOCK } from "@/lib/mock-data";
-import { mockTicketsList } from "@/lib/mock-data/ticket";
 import { useProperties } from "@/hooks/use-properties";
 import type { CleaningTask } from "@/types/cleaning-task";
 import type { Ticket } from "@/types/ticket";
@@ -34,7 +32,7 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
   }, [propertiesData]);
 
   const tickets = useMemo(() => {
-    const all = USE_MOCK ? mockTicketsList : (ticketsResponse?.data ?? []);
+    const all = ticketsResponse?.data ?? [];
     if (selectedListings.length === 0) return all;
     return all.filter((t) => t.listingId && selectedListings.includes(t.listingId));
   }, [ticketsResponse, selectedListings]);
@@ -78,7 +76,9 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
         )
       }
       getItemId={(item) => item.data.id}
-      getBorderColor={(item) => (item.kind === "task" ? item.data.listingColor : "var(--brand-10)")}
+      getBorderColor={(item) =>
+        item.kind === "task" ? item.data.listingColor : "var(--highlight-10)"
+      }
     />
   );
 }

@@ -25,8 +25,8 @@ const typeLabels: Record<string, string> = {
 const priorityColors: Record<string, { bg: string; text: string }> = {
   urgent: { bg: "var(--row-alt)", text: "var(--status-danger)" },
   high: { bg: "var(--row-alt)", text: "var(--status-danger)" },
-  medium: { bg: "var(--row-alt)", text: "var(--brand-10)" },
-  low: { bg: "var(--row-alt)", text: "var(--brand-10)" },
+  medium: { bg: "var(--row-alt)", text: "var(--highlight-10)" },
+  low: { bg: "var(--row-alt)", text: "var(--highlight-10)" },
 };
 
 interface CleaningListViewProps {
@@ -60,7 +60,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
         width: "112px",
         render: (t) => (
           <span
-            className="px-base py-xs text-body rounded-sm text-gray-600"
+            className="px-base py-xs text-body text-highlight-10 rounded-sm"
             style={{ backgroundColor: "var(--row-alt)" }}
           >
             {typeLabels[t.type] ?? t.type}
@@ -85,7 +85,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
         label: "Assignee",
         width: "160px",
         render: (t) => (
-          <span className="text-body text-gray-600">{t.cleanerName ?? "Unassigned"}</span>
+          <span className="text-body text-highlight-10">{t.cleanerName ?? "Unassigned"}</span>
         ),
       },
       {
@@ -96,7 +96,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
           <span
             className="px-base py-xs text-body rounded-md font-medium"
             style={{
-              backgroundColor: statusColors[t.status] ?? "var(--brand-10)",
+              backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
               color: "var(--surface-60)",
             }}
           >
