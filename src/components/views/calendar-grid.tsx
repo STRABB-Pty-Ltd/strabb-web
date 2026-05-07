@@ -249,7 +249,7 @@ export function CalendarGrid<T>({
                 key={i}
                 type="button"
                 onClick={() => onEventClick(ev)}
-                className="gap-base p-sm flex items-center rounded-lg border text-left transition-colors hover:bg-neutral-30"
+                className="gap-base p-sm hover:bg-neutral-30 flex items-center rounded-lg border text-left transition-colors"
                 style={{
                   borderColor: "var(--border)",
                   borderLeft: accent ? `4px solid ${accent}` : undefined,
@@ -292,7 +292,7 @@ export function CalendarGrid<T>({
         {DAY_LABELS.map((d, i) => (
           <div
             key={d}
-            className="py-xs text-body bg-neutral-30 text-center font-medium text-highlight-10"
+            className="py-xs text-body bg-neutral-30 text-highlight-10 text-center font-medium"
             style={{
               borderRight: i === DAY_LABELS.length - 1 ? undefined : "2px solid var(--neutral-30)",
               borderBottom: "2px solid var(--neutral-30)",

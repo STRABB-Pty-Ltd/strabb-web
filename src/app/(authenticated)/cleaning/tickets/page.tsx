@@ -49,8 +49,7 @@ export default function TicketsPage() {
   const meta = data?.meta;
   const hasActiveFilter = !!(filters.status || filters.priority || filters.propertyId);
 
-  const clearFilters = () =>
-    setFilters({ page: 1, pageSize: PAGE_SIZE });
+  const clearFilters = () => setFilters({ page: 1, pageSize: PAGE_SIZE });
 
   return (
     <div className="p-md space-y-md">
@@ -132,7 +131,7 @@ interface PaginationProps {
 
 function Pagination({ page, totalPages, total, onChange }: PaginationProps) {
   return (
-    <div className="gap-base text-body flex items-center justify-end text-highlight-10">
+    <div className="gap-base text-body text-highlight-10 flex items-center justify-end">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}

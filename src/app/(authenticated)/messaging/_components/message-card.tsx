@@ -30,7 +30,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
       <div className="space-y-xs">
         <div className="gap-base flex items-center justify-between">
           <div className="gap-base flex min-w-0 items-center">
-            <span className="text-body truncate font-medium text-highlight-10">
+            <span className="text-body text-highlight-10 truncate font-medium">
               {message.guestName}
             </span>
             {message.priority !== "low" && (
@@ -40,7 +40,9 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
               />
             )}
           </div>
-          <span className="text-body shrink-0 truncate text-highlight-10">{message.listingName}</span>
+          <span className="text-body text-highlight-10 shrink-0 truncate">
+            {message.listingName}
+          </span>
         </div>
 
         <div className="gap-base flex items-center">
@@ -52,12 +54,12 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
           >
             {formatChannel(message.channel)}
           </span>
-          <span className="text-body truncate text-highlight-10">{message.subject}</span>
+          <span className="text-body text-highlight-10 truncate">{message.subject}</span>
         </div>
 
-        <p className="text-body truncate text-highlight-10">{message.previewText}</p>
+        <p className="text-body text-highlight-10 truncate">{message.previewText}</p>
 
-        <div className="gap-base text-body flex items-center text-highlight-10">
+        <div className="gap-base text-body text-highlight-10 flex items-center">
           <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
           <span className="gap-xs flex items-center">
             <MessageSquare size={10} />

@@ -76,7 +76,9 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
         )
       }
       getItemId={(item) => item.data.id}
-      getBorderColor={(item) => (item.kind === "task" ? item.data.listingColor : "var(--highlight-10)")}
+      getBorderColor={(item) =>
+        item.kind === "task" ? item.data.listingColor : "var(--highlight-10)"
+      }
     />
   );
 }

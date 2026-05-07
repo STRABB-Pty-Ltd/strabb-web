@@ -181,11 +181,11 @@ export function TicketFormDialog({
             {errors.notes && <p className="text-destructive text-body">{errors.notes.message}</p>}
           </div>
 
-          <label className="gap-sm text-body flex items-center text-highlight-10">
+          <label className="gap-sm text-body text-highlight-10 flex items-center">
             <input
               type="checkbox"
               {...register("autoLinkToNext")}
-              className="h-base w-base rounded border-neutral-30"
+              className="h-base w-base border-neutral-30 rounded"
             />
             Auto-link to next scheduled clean for this listing
           </label>

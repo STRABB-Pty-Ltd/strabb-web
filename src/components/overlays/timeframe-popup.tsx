@@ -178,7 +178,7 @@ export function TimeframePopup() {
       />
       <div
         ref={popupRef}
-        className="fixed rounded-xl border bg-surface-60 shadow-xl"
+        className="bg-surface-60 fixed rounded-xl border shadow-xl"
         style={{
           zIndex: Z.DRAWER,
           top: positionStyle.top,
@@ -197,7 +197,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-highlight-10 hover:bg-neutral-30"
+            className="text-highlight-10 hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
             aria-label="Close"
             data-no-elevate
           >
@@ -286,7 +286,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -295,7 +295,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -342,7 +342,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} />
@@ -351,7 +351,7 @@ function QuarterPicker({
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
           <ChevronRight size={16} />
@@ -437,7 +437,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(subMonths(viewDate, 1))}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous month"
         >
           <ChevronLeft size={16} />
@@ -446,7 +446,7 @@ function MonthGrid({
         <button
           type="button"
           onClick={() => onViewDateChange(addMonths(viewDate, 1))}
-          className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next month"
         >
           <ChevronRight size={16} />
@@ -454,7 +454,7 @@ function MonthGrid({
       </div>
       <div className="mb-xs gap-xs grid grid-cols-7">
         {DAY_LABELS.map((d) => (
-          <div key={d} className="text-body text-center text-highlight-10">
+          <div key={d} className="text-body text-highlight-10 text-center">
             {d}
           </div>
         ))}
@@ -484,7 +484,7 @@ function MonthGrid({
               type="button"
               onClick={() => onDayClick(day)}
               onMouseEnter={() => onDayHover?.(day)}
-              className="h-lg text-body flex items-center justify-center rounded transition-colors hover:bg-neutral-30"
+              className="h-lg text-body hover:bg-neutral-30 flex items-center justify-center rounded transition-colors"
               style={{ color: fg, backgroundColor: bg }}
             >
               {day.getDate()}
@@ -642,7 +642,7 @@ function CustomRangeForm({
         type="button"
         disabled={!valid}
         onClick={() => onApply(start, end)}
-        className="mt-base py-xs text-body w-full rounded-lg text-surface-60 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-base py-xs text-body text-surface-60 w-full rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Apply

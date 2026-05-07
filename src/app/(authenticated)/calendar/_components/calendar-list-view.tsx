@@ -43,7 +43,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     key: "listing",
     label: "Listing",
     width: "200px",
-    render: (ev) => <span className="text-body truncate text-highlight-10">{ev.listingName}</span>,
+    render: (ev) => <span className="text-body text-highlight-10 truncate">{ev.listingName}</span>,
   },
   {
     key: "guest",
@@ -51,7 +51,7 @@ const columns: ColumnDef<CalendarEvent>[] = [
     width: "160px",
     render: (ev) =>
       ev.guest ? (
-        <span className="text-body truncate text-highlight-10">{ev.guest}</span>
+        <span className="text-body text-highlight-10 truncate">{ev.guest}</span>
       ) : (
         <span className="text-body text-highlight-10">-</span>
       ),

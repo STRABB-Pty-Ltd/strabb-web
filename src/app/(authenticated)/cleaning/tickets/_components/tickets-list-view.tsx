@@ -58,7 +58,7 @@ export function TicketsListView({
           onChange: (v) => onFilterChange("propertyId", v || undefined),
         },
         render: (t) => (
-          <span className="text-body truncate text-highlight-10">
+          <span className="text-body text-highlight-10 truncate">
             {propertyNames[t.propertyId] ?? t.propertyId.slice(0, 8)}
           </span>
         ),
@@ -67,7 +67,9 @@ export function TicketsListView({
         key: "description",
         label: "Description",
         sortable: false,
-        render: (t) => <span className="text-body truncate text-highlight-10">{t.description}</span>,
+        render: (t) => (
+          <span className="text-body text-highlight-10 truncate">{t.description}</span>
+        ),
       },
       {
         key: "priority",

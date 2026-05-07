@@ -88,12 +88,12 @@ export function DrillDownPanel({
           className="px-sm py-sm flex items-center justify-between border-b"
           style={{ borderColor: "var(--border)" }}
         >
-          <h2 className="text-body font-semibold text-highlight-10">{title}</h2>
+          <h2 className="text-body text-highlight-10 font-semibold">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close panel"
-            className="p-xs rounded text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10"
+            className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded"
             data-no-elevate
           >
             <X size={18} />

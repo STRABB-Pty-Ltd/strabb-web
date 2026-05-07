@@ -35,13 +35,13 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
     <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-xs flex items-center">
-          <Wrench size={12} className="shrink-0 text-highlight-10" />
-          <span className="text-body truncate font-medium text-highlight-10">
+          <Wrench size={12} className="text-highlight-10 shrink-0" />
+          <span className="text-body text-highlight-10 truncate font-medium">
             {propertyName ?? ticket.propertyId.slice(0, 8)}
           </span>
         </div>
 
-        <p className="text-body line-clamp-2 text-highlight-10">{ticket.description}</p>
+        <p className="text-body text-highlight-10 line-clamp-2">{ticket.description}</p>
 
         <div className="gap-base flex items-center">
           <span

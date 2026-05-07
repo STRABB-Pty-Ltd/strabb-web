@@ -97,8 +97,8 @@ export function BookingDetailDrawer() {
       {displayBooking && (
         <div className="space-y-md">
           {isConflicted && (
-            <div className="p-sm rounded-lg border border-neutral-30 bg-neutral-30 dark:border-status-danger dark:bg-status-danger">
-              <p className="text-body font-medium text-status-danger dark:text-neutral-30">
+            <div className="p-sm border-neutral-30 bg-neutral-30 dark:border-status-danger dark:bg-status-danger rounded-lg border">
+              <p className="text-body text-status-danger dark:text-neutral-30 font-medium">
                 Date conflict detected
               </p>
               <p className="text-body mt-xs text-status-danger dark:text-status-danger">
@@ -109,7 +109,7 @@ export function BookingDetailDrawer() {
                 type="button"
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
-                className="mt-base px-sm py-base text-body rounded-lg border font-medium text-status-danger disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-base px-sm py-base text-body text-status-danger rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
                 style={{
                   borderColor: "var(--status-danger)",
                   backgroundColor: "var(--surface-60)",
@@ -122,19 +122,19 @@ export function BookingDetailDrawer() {
 
           <div>
             <p className="text-body text-highlight-10">Listing</p>
-            <p className="text-body font-medium text-highlight-10">{listingName}</p>
+            <p className="text-body text-highlight-10 font-medium">{listingName}</p>
           </div>
 
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-highlight-10">Check-in</p>
-              <p className="text-body font-medium text-highlight-10">
+              <p className="text-body text-highlight-10 font-medium">
                 {formatInPropertyTimezone(displayBooking.checkIn, tz)}
               </p>
             </div>
             <div>
               <p className="text-body text-highlight-10">Check-out</p>
-              <p className="text-body font-medium text-highlight-10">
+              <p className="text-body text-highlight-10 font-medium">
                 {formatInPropertyTimezone(displayBooking.checkOut, tz)}
               </p>
             </div>
@@ -180,7 +180,7 @@ export function BookingDetailDrawer() {
           )}
 
           <div className="space-y-xs">
-            <label htmlFor="booking-notes" className="text-body font-semibold text-highlight-10">
+            <label htmlFor="booking-notes" className="text-body text-highlight-10 font-semibold">
               Notes
             </label>
             <textarea
@@ -197,7 +197,7 @@ export function BookingDetailDrawer() {
                 type="button"
                 onClick={handleSaveNotes}
                 disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
-                className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+                className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                 style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
               >
                 {updateNotes.isPending ? "Saving…" : "Save notes"}

@@ -36,7 +36,9 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
             className="h-base w-base shrink-0 rounded-full"
             style={{ backgroundColor: task.listingColor }}
           />
-          <span className="text-body truncate font-medium text-highlight-10">{task.listingName}</span>
+          <span className="text-body text-highlight-10 truncate font-medium">
+            {task.listingName}
+          </span>
         </div>
 
         <div className="gap-base flex items-center">
@@ -46,25 +48,25 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
           >
             {task.priority}
           </span>
-          <span className="px-xs py-xs text-body rounded-sm bg-neutral-30 font-medium text-highlight-10">
+          <span className="px-xs py-xs text-body bg-neutral-30 text-highlight-10 rounded-sm font-medium">
             {typeLabels[task.type] ?? task.type}
           </span>
         </div>
 
-        <div className="gap-xs text-body flex items-center text-highlight-10">
+        <div className="gap-xs text-body text-highlight-10 flex items-center">
           <Clock size={10} />
           <span>{formatInPropertyTimezone(task.scheduledTime, tz, "d MMM, HH:mm")}</span>
         </div>
 
         {task.cleanerName && (
-          <div className="gap-xs text-body flex items-center text-highlight-10">
+          <div className="gap-xs text-body text-highlight-10 flex items-center">
             <User size={10} />
             <span>{task.cleanerName}</span>
           </div>
         )}
 
         <div className="gap-base flex items-center">
-          <div className="h-xs flex-1 rounded-full bg-neutral-30">
+          <div className="h-xs bg-neutral-30 flex-1 rounded-full">
             <div
               className="h-xs rounded-full"
               style={{

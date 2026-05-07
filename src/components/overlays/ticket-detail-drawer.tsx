@@ -242,7 +242,7 @@ export function TicketDetailDrawer() {
         <div className="space-y-md">
           <div>
             <p className="text-body text-highlight-10">{placeLabel}</p>
-            <p className="text-body font-medium text-highlight-10">{placeValue}</p>
+            <p className="text-body text-highlight-10 font-medium">{placeValue}</p>
           </div>
 
           <div className="gap-sm grid grid-cols-2">
@@ -252,7 +252,7 @@ export function TicketDetailDrawer() {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
+                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {TICKET_PRIORITY_OPTIONS.map((o) => (
@@ -262,7 +262,7 @@ export function TicketDetailDrawer() {
                   ))}
                 </select>
               ) : (
-                <p className="text-body font-medium text-highlight-10">{priority}</p>
+                <p className="text-body text-highlight-10 font-medium">{priority}</p>
               )}
             </div>
             <div>
@@ -271,7 +271,7 @@ export function TicketDetailDrawer() {
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TicketStatus)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
+                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {TICKET_STATUS_OPTIONS.map((o) => (
@@ -326,7 +326,7 @@ export function TicketDetailDrawer() {
                 style={{ borderColor: "var(--border)" }}
               />
             ) : (
-              <p className="text-body whitespace-pre-wrap text-highlight-10">
+              <p className="text-body text-highlight-10 whitespace-pre-wrap">
                 {displayTicket.description}
               </p>
             )}
@@ -369,14 +369,14 @@ export function TicketDetailDrawer() {
                 style={{ borderColor: "var(--border)" }}
               />
             ) : (
-              <p className="text-body whitespace-pre-wrap text-highlight-10">
+              <p className="text-body text-highlight-10 whitespace-pre-wrap">
                 {displayTicket.notes || <span className="text-highlight-10">None</span>}
               </p>
             )}
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body font-semibold text-highlight-10">Linked clean</p>
+            <p className="text-body text-highlight-10 font-semibold">Linked clean</p>
             {linkedClean ? (
               <div className="space-y-xs">
                 <p className="text-body text-highlight-10">
@@ -387,7 +387,7 @@ export function TicketDetailDrawer() {
                   type="button"
                   onClick={handleUnlinkClean}
                   disabled={unlinkClean.isPending}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10 disabled:opacity-60"
+                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium disabled:opacity-60"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {unlinkClean.isPending ? "Removing…" : "Unlink"}
@@ -398,7 +398,7 @@ export function TicketDetailDrawer() {
                 <select
                   value={selectedCleanId}
                   onChange={(e) => setSelectedCleanId(e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-lg border bg-surface-60"
+                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <option value="">Choose a clean…</option>
@@ -414,7 +414,7 @@ export function TicketDetailDrawer() {
                     type="button"
                     onClick={handleLinkClean}
                     disabled={!selectedCleanId || linkClean.isPending}
-                    className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+                    className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                     style={{
                       backgroundColor: "var(--strabb-secondary)",
                       color: "var(--surface-60)",
@@ -428,7 +428,7 @@ export function TicketDetailDrawer() {
                       setLinkingMode(false);
                       setSelectedCleanId("");
                     }}
-                    className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
+                    className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
                     style={{ borderColor: "var(--border)" }}
                   >
                     Cancel
@@ -442,7 +442,7 @@ export function TicketDetailDrawer() {
               <button
                 type="button"
                 onClick={() => setLinkingMode(true)}
-                className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
+                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
                 style={{ borderColor: "var(--border)" }}
               >
                 Link to clean
@@ -459,7 +459,7 @@ export function TicketDetailDrawer() {
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
+                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
                   style={{ borderColor: "var(--border)" }}
                 >
                   Edit
@@ -487,7 +487,7 @@ export function TicketDetailDrawer() {
                     <button
                       type="button"
                       onClick={() => setConfirmDelete(false)}
-                      className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
+                      className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
                       style={{ borderColor: "var(--border)" }}
                     >
                       Cancel
@@ -501,7 +501,7 @@ export function TicketDetailDrawer() {
                   type="button"
                   onClick={handleSave}
                   disabled={updateTicket.isPending}
-                  className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+                  className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                   style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
                 >
                   {updateTicket.isPending ? "Saving…" : "Save"}
@@ -509,7 +509,7 @@ export function TicketDetailDrawer() {
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="px-sm py-base text-body rounded-lg border font-medium text-highlight-10"
+                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
                   style={{ borderColor: "var(--border)" }}
                 >
                   Cancel

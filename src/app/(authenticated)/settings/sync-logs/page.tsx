@@ -110,7 +110,7 @@ export default function SyncLogsPage() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-highlight-10">{row.errorMessage ?? "-"}</span>
+        <span className="text-body text-highlight-10 truncate">{row.errorMessage ?? "-"}</span>
       ),
     },
   ];
@@ -129,7 +129,7 @@ export default function SyncLogsPage() {
             onClick={handleTrigger}
             disabled={trigger.isPending}
             title={RATE_LIMIT_TOOLTIP}
-            className="gap-xs px-sm py-base text-body inline-flex items-center rounded-lg font-medium text-surface-60 disabled:opacity-60"
+            className="gap-xs px-sm py-base text-body text-surface-60 inline-flex items-center rounded-lg font-medium disabled:opacity-60"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <RefreshCw size={14} className={trigger.isPending ? "animate-spin" : undefined} />
@@ -165,7 +165,7 @@ interface PaginationProps {
 function Pagination({ meta, page, onChange }: PaginationProps) {
   if (meta.totalPages <= 1) return null;
   return (
-    <div className="gap-base text-body flex items-center justify-end text-highlight-10">
+    <div className="gap-base text-body text-highlight-10 flex items-center justify-end">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}

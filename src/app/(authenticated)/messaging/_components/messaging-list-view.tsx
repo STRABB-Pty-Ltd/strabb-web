@@ -63,7 +63,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
               key={msg.id}
               type="button"
               onClick={() => setSelectedMessage(msg.id)}
-              className="gap-sm px-md py-sm flex w-full items-center rounded-lg bg-surface-60 text-left transition-shadow hover:shadow-sm"
+              className="gap-sm px-md py-sm bg-surface-60 flex w-full items-center rounded-lg text-left transition-shadow hover:shadow-sm"
               style={{
                 borderLeft: `var(--stripe-width) solid ${channelColor}`,
                 outline: isSelected ? `var(--hairline) solid ${channelColor}` : undefined,
@@ -81,18 +81,20 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
 
               <div className="min-w-0 flex-1">
                 <div className="gap-base flex items-center justify-between">
-                  <span className="text-body truncate font-medium text-highlight-10">
+                  <span className="text-body text-highlight-10 truncate font-medium">
                     {msg.guestName}
                   </span>
-                  <span className="text-body shrink-0 text-highlight-10">
+                  <span className="text-body text-highlight-10 shrink-0">
                     {format(new Date(msg.lastMessageTime), "d MMM")}
                   </span>
                 </div>
-                <span className="text-body block truncate text-highlight-10">{msg.listingName}</span>
-                <p className="text-body truncate text-highlight-10">{msg.subject}</p>
+                <span className="text-body text-highlight-10 block truncate">
+                  {msg.listingName}
+                </span>
+                <p className="text-body text-highlight-10 truncate">{msg.subject}</p>
               </div>
 
-              <span className="gap-xs text-body flex shrink-0 items-center text-highlight-10">
+              <span className="gap-xs text-body text-highlight-10 flex shrink-0 items-center">
                 <MessageSquare size={10} />
                 {msg.messageCount}
               </span>

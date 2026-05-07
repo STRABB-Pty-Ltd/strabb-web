@@ -111,7 +111,7 @@ export function PhoneSection() {
 
   const header = (
     <div>
-      <h2 className="text-subheading font-semibold text-highlight-10">Phone</h2>
+      <h2 className="text-subheading text-highlight-10 font-semibold">Phone</h2>
       <p className="text-body text-highlight-10">
         Verify a mobile number to receive and send SMS for guest messaging.
       </p>
@@ -144,7 +144,7 @@ export function PhoneSection() {
                 style={{ color: "var(--semantic-success)", marginTop: "var(--hairline)" }}
               />
               <div>
-                <p className="text-body font-medium text-highlight-10">{status?.phoneNumber}</p>
+                <p className="text-body text-highlight-10 font-medium">{status?.phoneNumber}</p>
                 <p className="text-body text-highlight-10">
                   Verified {formatVerifiedAt(status?.phoneVerifiedAt ?? null)}
                 </p>
@@ -154,7 +154,7 @@ export function PhoneSection() {
               <button
                 type="button"
                 onClick={() => setConfirmRemove(true)}
-                className="px-sm py-xs text-body rounded-lg border font-medium text-highlight-10 hover:bg-neutral-30"
+                className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-lg border font-medium"
                 style={{ borderColor: "var(--border)" }}
               >
                 Remove phone
@@ -173,7 +173,7 @@ export function PhoneSection() {
                 <button
                   type="button"
                   onClick={() => setConfirmRemove(false)}
-                  className="px-sm py-xs text-body rounded-lg border font-medium text-highlight-10"
+                  className="px-sm py-xs text-body text-highlight-10 rounded-lg border font-medium"
                   style={{ borderColor: "var(--border)" }}
                 >
                   Cancel
@@ -190,7 +190,7 @@ export function PhoneSection() {
             We sent a verification code to your phone. Enter it below to confirm.
           </p>
           <div className="space-y-xs">
-            <label className="text-body block font-medium text-highlight-10" htmlFor="otp-input">
+            <label className="text-body text-highlight-10 block font-medium" htmlFor="otp-input">
               Verification code
             </label>
             <input
@@ -220,7 +220,7 @@ export function PhoneSection() {
               type="button"
               onClick={handleConfirm}
               disabled={confirmVerification.isPending || otpInput.length === 0}
-              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {confirmVerification.isPending ? "Verifying…" : "Verify"}
@@ -229,7 +229,7 @@ export function PhoneSection() {
               type="button"
               onClick={handleClear}
               disabled={clearPhone.isPending}
-              className="px-sm py-base text-body font-medium text-highlight-10 hover:text-highlight-10"
+              className="px-sm py-base text-body text-highlight-10 hover:text-highlight-10 font-medium"
             >
               Cancel
             </button>
@@ -244,7 +244,10 @@ export function PhoneSection() {
                 Could round to 13 (--space-sm) if visually acceptable. Left as-is to preserve icon alignment. */}
             <Phone size={18} style={{ color: "var(--strabb-secondary)", marginTop: 10 }} />
             <div className="space-y-xs flex-1">
-              <label className="text-body block font-medium text-highlight-10" htmlFor="phone-input">
+              <label
+                className="text-body text-highlight-10 block font-medium"
+                htmlFor="phone-input"
+              >
                 Mobile number
               </label>
               <input
@@ -275,7 +278,7 @@ export function PhoneSection() {
               type="button"
               onClick={handleRequest}
               disabled={requestVerification.isPending || cooldown > 0}
-              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {requestVerification.isPending
@@ -290,17 +293,17 @@ export function PhoneSection() {
 
       {usage && (
         <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-          <h3 className="mb-sm text-body font-semibold text-highlight-10">SMS usage today</h3>
+          <h3 className="mb-sm text-body text-highlight-10 font-semibold">SMS usage today</h3>
           <div className="gap-sm grid grid-cols-2">
             <div>
               <p className="text-body text-highlight-10">You</p>
-              <p className="font-data text-subheading font-semibold text-highlight-10">
+              <p className="font-data text-subheading text-highlight-10 font-semibold">
                 {usage.userTodayCount} / {usage.userDailyCap}
               </p>
             </div>
             <div>
               <p className="text-body text-highlight-10">Your team</p>
-              <p className="font-data text-subheading font-semibold text-highlight-10">
+              <p className="font-data text-subheading text-highlight-10 font-semibold">
                 {usage.tenantTodayCount} / {usage.tenantDailyCap}
               </p>
             </div>

@@ -38,9 +38,7 @@ export function ColumnFilterDropdown({ label, filter }: ColumnFilterDropdownProp
 
   return (
     <Menu.Root>
-      <Menu.Trigger
-        className="gap-xs flex min-w-0 flex-col items-start text-left outline-none cursor-pointer hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 rounded"
-      >
+      <Menu.Trigger className="gap-xs flex min-w-0 cursor-pointer flex-col items-start rounded text-left outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
         <span className="gap-xs flex items-center font-semibold tracking-wide uppercase">
           <span>{label}</span>
           <ChevronDown
@@ -79,7 +77,7 @@ export function ColumnFilterDropdown({ label, filter }: ColumnFilterDropdownProp
                 <Menu.Item
                   key={opt.value || "__all__"}
                   onClick={() => filter.onChange(opt.value)}
-                  className="px-sm py-base text-body flex items-center justify-between gap-base cursor-pointer outline-none transition-colors data-[highlighted]:bg-[color-mix(in_srgb,var(--surface-60)_12%,transparent)]"
+                  className="px-sm py-base text-body gap-base flex cursor-pointer items-center justify-between transition-colors outline-none data-[highlighted]:bg-[color-mix(in_srgb,var(--surface-60)_12%,transparent)]"
                   style={{ color: "var(--surface-60)" }}
                 >
                   <span>{opt.label}</span>

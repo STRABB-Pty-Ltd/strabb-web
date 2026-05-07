@@ -156,7 +156,7 @@ export function SharePopup() {
       >
         <div
           ref={popupRef}
-          className="w-full max-w-md rounded-xl bg-surface-60 shadow-xl"
+          className="bg-surface-60 w-full max-w-md rounded-xl shadow-xl"
           style={{ animation: cardAnim }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -169,7 +169,7 @@ export function SharePopup() {
               type="button"
               onClick={closeSharePopup}
               aria-label="Close share dialog"
-              className="p-xs rounded text-highlight-10 hover:bg-neutral-30"
+              className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
               data-no-elevate
             >
               <X size={18} />
@@ -184,7 +184,7 @@ export function SharePopup() {
                   type="checkbox"
                   checked={shareFields[f.key] ?? true}
                   onChange={() => toggleField(f.key)}
-                  className="h-sm w-sm rounded border-neutral-30"
+                  className="h-sm border-neutral-30 w-sm rounded"
                 />
                 <span className="text-body text-highlight-10">{f.label}</span>
               </label>
@@ -198,7 +198,7 @@ export function SharePopup() {
             <button
               type="button"
               onClick={closeSharePopup}
-              className="px-sm py-base text-body rounded-lg text-highlight-10 hover:bg-neutral-30"
+              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
             >
               Cancel
             </button>
@@ -206,7 +206,7 @@ export function SharePopup() {
               type="button"
               onClick={handleDownload}
               disabled={downloading || !isShareableMenu(currentPage)}
-              className="px-sm py-base text-body rounded-lg border border-neutral-30 text-highlight-10 hover:bg-neutral-30 disabled:cursor-not-allowed disabled:opacity-50"
+              className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
             >
               {downloading ? "Generating…" : "Download PDF"}
             </button>
@@ -216,7 +216,7 @@ export function SharePopup() {
                 navigator.clipboard.writeText(window.location.href);
                 closeSharePopup();
               }}
-              className="px-sm py-base text-body rounded-lg text-surface-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy Link

@@ -64,7 +64,7 @@ export function IntegrationsSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-highlight-10">Integrations</h2>
+        <h2 className="text-subheading text-highlight-10 font-semibold">Integrations</h2>
         <p className="text-body text-highlight-10">Connect platforms and manage sync settings.</p>
       </div>
 
@@ -82,7 +82,7 @@ export function IntegrationsSection() {
               {platform.logo}
             </div>
             <div className="flex-1">
-              <p className="text-body font-medium text-highlight-10">{platform.name}</p>
+              <p className="text-body text-highlight-10 font-medium">{platform.name}</p>
               {platform.connected ? (
                 <p className="text-body text-highlight-10">
                   Last sync: {platform.lastSync} &middot; {platform.listingCount} listings
@@ -120,7 +120,7 @@ export function IntegrationsSection() {
       </div>
 
       <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <h3 className="mb-sm text-body font-semibold text-highlight-10">Manual iCal Feed</h3>
+        <h3 className="mb-sm text-body text-highlight-10 font-semibold">Manual iCal Feed</h3>
         <div className="gap-base flex">
           <input
             type="url"
@@ -133,7 +133,7 @@ export function IntegrationsSection() {
           <button
             type="button"
             onClick={handleAddIcal}
-            className="px-sm py-base text-body rounded-lg font-medium text-surface-60"
+            className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Add Feed

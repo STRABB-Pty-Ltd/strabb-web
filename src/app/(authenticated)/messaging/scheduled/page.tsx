@@ -125,7 +125,7 @@ function ScheduledTab({
       key: "recipientEmail",
       header: "Recipient",
       render: (_v, m) => (
-        <span className="text-body truncate text-highlight-10">{m.recipientEmail}</span>
+        <span className="text-body text-highlight-10 truncate">{m.recipientEmail}</span>
       ),
     },
     {
@@ -163,7 +163,7 @@ function ScheduledTab({
       key: "errorMessage",
       header: "Error",
       render: (_v, m) => (
-        <span className="text-body truncate text-highlight-10">{m.errorMessage ?? ""}</span>
+        <span className="text-body text-highlight-10 truncate">{m.errorMessage ?? ""}</span>
       ),
     },
     {
@@ -174,7 +174,7 @@ function ScheduledTab({
           type="button"
           onClick={() => handleResend(m.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-lg border font-medium text-highlight-10 hover:bg-neutral-30 disabled:opacity-60"
+          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
           <RefreshCw size={12} />
@@ -273,7 +273,7 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
               <button
                 type="button"
                 onClick={() => toggleExpanded(log.id)}
-                className="px-sm py-base gap-sm text-body flex w-full items-center text-left hover:bg-neutral-30"
+                className="px-sm py-base gap-sm text-body hover:bg-neutral-30 flex w-full items-center text-left"
                 aria-expanded={isOpen}
               >
                 {isOpen ? (
@@ -281,13 +281,13 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
                 ) : (
                   <ChevronRight size={14} className="shrink-0" />
                 )}
-                <span className="font-medium text-highlight-10" style={{ minWidth: 144 }}>
+                <span className="text-highlight-10 font-medium" style={{ minWidth: 144 }}>
                   {log.event}
                 </span>
                 <span className="font-data text-highlight-10" style={{ minWidth: 144 }}>
                   {format(new Date(log.createdAt), "d MMM yyyy, HH:mm:ss")}
                 </span>
-                <span className="flex-1 truncate text-highlight-10">{log.details ?? ""}</span>
+                <span className="text-highlight-10 flex-1 truncate">{log.details ?? ""}</span>
               </button>
               {isOpen && (
                 <div
@@ -296,21 +296,23 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
                 >
                   {log.details && (
                     <div>
-                      <p className="text-body font-semibold text-highlight-10">Details</p>
-                      <pre className="text-body whitespace-pre-wrap text-highlight-10">
+                      <p className="text-body text-highlight-10 font-semibold">Details</p>
+                      <pre className="text-body text-highlight-10 whitespace-pre-wrap">
                         {log.details}
                       </pre>
                     </div>
                   )}
                   {log.providerResponse && (
                     <div>
-                      <p className="text-body font-semibold text-highlight-10">Provider response</p>
-                      <pre className="text-body whitespace-pre-wrap text-highlight-10">
+                      <p className="text-body text-highlight-10 font-semibold">Provider response</p>
+                      <pre className="text-body text-highlight-10 whitespace-pre-wrap">
                         {log.providerResponse}
                       </pre>
                     </div>
                   )}
-                  <p className="text-body text-highlight-10">Message ID: {log.scheduledMessageId}</p>
+                  <p className="text-body text-highlight-10">
+                    Message ID: {log.scheduledMessageId}
+                  </p>
                 </div>
               )}
             </div>
@@ -331,7 +333,7 @@ interface PaginationProps {
 function Pagination({ meta, page, onChange }: PaginationProps) {
   if (meta.totalPages <= 1) return null;
   return (
-    <div className="gap-base text-body flex items-center justify-end text-highlight-10">
+    <div className="gap-base text-body text-highlight-10 flex items-center justify-end">
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}

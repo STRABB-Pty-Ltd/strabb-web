@@ -153,7 +153,7 @@ export function CalendarDayCell({
                 e.stopPropagation();
                 setOverflowOpen((v) => !v);
               }}
-              className="text-body text-left text-highlight-10 hover:text-highlight-10"
+              className="text-body text-highlight-10 hover:text-highlight-10 text-left"
               style={{ background: "none", border: "none", padding: 0 }}
             >
               +{overflowEvents.length} more
@@ -190,7 +190,7 @@ export function CalendarDayCell({
                       setOverflowOpen(false);
                       ev.onClick();
                     }}
-                    className="gap-xs px-xs py-xs text-body flex items-center rounded-md text-left hover:bg-neutral-30"
+                    className="gap-xs px-xs py-xs text-body hover:bg-neutral-30 flex items-center rounded-md text-left"
                     style={{ color: "var(--highlight-10)", background: "none", border: "none" }}
                   >
                     <span

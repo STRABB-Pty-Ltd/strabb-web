@@ -96,7 +96,7 @@ export function ThreadOverlay({
         <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-body font-semibold text-highlight-10">{data.guestName}</h2>
+              <h2 className="text-body text-highlight-10 font-semibold">{data.guestName}</h2>
               <p className="text-body text-highlight-10">{data.listingName}</p>
               <p className="text-body text-highlight-10">
                 {data.checkIn} - {data.checkOut}
@@ -115,7 +115,7 @@ export function ThreadOverlay({
                 type="button"
                 onClick={onClose}
                 aria-label="Close thread"
-                className="p-xs rounded text-highlight-10 hover:bg-neutral-30"
+                className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
                 data-no-elevate
               >
                 <X size={18} />
@@ -158,21 +158,21 @@ export function ThreadOverlay({
         >
           <button
             type="button"
-            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-neutral-30 text-highlight-10 transition-colors hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10"
+            className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
             <Flag size={12} />
             Flag
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-neutral-30 text-highlight-10 transition-colors hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10"
+            className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
             <TicketPlus size={12} />
             Create Ticket
           </button>
           <button
             type="button"
-            className="gap-xs px-sm py-base text-body inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border border-neutral-30 text-highlight-10 transition-colors hover:bg-neutral-30 hover:text-highlight-10"
+            className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
             <Archive size={12} />
             Archive

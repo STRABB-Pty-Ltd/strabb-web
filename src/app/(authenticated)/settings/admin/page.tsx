@@ -82,9 +82,9 @@ export default function AdminPage() {
       {data && (
         <>
           {!data.hasIssues && (
-            <div className="gap-base p-sm flex items-center rounded-xl border border-neutral-30 bg-neutral-30 dark:border-status-success dark:bg-status-success">
+            <div className="gap-base p-sm border-neutral-30 bg-neutral-30 dark:border-status-success dark:bg-status-success flex items-center rounded-xl border">
               <CheckCircleIcon className="size-md text-status-success dark:text-status-success" />
-              <p className="text-body font-medium text-status-success dark:text-neutral-30">
+              <p className="text-body text-status-success dark:text-neutral-30 font-medium">
                 All systems healthy - no failures detected.
               </p>
             </div>
@@ -174,7 +174,7 @@ function SyncErrorsSection() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-highlight-10">{row.errorMessage ?? "-"}</span>
+        <span className="text-body text-highlight-10 truncate">{row.errorMessage ?? "-"}</span>
       ),
     },
   ];
@@ -224,7 +224,9 @@ function FailedMessagesSection() {
     {
       key: "recipientEmail",
       header: "Recipient",
-      render: (_v, row) => <span className="text-body text-highlight-10">{row.recipientEmail}</span>,
+      render: (_v, row) => (
+        <span className="text-body text-highlight-10">{row.recipientEmail}</span>
+      ),
     },
     {
       key: "templateName",
@@ -249,7 +251,7 @@ function FailedMessagesSection() {
       key: "errorMessage",
       header: "Error",
       render: (_v, row) => (
-        <span className="text-body truncate text-highlight-10">{row.errorMessage ?? "-"}</span>
+        <span className="text-body text-highlight-10 truncate">{row.errorMessage ?? "-"}</span>
       ),
     },
     {
@@ -260,7 +262,7 @@ function FailedMessagesSection() {
           type="button"
           onClick={() => handleResend(row.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body inline-flex items-center rounded-lg border font-medium text-highlight-10 hover:bg-neutral-30 disabled:opacity-60"
+          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
           <RefreshCw size={12} />

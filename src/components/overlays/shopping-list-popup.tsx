@@ -94,7 +94,7 @@ export function ShoppingListPopup() {
       >
         <div
           ref={popupRef}
-          className="w-full max-w-lg rounded-xl bg-surface-60 shadow-xl"
+          className="bg-surface-60 w-full max-w-lg rounded-xl shadow-xl"
           style={{ animation: cardAnim }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -115,7 +115,7 @@ export function ShoppingListPopup() {
                 type="button"
                 onClick={closeShoppingListPopup}
                 aria-label="Close shopping list"
-                className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded text-highlight-10 hover:bg-neutral-30"
+                className="text-highlight-10 hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
                 data-no-elevate
               >
                 <X size={18} />
@@ -126,7 +126,9 @@ export function ShoppingListPopup() {
           <div className="p-sm max-h-[377px] overflow-y-auto">
             {Object.entries(grouped).map(([listing, listItems]) => (
               <div key={listing} className="mb-sm">
-                <h3 className="mb-xs text-body font-semibold text-highlight-10 uppercase">{listing}</h3>
+                <h3 className="mb-xs text-body text-highlight-10 font-semibold uppercase">
+                  {listing}
+                </h3>
                 <div className="space-y-xs">
                   {listItems.map((item) => {
                     const isBought = boughtItems.includes(item.id);
@@ -134,13 +136,13 @@ export function ShoppingListPopup() {
                     return (
                       <label
                         key={item.id}
-                        className="gap-base px-base py-xs flex items-center rounded hover:bg-neutral-30"
+                        className="gap-base px-base py-xs hover:bg-neutral-30 flex items-center rounded"
                       >
                         <input
                           type="checkbox"
                           checked={isBought}
                           onChange={() => toggleBoughtItem(item.id)}
-                          className="h-sm w-sm rounded border-neutral-30"
+                          className="h-sm border-neutral-30 w-sm rounded"
                         />
                         <span
                           className="text-body flex-1"
@@ -151,7 +153,9 @@ export function ShoppingListPopup() {
                         >
                           {item.item}
                         </span>
-                        <span className="font-data text-body text-highlight-10">x{item.quantity}</span>
+                        <span className="font-data text-body text-highlight-10">
+                          x{item.quantity}
+                        </span>
                         <span
                           className="px-base py-xs text-body rounded-md"
                           style={{ backgroundColor: badge.bg, color: badge.text }}
@@ -173,21 +177,21 @@ export function ShoppingListPopup() {
             <button
               type="button"
               onClick={closeShoppingListPopup}
-              className="px-sm py-base text-body rounded-lg text-highlight-10 hover:bg-neutral-30"
+              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
             >
               Close
             </button>
             <button
               type="button"
               disabled
-              className="px-sm py-base text-body rounded-lg text-highlight-10"
+              className="px-sm py-base text-body text-highlight-10 rounded-lg"
             >
               Share Link
             </button>
             <button
               type="button"
               onClick={handleCopyList}
-              className="px-sm py-base text-body rounded-lg text-surface-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy List

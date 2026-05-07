@@ -2,10 +2,7 @@
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import {
-  ColumnFilterDropdown,
-  type ColumnFilterConfig,
-} from "./column-filter-dropdown";
+import { ColumnFilterDropdown, type ColumnFilterConfig } from "./column-filter-dropdown";
 
 export interface ColumnDef<T> {
   key: string;
@@ -32,7 +29,7 @@ export function SortableListHeader<T>({
 }: SortableListHeaderProps<T>) {
   return (
     <div
-      className="flex border-b bg-neutral-30"
+      className="bg-neutral-30 flex border-b"
       style={{ borderColor: "var(--border)", minHeight: "var(--space-lg)" }}
     >
       {columns.map((col) => {
@@ -50,7 +47,7 @@ export function SortableListHeader<T>({
             key={col.key}
             role="columnheader"
             aria-sort={ariaSort}
-            className="px-sm py-sm text-body flex min-w-0 items-center font-semibold tracking-wide text-highlight-10 uppercase"
+            className="px-sm py-sm text-body text-highlight-10 flex min-w-0 items-center font-semibold tracking-wide uppercase"
             style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
           >
             {col.filter ? (
@@ -59,7 +56,7 @@ export function SortableListHeader<T>({
               <button
                 type="button"
                 onClick={() => onSort(col.key)}
-                className="gap-xs flex items-center hover:text-highlight-10"
+                className="gap-xs hover:text-highlight-10 flex items-center"
               >
                 {col.label}
                 {isActive ? (

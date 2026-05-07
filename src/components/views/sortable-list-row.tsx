@@ -20,7 +20,7 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full text-left transition-colors hover:bg-neutral-30/50"
+      className="hover:bg-neutral-30/50 flex w-full text-left transition-colors"
       style={
         {
           height: "var(--space-xl)",
@@ -39,7 +39,7 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
           // overrides flex's default min-width:auto so the cell can shrink
           // below its content's natural size; without it, long text refuses
           // to shrink and pushes neighbouring columns out of alignment.
-          className="px-sm text-body flex min-w-0 items-center whitespace-nowrap text-highlight-10"
+          className="px-sm text-body text-highlight-10 flex min-w-0 items-center whitespace-nowrap"
           style={{ width: col.width ?? "1fr", flex: col.width ? `0 0 ${col.width}` : 1 }}
         >
           {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}

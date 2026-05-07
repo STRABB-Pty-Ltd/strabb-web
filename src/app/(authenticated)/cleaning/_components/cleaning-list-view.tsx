@@ -60,7 +60,7 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
         width: "112px",
         render: (t) => (
           <span
-            className="px-base py-xs text-body rounded-sm text-highlight-10"
+            className="px-base py-xs text-body text-highlight-10 rounded-sm"
             style={{ backgroundColor: "var(--row-alt)" }}
           >
             {typeLabels[t.type] ?? t.type}

@@ -45,7 +45,10 @@ export function RevenueByListingChart({ data, loading }: RevenueByListingChartPr
           // 55 = --space-xl
           height={55}
         />
-        <YAxis tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }} tickFormatter={formatAUD} />
+        <YAxis
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
+          tickFormatter={formatAUD}
+        />
         <ChartTooltip formatter={(value) => [formatAUD(Number(value)), "Revenue"]} />
         <Bar dataKey="revenue" radius={[3, 3, 0, 0]}>
           {sorted.map((entry, i) => (

@@ -137,7 +137,10 @@ export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
           tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           tickFormatter={formatMonthOnly}
         />
-        <YAxis tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }} tickFormatter={formatAUD} />
+        <YAxis
+          tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
+          tickFormatter={formatAUD}
+        />
         <ChartTooltip
           formatter={(value) => [formatAUD(Number(value)), "Revenue"]}
           labelFormatter={(label) => formatMonthLabel(String(label))}

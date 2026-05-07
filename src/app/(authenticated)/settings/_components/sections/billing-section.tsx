@@ -82,8 +82,10 @@ export function BillingSection() {
     return (
       <div className="space-y-md">
         <div>
-          <h2 className="text-subheading font-semibold text-highlight-10">Billing</h2>
-          <p className="text-body text-highlight-10">Manage your subscription and payment details.</p>
+          <h2 className="text-subheading text-highlight-10 font-semibold">Billing</h2>
+          <p className="text-body text-highlight-10">
+            Manage your subscription and payment details.
+          </p>
         </div>
         <p className="text-body text-highlight-10">Loading…</p>
       </div>
@@ -97,14 +99,14 @@ export function BillingSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading font-semibold text-highlight-10">Billing</h2>
+        <h2 className="text-subheading text-highlight-10 font-semibold">Billing</h2>
         <p className="text-body text-highlight-10">Manage your subscription and payment details.</p>
       </div>
 
       <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
         <div className="mb-sm flex items-center justify-between">
           <div>
-            <p className="text-body font-medium text-highlight-10">Current plan</p>
+            <p className="text-body text-highlight-10 font-medium">Current plan</p>
             <p className={`text-body font-semibold ${statusToneClass(status)}`}>
               {statusLabel(status)}
             </p>
@@ -127,7 +129,7 @@ export function BillingSection() {
         <div className="mb-sm gap-sm grid grid-cols-2">
           <div>
             <p className="text-body text-highlight-10">Billable listings</p>
-            <p className="font-data text-subheading font-semibold text-highlight-10">
+            <p className="font-data text-subheading text-highlight-10 font-semibold">
               {data.billableListingCount}
             </p>
           </div>
@@ -149,7 +151,7 @@ export function BillingSection() {
               type="button"
               onClick={handleStartTrial}
               disabled={startTrial.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {startTrial.isPending ? "Starting…" : "Start free trial"}
@@ -161,7 +163,7 @@ export function BillingSection() {
               type="button"
               onClick={handleCheckout}
               disabled={createCheckout.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createCheckout.isPending ? "Redirecting…" : "Add payment details"}
@@ -173,7 +175,7 @@ export function BillingSection() {
               type="button"
               onClick={handlePortal}
               disabled={createPortal.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createPortal.isPending ? "Redirecting…" : "Manage subscription"}
@@ -185,7 +187,7 @@ export function BillingSection() {
               type="button"
               onClick={handleCheckout}
               disabled={createCheckout.isPending}
-              className="px-sm py-base text-body rounded-lg font-medium text-surface-60 disabled:opacity-60"
+              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               {createCheckout.isPending ? "Redirecting…" : "Reactivate subscription"}

@@ -49,7 +49,7 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
     >
       <div
         ref={panelRef}
-        className="p-md w-full max-w-sm rounded-xl bg-surface-60 shadow-xl"
+        className="p-md bg-surface-60 w-full max-w-sm rounded-xl shadow-xl"
         style={{ animation: cardAnim }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -59,7 +59,7 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded hover:bg-neutral-30"
+            className="hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
             aria-label="Close shortcuts help"
             data-no-elevate
           >
@@ -74,7 +74,7 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
                 {s.keys.map((k) => (
                   <kbd
                     key={k}
-                    className="px-base py-xs text-body rounded border border-neutral-30 bg-neutral-30 font-mono"
+                    className="px-base py-xs text-body border-neutral-30 bg-neutral-30 rounded border font-mono"
                   >
                     {k}
                   </kbd>
