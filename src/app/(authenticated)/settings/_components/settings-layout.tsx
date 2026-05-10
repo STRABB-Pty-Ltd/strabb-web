@@ -7,6 +7,7 @@ import { TeamSection } from "./sections/team-section";
 import { BillingSection } from "./sections/billing-section";
 import { NotificationsSection } from "./sections/notifications-section";
 import { PhoneSection } from "./sections/phone-section";
+import { InboxSection } from "./sections/inbox-section";
 import { IntegrationsSection } from "./sections/integrations-section";
 import { CleaningSection } from "./sections/cleaning-section";
 import { ChannelsSection } from "./sections/channels-section";
@@ -17,6 +18,7 @@ const sectionComponents: Record<string, React.ComponentType> = {
   billing: BillingSection,
   notifications: NotificationsSection,
   phone: PhoneSection,
+  inbox: InboxSection,
   integrations: IntegrationsSection,
   cleaning: CleaningSection,
   channels: ChannelsSection,
