@@ -65,7 +65,7 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
           const hasBookings = day.bookings > 0;
           return (
             <div key={day.date} className="text-center">
-              <p className="text-body" style={{ color: "var(--highlight-10)", opacity: 0.55 }}>
+              <p className="text-body" style={{ color: "var(--text-secondary)" }}>
                 {format(d, "EEE")}
               </p>
               <p className="text-body font-medium" style={{ color: "var(--highlight-10)" }}>
@@ -161,7 +161,7 @@ function RevenueSparkline({
                 backgroundColor: "var(--chart-bar)",
               }}
             />
-            <span className="text-body" style={{ color: "var(--highlight-10)", opacity: 0.55 }}>
+            <span className="text-body" style={{ color: "var(--text-secondary)" }}>
               {formatBarLabel(d.label)}
             </span>
           </div>
@@ -214,7 +214,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
                 }}
               />
               <span className="flex-1 truncate">{b.guest}</span>
-              <span className="text-body" style={{ opacity: 0.55 }}>
+              <span className="text-body" style={{ color: "var(--text-secondary)" }}>
                 {format(new Date(b.checkIn), "d MMM")}
               </span>
             </div>
@@ -254,7 +254,7 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
                 }}
               />
               <span className="flex-1 truncate">{item.listing || "Unassigned"}</span>
-              <span className="text-body" style={{ opacity: 0.55 }}>
+              <span className="text-body" style={{ color: "var(--text-secondary)" }}>
                 {format(new Date(item.date), "d MMM")}
               </span>
             </div>

@@ -62,10 +62,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
       </p>
 
       {compareValue != null && (
-        <p
-          className="font-data mt-xs text-body"
-          style={{ color: "var(--highlight-10)", opacity: 0.55 }}
-        >
+        <p className="font-data mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
           vs {formatValue(compareValue, kpi.type)}
         </p>
       )}

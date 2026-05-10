@@ -16,6 +16,14 @@
   --status-warning: #ca8a04;
   --status-danger: #b91c1c;
 
+  /* Secondary/dimmed text. Mixes highlight-10 with the page surface so it
+     resolves to a deterministic colour - no alpha-stacking against parents.
+     70% mix lands at ~5.6:1 vs surface in light mode and ~8:1 in dark mode,
+     both clear of WCAG AA (4.5:1). Use this instead of `opacity: 0.X` on
+     text - opacity stacks with parent transparencies and silently breaks
+     contrast. */
+  --text-secondary: color-mix(in srgb, var(--highlight-10) 70%, var(--surface-60));
+
   /* Surfaces */
   --surface-page: var(--surface-60);
   --surface-card: var(--neutral-30);
@@ -212,6 +220,9 @@
   --status-danger: #f87171;
   --chart-grid: color-mix(in srgb, var(--highlight-10) 12%, transparent);
 
+  /* Secondary text - same 70% mix recipe; values flip with the palette. */
+  --text-secondary: color-mix(in srgb, var(--highlight-10) 70%, var(--surface-60));
+
   /* Tints get retuned for dark mode so they read against the dark surface. */
   --status-success-tint: var(--status-success);
   --status-warning-tint: var(--status-warning);
@@ -320,6 +331,7 @@
   --color-status-warning-tint: var(--status-warning-tint);
   --color-status-danger-tint: var(--status-danger-tint);
   --color-text-on-color: var(--text-on-color);
+  --color-text-secondary: var(--text-secondary);
   --color-scrim: var(--scrim);
 
   --color-booking-checked-out: var(--booking-checked-out);

@@ -44,7 +44,7 @@ export function ComparePanel({ current, comparison }: ComparePanelProps) {
               <span>{kpi.label}</span>
               <div className="gap-sm flex items-center">
                 <span className="font-data font-semibold">{formatValue(kpi.value, kpi.type)}</span>
-                <span className="font-data" style={{ opacity: 0.55 }}>
+                <span className="font-data" style={{ color: "var(--text-secondary)" }}>
                   {formatValue(comp.value, comp.type)}
                 </span>
                 <span
