@@ -1,28 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 
-import { useApiClient } from "@/hooks/use-api-client";
+import { useCreateShare } from "@/lib/api-hooks/share-api";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
-import { timeframeToDateRange } from "@/lib/timeframe-utils";
+import { buildShareFilters, type ShareableMenu } from "@/lib/share-filters";
 import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
-
-type ShareableMenu = "dashboard" | "calendar" | "messaging" | "cleaning" | "reporting";
-
-interface ShareCreateResponse {
-  data: {
-    id: string;
-    token: string;
-    publicUrl: string;
-    menu: string;
-    expiresAt: string | null;
-  };
-}
 
 const isShareableMenu = (page: PageId): page is ShareableMenu => page !== "settings";
 
@@ -33,6 +21,23 @@ const defaultFields = [
   { key: "cleaning", label: "Cleaning Tasks" },
   { key: "expenses", label: "Expenses" },
 ];
+
+type ExpiryOption = "never" | "1d" | "7d" | "30d";
+
+const expiryOptions: { value: ExpiryOption; label: string }[] = [
+  { value: "never", label: "Never" },
+  { value: "1d", label: "1 day" },
+  { value: "7d", label: "7 days" },
+  { value: "30d", label: "30 days" },
+];
+
+const expiryToIso = (option: ExpiryOption): string | null => {
+  if (option === "never") return null;
+  const days = option === "1d" ? 1 : option === "7d" ? 7 : 30;
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toISOString();
+};
 
 const EXIT_MS = 200;
 
@@ -50,47 +55,54 @@ export function SharePopup() {
   const cleaning = useAppStore((s) => s.cleaning);
   const reporting = useAppStore((s) => s.reporting);
   const addToast = useAppStore((s) => s.addToast);
-  const apiClient = useApiClient();
+  const createShare = useCreateShare();
   const [downloading, setDownloading] = useState(false);
+  const [expiry, setExpiry] = useState<ExpiryOption>("never");
 
   const open = sharePopup.open;
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
-  // Pull windowSize/anchor for whichever page the share was launched from.
-  // Messaging has no timeframe, so it falls back to "month / current".
-  const timeframeFor = (page: PageId): { windowSize: string; anchor: string | null } => {
-    switch (page) {
-      case "dashboard":
-        return { windowSize: dashboard.windowSize, anchor: dashboard.anchor };
-      case "calendar":
-        return { windowSize: calendar.windowSize, anchor: calendar.anchor };
-      case "cleaning":
-        return { windowSize: cleaning.windowSize, anchor: cleaning.anchor };
-      case "reporting":
-        return { windowSize: reporting.windowSize, anchor: reporting.anchor };
-      default:
-        return { windowSize: "month", anchor: null };
-    }
-  };
+  const timeframeFor = useCallback(
+    (page: PageId): { windowSize: string; anchor: string | null } => {
+      switch (page) {
+        case "dashboard":
+          return { windowSize: dashboard.windowSize, anchor: dashboard.anchor };
+        case "calendar":
+          return { windowSize: calendar.windowSize, anchor: calendar.anchor };
+        case "cleaning":
+          return { windowSize: cleaning.windowSize, anchor: cleaning.anchor };
+        case "reporting":
+          return { windowSize: reporting.windowSize, anchor: reporting.anchor };
+        default:
+          return { windowSize: "month", anchor: null };
+      }
+    },
+    [dashboard, calendar, cleaning, reporting],
+  );
+
+  const ensureShare = useCallback(async () => {
+    if (!isShareableMenu(currentPage)) return null;
+    const { windowSize, anchor } = timeframeFor(currentPage);
+    const filters = buildShareFilters(currentPage, {
+      windowSize,
+      anchor,
+      customRange,
+      selectedListings,
+    });
+    return createShare.mutateAsync({
+      menu: currentPage,
+      filters,
+      expiresAt: expiryToIso(expiry),
+    });
+  }, [createShare, currentPage, customRange, expiry, selectedListings, timeframeFor]);
 
   const handleDownload = async () => {
     if (!isShareableMenu(currentPage)) return;
     setDownloading(true);
     try {
-      const { windowSize, anchor } = timeframeFor(currentPage);
-      const { startDate, endDate } = timeframeToDateRange(windowSize, anchor, customRange);
-
-      const create = await apiClient.post<ShareCreateResponse>("/share/create", {
-        menu: currentPage,
-        filters: {
-          start_date: startDate,
-          end_date: endDate,
-          listing_ids: selectedListings,
-        },
-      });
-
-      // Public endpoint, no auth header. Same /be origin so cookies don't matter.
-      const pdfResp = await fetch(`/be/share/${create.data.token}`);
+      const share = await ensureShare();
+      if (!share) return;
+      const pdfResp = await fetch(`/be/share/${share.token}`);
       if (!pdfResp.ok) throw new Error(`PDF render failed: ${pdfResp.status}`);
       const blob = await pdfResp.blob();
       const url = URL.createObjectURL(blob);
@@ -108,6 +120,31 @@ export function SharePopup() {
       addToast({ type: "error", message });
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      const share = await ensureShare();
+      if (!share) return;
+      await navigator.clipboard.writeText(share.publicUrl);
+      addToast({ type: "success", message: "Public link copied to clipboard" });
+      closeSharePopup();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create share link";
+      addToast({ type: "error", message });
+    }
+  };
+
+  const handleOpenInTab = async () => {
+    try {
+      const share = await ensureShare();
+      if (!share) return;
+      window.open(share.publicUrl, "_blank", "noopener,noreferrer");
+      closeSharePopup();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create share link";
+      addToast({ type: "error", message });
     }
   };
 
@@ -139,6 +176,9 @@ export function SharePopup() {
   const cardAnim = !open
     ? `scaleOut ${EXIT_MS}ms ease-in forwards`
     : `scaleIn ${EXIT_MS}ms ease-out`;
+
+  const busy = downloading || createShare.isPending;
+  const disabled = busy || !isShareableMenu(currentPage);
 
   return (
     <>
@@ -189,10 +229,29 @@ export function SharePopup() {
                 <span className="text-body text-highlight-10">{f.label}</span>
               </label>
             ))}
+
+            <div className="gap-base pt-base flex items-center">
+              <label htmlFor="share-expiry" className="text-body text-highlight-10">
+                Link expires:
+              </label>
+              <select
+                id="share-expiry"
+                value={expiry}
+                onChange={(e) => setExpiry(e.target.value as ExpiryOption)}
+                className="px-sm py-xs text-body border-neutral-30 rounded-lg border"
+                style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
+              >
+                {expiryOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div
-            className="gap-base px-sm py-sm flex justify-end border-t"
+            className="gap-base px-sm py-sm flex flex-wrap justify-end border-t"
             style={{ borderColor: "var(--border)" }}
           >
             <button
@@ -204,19 +263,26 @@ export function SharePopup() {
             </button>
             <button
               type="button"
+              onClick={handleOpenInTab}
+              disabled={disabled}
+              className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <ExternalLink size={14} />
+              Open
+            </button>
+            <button
+              type="button"
               onClick={handleDownload}
-              disabled={downloading || !isShareableMenu(currentPage)}
+              disabled={disabled}
               className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
             >
               {downloading ? "Generating…" : "Download PDF"}
             </button>
             <button
               type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                closeSharePopup();
-              }}
-              className="px-sm py-base text-body text-surface-60 rounded-lg"
+              onClick={handleCopyLink}
+              disabled={disabled}
+              className="px-sm py-base text-body rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy Link

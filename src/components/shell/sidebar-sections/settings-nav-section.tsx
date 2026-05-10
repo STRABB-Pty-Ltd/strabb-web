@@ -4,6 +4,7 @@ import {
   Bell,
   CreditCard,
   Globe,
+  Link2,
   Phone,
   Radio,
   RefreshCw,
@@ -35,7 +36,8 @@ export function SettingsNavSection() {
   const router = useRouter();
   const onAdminRoute = pathname?.startsWith("/settings/admin") ?? false;
   const onSyncLogsRoute = pathname?.startsWith("/settings/sync-logs") ?? false;
-  const onSubRoute = onAdminRoute || onSyncLogsRoute;
+  const onShareableLinksRoute = pathname?.startsWith("/settings/shareable-links") ?? false;
+  const onSubRoute = onAdminRoute || onSyncLogsRoute || onShareableLinksRoute;
 
   const handleSectionClick = (id: string) => {
     setSection(id);
@@ -88,6 +90,20 @@ export function SettingsNavSection() {
         >
           <RefreshCw size={14} />
           Sync logs
+        </Link>
+        <Link
+          href="/settings/shareable-links"
+          aria-current={onShareableLinksRoute ? "page" : undefined}
+          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: onShareableLinksRoute
+              ? "var(--btn-active-bg)"
+              : "var(--btn-inactive-bg)",
+            color: onShareableLinksRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          }}
+        >
+          <Link2 size={14} />
+          Shareable links
         </Link>
       </div>
     </nav>
