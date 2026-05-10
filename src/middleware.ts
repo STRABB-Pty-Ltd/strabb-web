@@ -10,11 +10,12 @@ export default auth((req) => {
   const isLoginPage = nextUrl.pathname === "/login";
   const isAuthRoute = nextUrl.pathname.startsWith("/api/auth");
   const isPublicPage = nextUrl.pathname === "/privacy" || nextUrl.pathname === "/terms";
+  const isShareLink = nextUrl.pathname.startsWith("/share/");
   const isRoot = nextUrl.pathname === "/";
   const isAdminRoute = ADMIN_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
 
-  // Allow auth API routes and public pages through
-  if (isAuthRoute || isPublicPage) return;
+  // Allow auth API routes, public pages, and public share links through
+  if (isAuthRoute || isPublicPage || isShareLink) return;
 
   // Redirect authenticated users away from login
   if (isLoginPage && isAuthenticated) {
