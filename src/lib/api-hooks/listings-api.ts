@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import type { ListingListResponse, ListingResponse } from "@/lib/schemas/listing";
 
 export interface ListingHierarchy {
   properties: {
@@ -80,6 +81,43 @@ export function useDeleteListingGroupAPI() {
     mutationFn: (id: string) => apiClient.delete(`/listing-groups/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["listing-groups"] });
+    },
+  });
+}
+
+export function useListingsAPI(pageSize = 100) {
+  const apiClient = useApiClient();
+  const isReady = useAuthReady();
+
+  return useQuery<ListingListResponse>({
+    queryKey: ["listings", { pageSize }],
+    queryFn: async () =>
+      apiClient.get<ListingListResponse>(`/listings?page=1&page_size=${pageSize}`),
+    enabled: isReady,
+  });
+}
+
+export function useUpdateChannexMapping() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      listingId,
+      channexPropertyId,
+    }: {
+      listingId: string;
+      channexPropertyId: string | null;
+    }): Promise<ListingResponse> => {
+      const response = await apiClient.patch<{ data: ListingResponse }>(
+        `/listings/${listingId}/channex-mapping`,
+        { channexPropertyId },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["listings-hierarchy"] });
     },
   });
 }

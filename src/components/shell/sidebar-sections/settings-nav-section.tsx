@@ -4,6 +4,7 @@ import {
   Bell,
   CreditCard,
   Globe,
+  Home,
   Inbox,
   Link2,
   Phone,
@@ -39,7 +40,8 @@ export function SettingsNavSection() {
   const onAdminRoute = pathname?.startsWith("/settings/admin") ?? false;
   const onSyncLogsRoute = pathname?.startsWith("/settings/sync-logs") ?? false;
   const onShareableLinksRoute = pathname?.startsWith("/settings/shareable-links") ?? false;
-  const onSubRoute = onAdminRoute || onSyncLogsRoute || onShareableLinksRoute;
+  const onListingsRoute = pathname?.startsWith("/settings/listings") ?? false;
+  const onSubRoute = onAdminRoute || onSyncLogsRoute || onShareableLinksRoute || onListingsRoute;
 
   const handleSectionClick = (id: string) => {
     setSection(id);
@@ -106,6 +108,18 @@ export function SettingsNavSection() {
         >
           <Link2 size={14} />
           Shareable links
+        </Link>
+        <Link
+          href="/settings/listings"
+          aria-current={onListingsRoute ? "page" : undefined}
+          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: onListingsRoute ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+            color: onListingsRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          }}
+        >
+          <Home size={14} />
+          Listings
         </Link>
       </div>
     </nav>
