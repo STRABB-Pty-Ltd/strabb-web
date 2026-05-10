@@ -38,14 +38,10 @@ function HealthCard({
       className={`p-sm rounded-xl border ${hasIssue ? "border-neutral-30 bg-neutral-30 dark:border-status-danger dark:bg-status-danger" : "bg-card"}`}
     >
       <div className="gap-sm flex items-center">
-        <Icon
-          className={`size-md ${hasIssue ? "text-status-danger dark:text-status-danger" : "text-status-success dark:text-status-success"}`}
-        />
+        <Icon className={`size-md ${hasIssue ? "text-status-danger" : "text-status-success"}`} />
         <div>
           <p className="text-muted-foreground text-body">{label}</p>
-          <p
-            className={`text-subheading font-semibold ${hasIssue ? "text-status-danger dark:text-status-danger" : ""}`}
-          >
+          <p className={`text-subheading font-semibold ${hasIssue ? "text-status-danger" : ""}`}>
             {count}
           </p>
         </div>
@@ -83,7 +79,7 @@ export default function AdminPage() {
         <>
           {!data.hasIssues && (
             <div className="gap-base p-sm border-neutral-30 bg-neutral-30 dark:border-status-success dark:bg-status-success flex items-center rounded-xl border">
-              <CheckCircleIcon className="size-md text-status-success dark:text-status-success" />
+              <CheckCircleIcon className="size-md text-status-success" />
               <p className="text-body text-status-success dark:text-neutral-30 font-medium">
                 All systems healthy - no failures detected.
               </p>
