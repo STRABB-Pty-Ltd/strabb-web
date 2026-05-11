@@ -2,32 +2,25 @@
 
 import {
   addDays,
-  addMonths,
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
   format,
   isSameDay,
-  isSameMonth,
   parseISO,
   startOfMonth,
   startOfQuarter,
   startOfWeek,
   startOfYear,
-  subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { MonthGrid, WEEK_OPTS } from "@/components/ui/month-grid";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
-const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-const WEEK_OPTS = { weekStartsOn: 1 as const };
 const AUTO_CONFIRM_SECONDS = 3;
 const EXIT_MS = 200;
 
@@ -403,95 +396,6 @@ function YearPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: s
           </button>
         );
       })}
-    </div>
-  );
-}
-
-/** Shared month grid: header + day labels + 6×7 cell grid. Highlight modes are
- *  delegated to the parent via predicates so day, week, fortnight and custom
- *  range pickers all render identically. */
-function MonthGrid({
-  viewDate,
-  onViewDateChange,
-  isHighlighted,
-  isStrongHighlighted,
-  onDayClick,
-  onDayHover,
-}: {
-  viewDate: Date;
-  onViewDateChange: (next: Date) => void;
-  isHighlighted: (day: Date) => boolean;
-  isStrongHighlighted?: (day: Date) => boolean;
-  onDayClick: (day: Date) => void;
-  onDayHover?: (day: Date | null) => void;
-}) {
-  const monthStart = startOfMonth(viewDate);
-  const monthEnd = endOfMonth(viewDate);
-  const gridStart = startOfWeek(monthStart, WEEK_OPTS);
-  const gridEnd = endOfWeek(monthEnd, WEEK_OPTS);
-  const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
-
-  return (
-    <div>
-      <div className="mb-sm flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onViewDateChange(subMonths(viewDate, 1))}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
-          aria-label="Previous month"
-        >
-          <ChevronLeft size={16} />
-        </button>
-        <span className="text-body font-semibold">{format(viewDate, "MMMM yyyy")}</span>
-        <button
-          type="button"
-          onClick={() => onViewDateChange(addMonths(viewDate, 1))}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
-          aria-label="Next month"
-        >
-          <ChevronRight size={16} />
-        </button>
-      </div>
-      <div className="mb-xs gap-xs grid grid-cols-7">
-        {DAY_LABELS.map((d) => (
-          <div key={d} className="text-body text-highlight-10 text-center">
-            {d}
-          </div>
-        ))}
-      </div>
-      <div className="gap-xs grid grid-cols-7" onMouseLeave={() => onDayHover?.(null)}>
-        {gridDays.map((day) => {
-          const inMonth = isSameMonth(day, viewDate);
-          const strong = isStrongHighlighted?.(day) ?? false;
-          const soft = !strong && isHighlighted(day);
-
-          let bg: string | undefined;
-          let fg: string;
-          if (strong) {
-            bg = "var(--strabb-secondary)";
-            fg = "var(--surface-60)";
-          } else if (soft) {
-            bg = "var(--neutral-30)";
-            fg = "var(--highlight-10)";
-          } else {
-            bg = undefined;
-            fg = inMonth ? "var(--highlight-10)" : "var(--neutral-30)";
-          }
-
-          return (
-            <button
-              key={day.toISOString()}
-              type="button"
-              onClick={() => onDayClick(day)}
-              onMouseEnter={() => onDayHover?.(day)}
-              className="h-lg text-body hover:bg-neutral-30 flex items-center justify-center rounded transition-colors"
-              style={{ color: fg, backgroundColor: bg }}
-            >
-              {day.getDate()}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }

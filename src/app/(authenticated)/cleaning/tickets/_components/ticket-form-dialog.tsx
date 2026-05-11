@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -52,6 +53,8 @@ export function TicketFormDialog({
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useFormWithSchema(ticketCreateSchema, {
     propertyId: "",
@@ -186,12 +189,15 @@ export function TicketFormDialog({
 
           <div className="space-y-base">
             <Label htmlFor="m-scheduled">Scheduled for (optional)</Label>
-            <Input
+            <DateTimePicker
               id="m-scheduled"
-              type="datetime-local"
+              value={watch("dateScheduled") ?? ""}
+              onChange={(v) =>
+                setValue("dateScheduled", v, { shouldDirty: true, shouldValidate: true })
+              }
+              placeholder="Pick date and time"
               aria-invalid={!!errors.dateScheduled}
               aria-describedby={errors.dateScheduled ? "m-scheduled-error" : undefined}
-              {...register("dateScheduled")}
             />
             {errors.dateScheduled && (
               <p id="m-scheduled-error" className="text-destructive text-body">

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { useCompleteCleaningTask } from "@/hooks/use-cleaning-tasks";
 import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
@@ -313,13 +314,11 @@ export function TicketDetailDrawer() {
                 Scheduled
               </label>
               {editing ? (
-                <input
+                <DateTimePicker
                   id="ticket-drawer-date-scheduled"
-                  type="datetime-local"
                   value={dateScheduled}
-                  onChange={(e) => setDateScheduled(e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
+                  onChange={setDateScheduled}
+                  placeholder="Pick date and time"
                 />
               ) : (
                 <p className="font-data text-body">{fmtDate(displayTicket.dateScheduled, tz)}</p>
