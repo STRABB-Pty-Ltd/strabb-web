@@ -26,7 +26,12 @@ interface MessageCardProps {
 
 export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
-    <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full rounded text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+      data-no-elevate
+    >
       <div className="space-y-xs">
         <div className="gap-base flex items-center justify-between">
           <div className="gap-base flex min-w-0 items-center">

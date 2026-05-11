@@ -115,7 +115,7 @@ export function ThreadOverlay({
                 type="button"
                 onClick={onClose}
                 aria-label="Close thread"
-                className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
+                className="p-xs text-highlight-10 hover:bg-neutral-30 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 data-no-elevate
               >
                 <X size={18} />
@@ -195,7 +195,7 @@ export function ThreadOverlay({
           <button
             type="button"
             aria-label="Send reply"
-            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
+            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             <Send size={18} />

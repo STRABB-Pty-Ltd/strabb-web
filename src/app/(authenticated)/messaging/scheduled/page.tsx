@@ -66,7 +66,7 @@ export default function ScheduledMessagesPage() {
               type="button"
               onClick={() => handleTabChange(t.id)}
               aria-current={active ? "page" : undefined}
-              className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors"
+              className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
                 borderColor: active ? "var(--strabb-secondary)" : "transparent",
                 color: active ? "var(--strabb-secondary)" : "var(--highlight-10)",
@@ -174,7 +174,7 @@ function ScheduledTab({
           type="button"
           onClick={() => handleResend(m.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
+          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
           <RefreshCw size={12} />
@@ -273,7 +273,7 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
               <button
                 type="button"
                 onClick={() => toggleExpanded(log.id)}
-                className="px-sm py-base gap-sm text-body hover:bg-neutral-30 flex w-full items-center text-left"
+                className="px-sm py-base gap-sm text-body hover:bg-neutral-30 flex w-full items-center text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset"
                 aria-expanded={isOpen}
               >
                 {isOpen ? (
@@ -338,7 +338,7 @@ function Pagination({ meta, page, onChange }: PaginationProps) {
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}
         disabled={page <= 1}
-        className="px-sm py-xs rounded-lg border disabled:opacity-40"
+        className="px-sm py-xs rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-40"
         style={{ borderColor: "var(--border)" }}
       >
         Prev
@@ -350,7 +350,7 @@ function Pagination({ meta, page, onChange }: PaginationProps) {
         type="button"
         onClick={() => onChange(Math.min(meta.totalPages, page + 1))}
         disabled={page >= meta.totalPages}
-        className="px-sm py-xs rounded-lg border disabled:opacity-40"
+        className="px-sm py-xs rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-40"
         style={{ borderColor: "var(--border)" }}
       >
         Next

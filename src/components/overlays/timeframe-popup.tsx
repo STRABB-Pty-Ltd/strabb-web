@@ -197,7 +197,7 @@ export function TimeframePopup() {
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="text-highlight-10 hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
+            className="text-highlight-10 hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             aria-label="Close"
             data-no-elevate
           >
@@ -642,7 +642,7 @@ function CustomRangeForm({
         type="button"
         disabled={!valid}
         onClick={() => onApply(start, end)}
-        className="mt-base py-xs text-body text-surface-60 w-full rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-base py-xs text-body text-surface-60 w-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
       >
         Apply

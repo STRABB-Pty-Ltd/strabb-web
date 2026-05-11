@@ -93,7 +93,7 @@ export function DrillDownPanel({
             type="button"
             onClick={onClose}
             aria-label="Close panel"
-            className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded"
+            className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             data-no-elevate
           >
             <X size={18} />

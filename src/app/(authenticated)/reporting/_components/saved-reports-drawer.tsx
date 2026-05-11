@@ -31,7 +31,7 @@ export function SavedReportsDrawer() {
         <button
           type="button"
           onClick={() => setShowInput(true)}
-          className="gap-xs text-body flex items-center font-medium"
+          className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           style={{ color: "var(--strabb-secondary)" }}
         >
           <Plus size={12} />
@@ -53,7 +53,7 @@ export function SavedReportsDrawer() {
           <button
             type="button"
             onClick={handleSave}
-            className="px-sm py-xs text-body text-surface-60 rounded-sm"
+            className="px-sm py-xs text-body text-surface-60 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
           >
             Save
@@ -64,7 +64,7 @@ export function SavedReportsDrawer() {
               setShowInput(false);
               setNewName("");
             }}
-            className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-sm"
+            className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             Cancel
           </button>
@@ -93,7 +93,7 @@ export function SavedReportsDrawer() {
                 <button
                   type="button"
                   onClick={() => loadReport(report.id)}
-                  className="px-base py-xs text-body rounded-sm font-medium"
+                  className="px-base py-xs text-body rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                   style={{ color: "var(--strabb-secondary)" }}
                   data-no-elevate
                 >
@@ -103,7 +103,7 @@ export function SavedReportsDrawer() {
                   type="button"
                   onClick={() => setPendingDeleteId(report.id)}
                   aria-label="Delete saved report"
-                  className="p-xs text-highlight-10 hover:text-status-danger rounded-sm"
+                  className="p-xs text-highlight-10 hover:text-status-danger rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                   data-no-elevate
                 >
                   <Trash2 size={12} />

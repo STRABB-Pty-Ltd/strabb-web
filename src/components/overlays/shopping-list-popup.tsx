@@ -107,7 +107,7 @@ export function ShoppingListPopup() {
               <button
                 type="button"
                 onClick={() => setShowAll(!showAll)}
-                className="text-body text-highlight-10 hover:underline"
+                className="text-body text-highlight-10 rounded outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               >
                 {showAll ? "Show needed only" : "Show all"}
               </button>
@@ -115,7 +115,7 @@ export function ShoppingListPopup() {
                 type="button"
                 onClick={closeShoppingListPopup}
                 aria-label="Close shopping list"
-                className="text-highlight-10 hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
+                className="text-highlight-10 hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 data-no-elevate
               >
                 <X size={18} />
@@ -177,21 +177,21 @@ export function ShoppingListPopup() {
             <button
               type="button"
               onClick={closeShoppingListPopup}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
+              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Close
             </button>
             <button
               type="button"
               disabled
-              className="px-sm py-base text-body text-highlight-10 rounded-lg"
+              className="px-sm py-base text-body text-highlight-10 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Share Link
             </button>
             <button
               type="button"
               onClick={handleCopyList}
-              className="px-sm py-base text-body text-surface-60 rounded-lg"
+              className="px-sm py-base text-body text-surface-60 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy List

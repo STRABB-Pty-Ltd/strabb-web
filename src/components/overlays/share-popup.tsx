@@ -209,7 +209,7 @@ export function SharePopup() {
               type="button"
               onClick={closeSharePopup}
               aria-label="Close share dialog"
-              className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
+              className="p-xs text-highlight-10 hover:bg-neutral-30 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               data-no-elevate
             >
               <X size={18} />
@@ -257,7 +257,7 @@ export function SharePopup() {
             <button
               type="button"
               onClick={closeSharePopup}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
+              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Cancel
             </button>
@@ -265,7 +265,7 @@ export function SharePopup() {
               type="button"
               onClick={handleOpenInTab}
               disabled={disabled}
-              className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
+              className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ExternalLink size={14} />
               Open
@@ -274,7 +274,7 @@ export function SharePopup() {
               type="button"
               onClick={handleDownload}
               disabled={disabled}
-              className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
+              className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {downloading ? "Generating…" : "Download PDF"}
             </button>
@@ -282,7 +282,7 @@ export function SharePopup() {
               type="button"
               onClick={handleCopyLink}
               disabled={disabled}
-              className="px-sm py-base text-body rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
+              className="px-sm py-base text-body rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
             >
               Copy Link

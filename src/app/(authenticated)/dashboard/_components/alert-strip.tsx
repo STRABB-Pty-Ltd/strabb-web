@@ -76,7 +76,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
             <button
               type="button"
               onClick={() => handleView(alert)}
-              className="text-body cursor-pointer font-semibold whitespace-nowrap"
+              className="text-body cursor-pointer rounded font-semibold whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ color: accent }}
               data-no-elevate
             >
@@ -86,6 +86,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               type="button"
               onClick={() => setDismissed((d) => [...d, alert.id])}
               aria-label="Dismiss alert"
+              className="rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ color: "var(--text-secondary)" }}
               data-no-elevate
             >
