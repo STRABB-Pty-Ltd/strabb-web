@@ -190,6 +190,7 @@ export function ThreadOverlay({
             placeholder="Type a message..."
             aria-label="Compose reply"
             className="p-base text-body flex-1 resize-none rounded-lg border"
+            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
             rows={2}
           />
           <button

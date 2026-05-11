@@ -275,7 +275,7 @@ export function CleaningDetailDrawer() {
                   autoComplete="name"
                   placeholder="Cleaner name"
                   className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
                 <label htmlFor="cleaning-drawer-cleaner-email" className="sr-only">
                   Cleaner email
@@ -288,7 +288,7 @@ export function CleaningDetailDrawer() {
                   autoComplete="email"
                   placeholder="cleaner@example.com"
                   className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
                 <label htmlFor="cleaning-drawer-cleaner-phone" className="sr-only">
                   Cleaner phone
@@ -301,7 +301,7 @@ export function CleaningDetailDrawer() {
                   autoComplete="tel"
                   placeholder="+61 400 000 000"
                   className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
               </div>
             )}
@@ -327,7 +327,7 @@ export function CleaningDetailDrawer() {
                 rows={4}
                 aria-labelledby="cleaning-drawer-notes-label"
                 className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: "var(--border)" }}
+                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             )}
           </div>

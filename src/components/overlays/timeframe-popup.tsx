@@ -606,7 +606,7 @@ function CustomRangeForm({
             value={start}
             onChange={(e) => setStart(e.target.value)}
             className="px-base py-xs text-body w-full rounded border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
           />
         </label>
         <span className="text-body text-highlight-10">to</span>
@@ -617,7 +617,7 @@ function CustomRangeForm({
             value={end}
             onChange={(e) => setEnd(e.target.value)}
             className="px-base py-xs text-body w-full rounded border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
           />
         </label>
       </div>

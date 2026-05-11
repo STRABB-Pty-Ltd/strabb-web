@@ -190,7 +190,7 @@ export function BookingDetailDrawer() {
               placeholder="Add notes about this booking…"
               rows={3}
               className="px-sm py-base text-body w-full rounded-lg border"
-              style={{ borderColor: "var(--border)" }}
+              style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
             />
             <div>
               <button

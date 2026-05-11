@@ -319,7 +319,7 @@ export function TicketDetailDrawer() {
                   value={dateScheduled}
                   onChange={(e) => setDateScheduled(e.target.value)}
                   className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
               ) : (
                 <p className="font-data text-body">{fmtDate(displayTicket.dateScheduled, tz)}</p>
@@ -341,7 +341,7 @@ export function TicketDetailDrawer() {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: "var(--border)" }}
+                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             ) : (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
@@ -363,7 +363,7 @@ export function TicketDetailDrawer() {
                   value={cost}
                   onChange={(e) => setCost(e.target.value)}
                   className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
               ) : (
                 <p className="font-data text-body">
@@ -390,7 +390,7 @@ export function TicketDetailDrawer() {
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: "var(--border)" }}
+                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             ) : (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
