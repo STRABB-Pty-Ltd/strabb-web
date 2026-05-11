@@ -33,7 +33,7 @@ export default function CleaningPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-xs" aria-busy="true">
+      <div className="space-y-xs" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading cleaning tasks</span>
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} h={55} />

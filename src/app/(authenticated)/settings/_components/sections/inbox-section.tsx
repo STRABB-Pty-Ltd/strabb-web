@@ -93,7 +93,13 @@ export function InboxSection() {
       </div>
 
       {isLoading ? (
-        <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+        <p
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          className="text-body"
+          style={{ color: "var(--text-secondary)" }}
+        >
           Loading…
         </p>
       ) : (

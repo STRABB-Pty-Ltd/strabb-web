@@ -186,7 +186,7 @@ function ScheduledTab({
 
   if (isLoading) {
     return (
-      <div className="space-y-xs" aria-busy="true">
+      <div className="space-y-xs" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading messages</span>
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} h={55} />
@@ -241,7 +241,11 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
   };
 
   if (isLoading) {
-    return <p className="text-body text-highlight-10">Loading logs…</p>;
+    return (
+      <p role="status" aria-live="polite" aria-busy="true" className="text-body text-highlight-10">
+        Loading logs…
+      </p>
+    );
   }
 
   const logs = data?.data ?? [];

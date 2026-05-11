@@ -122,7 +122,14 @@ export function PhoneSection() {
     return (
       <div className="space-y-md">
         {header}
-        <p className="text-body text-highlight-10">Loading…</p>
+        <p
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          className="text-body text-highlight-10"
+        >
+          Loading…
+        </p>
       </div>
     );
   }

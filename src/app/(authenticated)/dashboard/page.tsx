@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
-      <div className="space-y-sm" aria-busy="true">
+      <div className="space-y-sm" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading dashboard</span>
         <div className="gap-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
