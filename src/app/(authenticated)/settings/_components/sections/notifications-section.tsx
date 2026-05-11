@@ -87,9 +87,9 @@ export function NotificationsSection() {
                   backgroundColor: checked ? "var(--strabb-secondary)" : "var(--neutral-30)",
                 }}
               >
-                {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
+                {/* Thumb 14x14 with locked left positions (2 / 18) gives symmetric 2px margins inside a w-lg (34px) track. */}
                 <span
-                  className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
+                  className="bg-surface-60 absolute top-[3px] h-[14px] w-[14px] rounded-full shadow transition-transform"
                   style={{ left: checked ? 18 : 2 }}
                 />
               </button>
