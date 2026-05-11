@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ArrowLeft, Pencil, Users } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowLeft, Pencil, Users, X } from "lucide-react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useClickOutside } from "@/hooks/use-click-outside";
+import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { getCleaners, type MockTeamMember } from "@/lib/mock-team";
+import { Z } from "@/lib/z-index";
 
 export interface CleanerAssignment {
   cleanerName: string;
@@ -28,6 +24,8 @@ interface CleanerPickerDialogProps {
   saving?: boolean;
 }
 
+const EXIT_MS = 200;
+
 export function CleanerPickerDialog({
   open,
   onOpenChange,
@@ -36,13 +34,16 @@ export function CleanerPickerDialog({
   saving = false,
 }: CleanerPickerDialogProps) {
   const cleaners = getCleaners();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const { shouldRender } = useDelayedClose(open, EXIT_MS);
+
   const [mode, setMode] = useState<Mode>("choose");
   const [selectedId, setSelectedId] = useState<string>("");
   const [name, setName] = useState(initial.cleanerName);
   const [email, setEmail] = useState(initial.cleanerEmail);
   const [phone, setPhone] = useState(initial.cleanerPhone);
 
-  // Reset state every time the dialog opens. The initial values come from
+  // Reset state every time the panel opens. The initial values come from
   // the current task so a re-open shows the latest assignment.
   useEffect(() => {
     if (open) {
@@ -53,6 +54,26 @@ export function CleanerPickerDialog({
       setPhone(initial.cleanerPhone);
     }
   }, [open, initial, cleaners]);
+
+  const handleClose = useCallback(() => onOpenChange(false), [onOpenChange]);
+
+  useClickOutside(panelRef, handleClose, open);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    },
+    [handleClose],
+  );
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [open, handleKeyDown]);
+
+  if (!shouldRender) return null;
 
   const handlePickExisting = (member: MockTeamMember) => {
     setSelectedId(member.id);
@@ -66,17 +87,49 @@ export function CleanerPickerDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Assign cleaner</DialogTitle>
-          <DialogDescription>
+    <div
+      ref={panelRef}
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="cleaner-picker-title"
+      className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
+      style={{
+        zIndex: Z.DRAWER,
+        top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
+        // Sit immediately to the left of the drill-down panel with the same
+        // gap the drawer uses from the viewport edge.
+        right: "calc(var(--drilldown-width) + var(--space-md) * 2)",
+        bottom: "var(--space-md)",
+        width: "var(--drilldown-width)",
+        animation: !open ? `fadeOut ${EXIT_MS}ms ease-in forwards` : `fadeIn ${EXIT_MS}ms ease-out`,
+      }}
+    >
+      <div
+        className="px-sm py-sm flex items-center justify-between border-b"
+        style={{ borderColor: "var(--border)" }}
+      >
+        <div>
+          <h2 id="cleaner-picker-title" className="text-body text-highlight-10 font-semibold">
+            Assign cleaner
+          </h2>
+          <p className="text-body text-highlight-10">
             Pick someone from your cleaning team or enter details for a one-off cleaner.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Close cleaner picker"
+          className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+          data-no-elevate
+        >
+          <X size={18} />
+        </button>
+      </div>
 
+      <div className="p-sm gap-sm flex flex-1 flex-col overflow-y-auto">
         {mode === "choose" && (
-          <div className="gap-base flex flex-col">
+          <>
             <button
               type="button"
               onClick={() => setMode("pick-existing")}
@@ -103,11 +156,11 @@ export function CleanerPickerDialog({
                 <p className="text-body text-highlight-10">For a one-off or external cleaner.</p>
               </div>
             </button>
-          </div>
+          </>
         )}
 
         {mode === "pick-existing" && (
-          <div className="gap-sm flex flex-col">
+          <>
             <button
               type="button"
               onClick={() => setMode("choose")}
@@ -146,11 +199,11 @@ export function CleanerPickerDialog({
                 })}
               </div>
             )}
-          </div>
+          </>
         )}
 
         {mode === "manual" && (
-          <div className="gap-sm flex flex-col">
+          <>
             <button
               type="button"
               onClick={() => setMode("choose")}
@@ -222,34 +275,37 @@ export function CleanerPickerDialog({
                 }}
               />
             </div>
-          </div>
+          </>
         )}
+      </div>
 
-        {mode !== "choose" && (
-          <div className="gap-base flex justify-end">
-            <button
-              type="button"
-              onClick={() => onOpenChange(false)}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving || (mode === "pick-existing" && !selectedId)}
-              className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
-              style={{
-                backgroundColor: "var(--strabb-secondary)",
-                color: "var(--surface-60)",
-              }}
-            >
-              {saving ? "Saving…" : "Save"}
-            </button>
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
+      {mode !== "choose" && (
+        <div
+          className="gap-base px-sm py-sm flex justify-end border-t"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving || (mode === "pick-existing" && !selectedId)}
+            className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
+            style={{
+              backgroundColor: "var(--strabb-secondary)",
+              color: "var(--surface-60)",
+            }}
+          >
+            {saving ? "Saving…" : "Save"}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
