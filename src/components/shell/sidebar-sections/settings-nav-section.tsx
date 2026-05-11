@@ -4,6 +4,9 @@ import {
   Bell,
   CreditCard,
   Globe,
+  Home,
+  Inbox,
+  Link2,
   Phone,
   Radio,
   RefreshCw,
@@ -23,6 +26,7 @@ const sections = [
   { id: "billing", label: "Billing", icon: CreditCard },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "phone", label: "Phone", icon: Phone },
+  { id: "inbox", label: "Inbox", icon: Inbox },
   { id: "integrations", label: "Integrations", icon: Globe },
   { id: "cleaning", label: "Cleaning", icon: Sparkles },
   { id: "channels", label: "Channels", icon: Radio },
@@ -35,7 +39,9 @@ export function SettingsNavSection() {
   const router = useRouter();
   const onAdminRoute = pathname?.startsWith("/settings/admin") ?? false;
   const onSyncLogsRoute = pathname?.startsWith("/settings/sync-logs") ?? false;
-  const onSubRoute = onAdminRoute || onSyncLogsRoute;
+  const onShareableLinksRoute = pathname?.startsWith("/settings/shareable-links") ?? false;
+  const onListingsRoute = pathname?.startsWith("/settings/listings") ?? false;
+  const onSubRoute = onAdminRoute || onSyncLogsRoute || onShareableLinksRoute || onListingsRoute;
 
   const handleSectionClick = (id: string) => {
     setSection(id);
@@ -88,6 +94,32 @@ export function SettingsNavSection() {
         >
           <RefreshCw size={14} />
           Sync logs
+        </Link>
+        <Link
+          href="/settings/shareable-links"
+          aria-current={onShareableLinksRoute ? "page" : undefined}
+          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: onShareableLinksRoute
+              ? "var(--btn-active-bg)"
+              : "var(--btn-inactive-bg)",
+            color: onShareableLinksRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          }}
+        >
+          <Link2 size={14} />
+          Shareable links
+        </Link>
+        <Link
+          href="/settings/listings"
+          aria-current={onListingsRoute ? "page" : undefined}
+          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: onListingsRoute ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
+            color: onListingsRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          }}
+        >
+          <Home size={14} />
+          Listings
         </Link>
       </div>
     </nav>

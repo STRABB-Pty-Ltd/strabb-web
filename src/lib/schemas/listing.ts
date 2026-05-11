@@ -38,6 +38,7 @@ export interface ListingResponse {
   isActive: boolean;
   listingType: ListingType;
   parentId: string | null;
+  channexPropertyId: string | null;
   children: string[];
   createdAt: string;
   updatedAt: string;

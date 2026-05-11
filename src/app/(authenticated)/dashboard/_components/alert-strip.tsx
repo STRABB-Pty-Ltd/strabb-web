@@ -86,7 +86,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               type="button"
               onClick={() => setDismissed((d) => [...d, alert.id])}
               aria-label="Dismiss alert"
-              style={{ color: "var(--highlight-10)", opacity: 0.6 }}
+              style={{ color: "var(--text-secondary)" }}
               data-no-elevate
             >
               <X size={14} />

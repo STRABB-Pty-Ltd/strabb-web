@@ -91,10 +91,7 @@ export function ContextualSidebar() {
           {savedReportsOpen && (
             <div className="mt-base space-y-xs">
               {savedReports.length === 0 ? (
-                <p
-                  className="px-base text-body"
-                  style={{ color: "var(--highlight-10)", opacity: 0.6 }}
-                >
+                <p className="px-base text-body" style={{ color: "var(--text-secondary)" }}>
                   No saved reports
                 </p>
               ) : (

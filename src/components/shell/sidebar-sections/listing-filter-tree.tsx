@@ -69,7 +69,7 @@ export function ListingFilterTree() {
       <div className="mb-base flex items-center justify-between">
         <h3
           className="text-body font-semibold tracking-wide uppercase"
-          style={{ color: "var(--highlight-10)", opacity: 0.7 }}
+          style={{ color: "var(--text-secondary)" }}
         >
           Listings
         </h3>

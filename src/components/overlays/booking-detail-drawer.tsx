@@ -101,7 +101,7 @@ export function BookingDetailDrawer() {
               <p className="text-body text-status-danger dark:text-neutral-30 font-medium">
                 Date conflict detected
               </p>
-              <p className="text-body mt-xs text-status-danger dark:text-status-danger">
+              <p className="text-body mt-xs text-status-danger">
                 This booking overlaps with another booking on a different listing for the same
                 property. Resolve the conflict on the booking platform, then dismiss it here.
               </p>
