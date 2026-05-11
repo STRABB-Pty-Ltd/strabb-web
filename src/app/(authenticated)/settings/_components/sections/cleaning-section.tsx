@@ -57,20 +57,16 @@ export function CleaningSection() {
             aria-checked={autoAssign}
             aria-labelledby="auto-assign-label"
             onClick={() => setAutoAssign(!autoAssign)}
-            className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            className="h-md relative w-lg rounded-full transition-colors outline-none before:absolute before:top-1/2 before:left-1/2 before:h-[var(--touch-target-min)] before:w-[var(--touch-target-min)] before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            style={{
+              backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
+            }}
           >
+            {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
             <span
-              className="h-md relative w-lg rounded-full transition-colors"
-              style={{
-                backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
-              }}
-            >
-              {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
-              <span
-                className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
-                style={{ left: autoAssign ? 18 : 2 }}
-              />
-            </span>
+              className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
+              style={{ left: autoAssign ? 18 : 2 }}
+            />
           </button>
         </div>
 
