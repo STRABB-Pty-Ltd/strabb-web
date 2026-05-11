@@ -24,11 +24,15 @@ export function CleaningSection() {
 
       <div className="space-y-sm">
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="cleaning-default-duration"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Default Duration (hours)
           </label>
           {/* w-[144px] is on the Fibonacci ladder (5/8/13/21/34/55/89/144/...), kept as an arbitrary value. */}
           <input
+            id="cleaning-default-duration"
             type="number"
             value={defaultDuration}
             onChange={(e) => setDefaultDuration(e.target.value)}
@@ -71,10 +75,14 @@ export function CleaningSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="cleaning-default-cleaner-name"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Default Cleaner Name
           </label>
           <input
+            id="cleaning-default-cleaner-name"
             type="text"
             value={defaultCleaner}
             onChange={(e) => setDefaultCleaner(e.target.value)}

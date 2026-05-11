@@ -48,10 +48,14 @@ export function GeneralSection() {
 
       <div className="space-y-sm">
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="general-company-name"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Company Name
           </label>
           <input
+            id="general-company-name"
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
@@ -61,10 +65,14 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="general-timezone"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Default Timezone
           </label>
           <select
+            id="general-timezone"
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
@@ -79,10 +87,14 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="general-currency"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Default Currency
           </label>
           <select
+            id="general-currency"
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
@@ -97,8 +109,15 @@ export function GeneralSection() {
         </div>
 
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">Appearance</label>
+          <span
+            id="general-appearance-label"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
+            Appearance
+          </span>
           <div
+            role="group"
+            aria-labelledby="general-appearance-label"
             className="p-xs inline-flex rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           >

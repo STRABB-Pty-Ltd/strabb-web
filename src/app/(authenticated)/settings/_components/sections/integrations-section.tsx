@@ -120,13 +120,20 @@ export function IntegrationsSection() {
       </div>
 
       <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <h3 className="mb-sm text-body text-highlight-10 font-semibold">Manual iCal Feed</h3>
+        <h3
+          id="integrations-ical-label"
+          className="mb-sm text-body text-highlight-10 font-semibold"
+        >
+          Manual iCal Feed
+        </h3>
         <div className="gap-base flex">
           <input
+            id="integrations-ical-url"
             type="url"
             value={icalUrl}
             onChange={(e) => setIcalUrl(e.target.value)}
             placeholder="https://example.com/calendar.ics"
+            aria-labelledby="integrations-ical-label"
             className="px-sm py-base text-body flex-1 rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           />

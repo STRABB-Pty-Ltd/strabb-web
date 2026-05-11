@@ -163,7 +163,11 @@ export function ListingFilterTree() {
       {/* Create Group */}
       {showCreateGroup ? (
         <div className="mt-base gap-xs flex flex-col">
+          <label htmlFor="listing-filter-new-group-name" className="sr-only">
+            New group name
+          </label>
           <input
+            id="listing-filter-new-group-name"
             type="text"
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}

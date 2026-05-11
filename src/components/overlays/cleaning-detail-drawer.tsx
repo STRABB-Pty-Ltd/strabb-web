@@ -235,7 +235,12 @@ export function CleaningDetailDrawer() {
 
           <div className="space-y-xs">
             <div className="flex items-center justify-between">
-              <p className="text-body text-highlight-10 font-semibold">Cleaner</p>
+              <p
+                id="cleaning-drawer-cleaner-heading"
+                className="text-body text-highlight-10 font-semibold"
+              >
+                Cleaner
+              </p>
               {!editing && !isCompleted && (
                 <button
                   type="button"
@@ -259,7 +264,11 @@ export function CleaningDetailDrawer() {
               </div>
             ) : (
               <div className="space-y-xs">
+                <label htmlFor="cleaning-drawer-cleaner-name" className="sr-only">
+                  Cleaner name
+                </label>
                 <input
+                  id="cleaning-drawer-cleaner-name"
                   type="text"
                   value={cleanerName}
                   onChange={(e) => setCleanerName(e.target.value)}
@@ -268,7 +277,11 @@ export function CleaningDetailDrawer() {
                   className="px-sm py-base text-body w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 />
+                <label htmlFor="cleaning-drawer-cleaner-email" className="sr-only">
+                  Cleaner email
+                </label>
                 <input
+                  id="cleaning-drawer-cleaner-email"
                   type="email"
                   value={cleanerEmail}
                   onChange={(e) => setCleanerEmail(e.target.value)}
@@ -277,7 +290,11 @@ export function CleaningDetailDrawer() {
                   className="px-sm py-base text-body w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 />
+                <label htmlFor="cleaning-drawer-cleaner-phone" className="sr-only">
+                  Cleaner phone
+                </label>
                 <input
+                  id="cleaning-drawer-cleaner-phone"
                   type="tel"
                   value={cleanerPhone}
                   onChange={(e) => setCleanerPhone(e.target.value)}
@@ -291,17 +308,24 @@ export function CleaningDetailDrawer() {
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body text-highlight-10 font-semibold">Notes</p>
+            <p
+              id="cleaning-drawer-notes-label"
+              className="text-body text-highlight-10 font-semibold"
+            >
+              Notes
+            </p>
             {!editing ? (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
                 {displayTask.notes || <span className="text-highlight-10">None</span>}
               </p>
             ) : (
               <textarea
+                id="cleaning-drawer-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Special instructions for this cleaning…"
                 rows={4}
+                aria-labelledby="cleaning-drawer-notes-label"
                 className="px-sm py-base text-body w-full rounded-lg border"
                 style={{ borderColor: "var(--border)" }}
               />
@@ -309,7 +333,12 @@ export function CleaningDetailDrawer() {
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body text-highlight-10 font-semibold">Linked ticket</p>
+            <p
+              id="cleaning-drawer-linked-ticket-label"
+              className="text-body text-highlight-10 font-semibold"
+            >
+              Linked ticket
+            </p>
             {displayTask.linkedTicketId && linkedTicket ? (
               <div className="space-y-xs">
                 <p className="text-body text-highlight-10">{linkedTicket.description}</p>
@@ -327,8 +356,10 @@ export function CleaningDetailDrawer() {
             ) : linkingMode ? (
               <div className="space-y-xs">
                 <select
+                  id="cleaning-drawer-linked-ticket-select"
                   value={selectedTicketId}
                   onChange={(e) => setSelectedTicketId(e.target.value)}
+                  aria-labelledby="cleaning-drawer-linked-ticket-label"
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >

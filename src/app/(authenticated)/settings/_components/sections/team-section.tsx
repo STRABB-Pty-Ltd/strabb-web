@@ -110,8 +110,14 @@ export function TeamSection() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex-1">
-            <label className="mb-xs text-body text-highlight-10 block font-medium">Email</label>
+            <label
+              htmlFor="team-invite-email"
+              className="mb-xs text-body text-highlight-10 block font-medium"
+            >
+              Email
+            </label>
             <input
+              id="team-invite-email"
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
@@ -122,8 +128,14 @@ export function TeamSection() {
             />
           </div>
           <div>
-            <label className="mb-xs text-body text-highlight-10 block font-medium">Role</label>
+            <label
+              htmlFor="team-invite-role"
+              className="mb-xs text-body text-highlight-10 block font-medium"
+            >
+              Role
+            </label>
             <select
+              id="team-invite-role"
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
               className="px-sm py-base text-body bg-surface-60 rounded-sm border"

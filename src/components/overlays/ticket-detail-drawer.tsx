@@ -247,9 +247,12 @@ export function TicketDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-highlight-10">Priority</p>
+              <label htmlFor="ticket-drawer-priority" className="text-body text-highlight-10 block">
+                Priority
+              </label>
               {editing ? (
                 <select
+                  id="ticket-drawer-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
@@ -266,9 +269,12 @@ export function TicketDetailDrawer() {
               )}
             </div>
             <div>
-              <p className="text-body text-highlight-10">Status</p>
+              <label htmlFor="ticket-drawer-status" className="text-body text-highlight-10 block">
+                Status
+              </label>
               {editing ? (
                 <select
+                  id="ticket-drawer-status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TicketStatus)}
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
@@ -300,9 +306,15 @@ export function TicketDetailDrawer() {
               <p className="font-data text-body">{fmtDate(displayTicket.dateReported, tz)}</p>
             </div>
             <div>
-              <p className="text-body text-highlight-10">Scheduled</p>
+              <label
+                htmlFor="ticket-drawer-date-scheduled"
+                className="text-body text-highlight-10 block"
+              >
+                Scheduled
+              </label>
               {editing ? (
                 <input
+                  id="ticket-drawer-date-scheduled"
                   type="datetime-local"
                   value={dateScheduled}
                   onChange={(e) => setDateScheduled(e.target.value)}
@@ -316,9 +328,15 @@ export function TicketDetailDrawer() {
           </div>
 
           <div>
-            <p className="text-body text-highlight-10">Description</p>
+            <label
+              htmlFor="ticket-drawer-description"
+              className="text-body text-highlight-10 block"
+            >
+              Description
+            </label>
             {editing ? (
               <textarea
+                id="ticket-drawer-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
@@ -334,9 +352,12 @@ export function TicketDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-highlight-10">Cost</p>
+              <label htmlFor="ticket-drawer-cost" className="text-body text-highlight-10 block">
+                Cost
+              </label>
               {editing ? (
                 <input
+                  id="ticket-drawer-cost"
                   type="number"
                   step="0.01"
                   value={cost}
@@ -359,9 +380,12 @@ export function TicketDetailDrawer() {
           </div>
 
           <div>
-            <p className="text-body text-highlight-10">Notes</p>
+            <label htmlFor="ticket-drawer-notes" className="text-body text-highlight-10 block">
+              Notes
+            </label>
             {editing ? (
               <textarea
+                id="ticket-drawer-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
@@ -376,7 +400,12 @@ export function TicketDetailDrawer() {
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body text-highlight-10 font-semibold">Linked clean</p>
+            <p
+              id="ticket-drawer-linked-clean-label"
+              className="text-body text-highlight-10 font-semibold"
+            >
+              Linked clean
+            </p>
             {linkedClean ? (
               <div className="space-y-xs">
                 <p className="text-body text-highlight-10">
@@ -396,8 +425,10 @@ export function TicketDetailDrawer() {
             ) : linkingMode ? (
               <div className="space-y-xs">
                 <select
+                  id="ticket-drawer-linked-clean-select"
                   value={selectedCleanId}
                   onChange={(e) => setSelectedCleanId(e.target.value)}
+                  aria-labelledby="ticket-drawer-linked-clean-label"
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >

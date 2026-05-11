@@ -41,7 +41,11 @@ export function SavedReportsDrawer() {
 
       {showInput && (
         <div className="mb-sm gap-base flex">
+          <label htmlFor="saved-report-name" className="sr-only">
+            Report name
+          </label>
           <input
+            id="saved-report-name"
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
