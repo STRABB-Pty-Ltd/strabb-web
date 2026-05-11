@@ -138,6 +138,7 @@ export function DateTimePicker({
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
       <button
         ref={triggerRef}
         id={id}
@@ -145,7 +146,6 @@ export function DateTimePicker({
         disabled={disabled}
         aria-haspopup="dialog"
         aria-expanded={open}
-        // eslint-disable-next-line jsx-a11y/role-supports-aria-props
         aria-invalid={ariaProps["aria-invalid"]}
         aria-describedby={ariaProps["aria-describedby"]}
         aria-labelledby={ariaProps["aria-labelledby"]}
