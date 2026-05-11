@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Pencil, Users, X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
@@ -33,7 +33,10 @@ export function CleanerPickerDialog({
   onSave,
   saving = false,
 }: CleanerPickerDialogProps) {
-  const cleaners = getCleaners();
+  // getCleaners returns a fresh array each call (filter is non-memoised);
+  // wrap in useMemo so the reference is stable across renders and downstream
+  // effects depending on it don't re-fire.
+  const cleaners = useMemo(() => getCleaners(), []);
   const panelRef = useRef<HTMLDivElement>(null);
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
@@ -43,16 +46,20 @@ export function CleanerPickerDialog({
   const [email, setEmail] = useState(initial.cleanerEmail);
   const [phone, setPhone] = useState(initial.cleanerPhone);
 
-  // Reset state every time the panel opens. The initial values come from
-  // the current task so a re-open shows the latest assignment.
+  // Reset state only on the false-to-true transition of `open` so clicking
+  // a mode button doesn't immediately reset mode back to "choose" via this
+  // effect. `initial` is recreated by the parent on every render; reading
+  // it inside the effect is intentional.
+  const wasOpen = useRef(false);
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpen.current) {
       setMode("choose");
       setSelectedId(matchExistingId(cleaners, initial));
       setName(initial.cleanerName);
       setEmail(initial.cleanerEmail);
       setPhone(initial.cleanerPhone);
     }
+    wasOpen.current = open;
   }, [open, initial, cleaners]);
 
   const handleClose = useCallback(() => onOpenChange(false), [onOpenChange]);
