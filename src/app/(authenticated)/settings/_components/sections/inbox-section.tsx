@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useTenantMe, useUpdateSubdomain } from "@/lib/api-hooks/tenant-api";
 import { ApiError } from "@/lib/api-client";
@@ -41,13 +41,14 @@ export function InboxSection() {
   const { data: tenant, isLoading } = useTenantMe();
   const updateSubdomain = useUpdateSubdomain();
 
-  const [input, setInput] = useState("");
+  // null = unedited (mirror server). Anything else (including "") = user edit.
+  // Derived value over useEffect-sync so there's no race between mount and
+  // server data arrival.
+  const [draft, setDraft] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Hydrate input when tenant data lands.
-  useEffect(() => {
-    if (tenant?.subdomain != null) setInput(tenant.subdomain);
-  }, [tenant?.subdomain]);
+  const stored = tenant?.subdomain ?? "";
+  const input = draft ?? stored;
 
   const handleSave = () => {
     const validation = validateSubdomain(input);
@@ -59,6 +60,8 @@ export function InboxSection() {
     const value = input.trim().toLowerCase();
     updateSubdomain.mutate(value, {
       onSuccess: () => {
+        // Drop the draft so the input mirrors the new server value.
+        setDraft(null);
         addToast({ type: "success", message: "Subdomain saved" });
       },
       onError: (err: unknown) => {
@@ -76,7 +79,7 @@ export function InboxSection() {
     });
   };
 
-  const dirty = input.trim().toLowerCase() !== (tenant?.subdomain ?? "");
+  const dirty = input.trim().toLowerCase() !== stored.toLowerCase();
   const inboxAddress = tenant?.subdomain ? `${tenant.subdomain}@inbox.strabb.io` : null;
 
   return (
@@ -105,7 +108,7 @@ export function InboxSection() {
                 type="text"
                 value={input}
                 onChange={(e) => {
-                  setInput(e.target.value);
+                  setDraft(e.target.value);
                   if (error) setError(null);
                 }}
                 placeholder="mytenant"
@@ -155,7 +158,7 @@ export function InboxSection() {
               <button
                 type="button"
                 onClick={() => {
-                  setInput(tenant.subdomain ?? "");
+                  setDraft(null);
                   setError(null);
                 }}
                 className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
