@@ -1,16 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Popover } from "@base-ui/react/popover";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Calendar, X } from "lucide-react";
 import { format, isSameDay, parseISO, startOfMonth } from "date-fns";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { MonthGrid } from "@/components/ui/month-grid";
 import { cn } from "@/lib/utils";
 
 interface DateTimePickerProps {
   id?: string;
-  /** ISO-ish "YYYY-MM-DD" (when showTime=false) or "YYYY-MM-DDTHH:MM" (when true). */
+  /** "YYYY-MM-DD" (when showTime=false) or "YYYY-MM-DDTHH:MM" (when true). */
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -19,7 +20,6 @@ interface DateTimePickerProps {
   "aria-invalid"?: boolean;
   "aria-describedby"?: string;
   "aria-labelledby"?: string;
-  /** Class additions for the trigger button. */
   className?: string;
 }
 
@@ -27,14 +27,11 @@ const ISO_DATE = "yyyy-MM-dd";
 const ISO_DATETIME_LOCAL = "yyyy-MM-dd'T'HH:mm";
 const DISPLAY_DATE = "d MMM yyyy";
 const DISPLAY_DATETIME = "d MMM yyyy, HH:mm";
+const POPOVER_WIDTH = 296;
 
-function parseValue(value: string, showTime: boolean): Date | null {
+function parseValue(value: string): Date | null {
   if (!value) return null;
   try {
-    if (showTime) {
-      // datetime-local format "YYYY-MM-DDTHH:MM" - parseISO handles it.
-      return parseISO(value);
-    }
     return parseISO(value);
   } catch {
     return null;
@@ -57,20 +54,49 @@ export function DateTimePicker({
   className,
   ...ariaProps
 }: DateTimePickerProps) {
-  // Memoise parsed so downstream effects don't fire every render -
-  // parseISO returns a fresh Date object each call, which makes a raw
-  // `[parsed]` dep list infinitely re-trigger.
-  const parsed = useMemo(() => parseValue(value, showTime), [value, showTime]);
+  // Memoise parsed so [parsed] dep lists don't loop on a fresh Date each render.
+  const parsed = useMemo(() => parseValue(value), [value]);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState<Date>(parsed ?? new Date());
+  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
 
-  // Pull the calendar back to the value's month when value changes externally.
-  // Depend on `value` (a stable string) rather than `parsed` (a new Date ref
-  // each render).
+  // Snap calendar back to the value's month whenever the external value changes.
   useEffect(() => {
     if (parsed) setViewDate(startOfMonth(parsed));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  // Compute popover position relative to the trigger every time it opens.
+  // Place it directly below with a small gap; flip up if it would overflow.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    const approxHeight = showTime ? 340 : 290;
+    const flipUp = rect.bottom + approxHeight + 8 > window.innerHeight;
+    setPos({
+      top: flipUp ? rect.top - approxHeight - 4 : rect.bottom + 4,
+      left: Math.max(8, Math.min(rect.left, window.innerWidth - POPOVER_WIDTH - 8)),
+    });
+  }, [open, showTime]);
+
+  const close = useCallback(() => setOpen(false), []);
+  useClickOutside(popoverRef, close, open);
+
+  // Esc closes. Click outside closes via useClickOutside on the popover panel
+  // (the trigger is outside the panel ref, so clicking it while open would
+  // also fire useClickOutside; guard re-open click by toggling on trigger).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, close]);
 
   const hours = parsed?.getHours() ?? 9;
   const minutes = parsed?.getMinutes() ?? 0;
@@ -111,14 +137,19 @@ export function DateTimePicker({
   const isPlaceholder = !parsed;
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger
+    <>
+      <button
+        ref={triggerRef}
         id={id}
         type="button"
         disabled={disabled}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        // eslint-disable-next-line jsx-a11y/role-supports-aria-props
         aria-invalid={ariaProps["aria-invalid"]}
         aria-describedby={ariaProps["aria-describedby"]}
         aria-labelledby={ariaProps["aria-labelledby"]}
+        onClick={() => setOpen((o) => !o)}
         className={cn(
           "px-sm py-base text-body w-full rounded-lg border text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60",
           "gap-base flex items-center justify-between",
@@ -135,16 +166,23 @@ export function DateTimePicker({
           {display}
         </span>
         <Calendar size={14} style={{ color: "var(--highlight-10)", flexShrink: 0 }} />
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Positioner sideOffset={4} align="start">
-          <Popover.Popup
-            className="p-sm rounded-lg border shadow-xl outline-none"
+      </button>
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            role="dialog"
+            aria-modal="false"
+            className="p-sm rounded-lg border shadow-xl"
             style={{
+              position: "fixed",
+              top: pos.top,
+              left: pos.left,
+              width: POPOVER_WIDTH,
               backgroundColor: "var(--surface-60)",
               borderColor: "var(--border)",
               zIndex: 200,
-              width: 296,
             }}
           >
             <MonthGrid
@@ -226,9 +264,9 @@ export function DateTimePicker({
                 </button>
               </div>
             )}
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
-    </Popover.Root>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
