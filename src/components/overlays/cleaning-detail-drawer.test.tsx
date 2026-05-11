@@ -165,21 +165,32 @@ describe("CleaningDetailDrawer", () => {
     expect(completeMock).toHaveBeenCalledWith(baseTask.id, expect.any(Object));
   });
 
-  it("switches to edit mode and saves via update mutation", async () => {
+  it("saves notes via update mutation when Edit + Save notes clicked", async () => {
     storeState.drillDownPanel = { open: true, type: "cleaning", itemId: baseTask.id };
     taskMock.mockReturnValue({ data: baseTask, isLoading: false });
     render(<CleaningDetailDrawer />);
 
     await userEvent.click(screen.getByRole("button", { name: /^edit$/i }));
-    await userEvent.click(screen.getByRole("button", { name: /^save$/i }));
+    await userEvent.click(screen.getByRole("button", { name: /save notes/i }));
 
     expect(updateMock).toHaveBeenCalledWith(
       expect.objectContaining({
         id: baseTask.id,
-        data: expect.objectContaining({ cleanerName: "Jane Cleaner" }),
+        data: expect.objectContaining({ notes: "Bring eco supplies" }),
       }),
       expect.any(Object),
     );
+  });
+
+  it("opens the cleaner picker dialog when Change clicked", async () => {
+    storeState.drillDownPanel = { open: true, type: "cleaning", itemId: baseTask.id };
+    taskMock.mockReturnValue({ data: baseTask, isLoading: false });
+    render(<CleaningDetailDrawer />);
+
+    await userEvent.click(screen.getByRole("button", { name: /change/i }));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByText(/assign cleaner/i)).toBeInTheDocument();
   });
 
   it("Link to ticket button calls link mutation with picked ticket id", async () => {

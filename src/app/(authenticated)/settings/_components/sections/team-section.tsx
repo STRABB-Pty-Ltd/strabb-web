@@ -3,59 +3,8 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 
+import { mockTeamMembers } from "@/lib/mock-team";
 import { useAppStore } from "@/stores/app-store";
-
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: "admin" | "manager" | "cleaner" | "viewer";
-  lastLogin: string;
-  status: "active" | "invited" | "inactive";
-}
-
-const mockMembers: TeamMember[] = [
-  {
-    id: "u-1",
-    name: "Will Flynn",
-    email: "will@strabb.com",
-    role: "admin",
-    lastLogin: "2026-04-14",
-    status: "active",
-  },
-  {
-    id: "u-2",
-    name: "Chris Taylor",
-    email: "chris@strabb.com",
-    role: "admin",
-    lastLogin: "2026-04-13",
-    status: "active",
-  },
-  {
-    id: "u-3",
-    name: "Maria Santos",
-    email: "maria.s@cleanteam.com",
-    role: "cleaner",
-    lastLogin: "2026-04-12",
-    status: "active",
-  },
-  {
-    id: "u-4",
-    name: "Tom Williams",
-    email: "tom.w@cleanteam.com",
-    role: "cleaner",
-    lastLogin: "2026-04-10",
-    status: "active",
-  },
-  {
-    id: "u-5",
-    name: "Jen Liu",
-    email: "jen.l@cleanteam.com",
-    role: "cleaner",
-    lastLogin: "2026-04-11",
-    status: "active",
-  },
-];
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
   admin: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
@@ -177,7 +126,7 @@ export function TeamSection() {
           <div className="px-sm py-sm w-[89px]">Last Login</div>
           <div className="px-sm py-sm w-[89px]">Status</div>
         </div>
-        {mockMembers.map((member) => {
+        {mockTeamMembers.map((member) => {
           const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
           return (
             <div

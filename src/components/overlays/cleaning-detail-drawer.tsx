@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import {
+  CleanerPickerDialog,
+  type CleanerAssignment,
+} from "@/components/overlays/cleaner-picker-dialog";
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -60,10 +64,8 @@ export function CleaningDetailDrawer() {
   const unlinkTicket = useUnlinkTicketFromClean();
   const updateTicket = useUpdateTicketAPI();
 
-  const [editing, setEditing] = useState(false);
-  const [cleanerName, setCleanerName] = useState("");
-  const [cleanerEmail, setCleanerEmail] = useState("");
-  const [cleanerPhone, setCleanerPhone] = useState("");
+  const [cleanerDialogOpen, setCleanerDialogOpen] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
   const [linkingMode, setLinkingMode] = useState(false);
@@ -81,32 +83,46 @@ export function CleaningDetailDrawer() {
 
   useEffect(() => {
     if (task) {
-      setCleanerName(task.cleanerName ?? "");
-      setCleanerEmail(task.cleanerEmail ?? "");
-      setCleanerPhone(task.cleanerPhone ?? "");
       setNotes(task.notes ?? "");
-      setEditing(false);
+      setEditingNotes(false);
+      setCleanerDialogOpen(false);
     }
   }, [task?.id, task]);
 
   const showError = toastError(addToast);
 
-  const handleSave = () => {
+  const handleSaveCleaner = (next: CleanerAssignment) => {
     if (!task) return;
     updateTask.mutate(
       {
         id: task.id,
         data: {
-          cleanerName: cleanerName || null,
-          cleanerEmail: cleanerEmail || null,
-          cleanerPhone: cleanerPhone || null,
-          notes: notes || null,
+          cleanerName: next.cleanerName || null,
+          cleanerEmail: next.cleanerEmail || null,
+          cleanerPhone: next.cleanerPhone || null,
         },
       },
       {
         onSuccess: () => {
-          setEditing(false);
-          addToast({ type: "success", message: "Task updated" });
+          setCleanerDialogOpen(false);
+          addToast({ type: "success", message: "Cleaner updated" });
+        },
+        onError: showError,
+      },
+    );
+  };
+
+  const handleSaveNotes = () => {
+    if (!task) return;
+    updateTask.mutate(
+      {
+        id: task.id,
+        data: { notes: notes || null },
+      },
+      {
+        onSuccess: () => {
+          setEditingNotes(false);
+          addToast({ type: "success", message: "Notes saved" });
         },
         onError: showError,
       },
@@ -241,94 +257,88 @@ export function CleaningDetailDrawer() {
               >
                 Cleaner
               </p>
-              {!editing && !isCompleted && (
+              {!isCompleted && (
                 <button
                   type="button"
-                  onClick={() => setEditing(true)}
-                  className="text-body text-highlight-10 hover:text-highlight-10 font-medium"
+                  onClick={() => setCleanerDialogOpen(true)}
+                  className="text-body text-highlight-10 hover:text-highlight-10 rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                >
+                  {displayTask.cleanerName ? "Change" : "Assign"}
+                </button>
+              )}
+            </div>
+
+            <div className="text-body space-y-xs">
+              <p className="text-highlight-10">{displayTask.cleanerName || "Unassigned"}</p>
+              {displayTask.cleanerEmail && (
+                <p className="text-highlight-10">{displayTask.cleanerEmail}</p>
+              )}
+              {displayTask.cleanerPhone && (
+                <p className="text-highlight-10">{displayTask.cleanerPhone}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-xs">
+            <div className="flex items-center justify-between">
+              <p
+                id="cleaning-drawer-notes-label"
+                className="text-body text-highlight-10 font-semibold"
+              >
+                Notes
+              </p>
+              {!editingNotes && !isCompleted && (
+                <button
+                  type="button"
+                  onClick={() => setEditingNotes(true)}
+                  className="text-body text-highlight-10 hover:text-highlight-10 rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 >
                   Edit
                 </button>
               )}
             </div>
-
-            {!editing ? (
-              <div className="text-body space-y-xs">
-                <p className="text-highlight-10">{displayTask.cleanerName || "Unassigned"}</p>
-                {displayTask.cleanerEmail && (
-                  <p className="text-highlight-10">{displayTask.cleanerEmail}</p>
-                )}
-                {displayTask.cleanerPhone && (
-                  <p className="text-highlight-10">{displayTask.cleanerPhone}</p>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-xs">
-                <label htmlFor="cleaning-drawer-cleaner-name" className="sr-only">
-                  Cleaner name
-                </label>
-                <input
-                  id="cleaning-drawer-cleaner-name"
-                  type="text"
-                  value={cleanerName}
-                  onChange={(e) => setCleanerName(e.target.value)}
-                  autoComplete="name"
-                  placeholder="Cleaner name"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-                />
-                <label htmlFor="cleaning-drawer-cleaner-email" className="sr-only">
-                  Cleaner email
-                </label>
-                <input
-                  id="cleaning-drawer-cleaner-email"
-                  type="email"
-                  value={cleanerEmail}
-                  onChange={(e) => setCleanerEmail(e.target.value)}
-                  autoComplete="email"
-                  placeholder="cleaner@example.com"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-                />
-                <label htmlFor="cleaning-drawer-cleaner-phone" className="sr-only">
-                  Cleaner phone
-                </label>
-                <input
-                  id="cleaning-drawer-cleaner-phone"
-                  type="tel"
-                  value={cleanerPhone}
-                  onChange={(e) => setCleanerPhone(e.target.value)}
-                  autoComplete="tel"
-                  placeholder="+61 400 000 000"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-xs">
-            <p
-              id="cleaning-drawer-notes-label"
-              className="text-body text-highlight-10 font-semibold"
-            >
-              Notes
-            </p>
-            {!editing ? (
+            {!editingNotes ? (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
                 {displayTask.notes || <span className="text-highlight-10">None</span>}
               </p>
             ) : (
-              <textarea
-                id="cleaning-drawer-notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Special instructions for this cleaning…"
-                rows={4}
-                aria-labelledby="cleaning-drawer-notes-label"
-                className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-              />
+              <div className="space-y-xs">
+                <textarea
+                  id="cleaning-drawer-notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Special instructions for this cleaning…"
+                  rows={4}
+                  aria-labelledby="cleaning-drawer-notes-label"
+                  className="px-sm py-base text-body w-full rounded-lg border"
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
+                />
+                <div className="gap-xs flex">
+                  <button
+                    type="button"
+                    onClick={handleSaveNotes}
+                    disabled={updateTask.isPending}
+                    className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
+                    style={{
+                      backgroundColor: "var(--strabb-secondary)",
+                      color: "var(--surface-60)",
+                    }}
+                  >
+                    {updateTask.isPending ? "Saving…" : "Save notes"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingNotes(false);
+                      setNotes(displayTask.notes ?? "");
+                    }}
+                    className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
@@ -411,55 +421,27 @@ export function CleaningDetailDrawer() {
             )}
           </div>
 
-          {editing ? (
-            <div className="gap-xs flex">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={updateTask.isPending}
-                className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
-              >
-                {updateTask.isPending ? "Saving…" : "Save"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditing(false);
-                  setCleanerName(displayTask.cleanerName ?? "");
-                  setCleanerEmail(displayTask.cleanerEmail ?? "");
-                  setCleanerPhone(displayTask.cleanerPhone ?? "");
-                  setNotes(displayTask.notes ?? "");
-                }}
-                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                style={{ borderColor: "var(--border)" }}
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <div className="gap-xs flex flex-wrap">
-              <button
-                type="button"
-                onClick={handleComplete}
-                disabled={isCompleted || completeTask.isPending}
-                className="px-sm py-base text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                style={{ backgroundColor: "var(--semantic-success)" }}
-              >
-                {completeTask.isPending ? "Completing…" : "Mark complete"}
-              </button>
-              <button
-                type="button"
-                onClick={handleResend}
-                disabled={!canResend || resendNotification.isPending}
-                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium disabled:opacity-60"
-                style={{ borderColor: "var(--border)" }}
-                title={!canResend ? "Needs a cleaner email" : undefined}
-              >
-                {resendNotification.isPending ? "Sending…" : "Resend notification"}
-              </button>
-            </div>
-          )}
+          <div className="gap-xs flex flex-wrap">
+            <button
+              type="button"
+              onClick={handleComplete}
+              disabled={isCompleted || completeTask.isPending}
+              className="px-sm py-base text-body text-text-on-color rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              style={{ backgroundColor: "var(--semantic-success)" }}
+            >
+              {completeTask.isPending ? "Completing…" : "Mark complete"}
+            </button>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={!canResend || resendNotification.isPending}
+              className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
+              style={{ borderColor: "var(--border)" }}
+              title={!canResend ? "Needs a cleaner email" : undefined}
+            >
+              {resendNotification.isPending ? "Sending…" : "Resend notification"}
+            </button>
+          </div>
         </div>
       )}
       <ConfirmDialog
@@ -471,6 +453,19 @@ export function CleaningDetailDrawer() {
         cancelLabel="Leave it open"
         onConfirm={handleConfirmCloseLinkedTicket}
       />
+      {displayTask && (
+        <CleanerPickerDialog
+          open={cleanerDialogOpen}
+          onOpenChange={setCleanerDialogOpen}
+          initial={{
+            cleanerName: displayTask.cleanerName ?? "",
+            cleanerEmail: displayTask.cleanerEmail ?? "",
+            cleanerPhone: displayTask.cleanerPhone ?? "",
+          }}
+          onSave={handleSaveCleaner}
+          saving={updateTask.isPending}
+        />
+      )}
     </DrillDownPanel>
   );
 }
