@@ -61,34 +61,45 @@ export function NotificationsSection() {
       </div>
 
       <div className="space-y-sm">
-        {toggles.map((t) => (
-          <div
-            key={t.id}
-            className="px-sm py-sm flex items-center justify-between rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <div>
-              <p className="text-body text-highlight-10 font-medium">{t.label}</p>
-              <p className="text-body text-highlight-10">{t.description}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => toggle(t.id)}
-              className="h-md relative w-lg rounded-full transition-colors"
-              style={{
-                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
-              }}
+        {toggles.map((t) => {
+          const labelId = `notify-${t.id}-label`;
+          const checked = settings[t.id] ?? false;
+          return (
+            <div
+              key={t.id}
+              className="px-sm py-sm flex items-center justify-between rounded-lg border"
+              style={{ borderColor: "var(--border)" }}
             >
-              {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
-              <span
-                className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
-                style={{
-                  left: settings[t.id] ? 18 : 2,
-                }}
-              />
-            </button>
-          </div>
-        ))}
+              <div>
+                <p id={labelId} className="text-body text-highlight-10 font-medium">
+                  {t.label}
+                </p>
+                <p className="text-body text-highlight-10">{t.description}</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={checked}
+                aria-labelledby={labelId}
+                onClick={() => toggle(t.id)}
+                className="inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              >
+                <span
+                  className="h-md relative w-lg rounded-full transition-colors"
+                  style={{
+                    backgroundColor: checked ? "var(--strabb-secondary)" : "var(--neutral-30)",
+                  }}
+                >
+                  {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
+                  <span
+                    className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
+                    style={{ left: checked ? 18 : 2 }}
+                  />
+                </span>
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       <button
