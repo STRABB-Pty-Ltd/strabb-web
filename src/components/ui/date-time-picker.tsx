@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { Calendar, X } from "lucide-react";
 import { format, isSameDay, parseISO, startOfMonth } from "date-fns";
@@ -57,15 +57,20 @@ export function DateTimePicker({
   className,
   ...ariaProps
 }: DateTimePickerProps) {
-  const parsed = parseValue(value, showTime);
+  // Memoise parsed so downstream effects don't fire every render -
+  // parseISO returns a fresh Date object each call, which makes a raw
+  // `[parsed]` dep list infinitely re-trigger.
+  const parsed = useMemo(() => parseValue(value, showTime), [value, showTime]);
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState<Date>(parsed ?? new Date());
 
-  // When the value changes externally (e.g. parent resets), pull the calendar
-  // back to the relevant month so the next open shows the value's month.
+  // Pull the calendar back to the value's month when value changes externally.
+  // Depend on `value` (a stable string) rather than `parsed` (a new Date ref
+  // each render).
   useEffect(() => {
     if (parsed) setViewDate(startOfMonth(parsed));
-  }, [parsed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const hours = parsed?.getHours() ?? 9;
   const minutes = parsed?.getMinutes() ?? 0;
