@@ -50,10 +50,11 @@
 
   /* Tinted backgrounds for trial banners, connect pills, integration success
      notes; coloured panel bg without committing the whole surface to the
-     bright accent. */
-  --status-success-tint: var(--status-success);
-  --status-warning-tint: var(--status-warning);
-  --status-danger-tint: var(--status-danger);
+     bright accent. 12% mix with surface keeps the bg readable while leaving
+     the base colour vivid for the foreground text that sits on top. */
+  --status-success-tint: color-mix(in srgb, var(--status-success) 12%, var(--surface-60));
+  --status-warning-tint: color-mix(in srgb, var(--status-warning) 15%, var(--surface-60));
+  --status-danger-tint: color-mix(in srgb, var(--status-danger) 12%, var(--surface-60));
 
   /* Light text for the few surfaces that stay dark in both modes
      (channel-airbnb red, channel-booking blue, etc - tones that don't
@@ -223,10 +224,12 @@
   /* Secondary text - same 70% mix recipe; values flip with the palette. */
   --text-secondary: color-mix(in srgb, var(--highlight-10) 70%, var(--surface-60));
 
-  /* Tints get retuned for dark mode so they read against the dark surface. */
-  --status-success-tint: var(--status-success);
-  --status-warning-tint: var(--status-warning);
-  --status-danger-tint: var(--status-danger);
+  /* Tints get retuned for dark mode so they read against the dark surface.
+     22% mix gives a slightly stronger wash here so the pill still pops
+     against the dark page without washing out the foreground colour. */
+  --status-success-tint: color-mix(in srgb, var(--status-success) 22%, var(--surface-60));
+  --status-warning-tint: color-mix(in srgb, var(--status-warning) 22%, var(--surface-60));
+  --status-danger-tint: color-mix(in srgb, var(--status-danger) 22%, var(--surface-60));
 
   /* Scrim flips to highlight-10 dark (warm off-white) at 60%. */
   --scrim: rgba(250, 249, 245, 0.6);
