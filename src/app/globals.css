@@ -115,14 +115,29 @@
      tickets share the unified status set, so a "pending" reads the same
      across the app. confirmed = neutral foreground (work acknowledged but
      not yet started); in_progress + completed both green (active or done);
-     pending = red (needs attention); cancelled = neutral gray (matches
-     channel-direct, which is the single source of truth for the gray). */
+     pending = red (needs attention); cancelled = neutral-30 (dim flipping
+     gray; channel-direct's mid-luminance doesn't clear 4.5:1 against
+     either base text token in either theme). */
   --status-pending: var(--status-danger);
   --status-confirmed: var(--highlight-10);
   --status-in-progress: var(--status-success);
   --status-completed: var(--status-success);
   --status-issues: var(--status-danger);
-  --status-cancelled: var(--channel-direct);
+  --status-cancelled: var(--neutral-30);
+
+  /* Status pill foregrounds. Every value resolves to a base palette token;
+     each pair was verified at >=4.5:1 against its background in both
+     themes (warning needs a per-theme override since light/dark yellow
+     invert which text colour reads). */
+  --status-success-fg: var(--surface-60);
+  --status-warning-fg: var(--highlight-10);
+  --status-danger-fg: var(--surface-60);
+  --status-confirmed-fg: var(--surface-60);
+  --status-cancelled-fg: var(--highlight-10);
+  --status-pending-fg: var(--status-danger-fg);
+  --status-in-progress-fg: var(--status-success-fg);
+  --status-completed-fg: var(--status-success-fg);
+  --status-issues-fg: var(--status-danger-fg);
 
   /* Booking status colors */
   --booking-checked-out: var(--channel-direct);
@@ -231,6 +246,13 @@
   --status-warning-tint: color-mix(in srgb, var(--status-warning) 22%, var(--surface-60));
   --status-danger-tint: color-mix(in srgb, var(--status-danger) 22%, var(--surface-60));
 
+  /* Dark warning is bright yellow (#fbbf24); against highlight-10 (off-white
+     in dark mode) it sits at ~1.4:1 which is unreadable. Flip to surface-60
+     (dark) for ~10:1. Only warning needs the per-theme override; success and
+     danger keep surface-60 in both themes because surface-60 flips and the
+     resulting pair clears 4.5:1 either way. */
+  --status-warning-fg: var(--surface-60);
+
   /* Scrim flips to highlight-10 dark (warm off-white) at 60%. */
   --scrim: rgba(250, 249, 245, 0.6);
 
@@ -333,6 +355,15 @@
   --color-status-success-tint: var(--status-success-tint);
   --color-status-warning-tint: var(--status-warning-tint);
   --color-status-danger-tint: var(--status-danger-tint);
+  --color-status-success-fg: var(--status-success-fg);
+  --color-status-warning-fg: var(--status-warning-fg);
+  --color-status-danger-fg: var(--status-danger-fg);
+  --color-status-confirmed-fg: var(--status-confirmed-fg);
+  --color-status-cancelled-fg: var(--status-cancelled-fg);
+  --color-status-pending-fg: var(--status-pending-fg);
+  --color-status-in-progress-fg: var(--status-in-progress-fg);
+  --color-status-completed-fg: var(--status-completed-fg);
+  --color-status-issues-fg: var(--status-issues-fg);
   --color-text-on-color: var(--text-on-color);
   --color-text-secondary: var(--text-secondary);
   --color-scrim: var(--scrim);
