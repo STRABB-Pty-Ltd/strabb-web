@@ -25,6 +25,14 @@ const cleaningStatusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const cleaningStatusFgColors: Record<string, string> = {
+  pending: "var(--status-pending-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-in-progress-fg)",
+  completed: "var(--status-completed-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
 const typeTextColors: Record<string, string> = {
   booking: "var(--highlight-10)",
   vacancy: "var(--highlight-10)",
@@ -230,7 +238,14 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
         }
         return typeColors[item.type] ?? item.color;
       }}
-      getTextColor={(item) => typeTextColors[item.type] ?? "var(--surface-60)"}
+      getTextColor={(item) => {
+        if (typeTextColors[item.type]) return typeTextColors[item.type];
+        if (item.type === "cleaning") {
+          return cleaningStatusFgColors[item.status ?? ""] ?? "var(--status-success-fg)";
+        }
+        if (item.type === "ticket") return "var(--status-danger-fg)";
+        return "var(--surface-60)";
+      }}
       // Cleaning bars: replace the word "Turnover" with the broom icon below.
       // Strip the "Turnover" / "Turnover - " prefix so only the assignee
       // name (or nothing) remains as text alongside the icon.

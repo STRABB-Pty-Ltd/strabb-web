@@ -21,6 +21,14 @@ const statusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-pending-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-in-progress-fg)",
+  completed: "var(--status-completed-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
 interface TicketKanbanCardProps {
   ticket: Ticket;
   propertyName?: string;
@@ -54,7 +62,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
             className="px-xs py-xs text-body rounded-sm font-medium"
             style={{
               backgroundColor: statusColors[ticket.status] ?? "var(--highlight-10)",
-              color: "var(--surface-60)",
+              color: statusFgColors[ticket.status] ?? "var(--surface-60)",
             }}
           >
             {ticket.status}

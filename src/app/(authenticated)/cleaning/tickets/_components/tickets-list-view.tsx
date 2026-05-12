@@ -19,6 +19,14 @@ const statusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-pending-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-in-progress-fg)",
+  completed: "var(--status-completed-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
 const priorityColors: Record<string, { bg: string; text: string }> = {
   urgent: { bg: "var(--row-alt)", text: "var(--status-danger)" },
   high: { bg: "var(--row-alt)", text: "var(--status-danger)" },
@@ -108,7 +116,7 @@ export function TicketsListView({
             className="px-base py-xs text-body rounded-md font-medium"
             style={{
               backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
-              color: "var(--surface-60)",
+              color: statusFgColors[t.status] ?? "var(--surface-60)",
             }}
           >
             {t.status.replace("_", " ")}

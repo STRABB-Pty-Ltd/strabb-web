@@ -32,6 +32,14 @@ const statusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-pending-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-in-progress-fg)",
+  completed: "var(--status-completed-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
 function toastError(addToast: ReturnType<typeof useAppStore.getState>["addToast"]) {
   return (err: unknown) => {
     const message =
@@ -242,7 +250,7 @@ export function CleaningDetailDrawer() {
               className="px-base py-xs text-body inline-block rounded-md font-medium"
               style={{
                 backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                color: "var(--surface-60)",
+                color: statusFgColors[status] ?? "var(--surface-60)",
               }}
             >
               {status.replace("_", " ")}

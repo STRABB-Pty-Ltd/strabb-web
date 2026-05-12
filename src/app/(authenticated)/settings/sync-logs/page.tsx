@@ -24,6 +24,13 @@ const statusColors: Record<string, string> = {
   in_progress: "var(--status-in-progress)",
 };
 
+const statusFgColors: Record<string, string> = {
+  synced: "var(--status-completed-fg)",
+  skipped: "var(--status-issues-fg)",
+  failed: "var(--status-danger-fg)",
+  in_progress: "var(--status-in-progress-fg)",
+};
+
 export default function SyncLogsPage() {
   const [page, setPage] = useState(1);
   const { data, isLoading } = useSyncLogs(page, PAGE_SIZE);
@@ -74,12 +81,13 @@ export default function SyncLogsPage() {
       header: "Status",
       render: (_v, row) => {
         const matched = statusColors[row.status];
+        const matchedFg = statusFgColors[row.status];
         return (
           <span
             className="px-base py-xs text-body rounded-md font-medium"
             style={{
               backgroundColor: matched ?? "var(--highlight-10)",
-              color: "var(--surface-60)",
+              color: matchedFg ?? "var(--surface-60)",
             }}
           >
             {row.status}

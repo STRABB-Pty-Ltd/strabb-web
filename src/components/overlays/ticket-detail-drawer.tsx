@@ -37,6 +37,14 @@ const statusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-pending-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-in-progress-fg)",
+  completed: "var(--status-completed-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
 function fmtDate(iso: string | null, tz: string): string {
   if (!iso) return "-";
   return formatInPropertyTimezone(iso, tz, "d MMM yyyy, HH:mm");
@@ -292,7 +300,7 @@ export function TicketDetailDrawer() {
                   className="px-base py-xs text-body inline-block rounded-md font-medium"
                   style={{
                     backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                    color: "var(--surface-60)",
+                    color: statusFgColors[status] ?? "var(--surface-60)",
                   }}
                 >
                   {status.replace("_", " ")}
