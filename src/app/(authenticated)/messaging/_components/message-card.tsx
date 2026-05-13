@@ -73,7 +73,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
         <div className="gap-base text-body text-highlight-10 flex items-center">
           <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
           <span className="gap-xs flex items-center">
-            <MessageSquare size={10} />
+            <MessageSquare size={10} aria-hidden="true" />
             {message.messageCount}
           </span>
         </div>

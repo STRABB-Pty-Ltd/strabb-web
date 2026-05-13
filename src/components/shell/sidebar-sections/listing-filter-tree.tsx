@@ -140,7 +140,11 @@ export function ListingFilterTree() {
                   className="p-xs shrink-0"
                   data-no-elevate
                 >
-                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                  {isExpanded ? (
+                    <ChevronDown size={13} aria-hidden="true" />
+                  ) : (
+                    <ChevronRight size={13} aria-hidden="true" />
+                  )}
                 </button>
                 <span className="text-body flex-1 truncate font-medium">{group.name}</span>
                 <button
@@ -218,7 +222,7 @@ export function ListingFilterTree() {
             color: "var(--highlight-10)",
           }}
         >
-          <Plus size={13} />
+          <Plus size={13} aria-hidden="true" />
           Create Group
         </button>
       )}

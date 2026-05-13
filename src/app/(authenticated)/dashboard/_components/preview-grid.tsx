@@ -28,7 +28,7 @@ function PanelHeader({ title, onView }: { title: string; onView?: () => void }) 
           style={{ color: "var(--highlight-10)" }}
           data-no-elevate
         >
-          View All <ArrowRight size={12} />
+          View All <ArrowRight size={12} aria-hidden="true" />
         </button>
       )}
     </div>

@@ -323,7 +323,7 @@ export function PhoneSection() {
                 color: "var(--status-danger)",
               }}
             >
-              <ShieldAlert size={14} />
+              <ShieldAlert size={14} aria-hidden="true" />
               Daily cap reached - SMS sending paused until tomorrow.
             </div>
           )}

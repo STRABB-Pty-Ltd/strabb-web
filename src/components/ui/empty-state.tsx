@@ -23,7 +23,12 @@ export function EmptyState({ icon: Icon, title, description, action, compact }: 
       }`}
     >
       {!compact && Icon && (
-        <Icon size={34} className="opacity-40" style={{ color: "var(--highlight-10)" }} />
+        <Icon
+          size={34}
+          className="opacity-40"
+          style={{ color: "var(--highlight-10)" }}
+          aria-hidden="true"
+        />
       )}
       <p className="text-body font-medium" style={{ color: "var(--highlight-10)" }}>
         {title}

@@ -46,6 +46,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
             <button
               key={opt.id}
               type="button"
+              aria-pressed={isActive}
               onClick={() => setView(page as "calendar" | "messaging" | "cleaning", opt.id)}
               className={`gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors ${isActive ? "font-semibold" : "font-medium"}`}
               style={{
@@ -53,7 +54,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
                 color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
-              <Icon size={13} />
+              <Icon size={13} aria-hidden="true" />
               {opt.label}
             </button>
           );

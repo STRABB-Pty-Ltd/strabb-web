@@ -97,7 +97,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
               </div>
 
               <span className="gap-xs text-body text-highlight-10 flex shrink-0 items-center">
-                <MessageSquare size={10} />
+                <MessageSquare size={10} aria-hidden="true" />
                 {msg.messageCount}
               </span>
             </button>

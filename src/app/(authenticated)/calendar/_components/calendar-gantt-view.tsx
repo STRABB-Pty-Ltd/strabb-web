@@ -255,7 +255,9 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       }}
       getIcon={(item) => {
         if (item.isImplicitBlock) return undefined;
-        return item.type === "cleaning" ? <BrushCleaning size={13} /> : undefined;
+        return item.type === "cleaning" ? (
+          <BrushCleaning size={13} aria-hidden="true" />
+        ) : undefined;
       }}
       // Bookings: 75–100 % of check-in day → middle days → 0–25 % of checkout
       // day, leaving the middle 50 % of any turnover day open.

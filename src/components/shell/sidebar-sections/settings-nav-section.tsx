@@ -66,7 +66,7 @@ export function SettingsNavSection() {
                 color: active ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
-              <Icon size={14} />
+              <Icon size={14} aria-hidden="true" />
               {s.label}
             </button>
           );
@@ -80,7 +80,7 @@ export function SettingsNavSection() {
             color: onAdminRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
-          <ShieldCheck size={14} />
+          <ShieldCheck size={14} aria-hidden="true" />
           Admin
         </Link>
         <Link
@@ -92,7 +92,7 @@ export function SettingsNavSection() {
             color: onSyncLogsRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
-          <RefreshCw size={14} />
+          <RefreshCw size={14} aria-hidden="true" />
           Sync logs
         </Link>
         <Link
@@ -116,7 +116,7 @@ export function SettingsNavSection() {
             color: onListingsRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
-          <Home size={14} />
+          <Home size={14} aria-hidden="true" />
           Listings
         </Link>
       </div>

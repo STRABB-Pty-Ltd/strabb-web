@@ -48,7 +48,7 @@ export function TeamSection() {
           className="gap-xs px-sm py-base text-body text-surface-60 flex items-center rounded-lg font-medium"
           style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
         >
-          <Plus size={16} />
+          <Plus size={16} aria-hidden="true" />
           Invite Member
         </button>
       </div>

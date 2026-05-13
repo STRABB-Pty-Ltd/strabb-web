@@ -99,7 +99,7 @@ export default function ShareableLinksPage() {
             aria-label="Copy public URL"
             className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
           >
-            <Copy size={14} />
+            <Copy size={14} aria-hidden="true" />
           </button>
         </div>
       ),

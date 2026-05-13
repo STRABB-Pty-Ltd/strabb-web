@@ -73,13 +73,14 @@ export function ContextualSidebar() {
           <button
             type="button"
             onClick={openShoppingListPopup}
+            aria-haspopup="dialog"
             className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
             style={{
               backgroundColor: "var(--neutral-30)",
               color: "var(--highlight-10)",
             }}
           >
-            <ShoppingCart size={13} />
+            <ShoppingCart size={13} aria-hidden="true" />
             Shopping List
           </button>
         </div>
@@ -90,13 +91,14 @@ export function ContextualSidebar() {
           <button
             type="button"
             onClick={toggleSavedReports}
+            aria-expanded={savedReportsOpen}
             className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
             style={{
               backgroundColor: "var(--neutral-30)",
               color: "var(--highlight-10)",
             }}
           >
-            <BookOpen size={13} />
+            <BookOpen size={13} aria-hidden="true" />
             Saved Reports
           </button>
           {savedReportsOpen && (
@@ -158,7 +160,7 @@ export function ContextualSidebar() {
                   className="gap-xs px-sm py-base text-body flex w-full items-center rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                   style={{ color: "var(--highlight-10)" }}
                 >
-                  <Plus size={13} />
+                  <Plus size={13} aria-hidden="true" />
                   Save current
                 </button>
               )}

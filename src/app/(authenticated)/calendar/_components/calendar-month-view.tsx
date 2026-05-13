@@ -94,7 +94,9 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
           ? (channelColors[ev.channel ?? "direct"] ?? "var(--channel-direct)")
           : undefined
       }
-      getEventIcon={(ev) => (ev.type === "cleaning" ? <BrushCleaning size={11} /> : undefined)}
+      getEventIcon={(ev) =>
+        ev.type === "cleaning" ? <BrushCleaning size={11} aria-hidden="true" /> : undefined
+      }
       getEventInset={(ev) => {
         // Match the calendar gantt's getPartialDay so a booking sits at
         // 75–100 % of its check-in cell and 0–25 % of its check-out cell,

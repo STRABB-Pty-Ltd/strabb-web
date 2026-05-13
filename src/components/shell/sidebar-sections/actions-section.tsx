@@ -38,7 +38,7 @@ export function ActionsSection() {
             opacity: 0.6,
           }}
         >
-          <Cog size={13} />
+          <Cog size={13} aria-hidden="true" />
           Configure
         </button>
         <button
@@ -51,7 +51,7 @@ export function ActionsSection() {
             opacity: 0.6,
           }}
         >
-          <Zap size={13} />
+          <Zap size={13} aria-hidden="true" />
           Automations
         </button>
       </div>

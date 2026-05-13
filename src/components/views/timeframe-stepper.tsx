@@ -52,7 +52,7 @@ export function TimeframeStepper() {
           className="min-h-lg hover:bg-neutral-30 inline-flex min-w-lg items-center justify-center rounded-sm"
           aria-label="Previous period"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={18} aria-hidden="true" />
         </button>
       )}
       <button
@@ -79,7 +79,7 @@ export function TimeframeStepper() {
           className="min-h-lg hover:bg-neutral-30 inline-flex min-w-lg items-center justify-center rounded-sm"
           aria-label="Next period"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={18} aria-hidden="true" />
         </button>
       )}
     </div>

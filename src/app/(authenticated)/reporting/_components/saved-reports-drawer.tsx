@@ -34,7 +34,7 @@ export function SavedReportsDrawer() {
           className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           style={{ color: "var(--highlight-10)" }}
         >
-          <Plus size={12} />
+          <Plus size={12} aria-hidden="true" />
           Save Current
         </button>
       </div>

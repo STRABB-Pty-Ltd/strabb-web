@@ -54,13 +54,13 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
         </div>
 
         <div className="gap-xs text-body text-highlight-10 flex items-center">
-          <Clock size={10} />
+          <Clock size={10} aria-hidden="true" />
           <span>{formatInPropertyTimezone(task.scheduledTime, tz, "d MMM, HH:mm")}</span>
         </div>
 
         {task.cleanerName && (
           <div className="gap-xs text-body text-highlight-10 flex items-center">
-            <User size={10} />
+            <User size={10} aria-hidden="true" />
             <span>{task.cleanerName}</span>
           </div>
         )}

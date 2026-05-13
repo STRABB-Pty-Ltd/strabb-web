@@ -51,7 +51,11 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
               color: trendPositive ? "var(--status-completed)" : "var(--status-issues)",
             }}
           >
-            {trendPositive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+            {trendPositive ? (
+              <ArrowUpRight size={13} aria-hidden="true" />
+            ) : (
+              <ArrowDownRight size={13} aria-hidden="true" />
+            )}
             {Math.abs(kpi.trend ?? 0)}%
           </div>
         )}

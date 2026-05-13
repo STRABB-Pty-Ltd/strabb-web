@@ -80,6 +80,8 @@ export function TimeframeSelector({ page }: { page: PageId }) {
             <button
               key={opt.id}
               type="button"
+              aria-pressed={isActive}
+              aria-haspopup="dialog"
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 setTimeframe(
@@ -111,6 +113,8 @@ export function TimeframeSelector({ page }: { page: PageId }) {
         })}
         <button
           type="button"
+          aria-pressed={currentWs === "custom"}
+          aria-haspopup="dialog"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const wasCustom = currentWs === "custom";

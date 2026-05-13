@@ -208,7 +208,7 @@ function ScheduledTab({
           className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
-          <RefreshCw size={12} />
+          <RefreshCw size={12} aria-hidden="true" />
           Resend
         </button>
       ),
@@ -312,9 +312,9 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
                 aria-expanded={isOpen}
               >
                 {isOpen ? (
-                  <ChevronDown size={14} className="shrink-0" />
+                  <ChevronDown size={14} className="shrink-0" aria-hidden="true" />
                 ) : (
-                  <ChevronRight size={14} className="shrink-0" />
+                  <ChevronRight size={14} className="shrink-0" aria-hidden="true" />
                 )}
                 <span className="text-highlight-10 font-medium" style={{ minWidth: 144 }}>
                   {log.event}
@@ -368,7 +368,10 @@ interface PaginationProps {
 function Pagination({ meta, page, onChange }: PaginationProps) {
   if (meta.totalPages <= 1) return null;
   return (
-    <div className="gap-base text-body text-highlight-10 flex items-center justify-end">
+    <nav
+      aria-label="Pagination"
+      className="gap-base text-body text-highlight-10 flex items-center justify-end"
+    >
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}
@@ -390,6 +393,6 @@ function Pagination({ meta, page, onChange }: PaginationProps) {
       >
         Next
       </button>
-    </div>
+    </nav>
   );
 }

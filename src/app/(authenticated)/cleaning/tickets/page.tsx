@@ -131,7 +131,10 @@ interface PaginationProps {
 
 function Pagination({ page, totalPages, total, onChange }: PaginationProps) {
   return (
-    <div className="gap-base text-body text-highlight-10 flex items-center justify-end">
+    <nav
+      aria-label="Pagination"
+      className="gap-base text-body text-highlight-10 flex items-center justify-end"
+    >
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}
@@ -153,6 +156,6 @@ function Pagination({ page, totalPages, total, onChange }: PaginationProps) {
       >
         Next
       </button>
-    </div>
+    </nav>
   );
 }

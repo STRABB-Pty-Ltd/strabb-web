@@ -41,7 +41,7 @@ export default function CalendarPage() {
     <div className="flex h-full flex-col overflow-hidden">
       {showMobileBanner && (
         <div className="mb-sm gap-base px-sm py-base text-body bg-neutral-30 text-highlight-10 flex items-center rounded-lg">
-          <Monitor size={16} />
+          <Monitor size={16} aria-hidden="true" />
           Switch to desktop for Gantt/Calendar view
         </div>
       )}

@@ -59,7 +59,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
     <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-xs flex items-center">
-          <Wrench size={12} className="text-highlight-10 shrink-0" />
+          <Wrench size={12} className="text-highlight-10 shrink-0" aria-hidden="true" />
           <span className="text-body text-highlight-10 truncate font-medium">
             {propertyName ?? ticket.propertyId.slice(0, 8)}
           </span>

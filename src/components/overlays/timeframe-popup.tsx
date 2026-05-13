@@ -282,7 +282,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} aria-hidden="true" />
         </button>
         <span className="text-body font-semibold">{year}</span>
         <button
@@ -291,7 +291,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
       <div className="gap-xs grid grid-cols-3">
@@ -338,7 +338,7 @@ function QuarterPicker({
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} aria-hidden="true" />
         </button>
         <span className="text-body font-semibold">{year}</span>
         <button
@@ -347,7 +347,7 @@ function QuarterPicker({
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
       <div className="gap-xs grid grid-cols-2">

@@ -61,9 +61,9 @@ export function SortableListHeader<T>({
                 {col.label}
                 {isActive ? (
                   sortDirection === "asc" ? (
-                    <ArrowUp size={12} />
+                    <ArrowUp size={12} aria-hidden="true" />
                   ) : (
-                    <ArrowDown size={12} />
+                    <ArrowDown size={12} aria-hidden="true" />
                   )
                 ) : (
                   <ArrowUpDown size={12} className="opacity-30" />

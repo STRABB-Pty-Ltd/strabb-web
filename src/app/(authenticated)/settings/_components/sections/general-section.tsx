@@ -136,7 +136,7 @@ export function GeneralSection() {
                   }}
                   aria-pressed={active}
                 >
-                  <Icon size={14} />
+                  <Icon size={14} aria-hidden="true" />
                   {opt.label}
                 </button>
               );

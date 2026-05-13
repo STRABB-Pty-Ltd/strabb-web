@@ -123,7 +123,7 @@ export function MessageThread({
           className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
           style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
         >
-          <Send size={18} />
+          <Send size={18} aria-hidden="true" />
         </button>
       </div>
     </div>

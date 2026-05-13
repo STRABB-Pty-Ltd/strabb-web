@@ -162,7 +162,7 @@ export function SubmenuBar() {
             href="/messaging/scheduled"
             className="gap-xs px-base py-base text-body hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold"
           >
-            <CalendarClock size={16} />
+            <CalendarClock size={16} aria-hidden="true" />
             Scheduled messages
           </Link>
         ) : (
@@ -216,11 +216,13 @@ export function SubmenuBar() {
                 <button
                   type="button"
                   onClick={() => handleChipClick(chip)}
+                  aria-haspopup="menu"
+                  aria-expanded={moreOpen}
                   className={chipClass}
                   style={chipStyle}
                 >
                   {chip.label}
-                  <ChevronDown size={13} />
+                  <ChevronDown size={13} aria-hidden="true" />
                 </button>
                 {moreOpen && (
                   <div

@@ -173,7 +173,7 @@ export function CleanerPickerDialog({
               onClick={() => setMode("choose")}
               className="gap-xs text-body text-highlight-10 inline-flex w-fit items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
-              <ArrowLeft size={14} />
+              <ArrowLeft size={14} aria-hidden="true" />
               Back
             </button>
             {cleaners.length === 0 ? (
@@ -216,7 +216,7 @@ export function CleanerPickerDialog({
               onClick={() => setMode("choose")}
               className="gap-xs text-body text-highlight-10 inline-flex w-fit items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
-              <ArrowLeft size={14} />
+              <ArrowLeft size={14} aria-hidden="true" />
               Back
             </button>
             <div>
