@@ -34,8 +34,8 @@ const statusColors: Record<string, string> = {
 };
 
 const statusFgColors: Record<string, string> = {
-  pending: "var(--status-pending-fg)",
-  sent: "var(--status-completed-fg)",
+  pending: "var(--status-danger-fg)",
+  sent: "var(--status-success-fg)",
   failed: "var(--status-danger-fg)",
   cancelled: "var(--status-cancelled-fg)",
 };
@@ -75,8 +75,8 @@ export default function ScheduledMessagesPage() {
               aria-current={active ? "page" : undefined}
               className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
-                borderColor: active ? "var(--strabb-secondary)" : "transparent",
-                color: active ? "var(--strabb-secondary)" : "var(--highlight-10)",
+                borderColor: active ? "var(--highlight-10)" : "transparent",
+                color: active ? "var(--highlight-10)" : "var(--highlight-10)",
               }}
             >
               {t.label}

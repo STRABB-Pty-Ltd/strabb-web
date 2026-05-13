@@ -81,7 +81,7 @@ export function MonthGrid({
           let bg: string | undefined;
           let fg: string;
           if (strong) {
-            bg = "var(--strabb-secondary)";
+            bg = "var(--highlight-10)";
             fg = "var(--surface-60)";
           } else if (soft) {
             bg = "var(--neutral-30)";

@@ -304,8 +304,8 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
               onClick={() => onPick(format(startOfMonth(m), "yyyy-MM-dd"))}
               className="px-sm py-base text-body rounded-lg transition-colors"
               style={{
-                backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isSelected ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isSelected ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               {format(m, "MMM")}
@@ -360,8 +360,8 @@ function QuarterPicker({
               onClick={() => onPick(format(startOfQuarter(new Date(year, q * 3, 1)), "yyyy-MM-dd"))}
               className="px-sm py-base text-body rounded-lg"
               style={{
-                backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isSelected ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isSelected ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               Q{q + 1} {year}
@@ -388,8 +388,8 @@ function YearPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: s
             onClick={() => onPick(format(startOfYear(new Date(y, 0, 1)), "yyyy-MM-dd"))}
             className="px-sm py-base text-body rounded-lg"
             style={{
-              backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-              color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              backgroundColor: isSelected ? "var(--highlight-10)" : "var(--neutral-30)",
+              color: isSelected ? "var(--surface-60)" : "var(--highlight-10)",
             }}
           >
             {y}
@@ -547,7 +547,7 @@ function CustomRangeForm({
         disabled={!valid}
         onClick={() => onApply(start, end)}
         className="mt-base py-xs text-body text-surface-60 w-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Apply
       </button>

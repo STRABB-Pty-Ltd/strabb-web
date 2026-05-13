@@ -56,7 +56,7 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <PanelHeader title="Next 7 Days" onView={handleViewAll} />
       <div className="gap-xs grid grid-cols-7">
@@ -149,7 +149,7 @@ function RevenueSparkline({
   const bars = useMemo(() => bucketRevenue(data, windowSize), [data, windowSize]);
   const max = Math.max(...bars.map((d) => d.revenue), 1);
   return (
-    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--neutral-30)" }}>
       <PanelHeader title="Revenue Trend" />
       <div className="gap-base flex items-end" style={{ height: 89 }}>
         {bars.map((d) => (
@@ -158,7 +158,7 @@ function RevenueSparkline({
               className="w-full rounded-t-sm"
               style={{
                 height: Math.max(5, (d.revenue / max) * 55),
-                backgroundColor: "var(--chart-bar)",
+                backgroundColor: "var(--highlight-10)",
               }}
             />
             <span className="text-body" style={{ color: "var(--text-secondary)" }}>
@@ -194,7 +194,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <PanelHeader title="Upcoming Bookings" onView={handleViewAll} />
       {data.length === 0 ? (
@@ -233,7 +233,7 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <PanelHeader title="Cleans and Tickets" onView={handleViewAll} />
       {data.length === 0 ? (

@@ -38,7 +38,7 @@ export function ChartContainer({
     return (
       <div
         className="flex items-center justify-center rounded-xl"
-        style={{ minHeight, backgroundColor: "var(--surface-card)" }}
+        style={{ minHeight, backgroundColor: "var(--neutral-30)" }}
       >
         <p className="text-body" style={{ color: "var(--status-issues)" }}>
           {error}
@@ -51,7 +51,7 @@ export function ChartContainer({
     return (
       <div
         className="flex items-center justify-center rounded-xl"
-        style={{ minHeight, backgroundColor: "var(--surface-card)" }}
+        style={{ minHeight, backgroundColor: "var(--neutral-30)" }}
       >
         <EmptyState
           icon={BarChart3}
@@ -63,7 +63,7 @@ export function ChartContainer({
   }
 
   return (
-    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--neutral-30)" }}>
       {title && (
         <h3 className="mb-sm text-body font-semibold" style={{ color: "var(--highlight-10)" }}>
           {title}

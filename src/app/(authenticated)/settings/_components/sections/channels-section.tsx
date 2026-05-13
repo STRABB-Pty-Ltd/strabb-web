@@ -143,7 +143,7 @@ export function ChannelsSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

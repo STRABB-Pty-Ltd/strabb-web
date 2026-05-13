@@ -131,7 +131,7 @@ export function GeneralSection() {
                   onClick={() => setTheme(opt.value)}
                   className="gap-xs px-sm py-xs text-body flex items-center rounded-sm font-medium transition-colors"
                   style={{
-                    backgroundColor: active ? "var(--strabb-secondary)" : "transparent",
+                    backgroundColor: active ? "var(--highlight-10)" : "transparent",
                     color: active ? "var(--surface-60)" : "var(--highlight-10)",
                   }}
                   aria-pressed={active}
@@ -149,7 +149,7 @@ export function GeneralSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

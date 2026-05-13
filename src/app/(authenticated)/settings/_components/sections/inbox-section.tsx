@@ -156,7 +156,7 @@ export function InboxSection() {
               onClick={handleSave}
               disabled={!dirty || updateSubdomain.isPending}
               className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               {updateSubdomain.isPending ? "Saving…" : "Save"}
             </button>

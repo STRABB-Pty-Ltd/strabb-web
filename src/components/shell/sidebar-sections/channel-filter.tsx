@@ -32,8 +32,8 @@ export function ChannelFilter() {
               aria-pressed={isActive}
               className="gap-base px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
               style={{
-                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               <span

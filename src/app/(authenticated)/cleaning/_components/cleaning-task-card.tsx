@@ -71,7 +71,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
               className="h-xs rounded-full"
               style={{
                 width: `${task.checklistTotal > 0 ? (task.checklistDone / task.checklistTotal) * 100 : 0}%`,
-                backgroundColor: "var(--semantic-success)",
+                backgroundColor: "var(--status-success)",
               }}
             />
           </div>

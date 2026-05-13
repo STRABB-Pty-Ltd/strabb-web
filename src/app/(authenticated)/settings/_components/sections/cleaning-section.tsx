@@ -63,7 +63,7 @@ export function CleaningSection() {
             onClick={() => setAutoAssign(!autoAssign)}
             className="h-md relative w-lg rounded-full transition-colors outline-none before:absolute before:top-1/2 before:left-1/2 before:h-[var(--touch-target-min)] before:w-[var(--touch-target-min)] before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             style={{
-              backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
+              backgroundColor: autoAssign ? "var(--highlight-10)" : "var(--neutral-30)",
             }}
           >
             {/* Thumb 14x14 with locked left positions (2 / 18) gives symmetric 2px margins inside a w-lg (34px) track. */}
@@ -132,7 +132,7 @@ export function CleaningSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

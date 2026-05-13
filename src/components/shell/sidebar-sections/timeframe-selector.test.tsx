@@ -38,7 +38,7 @@ describe("TimeframeSelector", () => {
     storeState.dashboard.windowSize = "month";
     render(<TimeframeSelector page="dashboard" />);
     const monthBtn = screen.getByRole("button", { name: "Month" });
-    expect(monthBtn).toHaveStyle({ backgroundColor: "var(--btn-active-bg)" });
+    expect(monthBtn).toHaveStyle({ backgroundColor: "var(--highlight-10)" });
   });
 
   it("clicking a non-active chip sets timeframe AND opens popup with autoSelect=true", async () => {

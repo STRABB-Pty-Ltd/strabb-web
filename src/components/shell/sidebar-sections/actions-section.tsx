@@ -21,8 +21,8 @@ export function ActionsSection() {
           onClick={openSharePopup}
           className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: "var(--btn-inactive-bg)",
-            color: "var(--btn-inactive-text)",
+            backgroundColor: "var(--neutral-30)",
+            color: "var(--highlight-10)",
           }}
         >
           <Share2 size={13} />
@@ -33,8 +33,8 @@ export function ActionsSection() {
           disabled
           className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: "var(--btn-inactive-bg)",
-            color: "var(--btn-inactive-text)",
+            backgroundColor: "var(--neutral-30)",
+            color: "var(--highlight-10)",
             opacity: 0.6,
           }}
         >
@@ -46,8 +46,8 @@ export function ActionsSection() {
           disabled
           className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: "var(--btn-inactive-bg)",
-            color: "var(--btn-inactive-text)",
+            backgroundColor: "var(--neutral-30)",
+            color: "var(--highlight-10)",
             opacity: 0.6,
           }}
         >

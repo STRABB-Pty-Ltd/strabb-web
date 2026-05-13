@@ -65,7 +65,7 @@ export function MessageThread({
             <div
               className="px-sm py-base max-w-[80%]"
               style={{
-                backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
+                backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--highlight-10)",
                 color: msg.isGuest ? "var(--highlight-10)" : "var(--surface-60)",
                 borderRadius: msg.isGuest
                   ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
@@ -121,7 +121,7 @@ export function MessageThread({
           onClick={handleSend}
           aria-label="Send reply"
           className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
-          style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
         >
           <Send size={18} />
         </button>

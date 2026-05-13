@@ -152,7 +152,7 @@ export default function SettingsListingsPage() {
                       disabled={!dirty || inFlight}
                       className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
                       style={{
-                        backgroundColor: "var(--strabb-secondary)",
+                        backgroundColor: "var(--highlight-10)",
                         color: "var(--surface-60)",
                       }}
                     >

@@ -148,7 +148,7 @@ export function PhoneSection() {
             <div className="gap-sm flex items-start">
               <CheckCircle2
                 size={20}
-                style={{ color: "var(--semantic-success)", marginTop: "var(--hairline)" }}
+                style={{ color: "var(--status-success)", marginTop: "var(--hairline)" }}
               />
               <div>
                 <p className="text-body text-highlight-10 font-medium">{status?.phoneNumber}</p>
@@ -228,7 +228,7 @@ export function PhoneSection() {
               onClick={handleConfirm}
               disabled={confirmVerification.isPending || otpInput.length === 0}
               className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               {confirmVerification.isPending ? "Verifying…" : "Verify"}
             </button>
@@ -249,7 +249,7 @@ export function PhoneSection() {
           <div className="gap-xs flex items-start">
             {/* marginTop: 10 is a sub-token value with no equivalent in the spacing scale.
                 Could round to 13 (--space-sm) if visually acceptable. Left as-is to preserve icon alignment. */}
-            <Phone size={18} style={{ color: "var(--strabb-secondary)", marginTop: 10 }} />
+            <Phone size={18} style={{ color: "var(--highlight-10)", marginTop: 10 }} />
             <div className="space-y-xs flex-1">
               <label
                 className="text-body text-highlight-10 block font-medium"
@@ -286,7 +286,7 @@ export function PhoneSection() {
               onClick={handleRequest}
               disabled={requestVerification.isPending || cooldown > 0}
               className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               {requestVerification.isPending
                 ? "Sending…"

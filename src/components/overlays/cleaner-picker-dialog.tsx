@@ -143,7 +143,7 @@ export function CleanerPickerDialog({
               className="px-sm py-sm gap-base flex items-center rounded-lg border text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ borderColor: "var(--border)" }}
             >
-              <Users size={20} style={{ color: "var(--strabb-secondary)" }} />
+              <Users size={20} style={{ color: "var(--highlight-10)" }} />
               <div>
                 <p className="text-body text-highlight-10 font-semibold">Choose from team</p>
                 <p className="text-body text-highlight-10">
@@ -157,7 +157,7 @@ export function CleanerPickerDialog({
               className="px-sm py-sm gap-base flex items-center rounded-lg border text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ borderColor: "var(--border)" }}
             >
-              <Pencil size={20} style={{ color: "var(--strabb-secondary)" }} />
+              <Pencil size={20} style={{ color: "var(--highlight-10)" }} />
               <div>
                 <p className="text-body text-highlight-10 font-semibold">Enter manually</p>
                 <p className="text-body text-highlight-10">For a one-off or external cleaner.</p>
@@ -192,9 +192,9 @@ export function CleanerPickerDialog({
                       aria-pressed={isSelected}
                       className="px-sm py-base flex w-full flex-col rounded-lg border text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                       style={{
-                        borderColor: isSelected ? "var(--strabb-secondary)" : "var(--border)",
+                        borderColor: isSelected ? "var(--highlight-10)" : "var(--border)",
                         backgroundColor: isSelected
-                          ? "color-mix(in srgb, var(--strabb-secondary) 8%, var(--surface-60))"
+                          ? "color-mix(in srgb, var(--highlight-10) 8%, var(--surface-60))"
                           : "var(--surface-60)",
                       }}
                     >
@@ -304,7 +304,7 @@ export function CleanerPickerDialog({
             disabled={saving || (mode === "pick-existing" && !selectedId)}
             className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
             style={{
-              backgroundColor: "var(--strabb-secondary)",
+              backgroundColor: "var(--highlight-10)",
               color: "var(--surface-60)",
             }}
           >

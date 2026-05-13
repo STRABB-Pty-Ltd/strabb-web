@@ -24,29 +24,11 @@
      contrast. */
   --text-secondary: color-mix(in srgb, var(--highlight-10) 70%, var(--surface-60));
 
-  /* Surfaces */
-  --surface-page: var(--surface-60);
-  --surface-card: var(--neutral-30);
-  --surface-sidebar: var(--surface-60);
-  --surface-submenu: var(--surface-60);
-  --surface-topnav: var(--highlight-10);
-
-  /* Primary palette */
-  --strabb-primary: var(--highlight-10);
-  --strabb-secondary: var(--highlight-10);
-  --strabb-accent: var(--highlight-10);
-
   /* Channel colors - Airbnb/Booking/VRBO keep brand identity; Direct goes neutral (no amber) */
   --channel-airbnb: #ff5a5f;
   --channel-booking: #003580;
   --channel-vrbo: #3b5998;
   --channel-direct: #6b7280;
-
-  /* Semantic colors - only green + red are accent; warning/in-progress collapse to navy */
-  --semantic-success: var(--status-success);
-  --semantic-warning: var(--highlight-10);
-  --semantic-destructive: var(--status-danger);
-  --semantic-in-progress: var(--highlight-10);
 
   /* Tinted backgrounds for trial banners, connect pills, integration success
      notes; coloured panel bg without committing the whole surface to the
@@ -62,12 +44,11 @@
      in dark mode and renders dark on those still-coloured surfaces.
      IMPORTANT: do NOT use this token on FLIPPING backgrounds. The full
      list of flipping bgs:
-       - --highlight-10 / --strabb-secondary (dark navy -> off-white)
+       - --highlight-10 (dark navy -> off-white)
        - --neutral-30 (light gray -> dark gray)
        - --surface-60 (light -> dark)
-       - --status-pending / --status-danger (dark red -> light pink)
-       - --status-success / --status-completed / --status-in-progress
-         (dark green -> medium green; light text fails in dark mode)
+       - --status-danger (dark red -> light pink)
+       - --status-success (dark green -> medium green)
      For all flipping bgs use var(--surface-60) directly so the text
      inverts OPPOSITE to the bg in both modes. */
   --text-on-color: var(--surface-60);
@@ -82,7 +63,6 @@
   /* Layout helper for overlays: positions a scrim or centred modal so it
      covers the canvas area only - the sidebar, top nav, and submenu bar
      stay uncovered and interactive. Pair with `position: fixed`. */
-  --canvas-left: var(--sidebar-width);
   --canvas-bottom: 0;
   --canvas-right: 0;
 
@@ -127,33 +107,14 @@
   --status-danger-fg: var(--surface-60);
   --status-confirmed-fg: var(--surface-60);
   --status-cancelled-fg: var(--highlight-10);
-  --status-pending-fg: var(--status-danger-fg);
-  --status-in-progress-fg: var(--status-success-fg);
-  --status-completed-fg: var(--status-success-fg);
-  --status-issues-fg: var(--status-danger-fg);
 
-  /* Booking status colors */
-  --booking-checked-out: var(--channel-direct);
-  --booking-checked-in: var(--status-success);
-  --booking-confirmed: var(--highlight-10);
-  --booking-pending: var(--highlight-10);
-  --booking-cancelled: var(--status-danger);
-
-  /* Chart */
-  --chart-bar: var(--highlight-10);
-  --chart-bar-hover: var(--highlight-10);
+  /* Chart grid - subtle highlight wash that flips with the theme. */
   --chart-grid: color-mix(in srgb, var(--highlight-10) 8%, transparent);
 
-  /* Interactive - pill buttons */
-  --btn-active-bg: var(--highlight-10);
-  --btn-active-text: var(--surface-60);
-  --btn-inactive-bg: var(--neutral-30);
-  --btn-inactive-text: var(--highlight-10);
+  /* Pill-button inactive state needs a transparent border to match its
+     active sibling's outlined silhouette - only kept because the value
+     can't be expressed via a base token. */
   --btn-inactive-border: transparent;
-
-  /* Icon tiles - solid navy tile with neutral-30 symbol */
-  --icon-bg: var(--highlight-10);
-  --icon-color: var(--neutral-30);
 
   /* Border tokens (no visible borders anywhere) */
   --border-default: transparent;
@@ -483,7 +444,7 @@
 .drain-progress {
   width: 100%;
   transform-origin: left;
-  background-color: var(--strabb-secondary);
+  background-color: var(--highlight-10);
   animation: drainProgress var(--drain-duration, 3s) linear forwards;
 }
 

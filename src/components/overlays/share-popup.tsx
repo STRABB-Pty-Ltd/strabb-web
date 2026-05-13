@@ -283,7 +283,7 @@ export function SharePopup() {
               onClick={handleCopyLink}
               disabled={disabled}
               className="px-sm py-base text-body rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               Copy Link
             </button>

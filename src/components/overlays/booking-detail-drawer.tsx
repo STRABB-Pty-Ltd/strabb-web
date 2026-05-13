@@ -88,7 +88,7 @@ export function BookingDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Booking"
-      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--highlight-10)"}
     >
       {open && isLoading && <p className="text-body text-highlight-10">Loading booking…</p>}
       {open && !isLoading && !booking && (
@@ -198,7 +198,7 @@ export function BookingDetailDrawer() {
                 onClick={handleSaveNotes}
                 disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
                 className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+                style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
               >
                 {updateNotes.isPending ? "Saving…" : "Save notes"}
               </button>

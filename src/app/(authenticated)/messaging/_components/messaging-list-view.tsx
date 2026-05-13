@@ -74,8 +74,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
               <span
                 className="h-base w-base shrink-0 rounded-full"
                 style={{
-                  backgroundColor:
-                    msg.status === "unread" ? "var(--strabb-secondary)" : "transparent",
+                  backgroundColor: msg.status === "unread" ? "var(--highlight-10)" : "transparent",
                 }}
               />
 

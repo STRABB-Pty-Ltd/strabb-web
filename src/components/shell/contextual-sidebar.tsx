@@ -54,7 +54,7 @@ export function ContextualSidebar() {
         // the separator. Contents' left positions are unaffected.
         width: "calc(var(--sidebar-width) + 4px)",
         paddingRight: "6px",
-        backgroundColor: "var(--surface-sidebar)",
+        backgroundColor: "var(--surface-60)",
       }}
     >
       {/* Spacer reserves room for the absolute logo overlay in app-shell.
@@ -75,8 +75,8 @@ export function ContextualSidebar() {
             onClick={openShoppingListPopup}
             className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
             style={{
-              backgroundColor: "var(--btn-inactive-bg)",
-              color: "var(--btn-inactive-text)",
+              backgroundColor: "var(--neutral-30)",
+              color: "var(--highlight-10)",
             }}
           >
             <ShoppingCart size={13} />
@@ -92,8 +92,8 @@ export function ContextualSidebar() {
             onClick={toggleSavedReports}
             className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
             style={{
-              backgroundColor: "var(--btn-inactive-bg)",
-              color: "var(--btn-inactive-text)",
+              backgroundColor: "var(--neutral-30)",
+              color: "var(--highlight-10)",
             }}
           >
             <BookOpen size={13} />
@@ -133,7 +133,7 @@ export function ContextualSidebar() {
                       disabled={!newReportName.trim()}
                       className="px-sm py-xs text-body flex-1 rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50"
                       style={{
-                        backgroundColor: "var(--strabb-secondary)",
+                        backgroundColor: "var(--highlight-10)",
                         color: "var(--surface-60)",
                       }}
                     >
@@ -156,7 +156,7 @@ export function ContextualSidebar() {
                   type="button"
                   onClick={() => setShowSaveInput(true)}
                   className="gap-xs px-sm py-base text-body flex w-full items-center rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                  style={{ color: "var(--strabb-secondary)" }}
+                  style={{ color: "var(--highlight-10)" }}
                 >
                   <Plus size={13} />
                   Save current
@@ -174,8 +174,8 @@ export function ContextualSidebar() {
                     onClick={() => loadReport(r.id)}
                     className="px-sm py-base text-body block w-full truncate rounded-lg text-left font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                     style={{
-                      backgroundColor: "var(--btn-inactive-bg)",
-                      color: "var(--btn-inactive-text)",
+                      backgroundColor: "var(--neutral-30)",
+                      color: "var(--highlight-10)",
                     }}
                   >
                     {r.name}

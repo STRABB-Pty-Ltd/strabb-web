@@ -33,10 +33,10 @@ const statusColors: Record<string, string> = {
 };
 
 const statusFgColors: Record<string, string> = {
-  pending: "var(--status-pending-fg)",
+  pending: "var(--status-danger-fg)",
   confirmed: "var(--status-confirmed-fg)",
-  in_progress: "var(--status-in-progress-fg)",
-  completed: "var(--status-completed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
   cancelled: "var(--status-cancelled-fg)",
 };
 
@@ -224,7 +224,7 @@ export function CleaningDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Cleaning task"
-      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--highlight-10)"}
     >
       {open && isLoading && <p className="text-body text-highlight-10">Loading task…</p>}
       {open && !isLoading && !task && (
@@ -328,7 +328,7 @@ export function CleaningDetailDrawer() {
                     disabled={updateTask.isPending}
                     className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
                     style={{
-                      backgroundColor: "var(--strabb-secondary)",
+                      backgroundColor: "var(--highlight-10)",
                       color: "var(--surface-60)",
                     }}
                   >
@@ -395,7 +395,7 @@ export function CleaningDetailDrawer() {
                     disabled={!selectedTicketId || linkTicket.isPending}
                     className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                     style={{
-                      backgroundColor: "var(--strabb-secondary)",
+                      backgroundColor: "var(--highlight-10)",
                       color: "var(--surface-60)",
                     }}
                   >
@@ -435,7 +435,7 @@ export function CleaningDetailDrawer() {
               onClick={handleComplete}
               disabled={isCompleted || completeTask.isPending}
               className="px-sm py-base text-body text-text-on-color rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: "var(--semantic-success)" }}
+              style={{ backgroundColor: "var(--status-success)" }}
             >
               {completeTask.isPending ? "Completing…" : "Mark complete"}
             </button>

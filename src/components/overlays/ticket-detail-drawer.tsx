@@ -38,10 +38,10 @@ const statusColors: Record<string, string> = {
 };
 
 const statusFgColors: Record<string, string> = {
-  pending: "var(--status-pending-fg)",
+  pending: "var(--status-danger-fg)",
   confirmed: "var(--status-confirmed-fg)",
-  in_progress: "var(--status-in-progress-fg)",
-  completed: "var(--status-completed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
   cancelled: "var(--status-cancelled-fg)",
 };
 
@@ -241,7 +241,7 @@ export function TicketDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Ticket"
-      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--highlight-10)"}
     >
       {open && isLoading && <p className="text-body text-highlight-10">Loading ticket…</p>}
       {open && !isLoading && !ticket && (
@@ -454,7 +454,7 @@ export function TicketDetailDrawer() {
                     disabled={!selectedCleanId || linkClean.isPending}
                     className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                     style={{
-                      backgroundColor: "var(--strabb-secondary)",
+                      backgroundColor: "var(--highlight-10)",
                       color: "var(--surface-60)",
                     }}
                   >
@@ -540,7 +540,7 @@ export function TicketDetailDrawer() {
                   onClick={handleSave}
                   disabled={updateTicket.isPending}
                   className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                  style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+                  style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
                 >
                   {updateTicket.isPending ? "Saving…" : "Save"}
                 </button>

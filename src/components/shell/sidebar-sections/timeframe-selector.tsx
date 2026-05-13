@@ -101,8 +101,8 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               }}
               className="px-sm py-base text-body rounded-lg font-medium transition-colors"
               style={{
-                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               {opt.label}
@@ -133,9 +133,8 @@ export function TimeframeSelector({ page }: { page: PageId }) {
             page === "dashboard" ? "" : "col-span-2"
           }`}
           style={{
-            backgroundColor:
-              currentWs === "custom" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-            color: currentWs === "custom" ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            backgroundColor: currentWs === "custom" ? "var(--highlight-10)" : "var(--neutral-30)",
+            color: currentWs === "custom" ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
           Custom

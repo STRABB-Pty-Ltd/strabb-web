@@ -32,7 +32,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
       type="button"
       onClick={onClick}
       className="p-sm rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
       data-no-elevate
     >
       <div className="mb-sm gap-base flex items-center">

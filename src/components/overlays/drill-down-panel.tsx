@@ -22,7 +22,7 @@ export function DrillDownPanel({
   open,
   onClose,
   title,
-  accentColor = "var(--strabb-secondary)",
+  accentColor = "var(--highlight-10)",
   children,
 }: DrillDownPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);

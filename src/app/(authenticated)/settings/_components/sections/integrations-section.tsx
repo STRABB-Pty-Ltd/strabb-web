@@ -109,7 +109,7 @@ export function IntegrationsSection() {
                 className="px-sm py-xs text-body rounded-lg border font-medium"
                 style={{
                   borderColor: "var(--border)",
-                  color: platform.connected ? "var(--status-danger)" : "var(--strabb-secondary)",
+                  color: platform.connected ? "var(--status-danger)" : "var(--highlight-10)",
                 }}
               >
                 {platform.connected ? "Disconnect" : "Connect"}
@@ -141,7 +141,7 @@ export function IntegrationsSection() {
             type="button"
             onClick={handleAddIcal}
             className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
           >
             Add Feed
           </button>

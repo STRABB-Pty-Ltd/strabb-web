@@ -147,7 +147,7 @@ export function SubmenuBar() {
     <div
       className="relative flex shrink-0 items-center"
       style={{
-        backgroundColor: "var(--surface-submenu)",
+        backgroundColor: "var(--surface-60)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
         // Match a chip's natural height (py-base × 2 + text-body line-height)
         // so the absolute-centred chips don't extend above the row's bounding
@@ -188,8 +188,8 @@ export function SubmenuBar() {
           const chipStyle = {
             width: "var(--btn-pill-width)",
             borderRadius: "var(--radius-md)",
-            backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-            color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            backgroundColor: active ? "var(--highlight-10)" : "var(--neutral-30)",
+            color: active ? "var(--surface-60)" : "var(--highlight-10)",
           };
 
           if (isNav && chip.href) {

@@ -32,7 +32,7 @@ export function SavedReportsDrawer() {
           type="button"
           onClick={() => setShowInput(true)}
           className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-          style={{ color: "var(--strabb-secondary)" }}
+          style={{ color: "var(--highlight-10)" }}
         >
           <Plus size={12} />
           Save Current
@@ -58,7 +58,7 @@ export function SavedReportsDrawer() {
             type="button"
             onClick={handleSave}
             className="px-sm py-xs text-body text-surface-60 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
           >
             Save
           </button>
@@ -98,7 +98,7 @@ export function SavedReportsDrawer() {
                   type="button"
                   onClick={() => loadReport(report.id)}
                   className="px-base py-xs text-body rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                  style={{ color: "var(--strabb-secondary)" }}
+                  style={{ color: "var(--highlight-10)" }}
                   data-no-elevate
                 >
                   Load

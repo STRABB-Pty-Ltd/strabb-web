@@ -25,10 +25,10 @@ const statusColors: Record<string, string> = {
 };
 
 const statusFgColors: Record<string, string> = {
-  synced: "var(--status-completed-fg)",
-  skipped: "var(--status-issues-fg)",
+  synced: "var(--status-success-fg)",
+  skipped: "var(--status-danger-fg)",
   failed: "var(--status-danger-fg)",
-  in_progress: "var(--status-in-progress-fg)",
+  in_progress: "var(--status-success-fg)",
 };
 
 export default function SyncLogsPage() {
@@ -138,7 +138,7 @@ export default function SyncLogsPage() {
             disabled={trigger.isPending}
             title={RATE_LIMIT_TOOLTIP}
             className="gap-xs px-sm py-base text-body text-surface-60 inline-flex items-center rounded-lg font-medium disabled:opacity-60"
-            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
           >
             <RefreshCw size={14} className={trigger.isPending ? "animate-spin" : undefined} />
             {trigger.isPending ? "Syncing…" : "Trigger sync"}

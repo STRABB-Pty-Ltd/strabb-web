@@ -26,10 +26,10 @@ const cleaningStatusColors: Record<string, string> = {
 };
 
 const cleaningStatusFgColors: Record<string, string> = {
-  pending: "var(--status-pending-fg)",
+  pending: "var(--status-danger-fg)",
   confirmed: "var(--status-confirmed-fg)",
-  in_progress: "var(--status-in-progress-fg)",
-  completed: "var(--status-completed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
   cancelled: "var(--status-cancelled-fg)",
 };
 
