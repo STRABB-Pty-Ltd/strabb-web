@@ -1,7 +1,17 @@
 "use client";
 
 import { format } from "date-fns";
-import { ChevronDown, ChevronRight, Inbox, RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Inbox,
+  RefreshCw,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -38,6 +48,13 @@ const statusFgColors: Record<string, string> = {
   sent: "var(--status-success-fg)",
   failed: "var(--status-danger-fg)",
   cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  sent: CheckCircle,
+  failed: AlertCircle,
+  cancelled: XCircle,
 };
 
 export default function ScheduledMessagesPage() {
@@ -152,17 +169,21 @@ function ScheduledTab({
     {
       key: "status",
       header: "Status",
-      render: (_v, m) => (
-        <span
-          className="px-base py-xs text-body rounded-md font-medium"
-          style={{
-            backgroundColor: statusColors[m.status] ?? "var(--highlight-10)",
-            color: statusFgColors[m.status] ?? "var(--surface-60)",
-          }}
-        >
-          {m.status}
-        </span>
-      ),
+      render: (_v, m) => {
+        const Icon = statusIcons[m.status];
+        return (
+          <span
+            className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+            style={{
+              backgroundColor: statusColors[m.status] ?? "var(--highlight-10)",
+              color: statusFgColors[m.status] ?? "var(--surface-60)",
+            }}
+          >
+            {Icon && <Icon size={11} aria-hidden="true" />}
+            {m.status}
+          </span>
+        );
+      },
     },
     {
       key: "retryCount",

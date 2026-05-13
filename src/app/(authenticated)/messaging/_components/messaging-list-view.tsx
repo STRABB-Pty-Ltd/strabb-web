@@ -70,13 +70,16 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
                 outlineOffset: isSelected ? "calc(-1 * var(--hairline))" : undefined,
               }}
             >
-              {/* Unread dot */}
+              {/* Unread dot - paired with sr-only label so the unread state
+                  isn't communicated by colour alone. */}
               <span
                 className="h-base w-base shrink-0 rounded-full"
                 style={{
                   backgroundColor: msg.status === "unread" ? "var(--highlight-10)" : "transparent",
                 }}
+                aria-hidden="true"
               />
+              {msg.status === "unread" && <span className="sr-only">Unread.</span>}
 
               <div className="min-w-0 flex-1">
                 <div className="gap-base flex items-center justify-between">

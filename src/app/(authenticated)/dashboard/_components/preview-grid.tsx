@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { addDays, format, parseISO } from "date-fns";
-import { ArrowRight, CalendarDays, Sparkles } from "lucide-react";
+import { ArrowRight, BrushCleaning, CalendarDays, Sparkles, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
@@ -240,25 +240,25 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
         <EmptyState compact icon={Sparkles} title="No upcoming cleans or tickets" />
       ) : (
         <div className="flex flex-col">
-          {data.map((item) => (
-            <div
-              key={`${item.kind}-${item.id}`}
-              className="gap-sm py-base text-body flex items-center"
-              style={{ color: "var(--highlight-10)" }}
-            >
-              <span
-                className="h-base w-base shrink-0 rounded-full"
-                style={{
-                  backgroundColor:
-                    item.kind === "ticket" ? "var(--status-issues)" : "var(--highlight-10)",
-                }}
-              />
-              <span className="flex-1 truncate">{item.listing || "Unassigned"}</span>
-              <span className="text-body" style={{ color: "var(--text-secondary)" }}>
-                {format(new Date(item.date), "d MMM")}
-              </span>
-            </div>
-          ))}
+          {data.map((item) => {
+            const Icon = item.kind === "ticket" ? Wrench : BrushCleaning;
+            const iconColor =
+              item.kind === "ticket" ? "var(--status-issues)" : "var(--highlight-10)";
+            return (
+              <div
+                key={`${item.kind}-${item.id}`}
+                className="gap-sm py-base text-body flex items-center"
+                style={{ color: "var(--highlight-10)" }}
+              >
+                <Icon size={12} style={{ color: iconColor, flexShrink: 0 }} aria-hidden="true" />
+                <span className="sr-only">{item.kind === "ticket" ? "Ticket" : "Cleaning"}.</span>
+                <span className="flex-1 truncate">{item.listing || "Unassigned"}</span>
+                <span className="text-body" style={{ color: "var(--text-secondary)" }}>
+                  {format(new Date(item.date), "d MMM")}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

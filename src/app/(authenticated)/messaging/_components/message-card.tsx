@@ -39,10 +39,16 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
               {message.guestName}
             </span>
             {message.priority !== "low" && (
-              <span
-                className="h-base w-base shrink-0 rounded-full"
-                style={{ backgroundColor: priorityDot[message.priority] }}
-              />
+              <>
+                <span
+                  className="h-base w-base shrink-0 rounded-full"
+                  style={{ backgroundColor: priorityDot[message.priority] }}
+                  aria-hidden="true"
+                />
+                <span className="sr-only">
+                  {message.priority === "high" ? "High" : "Medium"} priority.
+                </span>
+              </>
             )}
           </div>
           <span className="text-body text-highlight-10 shrink-0 truncate">

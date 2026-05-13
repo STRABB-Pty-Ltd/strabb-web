@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -43,6 +44,14 @@ const statusFgColors: Record<string, string> = {
   in_progress: "var(--status-success-fg)",
   completed: "var(--status-success-fg)",
   cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  confirmed: CalendarCheck,
+  in_progress: Loader,
+  completed: CheckCircle,
+  cancelled: XCircle,
 };
 
 function fmtDate(iso: string | null, tz: string): string {
@@ -296,15 +305,21 @@ export function TicketDetailDrawer() {
                   ))}
                 </select>
               ) : (
-                <span
-                  className="px-base py-xs text-body inline-block rounded-md font-medium"
-                  style={{
-                    backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                    color: statusFgColors[status] ?? "var(--surface-60)",
-                  }}
-                >
-                  {status.replace("_", " ")}
-                </span>
+                (() => {
+                  const Icon = statusIcons[status];
+                  return (
+                    <span
+                      className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+                      style={{
+                        backgroundColor: statusColors[status] ?? "var(--highlight-10)",
+                        color: statusFgColors[status] ?? "var(--surface-60)",
+                      }}
+                    >
+                      {Icon && <Icon size={11} aria-hidden="true" />}
+                      {status.replace("_", " ")}
+                    </span>
+                  );
+                })()
               )}
             </div>
           </div>

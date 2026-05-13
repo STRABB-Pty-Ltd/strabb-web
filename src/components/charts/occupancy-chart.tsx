@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
 
 import { ChartContainer } from "./chart-container";
 import { ChartTooltip } from "./chart-tooltip";
@@ -51,6 +51,14 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
           {data.map((entry, i) => (
             <Cell key={i} fill={getOccupancyColor(entry.occupancy)} />
           ))}
+          {/* Value labels on each bar so the occupancy band is readable
+              without relying on the bar colour alone (WCAG 1.4.1). */}
+          <LabelList
+            dataKey="occupancy"
+            position="top"
+            formatter={(v: unknown) => `${v}%`}
+            style={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
+          />
         </Bar>
       </BarChart>
     </ChartContainer>

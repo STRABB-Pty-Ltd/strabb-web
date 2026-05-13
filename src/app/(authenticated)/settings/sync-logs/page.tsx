@@ -1,7 +1,14 @@
 "use client";
 
 import { format } from "date-fns";
-import { RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  CircleDashed,
+  Loader,
+  RefreshCw,
+  type LucideIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 import { type Column, DataTable } from "@/components/ui/data-table";
@@ -29,6 +36,13 @@ const statusFgColors: Record<string, string> = {
   skipped: "var(--status-danger-fg)",
   failed: "var(--status-danger-fg)",
   in_progress: "var(--status-success-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  synced: CheckCircle,
+  skipped: CircleDashed,
+  failed: AlertCircle,
+  in_progress: Loader,
 };
 
 export default function SyncLogsPage() {
@@ -82,14 +96,16 @@ export default function SyncLogsPage() {
       render: (_v, row) => {
         const matched = statusColors[row.status];
         const matchedFg = statusFgColors[row.status];
+        const Icon = statusIcons[row.status];
         return (
           <span
-            className="px-base py-xs text-body rounded-md font-medium"
+            className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
             style={{
               backgroundColor: matched ?? "var(--highlight-10)",
               color: matchedFg ?? "var(--surface-60)",
             }}
           >
+            {Icon && <Icon size={11} aria-hidden="true" />}
             {row.status}
           </span>
         );
