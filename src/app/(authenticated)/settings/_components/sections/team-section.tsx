@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 
-import { mockTeamMembers } from "@/lib/mock-team";
+import { type Column, DataTable } from "@/components/ui/data-table";
+import { mockTeamMembers, type MockTeamMember } from "@/lib/mock-team";
 import { useAppStore } from "@/stores/app-store";
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
@@ -18,6 +19,58 @@ const statusColors: Record<string, string> = {
   invited: "var(--status-danger)",
   inactive: "var(--highlight-10)",
 };
+
+// Column widths w-[233px] and w-[89px] sit on the Fibonacci ladder
+// (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
+// tracking-wide on the header row: known design exception, no project letter-spacing token.
+const columns: Column<MockTeamMember>[] = [
+  {
+    key: "name",
+    header: "Name",
+    className: "text-highlight-10",
+    render: (_v, row) => <span className="font-medium">{row.name}</span>,
+  },
+  {
+    key: "email",
+    header: "Email",
+    className: "w-[233px] text-highlight-10",
+  },
+  {
+    key: "role",
+    header: "Role",
+    className: "w-[89px]",
+    render: (_v, row) => {
+      const badge = roleBadgeColors[row.role] ?? roleBadgeColors.viewer;
+      return (
+        <span
+          className="px-base py-xs text-body rounded-md font-medium capitalize"
+          style={{ backgroundColor: badge.bg, color: badge.text }}
+        >
+          {row.role}
+        </span>
+      );
+    },
+  },
+  {
+    key: "lastLogin",
+    header: "Last Login",
+    className: "w-[89px] text-highlight-10",
+  },
+  {
+    key: "status",
+    header: "Status",
+    className: "w-[89px]",
+    render: (_v, row) => (
+      <span className="gap-xs flex items-center" style={{ color: statusColors[row.status] }}>
+        <span
+          className="h-xs w-xs rounded-full"
+          style={{ backgroundColor: statusColors[row.status] }}
+        />
+        {row.status}
+      </span>
+    ),
+  },
+];
 
 export function TeamSection() {
   const addToast = useAppStore((s) => s.addToast);
@@ -115,56 +168,12 @@ export function TeamSection() {
         </div>
       )}
 
-      {/* Column widths w-[233px] and w-[89px] are arbitrary values on the Fibonacci ladder
-          (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
-          tracking-wide on the header row: known design exception, no project letter-spacing token. */}
-      <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <div className="text-body bg-neutral-30 text-highlight-10 flex border-b font-semibold tracking-wide uppercase">
-          <div className="px-sm py-sm flex-1">Name</div>
-          <div className="px-sm py-sm w-[233px]">Email</div>
-          <div className="px-sm py-sm w-[89px]">Role</div>
-          <div className="px-sm py-sm w-[89px]">Last Login</div>
-          <div className="px-sm py-sm w-[89px]">Status</div>
-        </div>
-        {mockTeamMembers.map((member) => {
-          const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
-          return (
-            <div
-              key={member.id}
-              className="text-body flex items-center border-b"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <div className="px-sm py-sm text-highlight-10 flex-1 font-medium">{member.name}</div>
-              <div className="px-sm py-sm text-highlight-10 w-[233px]">{member.email}</div>
-              <div className="px-sm py-sm w-[89px]">
-                <span
-                  className="px-base py-xs text-body rounded-md font-medium capitalize"
-                  style={{ backgroundColor: badge.bg, color: badge.text }}
-                >
-                  {member.role}
-                </span>
-              </div>
-              <div className="px-sm py-sm text-body text-highlight-10 w-[89px]">
-                {member.lastLogin}
-              </div>
-              <div className="px-sm py-sm w-[89px]">
-                <span
-                  className="gap-xs text-body flex items-center"
-                  style={{ color: statusColors[member.status] }}
-                >
-                  <span
-                    className="h-xs w-xs rounded-full"
-                    style={{
-                      backgroundColor: statusColors[member.status],
-                    }}
-                  />
-                  {member.status}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <DataTable<MockTeamMember>
+        columns={columns}
+        data={mockTeamMembers}
+        headerRowClassName="bg-neutral-30 border-b"
+        headerCellClassName="px-sm py-sm text-body text-highlight-10 text-left font-semibold tracking-wide uppercase"
+      />
     </div>
   );
 }
