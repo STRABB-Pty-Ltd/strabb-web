@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 
-import { type Column, DataTable } from "@/components/ui/data-table";
-import { mockTeamMembers, type MockTeamMember } from "@/lib/mock-team";
+import { mockTeamMembers } from "@/lib/mock-team";
 import { useAppStore } from "@/stores/app-store";
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
@@ -20,57 +19,8 @@ const statusColors: Record<string, string> = {
   inactive: "var(--highlight-10)",
 };
 
-// Column widths w-[233px] and w-[89px] sit on the Fibonacci ladder
-// (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
-// tracking-wide on the header row: known design exception, no project letter-spacing token.
-const columns: Column<MockTeamMember>[] = [
-  {
-    key: "name",
-    header: "Name",
-    className: "text-highlight-10",
-    render: (_v, row) => <span className="font-medium">{row.name}</span>,
-  },
-  {
-    key: "email",
-    header: "Email",
-    className: "w-[233px] text-highlight-10",
-  },
-  {
-    key: "role",
-    header: "Role",
-    className: "w-[89px]",
-    render: (_v, row) => {
-      const badge = roleBadgeColors[row.role] ?? roleBadgeColors.viewer;
-      return (
-        <span
-          className="px-base py-xs text-body rounded-md font-medium capitalize"
-          style={{ backgroundColor: badge.bg, color: badge.text }}
-        >
-          {row.role}
-        </span>
-      );
-    },
-  },
-  {
-    key: "lastLogin",
-    header: "Last Login",
-    className: "w-[89px] text-highlight-10",
-  },
-  {
-    key: "status",
-    header: "Status",
-    className: "w-[89px]",
-    render: (_v, row) => (
-      <span className="gap-xs flex items-center" style={{ color: statusColors[row.status] }}>
-        <span
-          className="h-xs w-xs rounded-full"
-          style={{ backgroundColor: statusColors[row.status] }}
-        />
-        {row.status}
-      </span>
-    ),
-  },
-];
+const headerCellClass =
+  "px-sm py-sm text-body text-highlight-10 text-left font-semibold tracking-wide uppercase whitespace-nowrap";
 
 export function TeamSection() {
   const addToast = useAppStore((s) => s.addToast);
@@ -168,12 +118,80 @@ export function TeamSection() {
         </div>
       )}
 
-      <DataTable<MockTeamMember>
-        columns={columns}
-        data={mockTeamMembers}
-        headerRowClassName="bg-neutral-30 border-b"
-        headerCellClassName="px-sm py-sm text-body text-highlight-10 text-left font-semibold tracking-wide uppercase"
-      />
+      <div
+        className="w-fit max-w-full overflow-x-auto rounded-lg border"
+        style={{ borderColor: "var(--border)" }}
+      >
+        <table className="text-body">
+          <thead>
+            <tr className="bg-neutral-30 border-b" style={{ borderColor: "var(--border)" }}>
+              <th scope="col" className={headerCellClass}>
+                Name
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Role
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Email
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Phone
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Last Login
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {mockTeamMembers.map((member) => {
+              const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
+              return (
+                <tr
+                  key={member.id}
+                  className="border-b last:border-b-0"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <td className="px-sm py-sm text-highlight-10 font-medium whitespace-nowrap">
+                    {member.name}
+                  </td>
+                  <td className="px-sm py-sm whitespace-nowrap">
+                    <span
+                      className="px-base py-xs text-body rounded-md font-medium capitalize"
+                      style={{ backgroundColor: badge.bg, color: badge.text }}
+                    >
+                      {member.role}
+                    </span>
+                  </td>
+                  <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
+                    {member.email}
+                  </td>
+                  <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
+                    {member.phone ?? ""}
+                  </td>
+                  <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
+                    {member.lastLogin}
+                  </td>
+                  <td className="px-sm py-sm whitespace-nowrap">
+                    <span
+                      className="gap-xs flex items-center"
+                      style={{ color: statusColors[member.status] }}
+                    >
+                      <span
+                        className="h-xs w-xs rounded-full"
+                        style={{ backgroundColor: statusColors[member.status] }}
+                      />
+                      {member.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
