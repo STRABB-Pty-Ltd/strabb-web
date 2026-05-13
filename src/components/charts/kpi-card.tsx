@@ -27,10 +27,21 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
   const hasTrend = typeof kpi.trend === "number" && kpi.trend !== 0;
   const trendPositive = (kpi.trend ?? 0) > 0;
 
+  // Single explicit aria-label so screen readers announce one tidy string
+  // rather than concatenating each child node (which produced "value, button,
+  // group" - VoiceOver inferring grouping from the CSS Grid parent).
+  const trendDescription = hasTrend
+    ? `, ${trendPositive ? "up" : "down"} ${Math.abs(kpi.trend ?? 0)} percent`
+    : "";
+  const compareDescription =
+    compareValue != null ? `, compared to ${formatValue(compareValue, kpi.type)}` : "";
+  const ariaLabel = `${kpi.label}, ${formatValue(kpi.value, kpi.type)}${trendDescription}${compareDescription}`;
+
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-label={ariaLabel}
       className="p-sm rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
       style={{ backgroundColor: "var(--neutral-30)" }}
       data-no-elevate
