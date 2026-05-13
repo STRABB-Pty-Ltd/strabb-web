@@ -7,6 +7,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 
 interface ChartContainerProps {
   title?: string;
+  // Plain-language summary of what the chart shows. Rendered as
+  // role="img" + aria-label on the chart's SVG wrapper so screen-reader
+  // users get an equivalent to the visual data (WCAG 1.1.1).
+  summary?: string;
   loading?: boolean;
   error?: string | null;
   empty?: boolean;
@@ -16,6 +20,7 @@ interface ChartContainerProps {
 
 export function ChartContainer({
   title,
+  summary,
   loading = false,
   error = null,
   empty = false,
@@ -69,9 +74,11 @@ export function ChartContainer({
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={minHeight}>
-        {children as React.ReactElement}
-      </ResponsiveContainer>
+      <div role={summary ? "img" : undefined} aria-label={summary}>
+        <ResponsiveContainer width="100%" height={minHeight}>
+          {children as React.ReactElement}
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

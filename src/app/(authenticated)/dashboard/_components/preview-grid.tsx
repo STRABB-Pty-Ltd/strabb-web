@@ -139,6 +139,31 @@ function bucketRevenue(
   return sortedMonths.slice(-6);
 }
 
+const formatAUDShort = (value: number) =>
+  new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(value);
+
+function buildSparklineSummary(bars: PreviewData["revenueSparkline"]): string {
+  if (bars.length === 0) return "";
+  const peak = bars.reduce((a, b) => (b.revenue > a.revenue ? b : a));
+  const latest = bars[bars.length - 1];
+  const first = bars[0].revenue;
+  const direction =
+    latest.revenue > first * 1.05
+      ? "trending up"
+      : latest.revenue < first * 0.95
+        ? "trending down"
+        : "broadly flat";
+  return (
+    `Revenue sparkline across ${bars.length} periods, ${direction}. ` +
+    `Latest ${formatBarLabel(latest.label)}: ${formatAUDShort(latest.revenue)}. ` +
+    `Peak ${formatBarLabel(peak.label)}: ${formatAUDShort(peak.revenue)}.`
+  );
+}
+
 function RevenueSparkline({
   data,
   windowSize,
@@ -148,20 +173,31 @@ function RevenueSparkline({
 }) {
   const bars = useMemo(() => bucketRevenue(data, windowSize), [data, windowSize]);
   const max = Math.max(...bars.map((d) => d.revenue), 1);
+  const summary = buildSparklineSummary(bars);
   return (
     <div className="p-md rounded-xl" style={{ backgroundColor: "var(--neutral-30)" }}>
       <PanelHeader title="Revenue Trend" />
-      <div className="gap-base flex items-end" style={{ height: 89 }}>
+      <div
+        role={summary ? "img" : undefined}
+        aria-label={summary}
+        className="gap-base flex items-end"
+        style={{ height: 89 }}
+      >
         {bars.map((d) => (
           <div key={d.label} className="gap-xs flex flex-1 flex-col items-center">
             <div
+              aria-hidden="true"
               className="w-full rounded-t-sm"
               style={{
                 height: Math.max(5, (d.revenue / max) * 55),
                 backgroundColor: "var(--highlight-10)",
               }}
             />
-            <span className="text-body" style={{ color: "var(--text-secondary)" }}>
+            <span
+              aria-hidden="true"
+              className="text-body"
+              style={{ color: "var(--text-secondary)" }}
+            >
               {formatBarLabel(d.label)}
             </span>
           </div>

@@ -29,9 +29,27 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+function buildSummary(data: ExpenseData[]): string {
+  if (data.length === 0) return "";
+  const total = data.reduce((sum, d) => sum + d.amount, 0);
+  const sorted = [...data].sort((a, b) => b.amount - a.amount);
+  const largest = sorted[0];
+  const smallest = sorted[sorted.length - 1];
+  return (
+    `Expense breakdown across ${data.length} categories totalling ${formatAUD(total)}. ` +
+    `Largest is ${largest.category} at ${formatAUD(largest.amount)}, ` +
+    `smallest is ${smallest.category} at ${formatAUD(smallest.amount)}.`
+  );
+}
+
 export function ExpenseChart({ data, loading }: ExpenseChartProps) {
   return (
-    <ChartContainer title="Expense Breakdown" loading={loading} empty={data.length === 0}>
+    <ChartContainer
+      title="Expense Breakdown"
+      summary={buildSummary(data)}
+      loading={loading}
+      empty={data.length === 0}
+    >
       <PieChart>
         <Pie
           data={data}
