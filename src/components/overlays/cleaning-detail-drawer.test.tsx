@@ -189,7 +189,7 @@ describe("CleaningDetailDrawer", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /change/i }));
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: /assign cleaner/i })).toBeInTheDocument();
     expect(screen.getByText(/assign cleaner/i)).toBeInTheDocument();
   });
 

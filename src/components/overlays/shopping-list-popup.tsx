@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useShoppingList } from "@/hooks/use-cleaning";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
@@ -20,6 +21,7 @@ const EXIT_MS = 200;
 
 export function ShoppingListPopup() {
   const popupRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
   const boughtItems = useAppStore((s) => s.cleaning.boughtItems);
@@ -31,21 +33,8 @@ export function ShoppingListPopup() {
 
   const [showAll, setShowAll] = useState(true);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeShoppingListPopup();
-    },
-    [closeShoppingListPopup],
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [open, handleKeyDown]);
-
   useClickOutside(popupRef, closeShoppingListPopup, open);
+  useFocusTrap(popupRef, { active: open, onEscape: closeShoppingListPopup });
 
   if (!shouldRender) return null;
 
@@ -94,6 +83,10 @@ export function ShoppingListPopup() {
       >
         <div
           ref={popupRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          tabIndex={-1}
           className="bg-surface-60 w-full max-w-lg rounded-xl shadow-xl"
           style={{ animation: cardAnim }}
           onClick={(e) => e.stopPropagation()}
@@ -102,7 +95,9 @@ export function ShoppingListPopup() {
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
-            <h2 className="text-body font-semibold">Shopping List</h2>
+            <h2 id={titleId} className="text-body font-semibold">
+              Shopping List
+            </h2>
             <div className="gap-base flex items-center">
               <button
                 type="button"

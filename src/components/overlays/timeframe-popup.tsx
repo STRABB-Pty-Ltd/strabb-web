@@ -11,10 +11,11 @@ import {
   startOfYear,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from "react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { MonthGrid, WEEK_OPTS } from "@/components/ui/month-grid";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
@@ -31,6 +32,7 @@ const isTimeframePage = (p: PageId): p is TimeframePage =>
 
 export function TimeframePopup() {
   const popupRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const tfPopup = useAppStore((s) => s.tfPopup);
   const closeTimeframePopup = useAppStore((s) => s.closeTimeframePopup);
   const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
@@ -88,21 +90,8 @@ export function TimeframePopup() {
     setProgressActive(false);
   }, []);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeTimeframePopup();
-    },
-    [closeTimeframePopup],
-  );
-
-  useEffect(() => {
-    if (tfPopup.open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [tfPopup.open, handleKeyDown]);
-
   useClickOutside(popupRef, closeTimeframePopup, tfPopup.open);
+  useFocusTrap(popupRef, { active: tfPopup.open, onEscape: closeTimeframePopup });
 
   // Anchor rect is captured at click time; if the user resizes the window the
   // saved coords go stale, so close rather than render in the wrong place.
@@ -112,18 +101,6 @@ export function TimeframePopup() {
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, [tfPopup.open, closeTimeframePopup]);
-
-  // Return focus to the trigger when the popup closes, so keyboard users
-  // don't lose their place in the tab order.
-  const previousFocusRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    if (tfPopup.open) {
-      previousFocusRef.current = document.activeElement as HTMLElement | null;
-    } else if (previousFocusRef.current) {
-      previousFocusRef.current.focus();
-      previousFocusRef.current = null;
-    }
-  }, [tfPopup.open]);
 
   const open = tfPopup.open && isTimeframePage(currentPage);
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
@@ -171,6 +148,10 @@ export function TimeframePopup() {
       />
       <div
         ref={popupRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className="bg-surface-60 fixed rounded-xl border shadow-xl"
         style={{
           zIndex: Z.DRAWER,
@@ -186,7 +167,9 @@ export function TimeframePopup() {
           className="px-sm py-base flex items-center justify-between border-b"
           style={{ borderColor: "var(--border)" }}
         >
-          <span className="text-body font-semibold capitalize">{labelForWindow(windowSize)}</span>
+          <span id={titleId} className="text-body font-semibold capitalize">
+            {labelForWindow(windowSize)}
+          </span>
           <button
             type="button"
             onClick={closeTimeframePopup}

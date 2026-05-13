@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import type { ThreadMessage } from "@/types/message";
@@ -41,9 +42,12 @@ export function ThreadOverlay({
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   useClickOutside(panelRef, onClose, open);
+  // Side drawer: rails stay live, no Tab trap. App-shell handles Esc globally.
+  useFocusTrap(panelRef, { active: open, trap: false });
 
   // Cache the props that drive header + body so the panel keeps showing
   // the conversation that was just open through the slide-out animation.
@@ -80,6 +84,9 @@ export function ThreadOverlay({
           inset by --space-md to match canvas content padding from screen edges. */}
       <div
         ref={panelRef}
+        role="dialog"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.THREAD,
@@ -96,7 +103,9 @@ export function ThreadOverlay({
         <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-body text-highlight-10 font-semibold">{data.guestName}</h2>
+              <h2 id={titleId} className="text-body text-highlight-10 font-semibold">
+                {data.guestName}
+              </h2>
               <p className="text-body text-highlight-10">{data.listingName}</p>
               <p className="text-body text-highlight-10">
                 {data.checkIn} - {data.checkOut}
