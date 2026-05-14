@@ -1,0 +1,44 @@
+name: Deploy to Production
+
+# Manual-only. Triggered by clicking "Run workflow" in the GitHub Actions UI.
+# Optionally pass a specific SHA to deploy; defaults to the latest commit on
+# the branch the workflow was dispatched from (typically `main`).
+#
+# This workflow does NOT run lint/test/typecheck/build — those run on PR
+# merge into main via `ci.yml`. By the time you deploy to production, those
+# gates have already passed.
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Git SHA to deploy (default: HEAD of the dispatched branch)"
+        required: false
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy web to production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.sha || github.sha }}
+      - name: Resolve deploy SHA
+        id: sha
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Production-specific build args: Next.js bakes these into the image
+      # at build time (per strabb-web#21). Image is environment-specific —
+      # cannot be shared with staging.
+      #
+      # INTERNAL_API_URL points at the production Container Apps env's API
+      # FQDN. The env DNS prefix `wittyground-f9a24fce` differs from
+      # staging's `icywave-6a962c16` — capture this if production env is
+      # ever rebuilt.
+      - name: Build and push web image
+        run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:production --image strabb-web:prod-${{ steps.sha.outputs.sha }} --build-arg NEXTAUTH_URL=https://app.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.strabb.io --build-arg INTERNAL_API_URL=https://strabb-api-production.wittyground-f9a24fce.australiaeast.azurecontainerapps.io .
+      - name: Deploy web to production Container App
+        run: az containerapp update --name strabb-web-production --resource-group strabb-production --image strabbregistry.azurecr.io/strabb-web:prod-${{ steps.sha.outputs.sha }}
