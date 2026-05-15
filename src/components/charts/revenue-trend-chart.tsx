@@ -121,9 +121,30 @@ function YearBrackets(props: YearBracketsProps & Record<string, unknown>) {
   );
 }
 
+function buildSummary(data: RevenueTrendData[]): string {
+  if (data.length === 0) return "";
+  const max = data.reduce((a, b) => (b.revenue > a.revenue ? b : a));
+  const min = data.reduce((a, b) => (b.revenue < a.revenue ? b : a));
+  const first = data[0].revenue;
+  const last = data[data.length - 1].revenue;
+  const direction =
+    last > first * 1.05 ? "trending up" : last < first * 0.95 ? "trending down" : "broadly flat";
+  return (
+    `Revenue trend across ${data.length} months. ` +
+    `Highest in ${formatMonthLabel(max.label)} at ${formatAUD(max.revenue)}, ` +
+    `lowest in ${formatMonthLabel(min.label)} at ${formatAUD(min.revenue)}. ` +
+    `Overall ${direction} from ${formatAUD(first)} to ${formatAUD(last)}.`
+  );
+}
+
 export function RevenueTrendChart({ data, loading }: RevenueTrendChartProps) {
   return (
-    <ChartContainer title="Revenue Trend" loading={loading} empty={data.length === 0}>
+    <ChartContainer
+      title="Revenue Trend"
+      summary={buildSummary(data)}
+      loading={loading}
+      empty={data.length === 0}
+    >
       <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 28 }}>
         <defs>
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">

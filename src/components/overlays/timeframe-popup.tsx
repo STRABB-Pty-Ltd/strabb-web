@@ -2,32 +2,26 @@
 
 import {
   addDays,
-  addMonths,
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
   format,
   isSameDay,
-  isSameMonth,
   parseISO,
   startOfMonth,
   startOfQuarter,
   startOfWeek,
   startOfYear,
-  subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from "react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { MonthGrid, WEEK_OPTS } from "@/components/ui/month-grid";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
-const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-const WEEK_OPTS = { weekStartsOn: 1 as const };
 const AUTO_CONFIRM_SECONDS = 3;
 const EXIT_MS = 200;
 
@@ -38,6 +32,7 @@ const isTimeframePage = (p: PageId): p is TimeframePage =>
 
 export function TimeframePopup() {
   const popupRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const tfPopup = useAppStore((s) => s.tfPopup);
   const closeTimeframePopup = useAppStore((s) => s.closeTimeframePopup);
   const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
@@ -95,21 +90,8 @@ export function TimeframePopup() {
     setProgressActive(false);
   }, []);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeTimeframePopup();
-    },
-    [closeTimeframePopup],
-  );
-
-  useEffect(() => {
-    if (tfPopup.open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [tfPopup.open, handleKeyDown]);
-
   useClickOutside(popupRef, closeTimeframePopup, tfPopup.open);
+  useFocusTrap(popupRef, { active: tfPopup.open, onEscape: closeTimeframePopup });
 
   // Anchor rect is captured at click time; if the user resizes the window the
   // saved coords go stale, so close rather than render in the wrong place.
@@ -119,18 +101,6 @@ export function TimeframePopup() {
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, [tfPopup.open, closeTimeframePopup]);
-
-  // Return focus to the trigger when the popup closes, so keyboard users
-  // don't lose their place in the tab order.
-  const previousFocusRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    if (tfPopup.open) {
-      previousFocusRef.current = document.activeElement as HTMLElement | null;
-    } else if (previousFocusRef.current) {
-      previousFocusRef.current.focus();
-      previousFocusRef.current = null;
-    }
-  }, [tfPopup.open]);
 
   const open = tfPopup.open && isTimeframePage(currentPage);
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
@@ -178,6 +148,10 @@ export function TimeframePopup() {
       />
       <div
         ref={popupRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className="bg-surface-60 fixed rounded-xl border shadow-xl"
         style={{
           zIndex: Z.DRAWER,
@@ -193,11 +167,13 @@ export function TimeframePopup() {
           className="px-sm py-base flex items-center justify-between border-b"
           style={{ borderColor: "var(--border)" }}
         >
-          <span className="text-body font-semibold capitalize">{labelForWindow(windowSize)}</span>
+          <span id={titleId} className="text-body font-semibold capitalize">
+            {labelForWindow(windowSize)}
+          </span>
           <button
             type="button"
             onClick={closeTimeframePopup}
-            className="text-highlight-10 hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
+            className="text-highlight-10 hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             aria-label="Close"
             data-no-elevate
           >
@@ -289,7 +265,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} aria-hidden="true" />
         </button>
         <span className="text-body font-semibold">{year}</span>
         <button
@@ -298,7 +274,7 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
       <div className="gap-xs grid grid-cols-3">
@@ -311,8 +287,8 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
               onClick={() => onPick(format(startOfMonth(m), "yyyy-MM-dd"))}
               className="px-sm py-base text-body rounded-lg transition-colors"
               style={{
-                backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isSelected ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isSelected ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               {format(m, "MMM")}
@@ -345,7 +321,7 @@ function QuarterPicker({
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} aria-hidden="true" />
         </button>
         <span className="text-body font-semibold">{year}</span>
         <button
@@ -354,7 +330,7 @@ function QuarterPicker({
           className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={16} aria-hidden="true" />
         </button>
       </div>
       <div className="gap-xs grid grid-cols-2">
@@ -367,8 +343,8 @@ function QuarterPicker({
               onClick={() => onPick(format(startOfQuarter(new Date(year, q * 3, 1)), "yyyy-MM-dd"))}
               className="px-sm py-base text-body rounded-lg"
               style={{
-                backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isSelected ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isSelected ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               Q{q + 1} {year}
@@ -395,103 +371,14 @@ function YearPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: s
             onClick={() => onPick(format(startOfYear(new Date(y, 0, 1)), "yyyy-MM-dd"))}
             className="px-sm py-base text-body rounded-lg"
             style={{
-              backgroundColor: isSelected ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-              color: isSelected ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+              backgroundColor: isSelected ? "var(--highlight-10)" : "var(--neutral-30)",
+              color: isSelected ? "var(--surface-60)" : "var(--highlight-10)",
             }}
           >
             {y}
           </button>
         );
       })}
-    </div>
-  );
-}
-
-/** Shared month grid: header + day labels + 6×7 cell grid. Highlight modes are
- *  delegated to the parent via predicates so day, week, fortnight and custom
- *  range pickers all render identically. */
-function MonthGrid({
-  viewDate,
-  onViewDateChange,
-  isHighlighted,
-  isStrongHighlighted,
-  onDayClick,
-  onDayHover,
-}: {
-  viewDate: Date;
-  onViewDateChange: (next: Date) => void;
-  isHighlighted: (day: Date) => boolean;
-  isStrongHighlighted?: (day: Date) => boolean;
-  onDayClick: (day: Date) => void;
-  onDayHover?: (day: Date | null) => void;
-}) {
-  const monthStart = startOfMonth(viewDate);
-  const monthEnd = endOfMonth(viewDate);
-  const gridStart = startOfWeek(monthStart, WEEK_OPTS);
-  const gridEnd = endOfWeek(monthEnd, WEEK_OPTS);
-  const gridDays = eachDayOfInterval({ start: gridStart, end: gridEnd });
-
-  return (
-    <div>
-      <div className="mb-sm flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onViewDateChange(subMonths(viewDate, 1))}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
-          aria-label="Previous month"
-        >
-          <ChevronLeft size={16} />
-        </button>
-        <span className="text-body font-semibold">{format(viewDate, "MMMM yyyy")}</span>
-        <button
-          type="button"
-          onClick={() => onViewDateChange(addMonths(viewDate, 1))}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
-          aria-label="Next month"
-        >
-          <ChevronRight size={16} />
-        </button>
-      </div>
-      <div className="mb-xs gap-xs grid grid-cols-7">
-        {DAY_LABELS.map((d) => (
-          <div key={d} className="text-body text-highlight-10 text-center">
-            {d}
-          </div>
-        ))}
-      </div>
-      <div className="gap-xs grid grid-cols-7" onMouseLeave={() => onDayHover?.(null)}>
-        {gridDays.map((day) => {
-          const inMonth = isSameMonth(day, viewDate);
-          const strong = isStrongHighlighted?.(day) ?? false;
-          const soft = !strong && isHighlighted(day);
-
-          let bg: string | undefined;
-          let fg: string;
-          if (strong) {
-            bg = "var(--strabb-secondary)";
-            fg = "var(--surface-60)";
-          } else if (soft) {
-            bg = "var(--neutral-30)";
-            fg = "var(--highlight-10)";
-          } else {
-            bg = undefined;
-            fg = inMonth ? "var(--highlight-10)" : "var(--neutral-30)";
-          }
-
-          return (
-            <button
-              key={day.toISOString()}
-              type="button"
-              onClick={() => onDayClick(day)}
-              onMouseEnter={() => onDayHover?.(day)}
-              className="h-lg text-body hover:bg-neutral-30 flex items-center justify-center rounded transition-colors"
-              style={{ color: fg, backgroundColor: bg }}
-            >
-              {day.getDate()}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }
@@ -606,7 +493,7 @@ function CustomRangeForm({
             value={start}
             onChange={(e) => setStart(e.target.value)}
             className="px-base py-xs text-body w-full rounded border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
           />
         </label>
         <span className="text-body text-highlight-10">to</span>
@@ -617,7 +504,7 @@ function CustomRangeForm({
             value={end}
             onChange={(e) => setEnd(e.target.value)}
             className="px-base py-xs text-body w-full rounded border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
           />
         </label>
       </div>
@@ -642,8 +529,8 @@ function CustomRangeForm({
         type="button"
         disabled={!valid}
         onClick={() => onApply(start, end)}
-        className="mt-base py-xs text-body text-surface-60 w-full rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        className="mt-base py-xs text-body text-surface-60 w-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Apply
       </button>

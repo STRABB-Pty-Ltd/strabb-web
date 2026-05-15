@@ -179,7 +179,14 @@ function SyncErrorsSection() {
     <section className="space-y-sm">
       <h2 className="text-subheading font-semibold">Recent sync errors</h2>
       {isLoading ? (
-        <p className="text-body text-highlight-10">Loading…</p>
+        <p
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          className="text-body text-highlight-10"
+        >
+          Loading…
+        </p>
       ) : (
         <DataTable<SyncLogResponse>
           columns={columns}
@@ -261,7 +268,7 @@ function FailedMessagesSection() {
           className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
-          <RefreshCw size={12} />
+          <RefreshCw size={12} aria-hidden="true" />
           Resend
         </button>
       ),
@@ -272,7 +279,14 @@ function FailedMessagesSection() {
     <section className="space-y-sm">
       <h2 className="text-subheading font-semibold">Failed messages</h2>
       {isLoading ? (
-        <p className="text-body text-highlight-10">Loading…</p>
+        <p
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          className="text-body text-highlight-10"
+        >
+          Loading…
+        </p>
       ) : (
         <DataTable<ScheduledMessageResponse>
           columns={columns}

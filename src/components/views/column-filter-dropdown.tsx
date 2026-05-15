@@ -81,7 +81,7 @@ export function ColumnFilterDropdown({ label, filter }: ColumnFilterDropdownProp
                   style={{ color: "var(--surface-60)" }}
                 >
                   <span>{opt.label}</span>
-                  {isSelected && <Check size={13} />}
+                  {isSelected && <Check size={13} aria-hidden="true" />}
                 </Menu.Item>
               );
             })}

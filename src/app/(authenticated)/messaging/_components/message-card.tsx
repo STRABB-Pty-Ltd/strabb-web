@@ -26,7 +26,12 @@ interface MessageCardProps {
 
 export function MessageCard({ message, onClick }: MessageCardProps) {
   return (
-    <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full rounded text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+      data-no-elevate
+    >
       <div className="space-y-xs">
         <div className="gap-base flex items-center justify-between">
           <div className="gap-base flex min-w-0 items-center">
@@ -34,10 +39,16 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
               {message.guestName}
             </span>
             {message.priority !== "low" && (
-              <span
-                className="h-base w-base shrink-0 rounded-full"
-                style={{ backgroundColor: priorityDot[message.priority] }}
-              />
+              <>
+                <span
+                  className="h-base w-base shrink-0 rounded-full"
+                  style={{ backgroundColor: priorityDot[message.priority] }}
+                  aria-hidden="true"
+                />
+                <span className="sr-only">
+                  {message.priority === "high" ? "High" : "Medium"} priority.
+                </span>
+              </>
             )}
           </div>
           <span className="text-body text-highlight-10 shrink-0 truncate">
@@ -62,7 +73,7 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
         <div className="gap-base text-body text-highlight-10 flex items-center">
           <span>{format(new Date(message.lastMessageTime), "d MMM, HH:mm")}</span>
           <span className="gap-xs flex items-center">
-            <MessageSquare size={10} />
+            <MessageSquare size={10} aria-hidden="true" />
             {message.messageCount}
           </span>
         </div>

@@ -54,8 +54,8 @@ export function ListingFilterTree() {
         aria-pressed={isChecked}
         className="px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
         style={{
-          backgroundColor: isChecked ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-          color: isChecked ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          backgroundColor: isChecked ? "var(--highlight-10)" : "var(--neutral-30)",
+          color: isChecked ? "var(--surface-60)" : "var(--highlight-10)",
           marginLeft: indent ? "var(--space-md)" : undefined,
         }}
       >
@@ -79,8 +79,8 @@ export function ListingFilterTree() {
             onClick={handleSelectAll}
             className="px-base py-xs text-body rounded-lg"
             style={{
-              backgroundColor: "var(--btn-inactive-bg)",
-              color: "var(--btn-inactive-text)",
+              backgroundColor: "var(--neutral-30)",
+              color: "var(--highlight-10)",
               opacity: allSelected ? 0.5 : 1,
             }}
             disabled={allSelected}
@@ -92,8 +92,8 @@ export function ListingFilterTree() {
             onClick={handleClear}
             className="px-base py-xs text-body rounded-lg"
             style={{
-              backgroundColor: "var(--btn-inactive-bg)",
-              color: "var(--btn-inactive-text)",
+              backgroundColor: "var(--neutral-30)",
+              color: "var(--highlight-10)",
               opacity: selectedListings.length === 0 ? 0.5 : 1,
             }}
             disabled={selectedListings.length === 0}
@@ -128,8 +128,8 @@ export function ListingFilterTree() {
               <div
                 className="gap-xs px-sm py-base flex items-center rounded-lg"
                 style={{
-                  backgroundColor: "var(--btn-inactive-bg)",
-                  color: "var(--btn-inactive-text)",
+                  backgroundColor: "var(--neutral-30)",
+                  color: "var(--highlight-10)",
                 }}
               >
                 <button
@@ -140,7 +140,11 @@ export function ListingFilterTree() {
                   className="p-xs shrink-0"
                   data-no-elevate
                 >
-                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                  {isExpanded ? (
+                    <ChevronDown size={13} aria-hidden="true" />
+                  ) : (
+                    <ChevronRight size={13} aria-hidden="true" />
+                  )}
                 </button>
                 <span className="text-body flex-1 truncate font-medium">{group.name}</span>
                 <button
@@ -163,7 +167,11 @@ export function ListingFilterTree() {
       {/* Create Group */}
       {showCreateGroup ? (
         <div className="mt-base gap-xs flex flex-col">
+          <label htmlFor="listing-filter-new-group-name" className="sr-only">
+            New group name
+          </label>
           <input
+            id="listing-filter-new-group-name"
             type="text"
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
@@ -185,8 +193,8 @@ export function ListingFilterTree() {
               onClick={handleCreateGroup}
               className="px-sm py-base text-body flex-1 rounded-lg"
               style={{
-                backgroundColor: "var(--btn-active-bg)",
-                color: "var(--btn-active-text)",
+                backgroundColor: "var(--highlight-10)",
+                color: "var(--surface-60)",
               }}
             >
               Add
@@ -196,8 +204,8 @@ export function ListingFilterTree() {
               onClick={() => setShowCreateGroup(false)}
               className="px-sm py-base text-body flex-1 rounded-lg"
               style={{
-                backgroundColor: "var(--btn-inactive-bg)",
-                color: "var(--btn-inactive-text)",
+                backgroundColor: "var(--neutral-30)",
+                color: "var(--highlight-10)",
               }}
             >
               Cancel
@@ -210,11 +218,11 @@ export function ListingFilterTree() {
           onClick={() => setShowCreateGroup(true)}
           className="mt-base gap-xs px-sm py-base text-body flex items-center rounded-lg"
           style={{
-            backgroundColor: "var(--btn-inactive-bg)",
-            color: "var(--btn-inactive-text)",
+            backgroundColor: "var(--neutral-30)",
+            color: "var(--highlight-10)",
           }}
         >
-          <Plus size={13} />
+          <Plus size={13} aria-hidden="true" />
           Create Group
         </button>
       )}

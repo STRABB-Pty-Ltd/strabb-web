@@ -62,11 +62,11 @@ export function SettingsNavSection() {
               aria-current={active ? "page" : undefined}
               className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
               style={{
-                backgroundColor: active ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: active ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: active ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: active ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
-              <Icon size={14} />
+              <Icon size={14} aria-hidden="true" />
               {s.label}
             </button>
           );
@@ -76,11 +76,11 @@ export function SettingsNavSection() {
           aria-current={onAdminRoute ? "page" : undefined}
           className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: onAdminRoute ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-            color: onAdminRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            backgroundColor: onAdminRoute ? "var(--highlight-10)" : "var(--neutral-30)",
+            color: onAdminRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
-          <ShieldCheck size={14} />
+          <ShieldCheck size={14} aria-hidden="true" />
           Admin
         </Link>
         <Link
@@ -88,11 +88,11 @@ export function SettingsNavSection() {
           aria-current={onSyncLogsRoute ? "page" : undefined}
           className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: onSyncLogsRoute ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-            color: onSyncLogsRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            backgroundColor: onSyncLogsRoute ? "var(--highlight-10)" : "var(--neutral-30)",
+            color: onSyncLogsRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
-          <RefreshCw size={14} />
+          <RefreshCw size={14} aria-hidden="true" />
           Sync logs
         </Link>
         <Link
@@ -100,10 +100,8 @@ export function SettingsNavSection() {
           aria-current={onShareableLinksRoute ? "page" : undefined}
           className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: onShareableLinksRoute
-              ? "var(--btn-active-bg)"
-              : "var(--btn-inactive-bg)",
-            color: onShareableLinksRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            backgroundColor: onShareableLinksRoute ? "var(--highlight-10)" : "var(--neutral-30)",
+            color: onShareableLinksRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
           <Link2 size={14} />
@@ -114,11 +112,11 @@ export function SettingsNavSection() {
           aria-current={onListingsRoute ? "page" : undefined}
           className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
           style={{
-            backgroundColor: onListingsRoute ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-            color: onListingsRoute ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+            backgroundColor: onListingsRoute ? "var(--highlight-10)" : "var(--neutral-30)",
+            color: onListingsRoute ? "var(--surface-60)" : "var(--highlight-10)",
           }}
         >
-          <Home size={14} />
+          <Home size={14} aria-hidden="true" />
           Listings
         </Link>
       </div>

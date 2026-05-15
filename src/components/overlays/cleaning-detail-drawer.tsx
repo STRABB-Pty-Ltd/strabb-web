@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
+import {
+  CleanerPickerDialog,
+  type CleanerAssignment,
+} from "@/components/overlays/cleaner-picker-dialog";
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -26,6 +31,22 @@ const statusColors: Record<string, string> = {
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
   cancelled: "var(--status-cancelled)",
+};
+
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  confirmed: CalendarCheck,
+  in_progress: Loader,
+  completed: CheckCircle,
+  cancelled: XCircle,
 };
 
 function toastError(addToast: ReturnType<typeof useAppStore.getState>["addToast"]) {
@@ -60,10 +81,8 @@ export function CleaningDetailDrawer() {
   const unlinkTicket = useUnlinkTicketFromClean();
   const updateTicket = useUpdateTicketAPI();
 
-  const [editing, setEditing] = useState(false);
-  const [cleanerName, setCleanerName] = useState("");
-  const [cleanerEmail, setCleanerEmail] = useState("");
-  const [cleanerPhone, setCleanerPhone] = useState("");
+  const [cleanerDialogOpen, setCleanerDialogOpen] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
   const [linkingMode, setLinkingMode] = useState(false);
@@ -81,32 +100,46 @@ export function CleaningDetailDrawer() {
 
   useEffect(() => {
     if (task) {
-      setCleanerName(task.cleanerName ?? "");
-      setCleanerEmail(task.cleanerEmail ?? "");
-      setCleanerPhone(task.cleanerPhone ?? "");
       setNotes(task.notes ?? "");
-      setEditing(false);
+      setEditingNotes(false);
+      setCleanerDialogOpen(false);
     }
   }, [task?.id, task]);
 
   const showError = toastError(addToast);
 
-  const handleSave = () => {
+  const handleSaveCleaner = (next: CleanerAssignment) => {
     if (!task) return;
     updateTask.mutate(
       {
         id: task.id,
         data: {
-          cleanerName: cleanerName || null,
-          cleanerEmail: cleanerEmail || null,
-          cleanerPhone: cleanerPhone || null,
-          notes: notes || null,
+          cleanerName: next.cleanerName || null,
+          cleanerEmail: next.cleanerEmail || null,
+          cleanerPhone: next.cleanerPhone || null,
         },
       },
       {
         onSuccess: () => {
-          setEditing(false);
-          addToast({ type: "success", message: "Task updated" });
+          setCleanerDialogOpen(false);
+          addToast({ type: "success", message: "Cleaner updated" });
+        },
+        onError: showError,
+      },
+    );
+  };
+
+  const handleSaveNotes = () => {
+    if (!task) return;
+    updateTask.mutate(
+      {
+        id: task.id,
+        data: { notes: notes || null },
+      },
+      {
+        onSuccess: () => {
+          setEditingNotes(false);
+          addToast({ type: "success", message: "Notes saved" });
         },
         onError: showError,
       },
@@ -200,7 +233,7 @@ export function CleaningDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Cleaning task"
-      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--highlight-10)"}
     >
       {open && isLoading && <p className="text-body text-highlight-10">Loading task…</p>}
       {open && !isLoading && !task && (
@@ -222,94 +255,123 @@ export function CleaningDetailDrawer() {
 
           <div>
             <p className="text-body text-highlight-10">Status</p>
-            <span
-              className="px-base py-xs text-body inline-block rounded-md font-medium"
-              style={{
-                backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                color: "var(--surface-60)",
-              }}
-            >
-              {status.replace("_", " ")}
-            </span>
+            {(() => {
+              const Icon = statusIcons[status];
+              return (
+                <span
+                  className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+                  style={{
+                    backgroundColor: statusColors[status] ?? "var(--highlight-10)",
+                    color: statusFgColors[status] ?? "var(--surface-60)",
+                  }}
+                >
+                  {Icon && <Icon size={11} aria-hidden="true" />}
+                  {status.replace("_", " ")}
+                </span>
+              );
+            })()}
           </div>
 
           <div className="space-y-xs">
             <div className="flex items-center justify-between">
-              <p className="text-body text-highlight-10 font-semibold">Cleaner</p>
-              {!editing && !isCompleted && (
+              <p
+                id="cleaning-drawer-cleaner-heading"
+                className="text-body text-highlight-10 font-semibold"
+              >
+                Cleaner
+              </p>
+              {!isCompleted && (
                 <button
                   type="button"
-                  onClick={() => setEditing(true)}
-                  className="text-body text-highlight-10 hover:text-highlight-10 font-medium"
+                  onClick={() => setCleanerDialogOpen(true)}
+                  className="text-body text-highlight-10 hover:text-highlight-10 rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                >
+                  {displayTask.cleanerName ? "Change" : "Assign"}
+                </button>
+              )}
+            </div>
+
+            <div className="text-body space-y-xs">
+              <p className="text-highlight-10">{displayTask.cleanerName || "Unassigned"}</p>
+              {displayTask.cleanerEmail && (
+                <p className="text-highlight-10">{displayTask.cleanerEmail}</p>
+              )}
+              {displayTask.cleanerPhone && (
+                <p className="text-highlight-10">{displayTask.cleanerPhone}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-xs">
+            <div className="flex items-center justify-between">
+              <p
+                id="cleaning-drawer-notes-label"
+                className="text-body text-highlight-10 font-semibold"
+              >
+                Notes
+              </p>
+              {!editingNotes && !isCompleted && (
+                <button
+                  type="button"
+                  onClick={() => setEditingNotes(true)}
+                  className="text-body text-highlight-10 hover:text-highlight-10 rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 >
                   Edit
                 </button>
               )}
             </div>
-
-            {!editing ? (
-              <div className="text-body space-y-xs">
-                <p className="text-highlight-10">{displayTask.cleanerName || "Unassigned"}</p>
-                {displayTask.cleanerEmail && (
-                  <p className="text-highlight-10">{displayTask.cleanerEmail}</p>
-                )}
-                {displayTask.cleanerPhone && (
-                  <p className="text-highlight-10">{displayTask.cleanerPhone}</p>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-xs">
-                <input
-                  type="text"
-                  value={cleanerName}
-                  onChange={(e) => setCleanerName(e.target.value)}
-                  autoComplete="name"
-                  placeholder="Cleaner name"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                />
-                <input
-                  type="email"
-                  value={cleanerEmail}
-                  onChange={(e) => setCleanerEmail(e.target.value)}
-                  autoComplete="email"
-                  placeholder="cleaner@example.com"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                />
-                <input
-                  type="tel"
-                  value={cleanerPhone}
-                  onChange={(e) => setCleanerPhone(e.target.value)}
-                  autoComplete="tel"
-                  placeholder="+61 400 000 000"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-xs">
-            <p className="text-body text-highlight-10 font-semibold">Notes</p>
-            {!editing ? (
+            {!editingNotes ? (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
                 {displayTask.notes || <span className="text-highlight-10">None</span>}
               </p>
             ) : (
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Special instructions for this cleaning…"
-                rows={4}
-                className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: "var(--border)" }}
-              />
+              <div className="space-y-xs">
+                <textarea
+                  id="cleaning-drawer-notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Special instructions for this cleaning…"
+                  rows={4}
+                  aria-labelledby="cleaning-drawer-notes-label"
+                  className="px-sm py-base text-body w-full rounded-lg border"
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
+                />
+                <div className="gap-xs flex">
+                  <button
+                    type="button"
+                    onClick={handleSaveNotes}
+                    disabled={updateTask.isPending}
+                    className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
+                    style={{
+                      backgroundColor: "var(--highlight-10)",
+                      color: "var(--surface-60)",
+                    }}
+                  >
+                    {updateTask.isPending ? "Saving…" : "Save notes"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingNotes(false);
+                      setNotes(displayTask.notes ?? "");
+                    }}
+                    className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body text-highlight-10 font-semibold">Linked ticket</p>
+            <p
+              id="cleaning-drawer-linked-ticket-label"
+              className="text-body text-highlight-10 font-semibold"
+            >
+              Linked ticket
+            </p>
             {displayTask.linkedTicketId && linkedTicket ? (
               <div className="space-y-xs">
                 <p className="text-body text-highlight-10">{linkedTicket.description}</p>
@@ -327,8 +389,10 @@ export function CleaningDetailDrawer() {
             ) : linkingMode ? (
               <div className="space-y-xs">
                 <select
+                  id="cleaning-drawer-linked-ticket-select"
                   value={selectedTicketId}
                   onChange={(e) => setSelectedTicketId(e.target.value)}
+                  aria-labelledby="cleaning-drawer-linked-ticket-label"
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
@@ -346,7 +410,7 @@ export function CleaningDetailDrawer() {
                     disabled={!selectedTicketId || linkTicket.isPending}
                     className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                     style={{
-                      backgroundColor: "var(--strabb-secondary)",
+                      backgroundColor: "var(--highlight-10)",
                       color: "var(--surface-60)",
                     }}
                   >
@@ -380,55 +444,27 @@ export function CleaningDetailDrawer() {
             )}
           </div>
 
-          {editing ? (
-            <div className="gap-xs flex">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={updateTask.isPending}
-                className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
-              >
-                {updateTask.isPending ? "Saving…" : "Save"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditing(false);
-                  setCleanerName(displayTask.cleanerName ?? "");
-                  setCleanerEmail(displayTask.cleanerEmail ?? "");
-                  setCleanerPhone(displayTask.cleanerPhone ?? "");
-                  setNotes(displayTask.notes ?? "");
-                }}
-                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                style={{ borderColor: "var(--border)" }}
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <div className="gap-xs flex flex-wrap">
-              <button
-                type="button"
-                onClick={handleComplete}
-                disabled={isCompleted || completeTask.isPending}
-                className="px-sm py-base text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                style={{ backgroundColor: "var(--semantic-success)" }}
-              >
-                {completeTask.isPending ? "Completing…" : "Mark complete"}
-              </button>
-              <button
-                type="button"
-                onClick={handleResend}
-                disabled={!canResend || resendNotification.isPending}
-                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium disabled:opacity-60"
-                style={{ borderColor: "var(--border)" }}
-                title={!canResend ? "Needs a cleaner email" : undefined}
-              >
-                {resendNotification.isPending ? "Sending…" : "Resend notification"}
-              </button>
-            </div>
-          )}
+          <div className="gap-xs flex flex-wrap">
+            <button
+              type="button"
+              onClick={handleComplete}
+              disabled={isCompleted || completeTask.isPending}
+              className="px-sm py-base text-body text-text-on-color rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              style={{ backgroundColor: "var(--status-success)" }}
+            >
+              {completeTask.isPending ? "Completing…" : "Mark complete"}
+            </button>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={!canResend || resendNotification.isPending}
+              className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
+              style={{ borderColor: "var(--border)" }}
+              title={!canResend ? "Needs a cleaner email" : undefined}
+            >
+              {resendNotification.isPending ? "Sending…" : "Resend notification"}
+            </button>
+          </div>
         </div>
       )}
       <ConfirmDialog
@@ -440,6 +476,19 @@ export function CleaningDetailDrawer() {
         cancelLabel="Leave it open"
         onConfirm={handleConfirmCloseLinkedTicket}
       />
+      {displayTask && (
+        <CleanerPickerDialog
+          open={cleanerDialogOpen}
+          onOpenChange={setCleanerDialogOpen}
+          initial={{
+            cleanerName: displayTask.cleanerName ?? "",
+            cleanerEmail: displayTask.cleanerEmail ?? "",
+            cleanerPhone: displayTask.cleanerPhone ?? "",
+          }}
+          onSave={handleSaveCleaner}
+          saving={updateTask.isPending}
+        />
+      )}
     </DrillDownPanel>
   );
 }

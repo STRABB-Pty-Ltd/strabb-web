@@ -36,6 +36,14 @@ const cleaningStatusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const cleaningStatusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
 // Channel accent stripe colours for booking chips. Same palette and meaning
 // as the messaging page's left-border on each message card and the gantt
 // view's booking accent.
@@ -73,13 +81,22 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
         }
         return typeColors[ev.type] ?? ev.color;
       }}
-      getEventTextColor={(ev) => typeTextColors[ev.type] ?? "var(--surface-60)"}
+      getEventTextColor={(ev) => {
+        if (typeTextColors[ev.type]) return typeTextColors[ev.type];
+        if (ev.type === "cleaning") {
+          return cleaningStatusFgColors[ev.status ?? ""] ?? "var(--status-success-fg)";
+        }
+        if (ev.type === "ticket") return "var(--status-danger-fg)";
+        return "var(--surface-60)";
+      }}
       getEventAccentColor={(ev) =>
         ev.type === "booking"
           ? (channelColors[ev.channel ?? "direct"] ?? "var(--channel-direct)")
           : undefined
       }
-      getEventIcon={(ev) => (ev.type === "cleaning" ? <BrushCleaning size={11} /> : undefined)}
+      getEventIcon={(ev) =>
+        ev.type === "cleaning" ? <BrushCleaning size={11} aria-hidden="true" /> : undefined
+      }
       getEventInset={(ev) => {
         // Match the calendar gantt's getPartialDay so a booking sits at
         // 75–100 % of its check-in cell and 0–25 % of its check-out cell,

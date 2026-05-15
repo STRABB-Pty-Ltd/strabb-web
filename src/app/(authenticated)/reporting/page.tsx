@@ -27,7 +27,7 @@ export default function ReportingPage() {
 
   if (kpisLoading || chartsLoading) {
     return (
-      <div className="space-y-lg" aria-busy="true">
+      <div className="space-y-lg" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading reports</span>
         <div className="gap-sm grid grid-cols-2 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (

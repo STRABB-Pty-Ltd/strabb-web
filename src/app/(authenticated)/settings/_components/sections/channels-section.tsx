@@ -93,10 +93,14 @@ export function ChannelsSection() {
             </div>
             <div className="gap-sm grid grid-cols-2">
               <div>
-                <label className="mb-xs text-body text-highlight-10 block font-medium">
+                <label
+                  htmlFor={`channel-${ch.id}-sync`}
+                  className="mb-xs text-body text-highlight-10 block font-medium"
+                >
                   Sync Frequency
                 </label>
                 <select
+                  id={`channel-${ch.id}-sync`}
                   value={ch.syncFrequency}
                   onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
                   className="px-sm py-base text-body w-full rounded-sm border"
@@ -110,10 +114,14 @@ export function ChannelsSection() {
                 </select>
               </div>
               <div>
-                <label className="mb-xs text-body text-highlight-10 block font-medium">
+                <label
+                  htmlFor={`channel-${ch.id}-pricing`}
+                  className="mb-xs text-body text-highlight-10 block font-medium"
+                >
                   Default Pricing Rule
                 </label>
                 <select
+                  id={`channel-${ch.id}-pricing`}
                   value={ch.pricingRule}
                   onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
                   className="px-sm py-base text-body w-full rounded-sm border"
@@ -135,7 +143,7 @@ export function ChannelsSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

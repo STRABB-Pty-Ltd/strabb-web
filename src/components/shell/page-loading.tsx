@@ -8,7 +8,7 @@ export function PageLoading() {
         className="gap-md px-md flex shrink-0 items-center"
         style={{
           height: "var(--topnav-height)",
-          backgroundColor: "var(--strabb-primary)",
+          backgroundColor: "var(--highlight-10)",
         }}
       >
         <div

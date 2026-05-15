@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useShoppingList } from "@/hooks/use-cleaning";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
@@ -20,6 +21,7 @@ const EXIT_MS = 200;
 
 export function ShoppingListPopup() {
   const popupRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
   const boughtItems = useAppStore((s) => s.cleaning.boughtItems);
@@ -31,21 +33,8 @@ export function ShoppingListPopup() {
 
   const [showAll, setShowAll] = useState(true);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeShoppingListPopup();
-    },
-    [closeShoppingListPopup],
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [open, handleKeyDown]);
-
   useClickOutside(popupRef, closeShoppingListPopup, open);
+  useFocusTrap(popupRef, { active: open, onEscape: closeShoppingListPopup });
 
   if (!shouldRender) return null;
 
@@ -94,6 +83,10 @@ export function ShoppingListPopup() {
       >
         <div
           ref={popupRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          tabIndex={-1}
           className="bg-surface-60 w-full max-w-lg rounded-xl shadow-xl"
           style={{ animation: cardAnim }}
           onClick={(e) => e.stopPropagation()}
@@ -102,12 +95,14 @@ export function ShoppingListPopup() {
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
-            <h2 className="text-body font-semibold">Shopping List</h2>
+            <h2 id={titleId} className="text-body font-semibold">
+              Shopping List
+            </h2>
             <div className="gap-base flex items-center">
               <button
                 type="button"
                 onClick={() => setShowAll(!showAll)}
-                className="text-body text-highlight-10 hover:underline"
+                className="text-body text-highlight-10 rounded outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               >
                 {showAll ? "Show needed only" : "Show all"}
               </button>
@@ -115,7 +110,7 @@ export function ShoppingListPopup() {
                 type="button"
                 onClick={closeShoppingListPopup}
                 aria-label="Close shopping list"
-                className="text-highlight-10 hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
+                className="text-highlight-10 hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 data-no-elevate
               >
                 <X size={18} />
@@ -177,22 +172,22 @@ export function ShoppingListPopup() {
             <button
               type="button"
               onClick={closeShoppingListPopup}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
+              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Close
             </button>
             <button
               type="button"
               disabled
-              className="px-sm py-base text-body text-highlight-10 rounded-lg"
+              className="px-sm py-base text-body text-highlight-10 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Share Link
             </button>
             <button
               type="button"
               onClick={handleCopyList}
-              className="px-sm py-base text-body text-surface-60 rounded-lg"
-              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+              className="px-sm py-base text-body text-surface-60 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               Copy List
             </button>

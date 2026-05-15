@@ -30,9 +30,27 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+function buildSummary(data: ChannelData[]): string {
+  if (data.length === 0) return "";
+  const total = data.reduce((sum, d) => sum + d.revenue, 0);
+  const sorted = [...data].sort((a, b) => b.revenue - a.revenue);
+  const top = sorted[0];
+  const bottom = sorted[sorted.length - 1];
+  return (
+    `Revenue by channel, totalling ${formatAUD(total)} across ${data.length} channels. ` +
+    `${top.channel} leads with ${formatAUD(top.revenue)} (${top.percentage} percent), ` +
+    `${bottom.channel} lowest at ${formatAUD(bottom.revenue)} (${bottom.percentage} percent).`
+  );
+}
+
 export function ChannelBreakdownChart({ data, loading }: ChannelBreakdownChartProps) {
   return (
-    <ChartContainer title="Channel Breakdown" loading={loading} empty={data.length === 0}>
+    <ChartContainer
+      title="Channel Breakdown"
+      summary={buildSummary(data)}
+      loading={loading}
+      empty={data.length === 0}
+    >
       <BarChart data={data} layout="vertical">
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis

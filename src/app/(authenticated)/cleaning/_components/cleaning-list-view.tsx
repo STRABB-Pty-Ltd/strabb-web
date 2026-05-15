@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import { DEFAULT_TIMEZONE } from "@/hooks/use-property-timezone";
@@ -8,12 +9,28 @@ import { formatInPropertyTimezone } from "@/lib/date-utils";
 import type { CleaningTask } from "@/types/cleaning-task";
 import { useAppStore } from "@/stores/app-store";
 
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  confirmed: CalendarCheck,
+  in_progress: Loader,
+  completed: CheckCircle,
+  cancelled: XCircle,
+};
+
 const statusColors: Record<string, string> = {
   pending: "var(--status-pending)",
   confirmed: "var(--status-confirmed)",
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
   cancelled: "var(--status-cancelled)",
+};
+
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
+  cancelled: "var(--status-cancelled-fg)",
 };
 
 const typeLabels: Record<string, string> = {
@@ -92,17 +109,21 @@ export function CleaningListView({ tasks, listingTimezones }: CleaningListViewPr
         key: "status",
         label: "Status",
         width: "112px",
-        render: (t) => (
-          <span
-            className="px-base py-xs text-body rounded-md font-medium"
-            style={{
-              backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
-              color: "var(--surface-60)",
-            }}
-          >
-            {t.status.replace("_", " ")}
-          </span>
-        ),
+        render: (t) => {
+          const Icon = statusIcons[t.status];
+          return (
+            <span
+              className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+              style={{
+                backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
+                color: statusFgColors[t.status] ?? "var(--surface-60)",
+              }}
+            >
+              {Icon && <Icon size={11} aria-hidden="true" />}
+              {t.status.replace("_", " ")}
+            </span>
+          );
+        },
       },
       {
         key: "priority",

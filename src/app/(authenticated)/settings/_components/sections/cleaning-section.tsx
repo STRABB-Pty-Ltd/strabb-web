@@ -24,11 +24,15 @@ export function CleaningSection() {
 
       <div className="space-y-sm">
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="cleaning-default-duration"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Default Duration (hours)
           </label>
           {/* w-[144px] is on the Fibonacci ladder (5/8/13/21/34/55/89/144/...), kept as an arbitrary value. */}
           <input
+            id="cleaning-default-duration"
             type="number"
             value={defaultDuration}
             onChange={(e) => setDefaultDuration(e.target.value)}
@@ -44,32 +48,41 @@ export function CleaningSection() {
           style={{ borderColor: "var(--border)" }}
         >
           <div>
-            <p className="text-body text-highlight-10 font-medium">Auto-assign Tasks</p>
+            <p id="auto-assign-label" className="text-body text-highlight-10 font-medium">
+              Auto-assign Tasks
+            </p>
             <p className="text-body text-highlight-10">
               Automatically assign cleaning tasks to the default cleaner
             </p>
           </div>
           <button
             type="button"
+            role="switch"
+            aria-checked={autoAssign}
+            aria-labelledby="auto-assign-label"
             onClick={() => setAutoAssign(!autoAssign)}
-            className="h-md relative w-lg rounded-full transition-colors"
+            className="h-md relative w-lg rounded-full transition-colors outline-none before:absolute before:top-1/2 before:left-1/2 before:h-[var(--touch-target-min)] before:w-[var(--touch-target-min)] before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             style={{
-              backgroundColor: autoAssign ? "var(--strabb-secondary)" : "var(--neutral-30)",
+              backgroundColor: autoAssign ? "var(--highlight-10)" : "var(--neutral-30)",
             }}
           >
-            {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
+            {/* Thumb 14x14 with locked left positions (2 / 18) gives symmetric 2px margins inside a w-lg (34px) track. */}
             <span
-              className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
+              className="bg-surface-60 absolute top-[3px] h-[14px] w-[14px] rounded-full shadow transition-transform"
               style={{ left: autoAssign ? 18 : 2 }}
             />
           </button>
         </div>
 
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="cleaning-default-cleaner-name"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Default Cleaner Name
           </label>
           <input
+            id="cleaning-default-cleaner-name"
             type="text"
             value={defaultCleaner}
             onChange={(e) => setDefaultCleaner(e.target.value)}
@@ -119,7 +132,7 @@ export function CleaningSection() {
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Save Changes
       </button>

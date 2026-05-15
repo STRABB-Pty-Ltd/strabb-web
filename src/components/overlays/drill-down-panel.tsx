@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useId, useRef } from "react";
 import { X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 
@@ -22,28 +23,18 @@ export function DrillDownPanel({
   open,
   onClose,
   title,
-  accentColor = "var(--strabb-secondary)",
+  accentColor = "var(--highlight-10)",
   children,
 }: DrillDownPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   // Keep the panel mounted briefly after close so slideOutRight can play.
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   useClickOutside(panelRef, onClose, open);
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose],
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [open, handleKeyDown]);
+  // Side drawer: rails stay live, so we don't aria-modal or trap Tab inside.
+  // The hook still moves focus into the panel on open and restores it on close.
+  useFocusTrap(panelRef, { active: open, onEscape: onClose, trap: false });
 
   if (!shouldRender) return null;
 
@@ -65,6 +56,9 @@ export function DrillDownPanel({
           inset by --space-md to match canvas content padding from screen edges. */}
       <div
         ref={panelRef}
+        role="dialog"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.DRAWER,
@@ -88,12 +82,14 @@ export function DrillDownPanel({
           className="px-sm py-sm flex items-center justify-between border-b"
           style={{ borderColor: "var(--border)" }}
         >
-          <h2 className="text-body text-highlight-10 font-semibold">{title}</h2>
+          <h2 id={titleId} className="text-body text-highlight-10 font-semibold">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close panel"
-            className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded"
+            className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             data-no-elevate
           >
             <X size={18} />

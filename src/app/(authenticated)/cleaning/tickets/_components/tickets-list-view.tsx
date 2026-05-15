@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import { DEFAULT_TIMEZONE } from "@/hooks/use-property-timezone";
@@ -17,6 +18,22 @@ const statusColors: Record<string, string> = {
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
   cancelled: "var(--status-cancelled)",
+};
+
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  confirmed: CalendarCheck,
+  in_progress: Loader,
+  completed: CheckCircle,
+  cancelled: XCircle,
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
@@ -103,17 +120,21 @@ export function TicketsListView({
           options: [{ value: "", label: "All statuses" }, ...TICKET_STATUS_OPTIONS],
           onChange: (v) => onFilterChange("status", v || undefined),
         },
-        render: (t) => (
-          <span
-            className="px-base py-xs text-body rounded-md font-medium"
-            style={{
-              backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
-              color: "var(--surface-60)",
-            }}
-          >
-            {t.status.replace("_", " ")}
-          </span>
-        ),
+        render: (t) => {
+          const Icon = statusIcons[t.status];
+          return (
+            <span
+              className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+              style={{
+                backgroundColor: statusColors[t.status] ?? "var(--highlight-10)",
+                color: statusFgColors[t.status] ?? "var(--surface-60)",
+              }}
+            >
+              {Icon && <Icon size={11} aria-hidden="true" />}
+              {t.status.replace("_", " ")}
+            </span>
+          );
+        },
       },
       {
         key: "reported",

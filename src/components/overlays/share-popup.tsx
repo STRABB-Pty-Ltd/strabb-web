@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { ExternalLink, X } from "lucide-react";
 
 import { useCreateShare } from "@/lib/api-hooks/share-api";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { buildShareFilters, type ShareableMenu } from "@/lib/share-filters";
 import { Z } from "@/lib/z-index";
@@ -43,6 +44,7 @@ const EXIT_MS = 200;
 
 export function SharePopup() {
   const popupRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const sharePopup = useAppStore((s) => s.sharePopup);
   const closeSharePopup = useAppStore((s) => s.closeSharePopup);
   const shareFields = useAppStore((s) => s.shareFields);
@@ -148,21 +150,8 @@ export function SharePopup() {
     }
   };
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeSharePopup();
-    },
-    [closeSharePopup],
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [open, handleKeyDown]);
-
   useClickOutside(popupRef, closeSharePopup, open);
+  useFocusTrap(popupRef, { active: open, onEscape: closeSharePopup });
 
   if (!shouldRender) return null;
 
@@ -196,6 +185,10 @@ export function SharePopup() {
       >
         <div
           ref={popupRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          tabIndex={-1}
           className="bg-surface-60 w-full max-w-md rounded-xl shadow-xl"
           style={{ animation: cardAnim }}
           onClick={(e) => e.stopPropagation()}
@@ -204,12 +197,14 @@ export function SharePopup() {
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
-            <h2 className="text-body font-semibold">Share Report</h2>
+            <h2 id={titleId} className="text-body font-semibold">
+              Share Report
+            </h2>
             <button
               type="button"
               onClick={closeSharePopup}
               aria-label="Close share dialog"
-              className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
+              className="p-xs text-highlight-10 hover:bg-neutral-30 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               data-no-elevate
             >
               <X size={18} />
@@ -257,7 +252,7 @@ export function SharePopup() {
             <button
               type="button"
               onClick={closeSharePopup}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
+              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               Cancel
             </button>
@@ -265,16 +260,16 @@ export function SharePopup() {
               type="button"
               onClick={handleOpenInTab}
               disabled={disabled}
-              className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
+              className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <ExternalLink size={14} />
+              <ExternalLink size={14} aria-hidden="true" />
               Open
             </button>
             <button
               type="button"
               onClick={handleDownload}
               disabled={disabled}
-              className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border disabled:cursor-not-allowed disabled:opacity-50"
+              className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {downloading ? "Generating…" : "Download PDF"}
             </button>
@@ -282,8 +277,8 @@ export function SharePopup() {
               type="button"
               onClick={handleCopyLink}
               disabled={disabled}
-              className="px-sm py-base text-body rounded-lg disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+              className="px-sm py-base text-body rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               Copy Link
             </button>

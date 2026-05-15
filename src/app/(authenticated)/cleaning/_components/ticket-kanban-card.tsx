@@ -1,6 +1,14 @@
 "use client";
 
-import { Wrench } from "lucide-react";
+import {
+  CalendarCheck,
+  CheckCircle,
+  Clock,
+  Loader,
+  Wrench,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
@@ -21,6 +29,22 @@ const statusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  confirmed: CalendarCheck,
+  in_progress: Loader,
+  completed: CheckCircle,
+  cancelled: XCircle,
+};
+
 interface TicketKanbanCardProps {
   ticket: Ticket;
   propertyName?: string;
@@ -35,7 +59,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
     <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-xs flex items-center">
-          <Wrench size={12} className="text-highlight-10 shrink-0" />
+          <Wrench size={12} className="text-highlight-10 shrink-0" aria-hidden="true" />
           <span className="text-body text-highlight-10 truncate font-medium">
             {propertyName ?? ticket.propertyId.slice(0, 8)}
           </span>
@@ -50,15 +74,21 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
           >
             {ticket.priority}
           </span>
-          <span
-            className="px-xs py-xs text-body rounded-sm font-medium"
-            style={{
-              backgroundColor: statusColors[ticket.status] ?? "var(--highlight-10)",
-              color: "var(--surface-60)",
-            }}
-          >
-            {ticket.status}
-          </span>
+          {(() => {
+            const Icon = statusIcons[ticket.status];
+            return (
+              <span
+                className="gap-xs px-xs py-xs text-body inline-flex items-center rounded-sm font-medium"
+                style={{
+                  backgroundColor: statusColors[ticket.status] ?? "var(--highlight-10)",
+                  color: statusFgColors[ticket.status] ?? "var(--surface-60)",
+                }}
+              >
+                {Icon && <Icon size={10} aria-hidden="true" />}
+                {ticket.status}
+              </span>
+            );
+          })()}
         </div>
 
         <div className="text-body text-highlight-10">

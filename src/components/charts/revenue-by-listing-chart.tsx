@@ -29,11 +29,28 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+function buildSummary(sorted: RevenueByListingData[]): string {
+  if (sorted.length === 0) return "";
+  const total = sorted.reduce((sum, d) => sum + d.revenue, 0);
+  const top = sorted[0];
+  const bottom = sorted[sorted.length - 1];
+  return (
+    `Revenue by listing, totalling ${formatAUD(total)} across ${sorted.length} listings. ` +
+    `${top.listing} leads with ${formatAUD(top.revenue)}, ` +
+    `${bottom.listing} lowest at ${formatAUD(bottom.revenue)}.`
+  );
+}
+
 export function RevenueByListingChart({ data, loading }: RevenueByListingChartProps) {
   const sorted = [...data].sort((a, b) => b.revenue - a.revenue);
 
   return (
-    <ChartContainer title="Revenue by Listing" loading={loading} empty={data.length === 0}>
+    <ChartContainer
+      title="Revenue by Listing"
+      summary={buildSummary(sorted)}
+      loading={loading}
+      empty={data.length === 0}
+    >
       <BarChart data={sorted}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis

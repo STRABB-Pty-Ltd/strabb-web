@@ -80,7 +80,7 @@ export function GanttBar({
     <button
       type="button"
       onClick={onClick}
-      className="text-body gap-xs absolute flex items-center justify-center overflow-hidden rounded-lg text-center break-words"
+      className="text-body gap-xs absolute flex items-center justify-center overflow-hidden rounded-lg text-center break-words outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
       title={label}
       style={baseStyle}
     >

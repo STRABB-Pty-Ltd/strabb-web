@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { useCompleteCleaningTask } from "@/hooks/use-cleaning-tasks";
 import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
@@ -34,6 +36,22 @@ const statusColors: Record<string, string> = {
   in_progress: "var(--status-in-progress)",
   completed: "var(--status-completed)",
   cancelled: "var(--status-cancelled)",
+};
+
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  confirmed: "var(--status-confirmed-fg)",
+  in_progress: "var(--status-success-fg)",
+  completed: "var(--status-success-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  confirmed: CalendarCheck,
+  in_progress: Loader,
+  completed: CheckCircle,
+  cancelled: XCircle,
 };
 
 function fmtDate(iso: string | null, tz: string): string {
@@ -232,7 +250,7 @@ export function TicketDetailDrawer() {
       open={open}
       onClose={closeDrillDownPanel}
       title="Ticket"
-      accentColor={statusColors[status] ?? "var(--strabb-secondary)"}
+      accentColor={statusColors[status] ?? "var(--highlight-10)"}
     >
       {open && isLoading && <p className="text-body text-highlight-10">Loading ticket…</p>}
       {open && !isLoading && !ticket && (
@@ -247,9 +265,12 @@ export function TicketDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-highlight-10">Priority</p>
+              <label htmlFor="ticket-drawer-priority" className="text-body text-highlight-10 block">
+                Priority
+              </label>
               {editing ? (
                 <select
+                  id="ticket-drawer-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
@@ -266,9 +287,12 @@ export function TicketDetailDrawer() {
               )}
             </div>
             <div>
-              <p className="text-body text-highlight-10">Status</p>
+              <label htmlFor="ticket-drawer-status" className="text-body text-highlight-10 block">
+                Status
+              </label>
               {editing ? (
                 <select
+                  id="ticket-drawer-status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TicketStatus)}
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
@@ -281,15 +305,21 @@ export function TicketDetailDrawer() {
                   ))}
                 </select>
               ) : (
-                <span
-                  className="px-base py-xs text-body inline-block rounded-md font-medium"
-                  style={{
-                    backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                    color: "var(--surface-60)",
-                  }}
-                >
-                  {status.replace("_", " ")}
-                </span>
+                (() => {
+                  const Icon = statusIcons[status];
+                  return (
+                    <span
+                      className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+                      style={{
+                        backgroundColor: statusColors[status] ?? "var(--highlight-10)",
+                        color: statusFgColors[status] ?? "var(--surface-60)",
+                      }}
+                    >
+                      {Icon && <Icon size={11} aria-hidden="true" />}
+                      {status.replace("_", " ")}
+                    </span>
+                  );
+                })()
               )}
             </div>
           </div>
@@ -300,14 +330,18 @@ export function TicketDetailDrawer() {
               <p className="font-data text-body">{fmtDate(displayTicket.dateReported, tz)}</p>
             </div>
             <div>
-              <p className="text-body text-highlight-10">Scheduled</p>
+              <label
+                htmlFor="ticket-drawer-date-scheduled"
+                className="text-body text-highlight-10 block"
+              >
+                Scheduled
+              </label>
               {editing ? (
-                <input
-                  type="datetime-local"
+                <DateTimePicker
+                  id="ticket-drawer-date-scheduled"
                   value={dateScheduled}
-                  onChange={(e) => setDateScheduled(e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  onChange={setDateScheduled}
+                  placeholder="Pick date and time"
                 />
               ) : (
                 <p className="font-data text-body">{fmtDate(displayTicket.dateScheduled, tz)}</p>
@@ -316,14 +350,20 @@ export function TicketDetailDrawer() {
           </div>
 
           <div>
-            <p className="text-body text-highlight-10">Description</p>
+            <label
+              htmlFor="ticket-drawer-description"
+              className="text-body text-highlight-10 block"
+            >
+              Description
+            </label>
             {editing ? (
               <textarea
+                id="ticket-drawer-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: "var(--border)" }}
+                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             ) : (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
@@ -334,15 +374,18 @@ export function TicketDetailDrawer() {
 
           <div className="gap-sm grid grid-cols-2">
             <div>
-              <p className="text-body text-highlight-10">Cost</p>
+              <label htmlFor="ticket-drawer-cost" className="text-body text-highlight-10 block">
+                Cost
+              </label>
               {editing ? (
                 <input
+                  id="ticket-drawer-cost"
                   type="number"
                   step="0.01"
                   value={cost}
                   onChange={(e) => setCost(e.target.value)}
                   className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
               ) : (
                 <p className="font-data text-body">
@@ -359,14 +402,17 @@ export function TicketDetailDrawer() {
           </div>
 
           <div>
-            <p className="text-body text-highlight-10">Notes</p>
+            <label htmlFor="ticket-drawer-notes" className="text-body text-highlight-10 block">
+              Notes
+            </label>
             {editing ? (
               <textarea
+                id="ticket-drawer-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: "var(--border)" }}
+                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             ) : (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
@@ -376,7 +422,12 @@ export function TicketDetailDrawer() {
           </div>
 
           <div className="space-y-xs">
-            <p className="text-body text-highlight-10 font-semibold">Linked clean</p>
+            <p
+              id="ticket-drawer-linked-clean-label"
+              className="text-body text-highlight-10 font-semibold"
+            >
+              Linked clean
+            </p>
             {linkedClean ? (
               <div className="space-y-xs">
                 <p className="text-body text-highlight-10">
@@ -396,8 +447,10 @@ export function TicketDetailDrawer() {
             ) : linkingMode ? (
               <div className="space-y-xs">
                 <select
+                  id="ticket-drawer-linked-clean-select"
                   value={selectedCleanId}
                   onChange={(e) => setSelectedCleanId(e.target.value)}
+                  aria-labelledby="ticket-drawer-linked-clean-label"
                   className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
@@ -416,7 +469,7 @@ export function TicketDetailDrawer() {
                     disabled={!selectedCleanId || linkClean.isPending}
                     className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
                     style={{
-                      backgroundColor: "var(--strabb-secondary)",
+                      backgroundColor: "var(--highlight-10)",
                       color: "var(--surface-60)",
                     }}
                   >
@@ -502,7 +555,7 @@ export function TicketDetailDrawer() {
                   onClick={handleSave}
                   disabled={updateTicket.isPending}
                   className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                  style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+                  style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
                 >
                   {updateTicket.isPending ? "Saving…" : "Save"}
                 </button>

@@ -40,8 +40,8 @@ export function TopNav() {
               style={{
                 width: "var(--btn-pill-width)",
                 borderRadius: "var(--radius-md)",
-                backgroundColor: isActive ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-                color: isActive ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+                backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
+                color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
               }}
             >
               {item.label}
@@ -64,9 +64,8 @@ export function TopNav() {
         style={{
           width: "var(--btn-pill-width)",
           borderRadius: "var(--radius-md)",
-          backgroundColor:
-            currentPage === "settings" ? "var(--btn-active-bg)" : "var(--btn-inactive-bg)",
-          color: currentPage === "settings" ? "var(--btn-active-text)" : "var(--btn-inactive-text)",
+          backgroundColor: currentPage === "settings" ? "var(--highlight-10)" : "var(--neutral-30)",
+          color: currentPage === "settings" ? "var(--surface-60)" : "var(--highlight-10)",
         }}
       >
         {settingsNavItem.label}

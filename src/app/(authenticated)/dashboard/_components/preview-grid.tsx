@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { addDays, format, parseISO } from "date-fns";
-import { ArrowRight, CalendarDays, Sparkles } from "lucide-react";
+import { ArrowRight, BrushCleaning, CalendarDays, Sparkles, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
@@ -28,7 +28,7 @@ function PanelHeader({ title, onView }: { title: string; onView?: () => void }) 
           style={{ color: "var(--highlight-10)" }}
           data-no-elevate
         >
-          View All <ArrowRight size={12} />
+          View All <ArrowRight size={12} aria-hidden="true" />
         </button>
       )}
     </div>
@@ -56,7 +56,7 @@ function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <PanelHeader title="Next 7 Days" onView={handleViewAll} />
       <div className="gap-xs grid grid-cols-7">
@@ -139,6 +139,31 @@ function bucketRevenue(
   return sortedMonths.slice(-6);
 }
 
+const formatAUDShort = (value: number) =>
+  new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(value);
+
+function buildSparklineSummary(bars: PreviewData["revenueSparkline"]): string {
+  if (bars.length === 0) return "";
+  const peak = bars.reduce((a, b) => (b.revenue > a.revenue ? b : a));
+  const latest = bars[bars.length - 1];
+  const first = bars[0].revenue;
+  const direction =
+    latest.revenue > first * 1.05
+      ? "trending up"
+      : latest.revenue < first * 0.95
+        ? "trending down"
+        : "broadly flat";
+  return (
+    `Revenue sparkline across ${bars.length} periods, ${direction}. ` +
+    `Latest ${formatBarLabel(latest.label)}: ${formatAUDShort(latest.revenue)}. ` +
+    `Peak ${formatBarLabel(peak.label)}: ${formatAUDShort(peak.revenue)}.`
+  );
+}
+
 function RevenueSparkline({
   data,
   windowSize,
@@ -148,20 +173,31 @@ function RevenueSparkline({
 }) {
   const bars = useMemo(() => bucketRevenue(data, windowSize), [data, windowSize]);
   const max = Math.max(...bars.map((d) => d.revenue), 1);
+  const summary = buildSparklineSummary(bars);
   return (
-    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--neutral-30)" }}>
       <PanelHeader title="Revenue Trend" />
-      <div className="gap-base flex items-end" style={{ height: 89 }}>
+      <div
+        role={summary ? "img" : undefined}
+        aria-label={summary}
+        className="gap-base flex items-end"
+        style={{ height: 89 }}
+      >
         {bars.map((d) => (
           <div key={d.label} className="gap-xs flex flex-1 flex-col items-center">
             <div
+              aria-hidden="true"
               className="w-full rounded-t-sm"
               style={{
                 height: Math.max(5, (d.revenue / max) * 55),
-                backgroundColor: "var(--chart-bar)",
+                backgroundColor: "var(--highlight-10)",
               }}
             />
-            <span className="text-body" style={{ color: "var(--text-secondary)" }}>
+            <span
+              aria-hidden="true"
+              className="text-body"
+              style={{ color: "var(--text-secondary)" }}
+            >
               {formatBarLabel(d.label)}
             </span>
           </div>
@@ -194,7 +230,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <PanelHeader title="Upcoming Bookings" onView={handleViewAll} />
       {data.length === 0 ? (
@@ -233,32 +269,32 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
-      style={{ backgroundColor: "var(--surface-card)" }}
+      style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <PanelHeader title="Cleans and Tickets" onView={handleViewAll} />
       {data.length === 0 ? (
         <EmptyState compact icon={Sparkles} title="No upcoming cleans or tickets" />
       ) : (
         <div className="flex flex-col">
-          {data.map((item) => (
-            <div
-              key={`${item.kind}-${item.id}`}
-              className="gap-sm py-base text-body flex items-center"
-              style={{ color: "var(--highlight-10)" }}
-            >
-              <span
-                className="h-base w-base shrink-0 rounded-full"
-                style={{
-                  backgroundColor:
-                    item.kind === "ticket" ? "var(--status-issues)" : "var(--highlight-10)",
-                }}
-              />
-              <span className="flex-1 truncate">{item.listing || "Unassigned"}</span>
-              <span className="text-body" style={{ color: "var(--text-secondary)" }}>
-                {format(new Date(item.date), "d MMM")}
-              </span>
-            </div>
-          ))}
+          {data.map((item) => {
+            const Icon = item.kind === "ticket" ? Wrench : BrushCleaning;
+            const iconColor =
+              item.kind === "ticket" ? "var(--status-issues)" : "var(--highlight-10)";
+            return (
+              <div
+                key={`${item.kind}-${item.id}`}
+                className="gap-sm py-base text-body flex items-center"
+                style={{ color: "var(--highlight-10)" }}
+              >
+                <Icon size={12} style={{ color: iconColor, flexShrink: 0 }} aria-hidden="true" />
+                <span className="sr-only">{item.kind === "ticket" ? "Ticket" : "Cleaning"}.</span>
+                <span className="flex-1 truncate">{item.listing || "Unassigned"}</span>
+                <span className="text-body" style={{ color: "var(--text-secondary)" }}>
+                  {format(new Date(item.date), "d MMM")}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

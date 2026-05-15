@@ -31,17 +31,21 @@ export function SavedReportsDrawer() {
         <button
           type="button"
           onClick={() => setShowInput(true)}
-          className="gap-xs text-body flex items-center font-medium"
-          style={{ color: "var(--strabb-secondary)" }}
+          className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+          style={{ color: "var(--highlight-10)" }}
         >
-          <Plus size={12} />
+          <Plus size={12} aria-hidden="true" />
           Save Current
         </button>
       </div>
 
       {showInput && (
         <div className="mb-sm gap-base flex">
+          <label htmlFor="saved-report-name" className="sr-only">
+            Report name
+          </label>
           <input
+            id="saved-report-name"
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
@@ -53,8 +57,8 @@ export function SavedReportsDrawer() {
           <button
             type="button"
             onClick={handleSave}
-            className="px-sm py-xs text-body text-surface-60 rounded-sm"
-            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+            className="px-sm py-xs text-body text-surface-60 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
           >
             Save
           </button>
@@ -64,7 +68,7 @@ export function SavedReportsDrawer() {
               setShowInput(false);
               setNewName("");
             }}
-            className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-sm"
+            className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             Cancel
           </button>
@@ -93,8 +97,8 @@ export function SavedReportsDrawer() {
                 <button
                   type="button"
                   onClick={() => loadReport(report.id)}
-                  className="px-base py-xs text-body rounded-sm font-medium"
-                  style={{ color: "var(--strabb-secondary)" }}
+                  className="px-base py-xs text-body rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                  style={{ color: "var(--highlight-10)" }}
                   data-no-elevate
                 >
                   Load
@@ -103,7 +107,7 @@ export function SavedReportsDrawer() {
                   type="button"
                   onClick={() => setPendingDeleteId(report.id)}
                   aria-label="Delete saved report"
-                  className="p-xs text-highlight-10 hover:text-status-danger rounded-sm"
+                  className="p-xs text-highlight-10 hover:text-status-danger rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                   data-no-elevate
                 >
                   <Trash2 size={12} />

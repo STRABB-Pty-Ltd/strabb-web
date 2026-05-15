@@ -1,7 +1,17 @@
 "use client";
 
 import { format } from "date-fns";
-import { ChevronDown, ChevronRight, Inbox, RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Inbox,
+  RefreshCw,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -31,6 +41,20 @@ const statusColors: Record<string, string> = {
   sent: "var(--status-completed)",
   failed: "var(--status-danger)",
   cancelled: "var(--status-cancelled)",
+};
+
+const statusFgColors: Record<string, string> = {
+  pending: "var(--status-danger-fg)",
+  sent: "var(--status-success-fg)",
+  failed: "var(--status-danger-fg)",
+  cancelled: "var(--status-cancelled-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  pending: Clock,
+  sent: CheckCircle,
+  failed: AlertCircle,
+  cancelled: XCircle,
 };
 
 export default function ScheduledMessagesPage() {
@@ -66,10 +90,10 @@ export default function ScheduledMessagesPage() {
               type="button"
               onClick={() => handleTabChange(t.id)}
               aria-current={active ? "page" : undefined}
-              className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors"
+              className="px-sm py-base text-body -mb-px border-b-2 font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{
-                borderColor: active ? "var(--strabb-secondary)" : "transparent",
-                color: active ? "var(--strabb-secondary)" : "var(--highlight-10)",
+                borderColor: active ? "var(--highlight-10)" : "transparent",
+                color: active ? "var(--highlight-10)" : "var(--highlight-10)",
               }}
             >
               {t.label}
@@ -145,14 +169,21 @@ function ScheduledTab({
     {
       key: "status",
       header: "Status",
-      render: (_v, m) => (
-        <span
-          className="px-base py-xs text-body rounded-md font-medium text-[var(--text-on-color)]"
-          style={{ backgroundColor: statusColors[m.status] ?? "var(--highlight-10)" }}
-        >
-          {m.status}
-        </span>
-      ),
+      render: (_v, m) => {
+        const Icon = statusIcons[m.status];
+        return (
+          <span
+            className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+            style={{
+              backgroundColor: statusColors[m.status] ?? "var(--highlight-10)",
+              color: statusFgColors[m.status] ?? "var(--surface-60)",
+            }}
+          >
+            {Icon && <Icon size={11} aria-hidden="true" />}
+            {m.status}
+          </span>
+        );
+      },
     },
     {
       key: "retryCount",
@@ -174,10 +205,10 @@ function ScheduledTab({
           type="button"
           onClick={() => handleResend(m.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
+          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
           style={{ borderColor: "var(--border)" }}
         >
-          <RefreshCw size={12} />
+          <RefreshCw size={12} aria-hidden="true" />
           Resend
         </button>
       ),
@@ -186,7 +217,7 @@ function ScheduledTab({
 
   if (isLoading) {
     return (
-      <div className="space-y-xs" aria-busy="true">
+      <div className="space-y-xs" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading messages</span>
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} h={55} />
@@ -241,7 +272,11 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
   };
 
   if (isLoading) {
-    return <p className="text-body text-highlight-10">Loading logs…</p>;
+    return (
+      <p role="status" aria-live="polite" aria-busy="true" className="text-body text-highlight-10">
+        Loading logs…
+      </p>
+    );
   }
 
   const logs = data?.data ?? [];
@@ -273,13 +308,13 @@ function LogsTab({ page, setPage }: { page: number; setPage: (p: number) => void
               <button
                 type="button"
                 onClick={() => toggleExpanded(log.id)}
-                className="px-sm py-base gap-sm text-body hover:bg-neutral-30 flex w-full items-center text-left"
+                className="px-sm py-base gap-sm text-body hover:bg-neutral-30 flex w-full items-center text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset"
                 aria-expanded={isOpen}
               >
                 {isOpen ? (
-                  <ChevronDown size={14} className="shrink-0" />
+                  <ChevronDown size={14} className="shrink-0" aria-hidden="true" />
                 ) : (
-                  <ChevronRight size={14} className="shrink-0" />
+                  <ChevronRight size={14} className="shrink-0" aria-hidden="true" />
                 )}
                 <span className="text-highlight-10 font-medium" style={{ minWidth: 144 }}>
                   {log.event}
@@ -333,12 +368,15 @@ interface PaginationProps {
 function Pagination({ meta, page, onChange }: PaginationProps) {
   if (meta.totalPages <= 1) return null;
   return (
-    <div className="gap-base text-body text-highlight-10 flex items-center justify-end">
+    <nav
+      aria-label="Pagination"
+      className="gap-base text-body text-highlight-10 flex items-center justify-end"
+    >
       <button
         type="button"
         onClick={() => onChange(Math.max(1, page - 1))}
         disabled={page <= 1}
-        className="px-sm py-xs rounded-lg border disabled:opacity-40"
+        className="px-sm py-xs rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-40"
         style={{ borderColor: "var(--border)" }}
       >
         Prev
@@ -350,11 +388,11 @@ function Pagination({ meta, page, onChange }: PaginationProps) {
         type="button"
         onClick={() => onChange(Math.min(meta.totalPages, page + 1))}
         disabled={page >= meta.totalPages}
-        className="px-sm py-xs rounded-lg border disabled:opacity-40"
+        className="px-sm py-xs rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-40"
         style={{ borderColor: "var(--border)" }}
       >
         Next
       </button>
-    </div>
+    </nav>
   );
 }

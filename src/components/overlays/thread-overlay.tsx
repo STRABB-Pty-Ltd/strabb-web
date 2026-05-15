@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import type { ThreadMessage } from "@/types/message";
@@ -41,9 +42,12 @@ export function ThreadOverlay({
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
   useClickOutside(panelRef, onClose, open);
+  // Side drawer: rails stay live, no Tab trap. App-shell handles Esc globally.
+  useFocusTrap(panelRef, { active: open, trap: false });
 
   // Cache the props that drive header + body so the panel keeps showing
   // the conversation that was just open through the slide-out animation.
@@ -80,6 +84,9 @@ export function ThreadOverlay({
           inset by --space-md to match canvas content padding from screen edges. */}
       <div
         ref={panelRef}
+        role="dialog"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.THREAD,
@@ -96,7 +103,9 @@ export function ThreadOverlay({
         <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-body text-highlight-10 font-semibold">{data.guestName}</h2>
+              <h2 id={titleId} className="text-body text-highlight-10 font-semibold">
+                {data.guestName}
+              </h2>
               <p className="text-body text-highlight-10">{data.listingName}</p>
               <p className="text-body text-highlight-10">
                 {data.checkIn} - {data.checkOut}
@@ -115,7 +124,7 @@ export function ThreadOverlay({
                 type="button"
                 onClick={onClose}
                 aria-label="Close thread"
-                className="p-xs text-highlight-10 hover:bg-neutral-30 rounded"
+                className="p-xs text-highlight-10 hover:bg-neutral-30 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 data-no-elevate
               >
                 <X size={18} />
@@ -131,7 +140,7 @@ export function ThreadOverlay({
               <div
                 className="px-sm py-base max-w-[80%]"
                 style={{
-                  backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--strabb-secondary)",
+                  backgroundColor: msg.isGuest ? "var(--neutral-30)" : "var(--highlight-10)",
                   color: msg.isGuest ? "var(--highlight-10)" : "var(--surface-60)",
                   borderRadius: msg.isGuest
                     ? "var(--radius-lg) var(--radius-lg) var(--radius-lg) 0"
@@ -160,21 +169,21 @@ export function ThreadOverlay({
             type="button"
             className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
-            <Flag size={12} />
+            <Flag size={12} aria-hidden="true" />
             Flag
           </button>
           <button
             type="button"
             className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
-            <TicketPlus size={12} />
+            <TicketPlus size={12} aria-hidden="true" />
             Create Ticket
           </button>
           <button
             type="button"
             className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
-            <Archive size={12} />
+            <Archive size={12} aria-hidden="true" />
             Archive
           </button>
         </div>
@@ -190,15 +199,16 @@ export function ThreadOverlay({
             placeholder="Type a message..."
             aria-label="Compose reply"
             className="p-base text-body flex-1 resize-none rounded-lg border"
+            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
             rows={2}
           />
           <button
             type="button"
             aria-label="Send reply"
-            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
-            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
           >
-            <Send size={18} />
+            <Send size={18} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -61,41 +61,48 @@ export function NotificationsSection() {
       </div>
 
       <div className="space-y-sm">
-        {toggles.map((t) => (
-          <div
-            key={t.id}
-            className="px-sm py-sm flex items-center justify-between rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <div>
-              <p className="text-body text-highlight-10 font-medium">{t.label}</p>
-              <p className="text-body text-highlight-10">{t.description}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => toggle(t.id)}
-              className="h-md relative w-lg rounded-full transition-colors"
-              style={{
-                backgroundColor: settings[t.id] ? "var(--strabb-secondary)" : "var(--neutral-30)",
-              }}
+        {toggles.map((t) => {
+          const labelId = `notify-${t.id}-label`;
+          const checked = settings[t.id] ?? false;
+          return (
+            <div
+              key={t.id}
+              className="px-sm py-sm flex items-center justify-between rounded-lg border"
+              style={{ borderColor: "var(--border)" }}
             >
-              {/* Toggle thumb pixel positions (18 / 2) are design-locked sub-token values. */}
-              <span
-                className="top-xs h-md bg-surface-60 absolute w-md rounded-full shadow transition-transform"
+              <div>
+                <p id={labelId} className="text-body text-highlight-10 font-medium">
+                  {t.label}
+                </p>
+                <p className="text-body text-highlight-10">{t.description}</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={checked}
+                aria-labelledby={labelId}
+                onClick={() => toggle(t.id)}
+                className="h-md relative w-lg rounded-full transition-colors outline-none before:absolute before:top-1/2 before:left-1/2 before:h-[var(--touch-target-min)] before:w-[var(--touch-target-min)] before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 style={{
-                  left: settings[t.id] ? 18 : 2,
+                  backgroundColor: checked ? "var(--highlight-10)" : "var(--neutral-30)",
                 }}
-              />
-            </button>
-          </div>
-        ))}
+              >
+                {/* Thumb 14x14 with locked left positions (2 / 18) gives symmetric 2px margins inside a w-lg (34px) track. */}
+                <span
+                  className="bg-surface-60 absolute top-[3px] h-[14px] w-[14px] rounded-full shadow transition-transform"
+                  style={{ left: checked ? 18 : 2 }}
+                />
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       <button
         type="button"
         onClick={handleSave}
         className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-        style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
         Save Preferences
       </button>

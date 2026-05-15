@@ -7,6 +7,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 
 interface ChartContainerProps {
   title?: string;
+  // Plain-language summary of what the chart shows. Rendered as
+  // role="img" + aria-label on the chart's SVG wrapper so screen-reader
+  // users get an equivalent to the visual data (WCAG 1.1.1).
+  summary?: string;
   loading?: boolean;
   error?: string | null;
   empty?: boolean;
@@ -16,6 +20,7 @@ interface ChartContainerProps {
 
 export function ChartContainer({
   title,
+  summary,
   loading = false,
   error = null,
   empty = false,
@@ -38,7 +43,7 @@ export function ChartContainer({
     return (
       <div
         className="flex items-center justify-center rounded-xl"
-        style={{ minHeight, backgroundColor: "var(--surface-card)" }}
+        style={{ minHeight, backgroundColor: "var(--neutral-30)" }}
       >
         <p className="text-body" style={{ color: "var(--status-issues)" }}>
           {error}
@@ -51,7 +56,7 @@ export function ChartContainer({
     return (
       <div
         className="flex items-center justify-center rounded-xl"
-        style={{ minHeight, backgroundColor: "var(--surface-card)" }}
+        style={{ minHeight, backgroundColor: "var(--neutral-30)" }}
       >
         <EmptyState
           icon={BarChart3}
@@ -63,15 +68,17 @@ export function ChartContainer({
   }
 
   return (
-    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--surface-card)" }}>
+    <div className="p-md rounded-xl" style={{ backgroundColor: "var(--neutral-30)" }}>
       {title && (
         <h3 className="mb-sm text-body font-semibold" style={{ color: "var(--highlight-10)" }}>
           {title}
         </h3>
       )}
-      <ResponsiveContainer width="100%" height={minHeight}>
-        {children as React.ReactElement}
-      </ResponsiveContainer>
+      <div role={summary ? "img" : undefined} aria-label={summary}>
+        <ResponsiveContainer width="100%" height={minHeight}>
+          {children as React.ReactElement}
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

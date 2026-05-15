@@ -34,7 +34,11 @@ export class ErrorBoundary extends React.Component<
       return (
         <div className="p-lg flex flex-1 items-center justify-center">
           <div className="max-w-md text-center">
-            <AlertTriangle size={55} className="mb-md text-highlight-10 mx-auto" />
+            <AlertTriangle
+              size={55}
+              className="mb-md text-highlight-10 mx-auto"
+              aria-hidden="true"
+            />
             <h2 className="mb-base text-subheading font-semibold">Something went wrong</h2>
             <p className="mb-md text-body text-highlight-10">
               An unexpected error occurred. Try reloading this section.
@@ -54,7 +58,7 @@ export class ErrorBoundary extends React.Component<
               onClick={this.handleReload}
               className="gap-base px-sm py-base text-body bg-primary text-primary-foreground hover:bg-primary/80 inline-flex items-center rounded-lg font-medium"
             >
-              <RefreshCw size={13} />
+              <RefreshCw size={13} aria-hidden="true" />
               Reload
             </button>
           </div>

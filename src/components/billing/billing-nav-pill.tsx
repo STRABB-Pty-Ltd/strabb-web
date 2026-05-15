@@ -32,9 +32,9 @@ const toneStyles: Record<Tone, { bg: string; text: string; border: string }> = {
     // OPPOSITE to highlight-10 and stays readable in both themes.
     // Don't switch to --text-on-color here: that token flips the same way
     // as highlight-10 and would render warm-white-on-warm-white in dark mode.
-    bg: "var(--strabb-secondary)",
+    bg: "var(--highlight-10)",
     text: "var(--surface-60)",
-    border: "var(--strabb-secondary)",
+    border: "var(--highlight-10)",
   },
 };
 

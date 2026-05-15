@@ -39,7 +39,7 @@ export function DataTable<T>({
         <thead>
           <tr className="bg-muted/50 border-b">
             {columns.map((col) => (
-              <th key={String(col.key)} className="px-sm py-sm text-left font-medium">
+              <th key={String(col.key)} scope="col" className="px-sm py-sm text-left font-medium">
                 {col.header}
               </th>
             ))}

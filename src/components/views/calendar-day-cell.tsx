@@ -111,7 +111,7 @@ export function CalendarDayCell({
         className={`text-body ${today ? "font-bold" : "font-medium"}`}
         style={{
           color: today
-            ? "var(--strabb-secondary)"
+            ? "var(--highlight-10)"
             : isCurrentMonth
               ? "var(--highlight-10)"
               : "var(--highlight-10)",

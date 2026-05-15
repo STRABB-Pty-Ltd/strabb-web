@@ -3,59 +3,8 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 
+import { mockTeamMembers } from "@/lib/mock-team";
 import { useAppStore } from "@/stores/app-store";
-
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: "admin" | "manager" | "cleaner" | "viewer";
-  lastLogin: string;
-  status: "active" | "invited" | "inactive";
-}
-
-const mockMembers: TeamMember[] = [
-  {
-    id: "u-1",
-    name: "Will Flynn",
-    email: "will@strabb.com",
-    role: "admin",
-    lastLogin: "2026-04-14",
-    status: "active",
-  },
-  {
-    id: "u-2",
-    name: "Chris Taylor",
-    email: "chris@strabb.com",
-    role: "admin",
-    lastLogin: "2026-04-13",
-    status: "active",
-  },
-  {
-    id: "u-3",
-    name: "Maria Santos",
-    email: "maria.s@cleanteam.com",
-    role: "cleaner",
-    lastLogin: "2026-04-12",
-    status: "active",
-  },
-  {
-    id: "u-4",
-    name: "Tom Williams",
-    email: "tom.w@cleanteam.com",
-    role: "cleaner",
-    lastLogin: "2026-04-10",
-    status: "active",
-  },
-  {
-    id: "u-5",
-    name: "Jen Liu",
-    email: "jen.l@cleanteam.com",
-    role: "cleaner",
-    lastLogin: "2026-04-11",
-    status: "active",
-  },
-];
 
 const roleBadgeColors: Record<string, { bg: string; text: string }> = {
   admin: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
@@ -69,6 +18,9 @@ const statusColors: Record<string, string> = {
   invited: "var(--status-danger)",
   inactive: "var(--highlight-10)",
 };
+
+const headerCellClass =
+  "px-sm py-sm text-body text-highlight-10 text-left font-semibold tracking-wide uppercase whitespace-nowrap";
 
 export function TeamSection() {
   const addToast = useAppStore((s) => s.addToast);
@@ -97,9 +49,9 @@ export function TeamSection() {
           type="button"
           onClick={() => setShowInvite(true)}
           className="gap-xs px-sm py-base text-body text-surface-60 flex items-center rounded-lg font-medium"
-          style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
         >
-          <Plus size={16} />
+          <Plus size={16} aria-hidden="true" />
           Invite Member
         </button>
       </div>
@@ -110,8 +62,14 @@ export function TeamSection() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex-1">
-            <label className="mb-xs text-body text-highlight-10 block font-medium">Email</label>
+            <label
+              htmlFor="team-invite-email"
+              className="mb-xs text-body text-highlight-10 block font-medium"
+            >
+              Email
+            </label>
             <input
+              id="team-invite-email"
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
@@ -122,8 +80,14 @@ export function TeamSection() {
             />
           </div>
           <div>
-            <label className="mb-xs text-body text-highlight-10 block font-medium">Role</label>
+            <label
+              htmlFor="team-invite-role"
+              className="mb-xs text-body text-highlight-10 block font-medium"
+            >
+              Role
+            </label>
             <select
+              id="team-invite-role"
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
               className="px-sm py-base text-body bg-surface-60 rounded-sm border"
@@ -139,7 +103,7 @@ export function TeamSection() {
             type="button"
             onClick={handleInvite}
             className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-            style={{ backgroundColor: "var(--strabb-secondary)", color: "var(--surface-60)" }}
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
           >
             Send Invite
           </button>
@@ -154,55 +118,79 @@ export function TeamSection() {
         </div>
       )}
 
-      {/* Column widths w-[233px] and w-[89px] are arbitrary values on the Fibonacci ladder
-          (5/8/13/21/34/55/89/144/233/...) - kept as inline arbitrary widths.
-          tracking-wide on the header row: known design exception, no project letter-spacing token. */}
-      <div className="overflow-hidden rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <div className="text-body bg-neutral-30 text-highlight-10 flex border-b font-semibold tracking-wide uppercase">
-          <div className="px-sm py-sm flex-1">Name</div>
-          <div className="px-sm py-sm w-[233px]">Email</div>
-          <div className="px-sm py-sm w-[89px]">Role</div>
-          <div className="px-sm py-sm w-[89px]">Last Login</div>
-          <div className="px-sm py-sm w-[89px]">Status</div>
-        </div>
-        {mockMembers.map((member) => {
-          const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
-          return (
-            <div
-              key={member.id}
-              className="text-body flex items-center border-b"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <div className="px-sm py-sm text-highlight-10 flex-1 font-medium">{member.name}</div>
-              <div className="px-sm py-sm text-highlight-10 w-[233px]">{member.email}</div>
-              <div className="px-sm py-sm w-[89px]">
-                <span
-                  className="px-base py-xs text-body rounded-md font-medium capitalize"
-                  style={{ backgroundColor: badge.bg, color: badge.text }}
+      <div
+        className="w-fit max-w-full overflow-x-auto rounded-lg border"
+        style={{ borderColor: "var(--border)" }}
+      >
+        <table className="text-body">
+          <thead>
+            <tr className="bg-neutral-30 border-b" style={{ borderColor: "var(--border)" }}>
+              <th scope="col" className={headerCellClass}>
+                Name
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Role
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Email
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Phone
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Last Login
+              </th>
+              <th scope="col" className={headerCellClass}>
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {mockTeamMembers.map((member) => {
+              const badge = roleBadgeColors[member.role] ?? roleBadgeColors.viewer;
+              return (
+                <tr
+                  key={member.id}
+                  className="border-b last:border-b-0"
+                  style={{ borderColor: "var(--border)" }}
                 >
-                  {member.role}
-                </span>
-              </div>
-              <div className="px-sm py-sm text-body text-highlight-10 w-[89px]">
-                {member.lastLogin}
-              </div>
-              <div className="px-sm py-sm w-[89px]">
-                <span
-                  className="gap-xs text-body flex items-center"
-                  style={{ color: statusColors[member.status] }}
-                >
-                  <span
-                    className="h-xs w-xs rounded-full"
-                    style={{
-                      backgroundColor: statusColors[member.status],
-                    }}
-                  />
-                  {member.status}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+                  <td className="px-sm py-sm text-highlight-10 font-medium whitespace-nowrap">
+                    {member.name}
+                  </td>
+                  <td className="px-sm py-sm whitespace-nowrap">
+                    <span
+                      className="px-base py-xs text-body rounded-md font-medium capitalize"
+                      style={{ backgroundColor: badge.bg, color: badge.text }}
+                    >
+                      {member.role}
+                    </span>
+                  </td>
+                  <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
+                    {member.email}
+                  </td>
+                  <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
+                    {member.phone ?? ""}
+                  </td>
+                  <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
+                    {member.lastLogin}
+                  </td>
+                  <td className="px-sm py-sm whitespace-nowrap">
+                    <span
+                      className="gap-xs flex items-center"
+                      style={{ color: statusColors[member.status] }}
+                    >
+                      <span
+                        className="h-xs w-xs rounded-full"
+                        style={{ backgroundColor: statusColors[member.status] }}
+                      />
+                      {member.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

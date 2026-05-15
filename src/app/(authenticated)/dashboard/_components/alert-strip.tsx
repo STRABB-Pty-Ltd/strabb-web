@@ -69,14 +69,14 @@ export function AlertStrip({ alerts }: AlertStripProps) {
             className="gap-sm px-md py-sm col-span-3 flex items-center rounded-lg transition-shadow hover:shadow-md"
             style={{ backgroundColor: bg }}
           >
-            <Icon size={16} style={{ color: accent }} />
+            <Icon size={16} style={{ color: accent }} aria-hidden="true" />
             <span className="text-body flex-1" style={{ color: "var(--highlight-10)" }}>
               {alert.description}
             </span>
             <button
               type="button"
               onClick={() => handleView(alert)}
-              className="text-body cursor-pointer font-semibold whitespace-nowrap"
+              className="text-body cursor-pointer rounded font-semibold whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ color: accent }}
               data-no-elevate
             >
@@ -86,10 +86,11 @@ export function AlertStrip({ alerts }: AlertStripProps) {
               type="button"
               onClick={() => setDismissed((d) => [...d, alert.id])}
               aria-label="Dismiss alert"
+              className="rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ color: "var(--text-secondary)" }}
               data-no-elevate
             >
-              <X size={14} />
+              <X size={14} aria-hidden="true" />
             </button>
           </div>
         );
