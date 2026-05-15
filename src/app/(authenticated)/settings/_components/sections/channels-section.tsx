@@ -73,8 +73,11 @@ export function ChannelsSection() {
   return (
     <div className="space-y-md">
       <div>
-        <h2 className="text-subheading text-highlight-10 font-semibold">Channels</h2>
-        <p className="text-body text-highlight-10">Per-platform sync and pricing settings.</p>
+        <h2 className="text-subheading text-highlight-10 font-semibold">Channel sync</h2>
+        <p className="text-body text-highlight-10">
+          How often each OTA polls and what pricing rule it inherits. Channel manager and other
+          third-party software connections live under Integrations.
+        </p>
       </div>
 
       <div className="space-y-sm">
