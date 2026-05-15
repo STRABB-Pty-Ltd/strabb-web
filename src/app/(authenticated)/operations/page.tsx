@@ -1,6 +1,5 @@
 "use client";
 
-import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCleaningTasks } from "@/hooks/use-cleaning";
 import { useAppStore } from "@/stores/app-store";
@@ -36,8 +35,6 @@ export default function OperationsPage() {
       {active === "overview" && <OperationsOverviewView tasks={tasks ?? []} />}
       {active === "cleaning" && <OperationsCleansView tasks={tasks ?? []} />}
       {active === "tickets" && <OperationsTicketsView />}
-
-      <ShoppingListPopup />
     </div>
   );
 }

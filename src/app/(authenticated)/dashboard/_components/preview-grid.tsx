@@ -86,9 +86,15 @@ function ShoppingListPanel() {
             </div>
           ))}
           {needed.length > top.length && (
-            <p className="text-body pt-xs" style={{ color: "var(--text-secondary)" }}>
+            <button
+              type="button"
+              onClick={openShoppingListPopup}
+              className="text-body pt-xs rounded text-left outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              style={{ color: "var(--text-secondary)" }}
+              data-no-elevate
+            >
               {needed.length - top.length} more
-            </p>
+            </button>
           )}
         </div>
       )}

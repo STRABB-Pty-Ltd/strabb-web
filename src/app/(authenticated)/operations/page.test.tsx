@@ -32,9 +32,6 @@ vi.mock("./_components/operations-cleans-view", () => ({
 vi.mock("./_components/operations-tickets-view", () => ({
   OperationsTicketsView: () => <div data-testid="tickets-view" />,
 }));
-vi.mock("@/components/overlays/shopping-list-popup", () => ({
-  ShoppingListPopup: () => <div data-testid="shopping-list-popup" />,
-}));
 
 import OperationsPage from "./page";
 
@@ -81,10 +78,4 @@ describe("OperationsPage", () => {
     expect(screen.getByTestId("tickets-view")).toBeInTheDocument();
   });
 
-  it("always renders the shopping list popup at the page root", () => {
-    storeMock.mockReturnValue(storeFor(["overview"]));
-    tasksMock.mockReturnValue({ data: [], isLoading: false });
-    render(<OperationsPage />);
-    expect(screen.getByTestId("shopping-list-popup")).toBeInTheDocument();
-  });
 });
