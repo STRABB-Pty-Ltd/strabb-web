@@ -37,11 +37,11 @@ function SectionPanel({
 }: SectionPanelProps) {
   return (
     <section
-      className="p-md flex min-w-0 flex-1 flex-col rounded-xl"
+      className="px-sm py-base flex min-w-0 flex-1 flex-col rounded-xl"
       style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <h3
-        className="mb-sm text-subheading text-center font-semibold"
+        className="mb-xs text-subheading text-center font-semibold"
         style={{ color: "var(--highlight-10)" }}
       >
         {title}
@@ -67,7 +67,7 @@ function SectionPanel({
 function SubColumnHeader({ label, count }: { label: string; count: number }) {
   return (
     <div
-      className="gap-base px-base py-base flex items-center border-b"
+      className="gap-base px-base py-xs flex items-center border-b"
       style={{ borderColor: "var(--border)" }}
     >
       <span className="text-body text-highlight-10 font-semibold">{label}</span>
