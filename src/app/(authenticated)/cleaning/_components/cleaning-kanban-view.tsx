@@ -41,7 +41,7 @@ function SectionPanel({
       style={{ backgroundColor: "var(--neutral-30)" }}
     >
       <h3
-        className="mb-sm text-subheading font-semibold"
+        className="mb-sm text-subheading text-center font-semibold"
         style={{ color: "var(--highlight-10)" }}
       >
         {title}
