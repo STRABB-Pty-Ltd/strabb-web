@@ -63,7 +63,7 @@ export function AlertStrip({ alerts }: AlertStripProps) {
         router.push("/operations");
         return;
       case "sync":
-        router.push("/settings/admin");
+        router.push("/settings");
         return;
     }
   };

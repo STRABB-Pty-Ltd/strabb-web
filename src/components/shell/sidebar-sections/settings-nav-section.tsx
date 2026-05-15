@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Bell,
   CreditCard,
   Globe,
   Home,
@@ -11,9 +10,7 @@ import {
   Radio,
   RefreshCw,
   Settings,
-  ShieldCheck,
   Sparkles,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -22,9 +19,7 @@ import { useAppStore } from "@/stores/app-store";
 
 const sections = [
   { id: "general", label: "General", icon: Settings },
-  { id: "team", label: "Team", icon: Users },
   { id: "billing", label: "Billing", icon: CreditCard },
-  { id: "notifications", label: "Notifications", icon: Bell },
   { id: "phone", label: "Phone", icon: Phone },
   { id: "inbox", label: "Inbox", icon: Inbox },
   { id: "integrations", label: "Integrations", icon: Globe },
@@ -37,11 +32,10 @@ export function SettingsNavSection() {
   const setSection = useAppStore((s) => s.setSection);
   const pathname = usePathname();
   const router = useRouter();
-  const onAdminRoute = pathname?.startsWith("/settings/admin") ?? false;
   const onSyncLogsRoute = pathname?.startsWith("/settings/sync-logs") ?? false;
   const onShareableLinksRoute = pathname?.startsWith("/settings/shareable-links") ?? false;
   const onListingsRoute = pathname?.startsWith("/settings/listings") ?? false;
-  const onSubRoute = onAdminRoute || onSyncLogsRoute || onShareableLinksRoute || onListingsRoute;
+  const onSubRoute = onSyncLogsRoute || onShareableLinksRoute || onListingsRoute;
 
   const handleSectionClick = (id: string) => {
     setSection(id);
@@ -71,18 +65,6 @@ export function SettingsNavSection() {
             </button>
           );
         })}
-        <Link
-          href="/settings/admin"
-          aria-current={onAdminRoute ? "page" : undefined}
-          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-          style={{
-            backgroundColor: onAdminRoute ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: onAdminRoute ? "var(--surface-60)" : "var(--highlight-10)",
-          }}
-        >
-          <ShieldCheck size={14} aria-hidden="true" />
-          Admin
-        </Link>
         <Link
           href="/settings/sync-logs"
           aria-current={onSyncLogsRoute ? "page" : undefined}

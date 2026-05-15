@@ -38,12 +38,12 @@ describe("SettingsNavSection", () => {
     pathnameMock.mockReturnValue("/settings");
   });
 
-  it("renders all section buttons plus the Admin link", () => {
+  it("renders all section buttons plus the sub-route links", () => {
     render(<SettingsNavSection />);
     expect(screen.getByRole("button", { name: /general/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /phone/i })).toBeInTheDocument();
-    const adminLink = screen.getByRole("link", { name: /admin/i });
-    expect(adminLink).toHaveAttribute("href", "/settings/admin");
+    const syncLogsLink = screen.getByRole("link", { name: /sync logs/i });
+    expect(syncLogsLink).toHaveAttribute("href", "/settings/sync-logs");
   });
 
   it("clicking a section on /settings does not navigate, only updates state", async () => {
@@ -53,17 +53,20 @@ describe("SettingsNavSection", () => {
     expect(pushMock).not.toHaveBeenCalled();
   });
 
-  it("clicking a section while on /settings/admin navigates back to /settings", async () => {
-    pathnameMock.mockReturnValue("/settings/admin");
+  it("clicking a section while on /settings/sync-logs navigates back to /settings", async () => {
+    pathnameMock.mockReturnValue("/settings/sync-logs");
     render(<SettingsNavSection />);
     await userEvent.click(screen.getByRole("button", { name: /phone/i }));
     expect(setSectionMock).toHaveBeenCalledWith("phone");
     expect(pushMock).toHaveBeenCalledWith("/settings");
   });
 
-  it("Admin link is marked aria-current when on /settings/admin", () => {
-    pathnameMock.mockReturnValue("/settings/admin");
+  it("Sync logs link is marked aria-current when on /settings/sync-logs", () => {
+    pathnameMock.mockReturnValue("/settings/sync-logs");
     render(<SettingsNavSection />);
-    expect(screen.getByRole("link", { name: /admin/i })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: /sync logs/i })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 });
