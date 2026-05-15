@@ -58,6 +58,11 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   const apiClient = useApiClient();
   const params = new URLSearchParams();
   selectedListings.forEach((id) => params.append("listing_ids", id));
+  // Request the API's max so the overview kanban doesn't lose actionable
+  // cleans to the default page_size=20 cutoff. ORDER BY scheduled_date DESC
+  // puts future-pending first, so past confirmed cleans get paginated off
+  // unless we ask for more.
+  params.set("page_size", "100");
 
   const statusMap: Record<string, string> = {
     confirmed: "confirmed",
