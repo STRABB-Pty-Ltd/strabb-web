@@ -264,7 +264,7 @@ function UpcomingBookings({ data }: { data: PreviewData["upcomingBookings"] }) {
 function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
   const router = useRouter();
 
-  const handleViewAll = () => router.push("/cleaning");
+  const handleViewAll = () => router.push("/operations");
 
   return (
     <div

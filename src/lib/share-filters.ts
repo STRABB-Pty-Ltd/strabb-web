@@ -1,6 +1,6 @@
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
 
-export type ShareableMenu = "dashboard" | "calendar" | "messaging" | "cleaning" | "reporting";
+export type ShareableMenu = "dashboard" | "calendar" | "messaging" | "operations" | "reporting";
 
 export interface ShareFilterContext {
   windowSize: string;

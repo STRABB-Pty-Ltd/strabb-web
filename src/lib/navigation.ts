@@ -22,7 +22,7 @@ export const topNavItems: TopNavItem[] = [
   { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { id: "calendar", label: "Calendar", href: "/calendar", icon: CalendarDays },
   { id: "messaging", label: "Messaging", href: "/messaging", icon: MessageSquare },
-  { id: "cleaning", label: "Cleaning", href: "/cleaning", icon: Sparkles },
+  { id: "operations", label: "Operations", href: "/operations", icon: Sparkles },
   { id: "reporting", label: "Reporting", href: "/reporting", icon: BarChart3 },
 ];
 

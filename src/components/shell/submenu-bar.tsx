@@ -27,7 +27,7 @@ export function SubmenuBar() {
   const dashboardCompare = useAppStore((s) => s.dashboard.compare);
   const calendarSubmenu = useAppStore((s) => s.calendar.submenu);
   const messagingSubmenu = useAppStore((s) => s.messaging.submenu);
-  const cleaningSubmenu = useAppStore((s) => s.cleaning.submenu);
+  const operationsSubmenu = useAppStore((s) => s.operations.submenu);
   const reportingSubmenu = useAppStore((s) => s.reporting.submenu);
 
   const [moreOpen, setMoreOpen] = useState(false);
@@ -40,7 +40,7 @@ export function SubmenuBar() {
     dashboard: dashboardSubmenu,
     calendar: calendarSubmenu,
     messaging: messagingSubmenu,
-    cleaning: cleaningSubmenu,
+    operations: operationsSubmenu,
     reporting: reportingSubmenu,
   }[currentPage];
 
@@ -69,8 +69,13 @@ export function SubmenuBar() {
     // Forced on every click - the user cannot stick on a non-default view
     // for a given chip; this is intentional per the chip-driven layout
     // (Overview = wide-zoom view, filtered chips = focused list/grid).
-    if ((page === "messaging" || page === "cleaning") && chip.behavior !== "nav") {
+    if (page === "messaging" && chip.behavior !== "nav") {
       setView(page, chip.id === "overview" ? "kanban" : "list");
+    }
+    if (page === "operations" && chip.behavior !== "nav") {
+      // Operations is kanban for every chip; the three views differ in shape,
+      // not in list-vs-grid, so keep the view dimension constant.
+      setView(page, "kanban");
     }
     if (page === "calendar" && chip.behavior !== "nav") {
       const calendarViewByChip: Record<string, "gantt" | "calendar" | "list"> = {
@@ -83,7 +88,7 @@ export function SubmenuBar() {
       setView(page, calendarViewByChip[chip.id] ?? "gantt");
     }
 
-    // If we're on a nav-chip sub-route (e.g. /cleaning/tickets) and the user
+    // If we're on a nav-chip sub-route (e.g. /settings/admin) and the user
     // clicks any non-nav chip, route back to the page root so the nav chip
     // deactivates and the clicked chip becomes the only active one.
     if (chip.behavior !== "nav" && onNavSubRoute) {

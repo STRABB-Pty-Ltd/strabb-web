@@ -24,7 +24,7 @@ export function ShoppingListPopup() {
   const titleId = useId();
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
-  const boughtItems = useAppStore((s) => s.cleaning.boughtItems);
+  const boughtItems = useAppStore((s) => s.operations.boughtItems);
   const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { data: shoppingItemList = [] } = useShoppingList(selectedListings);

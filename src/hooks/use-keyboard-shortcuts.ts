@@ -10,7 +10,7 @@ const pageShortcuts: Record<string, { page: PageId; href: string }> = {
   "1": { page: "dashboard", href: "/dashboard" },
   "2": { page: "calendar", href: "/calendar" },
   "3": { page: "messaging", href: "/messaging" },
-  "4": { page: "cleaning", href: "/cleaning" },
+  "4": { page: "operations", href: "/operations" },
   "5": { page: "reporting", href: "/reporting" },
 };
 

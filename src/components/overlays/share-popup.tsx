@@ -54,7 +54,7 @@ export function SharePopup() {
   const customRange = useAppStore((s) => s.customRange);
   const dashboard = useAppStore((s) => s.dashboard);
   const calendar = useAppStore((s) => s.calendar);
-  const cleaning = useAppStore((s) => s.cleaning);
+  const operations = useAppStore((s) => s.operations);
   const reporting = useAppStore((s) => s.reporting);
   const addToast = useAppStore((s) => s.addToast);
   const createShare = useCreateShare();
@@ -71,15 +71,15 @@ export function SharePopup() {
           return { windowSize: dashboard.windowSize, anchor: dashboard.anchor };
         case "calendar":
           return { windowSize: calendar.windowSize, anchor: calendar.anchor };
-        case "cleaning":
-          return { windowSize: cleaning.windowSize, anchor: cleaning.anchor };
+        case "operations":
+          return { windowSize: operations.windowSize, anchor: operations.anchor };
         case "reporting":
           return { windowSize: reporting.windowSize, anchor: reporting.anchor };
         default:
           return { windowSize: "month", anchor: null };
       }
     },
-    [dashboard, calendar, cleaning, reporting],
+    [dashboard, calendar, operations, reporting],
   );
 
   const ensureShare = useCallback(async () => {

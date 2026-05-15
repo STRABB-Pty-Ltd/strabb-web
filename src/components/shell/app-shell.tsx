@@ -28,7 +28,7 @@ const validPages: PageId[] = [
   "dashboard",
   "calendar",
   "messaging",
-  "cleaning",
+  "operations",
   "reporting",
   "settings",
 ];
@@ -37,7 +37,7 @@ const pageLabels: Record<PageId, string> = {
   dashboard: "Dashboard",
   calendar: "Calendar",
   messaging: "Messaging",
-  cleaning: "Cleaning",
+  operations: "Operations",
   reporting: "Reporting",
   settings: "Settings",
 };

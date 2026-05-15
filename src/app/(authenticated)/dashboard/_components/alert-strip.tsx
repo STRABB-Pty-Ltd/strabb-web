@@ -51,15 +51,16 @@ export function AlertStrip({ alerts }: AlertStripProps) {
         router.push("/messaging");
         return;
       case "unscheduled":
-        setSubmenu("cleaning", ["pending"]);
-        router.push("/cleaning");
+        setSubmenu("operations", ["cleaning"]);
+        router.push("/operations");
         return;
       case "past-due-clean":
-        setSubmenu("cleaning", ["urgent"]);
-        router.push("/cleaning");
+        setSubmenu("operations", ["cleaning"]);
+        router.push("/operations");
         return;
       case "ticket":
-        router.push("/cleaning/tickets");
+        setSubmenu("operations", ["tickets"]);
+        router.push("/operations");
         return;
       case "sync":
         router.push("/settings/admin");

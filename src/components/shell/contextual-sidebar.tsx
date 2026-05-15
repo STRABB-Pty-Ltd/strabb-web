@@ -17,9 +17,9 @@ import { ViewSwitcher } from "./sidebar-sections/view-switcher";
 const showViewSwitcher = (p: PageId) => p === "calendar";
 const showListingFilter = (p: PageId) => p !== "settings";
 const showTimeframe = (p: PageId) =>
-  p === "dashboard" || p === "calendar" || p === "cleaning" || p === "reporting";
+  p === "dashboard" || p === "calendar" || p === "operations" || p === "reporting";
 const showChannelFilter = (p: PageId) => p === "messaging";
-const showShoppingList = (p: PageId) => p === "cleaning";
+const showShoppingList = (p: PageId) => p === "operations";
 const showSavedReports = (p: PageId) => p === "reporting";
 const showActions = (p: PageId) => p !== "settings";
 const showSettingsNav = (p: PageId) => p === "settings";

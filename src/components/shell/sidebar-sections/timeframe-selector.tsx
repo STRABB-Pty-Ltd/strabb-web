@@ -20,7 +20,7 @@ const timeframeOptions: Record<string, TimeframeOption[]> = {
     { id: "fortnight", label: "Fortnight" },
     { id: "month", label: "Month" },
   ],
-  cleaning: [
+  operations: [
     { id: "today", label: "Today" },
     { id: "week", label: "Week" },
     { id: "fortnight", label: "Fortnight" },
@@ -48,7 +48,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
   const openTimeframePopup = useAppStore((s) => s.openTimeframePopup);
   const dashboardWs = useAppStore((s) => s.dashboard.windowSize);
   const calendarWs = useAppStore((s) => s.calendar.windowSize);
-  const cleaningWs = useAppStore((s) => s.cleaning.windowSize);
+  const operationsWs = useAppStore((s) => s.operations.windowSize);
   const reportingWs = useAppStore((s) => s.reporting.windowSize);
 
   const options = timeframeOptions[page];
@@ -57,12 +57,12 @@ export function TimeframeSelector({ page }: { page: PageId }) {
   const wsByPage: Record<string, string> = {
     dashboard: dashboardWs,
     calendar: calendarWs,
-    cleaning: cleaningWs,
+    operations: operationsWs,
     reporting: reportingWs,
   };
   const currentWs = wsByPage[page] ?? "";
   const activeChipId =
-    page === "cleaning" ? (windowSizeToChipId[currentWs] ?? currentWs) : currentWs;
+    page === "operations" ? (windowSizeToChipId[currentWs] ?? currentWs) : currentWs;
 
   return (
     <div style={{ padding: "var(--space-sm)" }}>
@@ -85,7 +85,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 setTimeframe(
-                  page as "dashboard" | "calendar" | "cleaning" | "reporting",
+                  page as "dashboard" | "calendar" | "operations" | "reporting",
                   targetWindowSize,
                   null,
                 );
@@ -119,7 +119,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
             const rect = e.currentTarget.getBoundingClientRect();
             const wasCustom = currentWs === "custom";
             setTimeframe(
-              page as "dashboard" | "calendar" | "cleaning" | "reporting",
+              page as "dashboard" | "calendar" | "operations" | "reporting",
               "custom",
               null,
             );

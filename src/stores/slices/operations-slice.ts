@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 
-export interface CleaningPageState {
+export interface OperationsPageState {
   view: "kanban" | "list";
   windowSize: string;
   anchor: string | null;
@@ -11,18 +11,18 @@ export interface CleaningPageState {
   boughtItems: string[];
 }
 
-export interface CleaningSlice {
-  cleaning: CleaningPageState;
-  setCleaningListSort: (sort: string) => void;
+export interface OperationsSlice {
+  operations: OperationsPageState;
+  setOperationsListSort: (sort: string) => void;
   toggleShoppingDrawer: () => void;
   toggleBoughtItem: (id: string) => void;
 }
 
-export const createCleaningSlice: StateCreator<CleaningSlice, [], [], CleaningSlice> = (
+export const createOperationsSlice: StateCreator<OperationsSlice, [], [], OperationsSlice> = (
   set,
   get,
 ) => ({
-  cleaning: {
+  operations: {
     view: "kanban",
     windowSize: "week",
     anchor: null,
@@ -32,19 +32,19 @@ export const createCleaningSlice: StateCreator<CleaningSlice, [], [], CleaningSl
     shoppingDrawerOpen: false,
     boughtItems: [],
   },
-  setCleaningListSort: (sort) => set({ cleaning: { ...get().cleaning, listSort: sort } }),
+  setOperationsListSort: (sort) => set({ operations: { ...get().operations, listSort: sort } }),
   toggleShoppingDrawer: () =>
     set({
-      cleaning: {
-        ...get().cleaning,
-        shoppingDrawerOpen: !get().cleaning.shoppingDrawerOpen,
+      operations: {
+        ...get().operations,
+        shoppingDrawerOpen: !get().operations.shoppingDrawerOpen,
       },
     }),
   toggleBoughtItem: (id) => {
-    const current = get().cleaning.boughtItems;
+    const current = get().operations.boughtItems;
     set({
-      cleaning: {
-        ...get().cleaning,
+      operations: {
+        ...get().operations,
         boughtItems: current.includes(id) ? current.filter((i) => i !== id) : [...current, id],
       },
     });

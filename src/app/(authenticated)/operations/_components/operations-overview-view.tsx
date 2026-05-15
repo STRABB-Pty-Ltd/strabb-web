@@ -10,71 +10,14 @@ import type { Ticket } from "@/types/ticket";
 import { useAppStore } from "@/stores/app-store";
 
 import { CleaningTaskCard } from "./cleaning-task-card";
+import { SectionPanel } from "./operations-section-panel";
 import { TicketKanbanCard } from "./ticket-kanban-card";
 
-interface CleaningKanbanViewProps {
+interface OperationsOverviewViewProps {
   tasks: CleaningTask[];
 }
 
-interface SectionPanelProps {
-  title: string;
-  pendingLabel?: string;
-  confirmedLabel?: string;
-  pendingCount: number;
-  confirmedCount: number;
-  pendingCards: React.ReactNode;
-  confirmedCards: React.ReactNode;
-}
-
-function SectionPanel({
-  title,
-  pendingLabel = "Pending",
-  confirmedLabel = "Confirmed",
-  pendingCount,
-  confirmedCount,
-  pendingCards,
-  confirmedCards,
-}: SectionPanelProps) {
-  return (
-    <section
-      className="px-sm py-base flex min-w-0 flex-1 flex-col rounded-xl"
-      style={{ backgroundColor: "var(--neutral-30)" }}
-    >
-      <h3
-        className="mb-xs text-subheading text-center font-semibold"
-        style={{ color: "var(--highlight-10)" }}
-      >
-        {title}
-      </h3>
-      <div className="gap-sm flex flex-1">
-        <div className="flex min-w-0 flex-1 flex-col">
-          <SubColumnHeader label={pendingLabel} count={pendingCount} />
-          <div className="gap-base pt-base flex flex-col">{pendingCards}</div>
-        </div>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <SubColumnHeader label={confirmedLabel} count={confirmedCount} />
-          <div className="gap-base pt-base flex flex-col">{confirmedCards}</div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SubColumnHeader({ label, count }: { label: string; count: number }) {
-  return (
-    <div
-      className="gap-base px-base py-xs flex items-center border-b"
-      style={{ borderColor: "var(--border)" }}
-    >
-      <span className="text-body text-highlight-10 font-semibold">{label}</span>
-      <span className="px-base py-xs text-body bg-surface-60 text-highlight-10 rounded-full font-medium">
-        {count}
-      </span>
-    </div>
-  );
-}
-
-export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
+export function OperationsOverviewView({ tasks }: OperationsOverviewViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
@@ -121,17 +64,37 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
     <div className="gap-sm flex min-h-full">
       <SectionPanel
         title="Tickets"
-        pendingCount={ticketPending.length}
-        confirmedCount={ticketConfirmed.length}
-        pendingCards={ticketPending.map(renderTicket)}
-        confirmedCards={ticketConfirmed.map(renderTicket)}
+        columns={[
+          {
+            id: "ticket-pending",
+            label: "Pending",
+            count: ticketPending.length,
+            cards: ticketPending.map(renderTicket),
+          },
+          {
+            id: "ticket-confirmed",
+            label: "Confirmed",
+            count: ticketConfirmed.length,
+            cards: ticketConfirmed.map(renderTicket),
+          },
+        ]}
       />
       <SectionPanel
         title="Cleaning"
-        pendingCount={cleanPending.length}
-        confirmedCount={cleanConfirmed.length}
-        pendingCards={cleanPending.map(renderTask)}
-        confirmedCards={cleanConfirmed.map(renderTask)}
+        columns={[
+          {
+            id: "clean-pending",
+            label: "Pending",
+            count: cleanPending.length,
+            cards: cleanPending.map(renderTask),
+          },
+          {
+            id: "clean-confirmed",
+            label: "Confirmed",
+            count: cleanConfirmed.length,
+            cards: cleanConfirmed.map(renderTask),
+          },
+        ]}
       />
     </div>
   );

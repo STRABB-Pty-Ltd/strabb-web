@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function PropertiesRedirect() {
-  redirect("/cleaning/tickets");
+  redirect("/operations");
 }

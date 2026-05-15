@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { type CalendarSlice, createCalendarSlice } from "./slices/calendar-slice";
-import { type CleaningSlice, createCleaningSlice } from "./slices/cleaning-slice";
+import { type OperationsSlice, createOperationsSlice } from "./slices/operations-slice";
 import { type DashboardSlice, createDashboardSlice } from "./slices/dashboard-slice";
 import { type ListingsSlice, createListingsSlice } from "./slices/listings-slice";
 import { type MessagingSlice, createMessagingSlice } from "./slices/messaging-slice";
@@ -11,19 +11,19 @@ import { type ReportingSlice, createReportingSlice } from "./slices/reporting-sl
 import { type SettingsSlice, createSettingsSlice } from "./slices/settings-slice";
 
 // Pages that support a view switcher
-type ViewablePage = "calendar" | "messaging" | "cleaning";
+type ViewablePage = "calendar" | "messaging" | "operations";
 
 // Pages that support a timeframe
-type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
+type TimeframePage = "dashboard" | "calendar" | "operations" | "reporting";
 
 // Pages that support submenu chips
-type SubmenuPage = "dashboard" | "calendar" | "messaging" | "cleaning" | "reporting";
+type SubmenuPage = "dashboard" | "calendar" | "messaging" | "operations" | "reporting";
 
 // Default windowSize applied when switching to (page, view). Views absent
 // from this map preserve whatever windowSize the page was already on.
 const viewDefaultWindowSize: Record<string, Record<string, string>> = {
   calendar: { gantt: "fortnight", calendar: "month" },
-  cleaning: { calendar: "month" },
+  operations: { calendar: "month" },
 };
 
 // Default view per page when freshly entered (Overview chip). Pages
@@ -31,7 +31,7 @@ const viewDefaultWindowSize: Record<string, Record<string, string>> = {
 const pageDefaultView: Partial<Record<ViewablePage, string>> = {
   calendar: "gantt",
   messaging: "kanban",
-  cleaning: "kanban",
+  operations: "kanban",
 };
 
 export interface CrossCuttingActions {
@@ -53,7 +53,7 @@ export type AppState = NavigationSlice &
   DashboardSlice &
   CalendarSlice &
   MessagingSlice &
-  CleaningSlice &
+  OperationsSlice &
   ReportingSlice &
   SettingsSlice &
   OverlaySlice &
@@ -67,7 +67,7 @@ export const useAppStore = create<AppState>()((...a) => {
     ...createDashboardSlice(...a),
     ...createCalendarSlice(...a),
     ...createMessagingSlice(...a),
-    ...createCleaningSlice(...a),
+    ...createOperationsSlice(...a),
     ...createReportingSlice(...a),
     ...createSettingsSlice(...a),
     ...createOverlaySlice(...a),

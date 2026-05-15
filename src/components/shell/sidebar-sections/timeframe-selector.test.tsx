@@ -12,7 +12,7 @@ const storeState = {
   openTimeframePopup: openTimeframePopupMock,
   dashboard: { windowSize: "month" },
   calendar: { windowSize: "month" },
-  cleaning: { windowSize: "week" },
+  operations: { windowSize: "week" },
   reporting: { windowSize: "month" },
 };
 
@@ -30,7 +30,7 @@ describe("TimeframeSelector", () => {
   afterEach(() => {
     storeState.dashboard.windowSize = "month";
     storeState.calendar.windowSize = "month";
-    storeState.cleaning.windowSize = "week";
+    storeState.operations.windowSize = "week";
     storeState.reporting.windowSize = "month";
   });
 
@@ -61,9 +61,9 @@ describe("TimeframeSelector", () => {
   });
 
   it("cleaning's 'Today' chip maps to windowSize 'day'", async () => {
-    render(<TimeframeSelector page="cleaning" />);
+    render(<TimeframeSelector page="operations" />);
     await userEvent.click(screen.getByRole("button", { name: "Today" }));
-    expect(setTimeframeMock).toHaveBeenCalledWith("cleaning", "day", null);
+    expect(setTimeframeMock).toHaveBeenCalledWith("operations", "day", null);
   });
 
   it("Custom button sets windowSize=custom and opens the popup", async () => {

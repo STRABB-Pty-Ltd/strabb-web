@@ -76,7 +76,7 @@ describe("Navigation integration", () => {
     await user.click(screen.getByText("Calendar"));
     expect(useAppStore.getState().previousPage).toBe("dashboard");
 
-    await user.click(screen.getByText("Cleaning"));
+    await user.click(screen.getByText("Operations"));
     expect(useAppStore.getState().previousPage).toBe("calendar");
   });
 
