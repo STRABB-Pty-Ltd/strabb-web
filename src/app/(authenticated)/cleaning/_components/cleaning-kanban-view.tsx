@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 
-import { KanbanBoard } from "@/components/views/kanban-board";
+import { KanbanCard } from "@/components/views/kanban-card";
+import { KanbanColumn } from "@/components/views/kanban-column";
 import { useTicketsAPI } from "@/lib/api-hooks/tickets-api";
 import { useProperties } from "@/hooks/use-properties";
 import type { CleaningTask } from "@/types/cleaning-task";
@@ -11,8 +12,6 @@ import { useAppStore } from "@/stores/app-store";
 
 import { CleaningTaskCard } from "./cleaning-task-card";
 import { TicketKanbanCard } from "./ticket-kanban-card";
-
-type KanbanItem = { kind: "task"; data: CleaningTask } | { kind: "ticket"; data: Ticket };
 
 interface CleaningKanbanViewProps {
   tasks: CleaningTask[];
@@ -37,58 +36,61 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
     return all.filter((t) => t.listingId && selectedListings.includes(t.listingId));
   }, [ticketsResponse, selectedListings]);
 
-  const columns = useMemo(() => {
-    const taskItems: KanbanItem[] = tasks.map((t) => ({ kind: "task", data: t }));
-    const ticketItems: KanbanItem[] = tickets.map((t) => ({ kind: "ticket", data: t }));
-    // Overview kanban shows operator workload across both entities at the
-    // same two actionable statuses (pending / confirmed). Completed,
-    // in_progress, and cancelled rows live in the list view via the
-    // submenu filters.
-    return [
-      {
-        id: "ticket-pending",
-        label: "Tickets - Pending",
-        items: ticketItems.filter((i) => i.kind === "ticket" && i.data.status === "pending"),
-      },
-      {
-        id: "ticket-confirmed",
-        label: "Tickets - Confirmed",
-        items: ticketItems.filter((i) => i.kind === "ticket" && i.data.status === "confirmed"),
-      },
-      {
-        id: "clean-pending",
-        label: "Cleans - Pending",
-        items: taskItems.filter((i) => i.kind === "task" && i.data.status === "pending"),
-      },
-      {
-        id: "clean-confirmed",
-        label: "Cleans - Confirmed",
-        items: taskItems.filter((i) => i.kind === "task" && i.data.status === "confirmed"),
-      },
-    ];
-  }, [tasks, tickets]);
+  const ticketPending = useMemo(() => tickets.filter((t) => t.status === "pending"), [tickets]);
+  const ticketConfirmed = useMemo(
+    () => tickets.filter((t) => t.status === "confirmed"),
+    [tickets],
+  );
+  const cleanPending = useMemo(() => tasks.filter((t) => t.status === "pending"), [tasks]);
+  const cleanConfirmed = useMemo(() => tasks.filter((t) => t.status === "confirmed"), [tasks]);
 
+  const renderTicket = (t: Ticket) => (
+    <KanbanCard key={t.id} borderColor="var(--highlight-10)">
+      <TicketKanbanCard
+        ticket={t}
+        propertyName={propertyNames[t.propertyId]}
+        onClick={() => openDrillDownPanel("ticket", t.id)}
+      />
+    </KanbanCard>
+  );
+
+  const renderTask = (t: CleaningTask) => (
+    <KanbanCard key={t.id} borderColor={t.listingColor}>
+      <CleaningTaskCard task={t} onClick={() => openDrillDownPanel("cleaning", t.id)} />
+    </KanbanCard>
+  );
+
+  // Two top-level sections (Tickets, Cleaning) at 50/50 width. Each carries
+  // its own Pending/Confirmed sub-columns. One outer scroll container so the
+  // two sections track together vertically.
+  // 233 = next Fibonacci step beyond --space-xl, design-locked.
   return (
-    <KanbanBoard<KanbanItem>
-      columns={columns}
-      renderCard={(item) =>
-        item.kind === "task" ? (
-          <CleaningTaskCard
-            task={item.data}
-            onClick={() => openDrillDownPanel("cleaning", item.data.id)}
-          />
-        ) : (
-          <TicketKanbanCard
-            ticket={item.data}
-            propertyName={propertyNames[item.data.propertyId]}
-            onClick={() => openDrillDownPanel("ticket", item.data.id)}
-          />
-        )
-      }
-      getItemId={(item) => item.data.id}
-      getBorderColor={(item) =>
-        item.kind === "task" ? item.data.listingColor : "var(--highlight-10)"
-      }
-    />
+    <div className="no-scrollbar overflow-auto" style={{ maxHeight: "calc(100vh - 233px)" }}>
+      <div className="gap-sm pb-sm flex">
+        <section className="gap-sm flex min-w-0 flex-1 flex-col">
+          <h2 className="px-base text-body text-highlight-10 font-semibold">Tickets</h2>
+          <div className="gap-sm flex flex-1">
+            <KanbanColumn id="ticket-pending" label="Pending" count={ticketPending.length}>
+              {ticketPending.map(renderTicket)}
+            </KanbanColumn>
+            <KanbanColumn id="ticket-confirmed" label="Confirmed" count={ticketConfirmed.length}>
+              {ticketConfirmed.map(renderTicket)}
+            </KanbanColumn>
+          </div>
+        </section>
+
+        <section className="gap-sm flex min-w-0 flex-1 flex-col">
+          <h2 className="px-base text-body text-highlight-10 font-semibold">Cleaning</h2>
+          <div className="gap-sm flex flex-1">
+            <KanbanColumn id="clean-pending" label="Pending" count={cleanPending.length}>
+              {cleanPending.map(renderTask)}
+            </KanbanColumn>
+            <KanbanColumn id="clean-confirmed" label="Confirmed" count={cleanConfirmed.length}>
+              {cleanConfirmed.map(renderTask)}
+            </KanbanColumn>
+          </div>
+        </section>
+      </div>
+    </div>
   );
 }
