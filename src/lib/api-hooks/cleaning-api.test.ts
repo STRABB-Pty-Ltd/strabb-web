@@ -90,6 +90,18 @@ describe("cleaning-api hooks", () => {
     expect(url).toMatch(/status=completed/);
   });
 
+  it("useCleaningTasksAPI maps 'urgent' submenu chip to past_due_only=true", async () => {
+    getMock.mockResolvedValue({ data: [] });
+    const { result } = renderHook(() => useCleaningTasksAPI(["urgent"], []), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const url = getMock.mock.calls[0][0] as string;
+    expect(url).toMatch(/past_due_only=true/);
+    expect(url).not.toMatch(/status=/);
+  });
+
   it("useCleaningTasksAPI maps RawCleaningTask scheduledDate fallback into scheduledTime", async () => {
     getMock.mockResolvedValue({ data: [rawTask] });
     const { result } = renderHook(() => useCleaningTasksAPI([], []), { wrapper: withProvider() });

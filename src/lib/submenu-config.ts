@@ -39,6 +39,7 @@ export const submenuConfigs: Record<Exclude<PageId, "settings">, SubmenuChip[]> 
   cleaning: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
     { id: "tickets", label: "Tickets", behavior: "nav", href: "/cleaning/tickets" },
+    { id: "urgent", label: "Urgent", behavior: "exclusive" },
     { id: "confirmed", label: "Confirmed", behavior: "exclusive" },
     { id: "pending", label: "Pending", behavior: "exclusive" },
     { id: "archived", label: "Archived", behavior: "exclusive" },

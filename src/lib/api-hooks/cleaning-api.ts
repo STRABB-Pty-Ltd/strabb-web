@@ -66,6 +66,9 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   };
   const showAll = submenuFilters.length === 0 || submenuFilters.includes("overview");
   if (!showAll) {
+    if (submenuFilters.includes("urgent")) {
+      params.set("past_due_only", "true");
+    }
     submenuFilters.forEach((f) => {
       const mapped = statusMap[f];
       if (mapped) params.append("status", mapped);

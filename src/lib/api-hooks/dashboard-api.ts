@@ -15,7 +15,7 @@ export interface KPIData {
 
 export interface AlertItem {
   id: string;
-  type: "message" | "unscheduled" | "ticket" | "sync";
+  type: "message" | "unscheduled" | "past-due-clean" | "ticket" | "sync";
   severity: "red" | "amber" | "blue";
   description: string;
   count: number;
@@ -66,6 +66,7 @@ interface RawKPIResponse extends RawKPIMetrics {
 export interface RawAlertResponse {
   unreadMessages: number;
   unscheduledCleans: number;
+  pastDueCleans: number;
   urgentTickets: number;
   syncErrors: number;
 }
@@ -107,6 +108,7 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
 export function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
   // `?? 0` defensive against malformed responses; backend always returns these fields.
   const unscheduled = raw.unscheduledCleans ?? 0;
+  const pastDue = raw.pastDueCleans ?? 0;
   const urgent = raw.urgentTickets ?? 0;
   const sync = raw.syncErrors ?? 0;
 
@@ -124,6 +126,13 @@ export function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
       severity: "amber",
       description: `${unscheduled} clean${unscheduled === 1 ? "" : "s"} need scheduling`,
       count: unscheduled,
+    },
+    {
+      id: "alert-past-due-cleans",
+      type: "past-due-clean",
+      severity: "red",
+      description: `${pastDue} past-due clean${pastDue === 1 ? "" : "s"}`,
+      count: pastDue,
     },
     {
       id: "alert-tickets",
