@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { format } from "date-fns";
 import { Send } from "lucide-react";
 
 import type { Message, ThreadMessage } from "@/types/message";
@@ -75,10 +76,7 @@ export function MessageThread({
               <p className="text-body font-medium opacity-70">{msg.senderName}</p>
               <p className="text-body">{msg.content}</p>
               <p className="mt-xs text-body opacity-50">
-                {new Date(msg.sentAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {format(new Date(msg.sentAt), "d MMM, HH:mm")}
               </p>
             </div>
           </div>
