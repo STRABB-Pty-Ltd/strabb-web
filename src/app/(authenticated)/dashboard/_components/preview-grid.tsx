@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import { addDays, format, parseISO } from "date-fns";
-import { ArrowRight, BrushCleaning, CalendarDays, Sparkles, Wrench } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { ArrowRight, BrushCleaning, CalendarDays, ShoppingBag, Sparkles, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import type { PreviewData } from "@/hooks/use-dashboard";
+import { useShoppingList } from "@/hooks/use-cleaning";
 import { useAppStore } from "@/stores/app-store";
 
 interface PreviewGridProps {
@@ -35,55 +36,62 @@ function PanelHeader({ title, onView }: { title: string; onView?: () => void }) 
   );
 }
 
-function MiniCalendar({ data }: { data: PreviewData["miniCalendar"] }) {
-  const router = useRouter();
-  const setSubmenu = useAppStore((s) => s.setSubmenu);
-  const setView = useAppStore((s) => s.setView);
-  const setTimeframe = useAppStore((s) => s.setTimeframe);
-  const setCustomRange = useAppStore((s) => s.setCustomRange);
+function ShoppingListPanel() {
+  const selectedListings = useAppStore((s) => s.selectedListings);
+  const openShoppingListPopup = useAppStore((s) => s.openShoppingListPopup);
+  const boughtItems = useAppStore((s) => s.operations.boughtItems);
+  const { data: items = [] } = useShoppingList(selectedListings);
 
-  const handleViewAll = () => {
-    const start = new Date();
-    const end = addDays(start, 6);
-    const fmt = (d: Date) => format(d, "yyyy-MM-dd");
-    setCustomRange({ start: fmt(start), end: fmt(end) });
-    setSubmenu("calendar", ["overview"]);
-    setView("calendar", "gantt");
-    setTimeframe("calendar", "custom", null);
-    router.push("/calendar");
-  };
+  const needed = useMemo(() => items.filter((i) => !boughtItems.includes(i.id)), [
+    items,
+    boughtItems,
+  ]);
+  // Top 5 by priority (high first) so the panel previews what matters,
+  // not what happens to be at the top of the alphabetical list.
+  const top = useMemo(() => {
+    const rank: Record<string, number> = { high: 0, medium: 1, low: 2 };
+    return [...needed]
+      .sort((a, b) => (rank[a.priority] ?? 3) - (rank[b.priority] ?? 3))
+      .slice(0, 5);
+  }, [needed]);
 
   return (
     <div
       className="p-md rounded-xl transition-shadow hover:shadow-md"
       style={{ backgroundColor: "var(--neutral-30)" }}
     >
-      <PanelHeader title="Next 7 Days" onView={handleViewAll} />
-      <div className="gap-xs grid grid-cols-7">
-        {data.map((day) => {
-          const d = new Date(day.date + "T00:00:00");
-          const hasBookings = day.bookings > 0;
-          return (
-            <div key={day.date} className="text-center">
-              <p className="text-body" style={{ color: "var(--text-secondary)" }}>
-                {format(d, "EEE")}
-              </p>
-              <p className="text-body font-medium" style={{ color: "var(--highlight-10)" }}>
-                {format(d, "d")}
-              </p>
-              <div
-                className="mt-xs h-md text-body mx-auto w-md rounded-full text-center leading-5"
+      <PanelHeader title="Shopping List" onView={openShoppingListPopup} />
+      {needed.length === 0 ? (
+        <EmptyState compact icon={ShoppingBag} title="Nothing needed" />
+      ) : (
+        <div className="space-y-xs">
+          {top.map((item) => (
+            <div key={item.id} className="gap-base flex items-center">
+              <span
+                className="px-base py-xs text-body shrink-0 rounded-md font-medium"
                 style={{
-                  backgroundColor: hasBookings ? "var(--highlight-10)" : "var(--surface-60)",
-                  color: hasBookings ? "var(--surface-60)" : "var(--highlight-10)",
+                  backgroundColor: "var(--neutral-30)",
+                  color:
+                    item.priority === "high"
+                      ? "var(--status-danger)"
+                      : "var(--highlight-10)",
                 }}
               >
-                {day.bookings}
-              </div>
+                {item.priority}
+              </span>
+              <span className="text-body text-highlight-10 flex-1 truncate">{item.item}</span>
+              <span className="font-data text-body text-highlight-10 shrink-0">
+                x{item.quantity}
+              </span>
             </div>
-          );
-        })}
-      </div>
+          ))}
+          {needed.length > top.length && (
+            <p className="text-body pt-xs" style={{ color: "var(--text-secondary)" }}>
+              {needed.length - top.length} more
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -304,7 +312,7 @@ function CleansAndTickets({ data }: { data: PreviewData["cleansAndTickets"] }) {
 export function PreviewGrid({ data, windowSize }: PreviewGridProps) {
   return (
     <div className="gap-sm grid grid-cols-1 lg:grid-cols-2">
-      <MiniCalendar data={data.miniCalendar} />
+      <ShoppingListPanel />
       <RevenueSparkline data={data.revenueSparkline} windowSize={windowSize} />
       <UpcomingBookings data={data.upcomingBookings} />
       <CleansAndTickets data={data.cleansAndTickets} />
