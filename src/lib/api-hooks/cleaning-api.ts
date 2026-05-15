@@ -57,7 +57,7 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   const isReady = useAuthReady();
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_id", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
 
   const statusMap: Record<string, string> = {
     confirmed: "confirmed",
@@ -88,7 +88,7 @@ export function useShoppingListAPI(selectedListings: string[]) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_id", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
 
   return useQuery<ShoppingItem[]>({
     queryKey: ["shopping-list", ...selectedListings],
