@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { format } from "date-fns";
 import { Archive, Flag, Send, TicketPlus, X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
@@ -108,7 +109,8 @@ export function ThreadOverlay({
               </h2>
               <p className="text-body text-highlight-10">{data.listingName}</p>
               <p className="text-body text-highlight-10">
-                {data.checkIn} - {data.checkOut}
+                {format(new Date(data.checkIn), "d MMM")} -{" "}
+                {format(new Date(data.checkOut), "d MMM yyyy")}
               </p>
             </div>
             <div className="gap-base flex items-center">
@@ -150,10 +152,7 @@ export function ThreadOverlay({
                 <p className="text-body font-medium opacity-70">{msg.senderName}</p>
                 <p className="text-body">{msg.content}</p>
                 <p className="mt-xs text-body opacity-50">
-                  {new Date(msg.sentAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {format(new Date(msg.sentAt), "d MMM, HH:mm")}
                 </p>
               </div>
             </div>

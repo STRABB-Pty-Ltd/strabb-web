@@ -45,7 +45,8 @@ export function MessageThread({
             <h3 className="text-body text-highlight-10 font-semibold">{message.guestName}</h3>
             <p className="text-body text-highlight-10">{message.listingName}</p>
             <p className="text-body text-highlight-10">
-              {message.checkIn} &ndash; {message.checkOut}
+              {format(new Date(message.checkIn), "d MMM")} &ndash;{" "}
+              {format(new Date(message.checkOut), "d MMM yyyy")}
             </p>
           </div>
           <span
