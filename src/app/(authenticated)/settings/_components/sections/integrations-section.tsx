@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Calculator, CalendarSync, KeyRound, Network, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Calculator,
+  CalendarSync,
+  Home,
+  KeyRound,
+  Link2,
+  Network,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 
@@ -28,7 +37,26 @@ const integrations: IntegrationCard[] = [
     icon: Network,
     status: "available",
     ctaHref: "/settings/listings",
-    ctaLabel: "Map listings",
+    ctaLabel: "Listings & mapping",
+  },
+  {
+    id: "listings",
+    name: "Listings",
+    description: "Photos, pricing, stay rules, amenities, and description for each STRABB listing.",
+    icon: Home,
+    status: "available",
+    ctaHref: "/settings/listings",
+    ctaLabel: "Open listings editor",
+  },
+  {
+    id: "shareable-links",
+    name: "Shareable links",
+    description:
+      "Read-only public URLs for sharing dashboards, calendars, or reports with cleaners, owners, or accountants.",
+    icon: Link2,
+    status: "available",
+    ctaHref: "/settings/shareable-links",
+    ctaLabel: "Manage links",
   },
   {
     id: "ical",
