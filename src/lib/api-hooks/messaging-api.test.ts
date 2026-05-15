@@ -66,7 +66,7 @@ describe("messaging-api hooks", () => {
     const url = getMock.mock.calls[0][0] as string;
     expect(url).toMatch(/^\/conversations\?/);
     expect(url).toMatch(/channel=airbnb/);
-    expect(url).toMatch(/listing_id=lst-1/);
+    expect(url).toMatch(/listing_ids=lst-1/);
   });
 
   it("useMessagesAPI applies status filter client-side without refetching", async () => {
