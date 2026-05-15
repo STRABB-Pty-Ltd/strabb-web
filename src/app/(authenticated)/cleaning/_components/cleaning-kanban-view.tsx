@@ -40,20 +40,30 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
   const columns = useMemo(() => {
     const taskItems: KanbanItem[] = tasks.map((t) => ({ kind: "task", data: t }));
     const ticketItems: KanbanItem[] = tickets.map((t) => ({ kind: "ticket", data: t }));
-    // Overview kanban shows operator workload only: Tickets, Confirmed,
-    // Pending. Completed tasks aren't actionable - they live in the list
-    // view if someone needs to find them.
+    // Overview kanban shows operator workload across both entities at the
+    // same two actionable statuses (pending / confirmed). Completed,
+    // in_progress, and cancelled rows live in the list view via the
+    // submenu filters.
     return [
-      { id: "ticket", label: "Tickets", items: ticketItems },
       {
-        id: "confirmed",
-        label: "Confirmed",
-        items: taskItems.filter((i) => i.kind === "task" && i.data.status === "confirmed"),
+        id: "ticket-pending",
+        label: "Tickets - Pending",
+        items: ticketItems.filter((i) => i.kind === "ticket" && i.data.status === "pending"),
       },
       {
-        id: "pending",
-        label: "Pending",
+        id: "ticket-confirmed",
+        label: "Tickets - Confirmed",
+        items: ticketItems.filter((i) => i.kind === "ticket" && i.data.status === "confirmed"),
+      },
+      {
+        id: "clean-pending",
+        label: "Cleans - Pending",
         items: taskItems.filter((i) => i.kind === "task" && i.data.status === "pending"),
+      },
+      {
+        id: "clean-confirmed",
+        label: "Cleans - Confirmed",
+        items: taskItems.filter((i) => i.kind === "task" && i.data.status === "confirmed"),
       },
     ];
   }, [tasks, tickets]);
