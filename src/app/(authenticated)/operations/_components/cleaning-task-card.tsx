@@ -4,6 +4,7 @@ import { Clock, User } from "lucide-react";
 
 import { useTimezoneForListing } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatEnumLabel } from "@/lib/utils";
 import type { CleaningTask } from "@/types/cleaning-task";
 
 const typeLabels: Record<string, string> = {
@@ -46,7 +47,7 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
             className="px-xs py-xs text-body rounded-sm font-medium"
             style={{ backgroundColor: priority.bg, color: priority.text }}
           >
-            {task.priority}
+            {formatEnumLabel(task.priority)}
           </span>
           <span className="px-xs py-xs text-body bg-neutral-30 text-highlight-10 rounded-sm font-medium">
             {typeLabels[task.type] ?? task.type}

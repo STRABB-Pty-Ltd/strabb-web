@@ -22,6 +22,7 @@ import { ApiError } from "@/lib/api-client";
 import { useLinkTicketToClean, useUnlinkTicketFromClean } from "@/lib/api-hooks/cleaning-api";
 import { useTicket, useTicketsAPI, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatEnumLabel } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
 
@@ -375,7 +376,9 @@ export function CleaningDetailDrawer() {
             {displayTask.linkedTicketId && linkedTicket ? (
               <div className="space-y-xs">
                 <p className="text-body text-highlight-10">{linkedTicket.description}</p>
-                <p className="text-body text-highlight-10">Status: {linkedTicket.status}</p>
+                <p className="text-body text-highlight-10">
+                  Status: {formatEnumLabel(linkedTicket.status)}
+                </p>
                 <button
                   type="button"
                   onClick={handleUnlink}
