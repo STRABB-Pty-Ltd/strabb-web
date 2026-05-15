@@ -43,7 +43,7 @@ export default function CleaningPage() {
   }
 
   return (
-    <div>
+    <div className="h-full">
       {view === "kanban" && <CleaningKanbanView tasks={tasks ?? []} />}
       {view === "list" && (
         <CleaningListView tasks={tasks ?? []} listingTimezones={listingTimezones} />

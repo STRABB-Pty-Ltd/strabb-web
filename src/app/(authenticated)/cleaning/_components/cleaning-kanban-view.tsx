@@ -46,14 +46,18 @@ function SectionPanel({
       >
         {title}
       </h3>
-      <div className="gap-sm flex flex-1">
-        <div className="flex min-w-0 flex-1 flex-col">
+      <div className="gap-sm flex min-h-0 flex-1">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <SubColumnHeader label={pendingLabel} count={pendingCount} />
-          <div className="gap-base pt-base flex flex-col">{pendingCards}</div>
+          <div className="gap-base pt-base no-scrollbar flex flex-col overflow-y-auto">
+            {pendingCards}
+          </div>
         </div>
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <SubColumnHeader label={confirmedLabel} count={confirmedCount} />
-          <div className="gap-base pt-base flex flex-col">{confirmedCards}</div>
+          <div className="gap-base pt-base no-scrollbar flex flex-col overflow-y-auto">
+            {confirmedCards}
+          </div>
         </div>
       </div>
     </section>
@@ -117,25 +121,22 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
     </KanbanCard>
   );
 
-  // 233 = next Fibonacci step beyond --space-xl, design-locked.
   return (
-    <div className="no-scrollbar overflow-auto" style={{ maxHeight: "calc(100vh - 233px)" }}>
-      <div className="gap-sm pb-sm flex">
-        <SectionPanel
-          title="Tickets"
-          pendingCount={ticketPending.length}
-          confirmedCount={ticketConfirmed.length}
-          pendingCards={ticketPending.map(renderTicket)}
-          confirmedCards={ticketConfirmed.map(renderTicket)}
-        />
-        <SectionPanel
-          title="Cleaning"
-          pendingCount={cleanPending.length}
-          confirmedCount={cleanConfirmed.length}
-          pendingCards={cleanPending.map(renderTask)}
-          confirmedCards={cleanConfirmed.map(renderTask)}
-        />
-      </div>
+    <div className="gap-sm flex h-full">
+      <SectionPanel
+        title="Tickets"
+        pendingCount={ticketPending.length}
+        confirmedCount={ticketConfirmed.length}
+        pendingCards={ticketPending.map(renderTicket)}
+        confirmedCards={ticketConfirmed.map(renderTicket)}
+      />
+      <SectionPanel
+        title="Cleaning"
+        pendingCount={cleanPending.length}
+        confirmedCount={cleanConfirmed.length}
+        pendingCards={cleanPending.map(renderTask)}
+        confirmedCards={cleanConfirmed.map(renderTask)}
+      />
     </div>
   );
 }
