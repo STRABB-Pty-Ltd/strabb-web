@@ -46,18 +46,14 @@ function SectionPanel({
       >
         {title}
       </h3>
-      <div className="gap-sm flex min-h-0 flex-1">
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="gap-sm flex flex-1">
+        <div className="flex min-w-0 flex-1 flex-col">
           <SubColumnHeader label={pendingLabel} count={pendingCount} />
-          <div className="gap-base pt-base no-scrollbar flex flex-col overflow-y-auto">
-            {pendingCards}
-          </div>
+          <div className="gap-base pt-base flex flex-col">{pendingCards}</div>
         </div>
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <SubColumnHeader label={confirmedLabel} count={confirmedCount} />
-          <div className="gap-base pt-base no-scrollbar flex flex-col overflow-y-auto">
-            {confirmedCards}
-          </div>
+          <div className="gap-base pt-base flex flex-col">{confirmedCards}</div>
         </div>
       </div>
     </section>
@@ -122,7 +118,7 @@ export function CleaningKanbanView({ tasks }: CleaningKanbanViewProps) {
   );
 
   return (
-    <div className="gap-sm flex h-full">
+    <div className="gap-sm flex min-h-full">
       <SectionPanel
         title="Tickets"
         pendingCount={ticketPending.length}
