@@ -25,10 +25,10 @@ import type { PageId } from "@/stores/types";
 const AUTO_CONFIRM_SECONDS = 3;
 const EXIT_MS = 200;
 
-type TimeframePage = "dashboard" | "calendar" | "cleaning" | "reporting";
+type TimeframePage = "dashboard" | "calendar" | "operations" | "reporting";
 
 const isTimeframePage = (p: PageId): p is TimeframePage =>
-  p === "dashboard" || p === "calendar" || p === "cleaning" || p === "reporting";
+  p === "dashboard" || p === "calendar" || p === "operations" || p === "reporting";
 
 export function TimeframePopup() {
   const popupRef = useRef<HTMLDivElement>(null);
@@ -41,7 +41,7 @@ export function TimeframePopup() {
   const currentPage = useAppStore((s) => s.currentPage);
   const dashboard = useAppStore((s) => s.dashboard);
   const calendar = useAppStore((s) => s.calendar);
-  const cleaning = useAppStore((s) => s.cleaning);
+  const operations = useAppStore((s) => s.operations);
   const reporting = useAppStore((s) => s.reporting);
 
   // Resolve the active slice up-front so the auto-confirm timer can read
@@ -51,8 +51,8 @@ export function TimeframePopup() {
       ? dashboard
       : currentPage === "calendar"
         ? calendar
-        : currentPage === "cleaning"
-          ? cleaning
+        : currentPage === "operations"
+          ? operations
           : reporting
     : null;
   const windowSize = (slice as { windowSize?: string } | null)?.windowSize ?? "";

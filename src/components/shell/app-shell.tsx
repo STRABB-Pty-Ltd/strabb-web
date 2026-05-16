@@ -11,6 +11,7 @@ import { BillingBanner } from "@/components/billing/billing-banner";
 import { BookingDetailDrawer } from "@/components/overlays/booking-detail-drawer";
 import { CleaningDetailDrawer } from "@/components/overlays/cleaning-detail-drawer";
 import { SharePopup } from "@/components/overlays/share-popup";
+import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
 import { TicketDetailDrawer } from "@/components/overlays/ticket-detail-drawer";
 import { TimeframePopup } from "@/components/overlays/timeframe-popup";
 import { ToastContainer } from "@/components/overlays/toast-container";
@@ -28,7 +29,7 @@ const validPages: PageId[] = [
   "dashboard",
   "calendar",
   "messaging",
-  "cleaning",
+  "operations",
   "reporting",
   "settings",
 ];
@@ -37,7 +38,7 @@ const pageLabels: Record<PageId, string> = {
   dashboard: "Dashboard",
   calendar: "Calendar",
   messaging: "Messaging",
-  cleaning: "Cleaning",
+  operations: "Operations",
   reporting: "Reporting",
   settings: "Settings",
 };
@@ -153,6 +154,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       <TicketDetailDrawer />
       <TimeframePopup />
       <SharePopup />
+      <ShoppingListPopup />
       <ToastContainer />
     </div>
   );

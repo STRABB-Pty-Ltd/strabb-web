@@ -21,14 +21,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-vi.mock("next/link", () => ({
-  default: ({ href, children, ...rest }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-    <a href={href as string} {...rest}>
-      {children}
-    </a>
-  ),
-}));
-
 import { SettingsNavSection } from "./settings-nav-section";
 
 describe("SettingsNavSection", () => {
@@ -38,12 +30,13 @@ describe("SettingsNavSection", () => {
     pathnameMock.mockReturnValue("/settings");
   });
 
-  it("renders all section buttons plus the Admin link", () => {
+  it("renders only section buttons, no sub-route links", () => {
     render(<SettingsNavSection />);
     expect(screen.getByRole("button", { name: /general/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /phone/i })).toBeInTheDocument();
-    const adminLink = screen.getByRole("link", { name: /admin/i });
-    expect(adminLink).toHaveAttribute("href", "/settings/admin");
+    expect(screen.queryByRole("link", { name: /sync logs/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /shareable links/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /listings/i })).not.toBeInTheDocument();
   });
 
   it("clicking a section on /settings does not navigate, only updates state", async () => {
@@ -53,17 +46,11 @@ describe("SettingsNavSection", () => {
     expect(pushMock).not.toHaveBeenCalled();
   });
 
-  it("clicking a section while on /settings/admin navigates back to /settings", async () => {
-    pathnameMock.mockReturnValue("/settings/admin");
+  it("clicking a section while on a sub-route navigates back to /settings", async () => {
+    pathnameMock.mockReturnValue("/settings/sync-logs");
     render(<SettingsNavSection />);
     await userEvent.click(screen.getByRole("button", { name: /phone/i }));
     expect(setSectionMock).toHaveBeenCalledWith("phone");
     expect(pushMock).toHaveBeenCalledWith("/settings");
-  });
-
-  it("Admin link is marked aria-current when on /settings/admin", () => {
-    pathnameMock.mockReturnValue("/settings/admin");
-    render(<SettingsNavSection />);
-    expect(screen.getByRole("link", { name: /admin/i })).toHaveAttribute("aria-current", "page");
   });
 });

@@ -75,7 +75,7 @@ describe("cleaning-api hooks", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     const url = getMock.mock.calls[0][0] as string;
-    expect(url).toMatch(/listing_id=lst-1/);
+    expect(url).toMatch(/listing_ids=lst-1/);
     expect(url).not.toMatch(/status=/);
   });
 
@@ -88,6 +88,18 @@ describe("cleaning-api hooks", () => {
 
     const url = getMock.mock.calls[0][0] as string;
     expect(url).toMatch(/status=completed/);
+  });
+
+  it("useCleaningTasksAPI maps 'urgent' submenu chip to past_due_only=true", async () => {
+    getMock.mockResolvedValue({ data: [] });
+    const { result } = renderHook(() => useCleaningTasksAPI(["urgent"], []), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const url = getMock.mock.calls[0][0] as string;
+    expect(url).toMatch(/past_due_only=true/);
+    expect(url).not.toMatch(/status=/);
   });
 
   it("useCleaningTasksAPI maps RawCleaningTask scheduledDate fallback into scheduledTime", async () => {
@@ -103,7 +115,7 @@ describe("cleaning-api hooks", () => {
     });
   });
 
-  it("useShoppingListAPI passes listing_id params to /cleaning-tasks/shopping-list", async () => {
+  it("useShoppingListAPI passes listing_ids params to /cleaning-tasks/shopping-list", async () => {
     getMock.mockResolvedValue({ data: [] });
     const { result } = renderHook(() => useShoppingListAPI(["lst-1", "lst-2"]), {
       wrapper: withProvider(),
@@ -112,8 +124,8 @@ describe("cleaning-api hooks", () => {
 
     const url = getMock.mock.calls[0][0] as string;
     expect(url).toMatch(/^\/cleaning-tasks\/shopping-list\?/);
-    expect(url).toMatch(/listing_id=lst-1/);
-    expect(url).toMatch(/listing_id=lst-2/);
+    expect(url).toMatch(/listing_ids=lst-1/);
+    expect(url).toMatch(/listing_ids=lst-2/);
   });
 
   it("create / update mutations target the cleaning-tasks endpoint", async () => {

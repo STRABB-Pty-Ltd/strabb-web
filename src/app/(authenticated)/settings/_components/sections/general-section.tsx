@@ -6,6 +6,10 @@ import { Monitor, Moon, Sun } from "lucide-react";
 
 import { useAppStore } from "@/stores/app-store";
 
+import { NotificationsSection } from "./notifications-section";
+import { SystemHealthCard } from "./system-health-card";
+import { TeamSection } from "./team-section";
+
 const timezones = [
   "Australia/Sydney",
   "Australia/Melbourne",
@@ -153,6 +157,15 @@ export function GeneralSection() {
       >
         Save Changes
       </button>
+
+      <hr className="my-md" style={{ borderColor: "var(--border)" }} />
+      <TeamSection />
+
+      <hr className="my-md" style={{ borderColor: "var(--border)" }} />
+      <NotificationsSection />
+
+      <hr className="my-md" style={{ borderColor: "var(--border)" }} />
+      <SystemHealthCard />
     </div>
   );
 }

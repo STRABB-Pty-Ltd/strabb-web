@@ -76,7 +76,7 @@ export function useMessagesAPI(
   const isReady = useAuthReady();
   const params = new URLSearchParams();
   channels.forEach((ch) => params.append("channel", ch));
-  selectedListings.forEach((id) => params.append("listing_id", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
 
   // Backend only accepts one status; status filtering happens client-side so
   // the messaging submenu's multi-select (Unread + Flagged + Read) behaves as

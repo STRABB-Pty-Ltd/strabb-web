@@ -57,7 +57,12 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   const isReady = useAuthReady();
   const apiClient = useApiClient();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_id", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
+  // Request the API's max so the overview kanban doesn't lose actionable
+  // cleans to the default page_size=20 cutoff. ORDER BY scheduled_date DESC
+  // puts future-pending first, so past confirmed cleans get paginated off
+  // unless we ask for more.
+  params.set("page_size", "100");
 
   const statusMap: Record<string, string> = {
     confirmed: "confirmed",
@@ -66,6 +71,9 @@ export function useCleaningTasksAPI(submenuFilters: string[], selectedListings: 
   };
   const showAll = submenuFilters.length === 0 || submenuFilters.includes("overview");
   if (!showAll) {
+    if (submenuFilters.includes("urgent")) {
+      params.set("past_due_only", "true");
+    }
     submenuFilters.forEach((f) => {
       const mapped = statusMap[f];
       if (mapped) params.append("status", mapped);
@@ -88,7 +96,7 @@ export function useShoppingListAPI(selectedListings: string[]) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_id", id));
+  selectedListings.forEach((id) => params.append("listing_ids", id));
 
   return useQuery<ShoppingItem[]>({
     queryKey: ["shopping-list", ...selectedListings],

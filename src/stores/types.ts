@@ -1,4 +1,10 @@
-export type PageId = "dashboard" | "calendar" | "messaging" | "cleaning" | "reporting" | "settings";
+export type PageId =
+  | "dashboard"
+  | "calendar"
+  | "messaging"
+  | "operations"
+  | "reporting"
+  | "settings";
 
 export interface CustomGroup {
   id: string;

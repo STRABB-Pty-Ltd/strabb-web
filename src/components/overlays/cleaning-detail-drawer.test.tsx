@@ -87,7 +87,7 @@ const baseTask: CleaningTaskResponse = {
   cleanerEmail: "jane@example.com",
   cleanerPhone: "+61400111222",
   scheduledDate: "2026-04-26T09:00:00Z",
-  status: "scheduled",
+  status: "pending",
   notes: "Bring eco supplies",
   linkedTicketId: null,
   createdAt: "2026-04-20T00:00:00Z",

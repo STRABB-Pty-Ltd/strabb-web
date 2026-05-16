@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, CalendarClock, MessageSquare, RefreshCw, Wrench, X } from "lucide-react";
+import {
+  AlertTriangle,
+  CalendarClock,
+  Clock,
+  MessageSquare,
+  RefreshCw,
+  Wrench,
+  X,
+} from "lucide-react";
 
 import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
@@ -22,6 +30,7 @@ const severityAccent: Record<string, string> = {
 const typeIcon: Record<string, React.ElementType> = {
   message: MessageSquare,
   unscheduled: CalendarClock,
+  "past-due-clean": Clock,
   ticket: Wrench,
   sync: RefreshCw,
 };
@@ -42,14 +51,19 @@ export function AlertStrip({ alerts }: AlertStripProps) {
         router.push("/messaging");
         return;
       case "unscheduled":
-        setSubmenu("cleaning", ["pending"]);
-        router.push("/cleaning");
+        setSubmenu("operations", ["cleaning"]);
+        router.push("/operations");
+        return;
+      case "past-due-clean":
+        setSubmenu("operations", ["cleaning"]);
+        router.push("/operations");
         return;
       case "ticket":
-        router.push("/cleaning/tickets");
+        setSubmenu("operations", ["tickets"]);
+        router.push("/operations");
         return;
       case "sync":
-        router.push("/settings/admin");
+        router.push("/settings");
         return;
     }
   };

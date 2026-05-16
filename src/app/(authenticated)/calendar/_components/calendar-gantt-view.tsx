@@ -262,13 +262,17 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       // Bookings: 75–100 % of check-in day → middle days → 0–25 % of checkout
       // day, leaving the middle 50 % of any turnover day open.
       // Cleaning turnovers fill that gap (25–75 % of their day).
-      // Vacancy / ticket events stay full-day. Shadows mirror their source
-      // booking's pattern (same 75/25 inset) so the implicit-block shading
-      // tracks exactly when the related row is actually unavailable.
+      // Vacancy spans use the same handshake: start after a checkout
+      // (25 %) and end before a checkin (75 %) so the bar doesn't claim
+      // the partial-booking day.
+      // Ticket events stay full-day. Shadows mirror their source booking's
+      // pattern (same 75/25 inset) so the implicit-block shading tracks
+      // exactly when the related row is actually unavailable.
       getPartialDay={(item) => {
         if (item.type === "booking" || item.isImplicitBlock)
           return { insetStart: 0.75, insetEnd: 0.25 };
         if (item.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.75 };
+        if (item.type === "vacancy") return { insetStart: 0.25, insetEnd: 0.75 };
         return {};
       }}
       getAccentColor={(item) => {

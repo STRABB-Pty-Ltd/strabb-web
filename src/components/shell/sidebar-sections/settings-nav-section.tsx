@@ -1,30 +1,13 @@
 "use client";
 
-import {
-  Bell,
-  CreditCard,
-  Globe,
-  Home,
-  Inbox,
-  Link2,
-  Phone,
-  Radio,
-  RefreshCw,
-  Settings,
-  ShieldCheck,
-  Sparkles,
-  Users,
-} from "lucide-react";
-import Link from "next/link";
+import { CreditCard, Globe, Inbox, Phone, Radio, Settings, Sparkles } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAppStore } from "@/stores/app-store";
 
 const sections = [
   { id: "general", label: "General", icon: Settings },
-  { id: "team", label: "Team", icon: Users },
   { id: "billing", label: "Billing", icon: CreditCard },
-  { id: "notifications", label: "Notifications", icon: Bell },
   { id: "phone", label: "Phone", icon: Phone },
   { id: "inbox", label: "Inbox", icon: Inbox },
   { id: "integrations", label: "Integrations", icon: Globe },
@@ -37,11 +20,11 @@ export function SettingsNavSection() {
   const setSection = useAppStore((s) => s.setSection);
   const pathname = usePathname();
   const router = useRouter();
-  const onAdminRoute = pathname?.startsWith("/settings/admin") ?? false;
-  const onSyncLogsRoute = pathname?.startsWith("/settings/sync-logs") ?? false;
-  const onShareableLinksRoute = pathname?.startsWith("/settings/shareable-links") ?? false;
-  const onListingsRoute = pathname?.startsWith("/settings/listings") ?? false;
-  const onSubRoute = onAdminRoute || onSyncLogsRoute || onShareableLinksRoute || onListingsRoute;
+  // Sub-routes (/settings/sync-logs, /settings/shareable-links,
+  // /settings/listings) used to appear as sidebar links. They now drill in
+  // from cards inside the relevant section. Clicking a section while on
+  // any of those sub-routes routes back to /settings root.
+  const onSubRoute = (pathname?.startsWith("/settings/") ?? false) && pathname !== "/settings";
 
   const handleSectionClick = (id: string) => {
     setSection(id);
@@ -71,54 +54,6 @@ export function SettingsNavSection() {
             </button>
           );
         })}
-        <Link
-          href="/settings/admin"
-          aria-current={onAdminRoute ? "page" : undefined}
-          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-          style={{
-            backgroundColor: onAdminRoute ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: onAdminRoute ? "var(--surface-60)" : "var(--highlight-10)",
-          }}
-        >
-          <ShieldCheck size={14} aria-hidden="true" />
-          Admin
-        </Link>
-        <Link
-          href="/settings/sync-logs"
-          aria-current={onSyncLogsRoute ? "page" : undefined}
-          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-          style={{
-            backgroundColor: onSyncLogsRoute ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: onSyncLogsRoute ? "var(--surface-60)" : "var(--highlight-10)",
-          }}
-        >
-          <RefreshCw size={14} aria-hidden="true" />
-          Sync logs
-        </Link>
-        <Link
-          href="/settings/shareable-links"
-          aria-current={onShareableLinksRoute ? "page" : undefined}
-          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-          style={{
-            backgroundColor: onShareableLinksRoute ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: onShareableLinksRoute ? "var(--surface-60)" : "var(--highlight-10)",
-          }}
-        >
-          <Link2 size={14} />
-          Shareable links
-        </Link>
-        <Link
-          href="/settings/listings"
-          aria-current={onListingsRoute ? "page" : undefined}
-          className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-          style={{
-            backgroundColor: onListingsRoute ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: onListingsRoute ? "var(--surface-60)" : "var(--highlight-10)",
-          }}
-        >
-          <Home size={14} aria-hidden="true" />
-          Listings
-        </Link>
       </div>
     </nav>
   );

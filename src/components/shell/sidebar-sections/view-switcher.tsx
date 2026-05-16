@@ -11,7 +11,7 @@ interface ViewOption {
   icon: LucideIcon;
 }
 
-// Only the calendar page exposes a manual view picker. Messaging and cleaning
+// Only the calendar page exposes a manual view picker. Messaging and operations
 // derive their view from the active submenu chip (see submenu-bar.tsx).
 const viewOptions: Record<string, ViewOption[]> = {
   calendar: [
@@ -47,7 +47,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
               key={opt.id}
               type="button"
               aria-pressed={isActive}
-              onClick={() => setView(page as "calendar" | "messaging" | "cleaning", opt.id)}
+              onClick={() => setView(page as "calendar" | "messaging" | "operations", opt.id)}
               className={`gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors ${isActive ? "font-semibold" : "font-medium"}`}
               style={{
                 backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",

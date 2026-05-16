@@ -112,40 +112,50 @@ describe("rawAlertsToAlertItems", () => {
     return {
       unreadMessages: 0,
       unscheduledCleans: 0,
+      pastDueCleans: 0,
       urgentTickets: 0,
       syncErrors: 0,
       ...overrides,
     };
   }
 
-  it("renders all four alert chips with the correct counts", () => {
+  it("renders all five alert chips with the correct counts", () => {
     const items = rawAlertsToAlertItems(
       makeRaw({
         unreadMessages: 3,
         unscheduledCleans: 5,
+        pastDueCleans: 4,
         urgentTickets: 2,
         syncErrors: 1,
       }),
     );
-    expect(items).toHaveLength(4);
+    expect(items).toHaveLength(5);
     expect(items[0]).toMatchObject({ id: "alert-messages", count: 3 });
     expect(items[1]).toMatchObject({ id: "alert-unscheduled", count: 5 });
-    expect(items[2]).toMatchObject({ id: "alert-tickets", count: 2 });
-    expect(items[3]).toMatchObject({ id: "alert-sync", count: 1 });
+    expect(items[2]).toMatchObject({ id: "alert-past-due-cleans", count: 4 });
+    expect(items[3]).toMatchObject({ id: "alert-tickets", count: 2 });
+    expect(items[4]).toMatchObject({ id: "alert-sync", count: 1 });
   });
 
   it("uses singular nouns when count is exactly 1", () => {
     const items = rawAlertsToAlertItems(
-      makeRaw({ unreadMessages: 1, unscheduledCleans: 1, urgentTickets: 1, syncErrors: 1 }),
+      makeRaw({
+        unreadMessages: 1,
+        unscheduledCleans: 1,
+        pastDueCleans: 1,
+        urgentTickets: 1,
+        syncErrors: 1,
+      }),
     );
     expect(items[0].description).toBe("1 unread message");
     expect(items[1].description).toBe("1 clean need scheduling");
-    expect(items[2].description).toBe("1 urgent ticket");
-    expect(items[3].description).toBe("1 sync error");
+    expect(items[2].description).toBe("1 past-due clean");
+    expect(items[3].description).toBe("1 urgent ticket");
+    expect(items[4].description).toBe("1 sync error");
   });
 
   it("defaults missing fields to 0 (defensive against malformed responses)", () => {
     const items = rawAlertsToAlertItems({ unreadMessages: 0 } as RawAlertResponse);
-    expect(items.map((i) => i.count)).toEqual([0, 0, 0, 0]);
+    expect(items.map((i) => i.count)).toEqual([0, 0, 0, 0, 0]);
   });
 });

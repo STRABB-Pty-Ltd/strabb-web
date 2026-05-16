@@ -87,7 +87,7 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
                     {msg.guestName}
                   </span>
                   <span className="text-body text-highlight-10 shrink-0">
-                    {format(new Date(msg.lastMessageTime), "d MMM")}
+                    {format(new Date(msg.lastMessageTime), "d MMM, HH:mm")}
                   </span>
                 </div>
                 <span className="text-body text-highlight-10 block truncate">

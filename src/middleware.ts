@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 
-const ADMIN_ROUTE_PREFIXES = ["/settings/admin"];
+// No client-side admin routes currently - admin endpoints are gated by the
+// backend, and the System Health UI lives inside the General settings section
+// (which hides itself for non-admin roles via the underlying API 403s).
+const ADMIN_ROUTE_PREFIXES: string[] = [];
 
 export default auth((req) => {
   const { nextUrl } = req;

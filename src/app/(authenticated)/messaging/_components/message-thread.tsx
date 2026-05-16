@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { format } from "date-fns";
 import { Send } from "lucide-react";
 
 import type { Message, ThreadMessage } from "@/types/message";
@@ -44,7 +45,8 @@ export function MessageThread({
             <h3 className="text-body text-highlight-10 font-semibold">{message.guestName}</h3>
             <p className="text-body text-highlight-10">{message.listingName}</p>
             <p className="text-body text-highlight-10">
-              {message.checkIn} &ndash; {message.checkOut}
+              {format(new Date(message.checkIn), "d MMM")} &ndash;{" "}
+              {format(new Date(message.checkOut), "d MMM yyyy")}
             </p>
           </div>
           <span
@@ -75,10 +77,7 @@ export function MessageThread({
               <p className="text-body font-medium opacity-70">{msg.senderName}</p>
               <p className="text-body">{msg.content}</p>
               <p className="mt-xs text-body opacity-50">
-                {new Date(msg.sentAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {format(new Date(msg.sentAt), "d MMM, HH:mm")}
               </p>
             </div>
           </div>

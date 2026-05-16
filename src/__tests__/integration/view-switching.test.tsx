@@ -48,30 +48,30 @@ describe("View switching integration", () => {
 
   describe("Cleaning page", () => {
     it("defaults to kanban view", () => {
-      expect(useAppStore.getState().cleaning.view).toBe("kanban");
+      expect(useAppStore.getState().operations.view).toBe("kanban");
     });
 
     it("switching to calendar view works", () => {
-      useAppStore.getState().setView("cleaning", "calendar");
-      expect(useAppStore.getState().cleaning.view).toBe("calendar");
+      useAppStore.getState().setView("operations", "calendar");
+      expect(useAppStore.getState().operations.view).toBe("calendar");
     });
 
     it("switching to list view works", () => {
-      useAppStore.getState().setView("cleaning", "list");
-      expect(useAppStore.getState().cleaning.view).toBe("list");
+      useAppStore.getState().setView("operations", "list");
+      expect(useAppStore.getState().operations.view).toBe("list");
     });
 
     it("switching back to kanban view works", () => {
-      useAppStore.getState().setView("cleaning", "list");
-      useAppStore.getState().setView("cleaning", "kanban");
-      expect(useAppStore.getState().cleaning.view).toBe("kanban");
+      useAppStore.getState().setView("operations", "list");
+      useAppStore.getState().setView("operations", "kanban");
+      expect(useAppStore.getState().operations.view).toBe("kanban");
     });
   });
 
   describe("View independence", () => {
     it("changing calendar view does not affect cleaning view", () => {
       useAppStore.getState().setView("calendar", "list");
-      expect(useAppStore.getState().cleaning.view).toBe("kanban");
+      expect(useAppStore.getState().operations.view).toBe("kanban");
     });
 
     it("changing messaging view does not affect calendar view", () => {

@@ -21,6 +21,7 @@ import {
 } from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { formatCurrency } from "@/lib/format-currency";
+import { formatEnumLabel } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import {
   TICKET_PRIORITY_OPTIONS,
@@ -433,7 +434,9 @@ export function TicketDetailDrawer() {
                 <p className="text-body text-highlight-10">
                   {formatInPropertyTimezone(linkedClean.scheduledTime, tz, "d MMM yyyy, HH:mm")}
                 </p>
-                <p className="text-body text-highlight-10">Status: {linkedClean.status}</p>
+                <p className="text-body text-highlight-10">
+                  Status: {formatEnumLabel(linkedClean.status)}
+                </p>
                 <button
                   type="button"
                   onClick={handleUnlinkClean}

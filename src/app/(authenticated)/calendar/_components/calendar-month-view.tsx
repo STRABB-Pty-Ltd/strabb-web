@@ -101,8 +101,12 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
         // Match the calendar gantt's getPartialDay so a booking sits at
         // 75–100 % of its check-in cell and 0–25 % of its check-out cell,
         // with a turnover cleaning filling the 25–75 % gap on the same row.
+        // Vacancy mirrors the booking handshake from the other side: starts
+        // after a checkout (25 %) and ends before a checkin (75 %), so a
+        // gap doesn't visually claim the partial-booking day.
         if (ev.type === "booking") return { insetStart: 0.75, insetEnd: 0.75 };
         if (ev.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.25 };
+        if (ev.type === "vacancy") return { insetStart: 0.25, insetEnd: 0.25 };
         return { insetStart: 0, insetEnd: 0 };
       }}
       // Bookings are the spine of the calendar - they get the top tracks.

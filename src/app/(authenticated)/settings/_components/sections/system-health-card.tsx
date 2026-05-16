@@ -13,7 +13,6 @@ import Link from "next/link";
 
 import { type Column, DataTable } from "@/components/ui/data-table";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { PageHeader } from "@/components/ui/page-header";
 import { useFailedMessages, useSyncErrors, useSystemHealth } from "@/hooks/use-admin";
 import { useResendMessage } from "@/hooks/use-messages";
 import { ApiError } from "@/lib/api-client";
@@ -59,18 +58,20 @@ function HealthCard({
   return content;
 }
 
-export default function AdminPage() {
+export function SystemHealthCard() {
   const { data, isLoading } = useSystemHealth();
 
   return (
-    <div className="space-y-md">
-      <PageHeader
-        title="System Health"
-        description="Monitor sync failures, email failures, and task issues."
-      />
+    <div className="space-y-sm">
+      <div>
+        <h3 className="text-subheading text-highlight-10 font-semibold">System health</h3>
+        <p className="text-body text-highlight-10">
+          Monitor sync failures, email failures, and task issues.
+        </p>
+      </div>
 
       {isLoading && (
-        <div className="py-xl flex justify-center">
+        <div className="py-md flex justify-center">
           <LoadingSpinner />
         </div>
       )}
@@ -97,13 +98,13 @@ export default function AdminPage() {
               label="Listings Errored"
               count={data.listingsErrored}
               icon={AlertTriangleIcon}
-              href="/listings"
+              href="/settings/listings"
             />
             <HealthCard
               label="Tasks Failed"
               count={data.tasksFailed}
               icon={SparklesIcon}
-              href="/automations/cleaning?status=failed"
+              href="/operations"
             />
             <HealthCard
               label="Messages Failed"
@@ -177,7 +178,7 @@ function SyncErrorsSection() {
 
   return (
     <section className="space-y-sm">
-      <h2 className="text-subheading font-semibold">Recent sync errors</h2>
+      <h4 className="text-body font-semibold">Recent sync errors</h4>
       {isLoading ? (
         <p
           role="status"
@@ -277,7 +278,7 @@ function FailedMessagesSection() {
 
   return (
     <section className="space-y-sm">
-      <h2 className="text-subheading font-semibold">Failed messages</h2>
+      <h4 className="text-body font-semibold">Failed messages</h4>
       {isLoading ? (
         <p
           role="status"

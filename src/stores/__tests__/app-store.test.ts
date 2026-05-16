@@ -92,15 +92,15 @@ describe("AppStore", () => {
     });
 
     it("setSubmenu replaces the chip list", () => {
-      useAppStore.getState().setSubmenu("calendar", ["bookings", "cleaning"]);
-      expect(useAppStore.getState().calendar.submenu).toEqual(["bookings", "cleaning"]);
+      useAppStore.getState().setSubmenu("calendar", ["bookings", "operations"]);
+      expect(useAppStore.getState().calendar.submenu).toEqual(["bookings", "operations"]);
     });
   });
 
   describe("cross-cutting: views", () => {
     it("setView updates the correct page view", () => {
-      useAppStore.getState().setView("cleaning", "list");
-      expect(useAppStore.getState().cleaning.view).toBe("list");
+      useAppStore.getState().setView("operations", "list");
+      expect(useAppStore.getState().operations.view).toBe("list");
 
       useAppStore.getState().setView("calendar", "list");
       expect(useAppStore.getState().calendar.view).toBe("list");
@@ -120,9 +120,9 @@ describe("AppStore", () => {
       expect(useAppStore.getState().calendar.windowSize).toBe("month");
 
       // Cleaning/Calendar → month
-      useAppStore.getState().setTimeframe("cleaning", "week");
-      useAppStore.getState().setView("cleaning", "calendar");
-      expect(useAppStore.getState().cleaning.windowSize).toBe("month");
+      useAppStore.getState().setTimeframe("operations", "week");
+      useAppStore.getState().setView("operations", "calendar");
+      expect(useAppStore.getState().operations.windowSize).toBe("month");
 
       // Views without a configured default preserve current windowSize
       useAppStore.getState().setView("calendar", "list");
@@ -215,21 +215,21 @@ describe("AppStore", () => {
     });
   });
 
-  describe("cleaning", () => {
+  describe("operations", () => {
     it("toggleShoppingDrawer flips shoppingDrawerOpen", () => {
-      expect(useAppStore.getState().cleaning.shoppingDrawerOpen).toBe(false);
+      expect(useAppStore.getState().operations.shoppingDrawerOpen).toBe(false);
       useAppStore.getState().toggleShoppingDrawer();
-      expect(useAppStore.getState().cleaning.shoppingDrawerOpen).toBe(true);
+      expect(useAppStore.getState().operations.shoppingDrawerOpen).toBe(true);
       useAppStore.getState().toggleShoppingDrawer();
-      expect(useAppStore.getState().cleaning.shoppingDrawerOpen).toBe(false);
+      expect(useAppStore.getState().operations.shoppingDrawerOpen).toBe(false);
     });
 
     it("toggleBoughtItem adds and removes items", () => {
       useAppStore.getState().toggleBoughtItem("si-001");
-      expect(useAppStore.getState().cleaning.boughtItems).toEqual(["si-001"]);
+      expect(useAppStore.getState().operations.boughtItems).toEqual(["si-001"]);
 
       useAppStore.getState().toggleBoughtItem("si-001");
-      expect(useAppStore.getState().cleaning.boughtItems).toEqual([]);
+      expect(useAppStore.getState().operations.boughtItems).toEqual([]);
     });
   });
 

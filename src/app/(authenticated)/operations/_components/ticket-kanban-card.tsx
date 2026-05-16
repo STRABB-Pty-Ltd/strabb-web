@@ -12,6 +12,7 @@ import {
 
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
+import { formatEnumLabel } from "@/lib/utils";
 import type { Ticket } from "@/types/ticket";
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
@@ -72,7 +73,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
             className="px-xs py-xs text-body rounded-sm font-medium"
             style={{ backgroundColor: priority.bg, color: priority.text }}
           >
-            {ticket.priority}
+            {formatEnumLabel(ticket.priority)}
           </span>
           {(() => {
             const Icon = statusIcons[ticket.status];
@@ -85,7 +86,7 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
                 }}
               >
                 {Icon && <Icon size={10} aria-hidden="true" />}
-                {ticket.status}
+                {formatEnumLabel(ticket.status)}
               </span>
             );
           })()}
