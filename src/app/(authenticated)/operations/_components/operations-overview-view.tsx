@@ -37,10 +37,7 @@ export function OperationsOverviewView({ tasks }: OperationsOverviewViewProps) {
   }, [ticketsResponse, selectedListings]);
 
   const ticketPending = useMemo(() => tickets.filter((t) => t.status === "pending"), [tickets]);
-  const ticketConfirmed = useMemo(
-    () => tickets.filter((t) => t.status === "confirmed"),
-    [tickets],
-  );
+  const ticketConfirmed = useMemo(() => tickets.filter((t) => t.status === "confirmed"), [tickets]);
   const cleanPending = useMemo(() => tasks.filter((t) => t.status === "pending"), [tasks]);
   const cleanConfirmed = useMemo(() => tasks.filter((t) => t.status === "confirmed"), [tasks]);
 

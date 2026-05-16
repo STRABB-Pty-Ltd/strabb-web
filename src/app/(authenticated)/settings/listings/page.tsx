@@ -105,7 +105,10 @@ export default function SettingsListingsPage() {
   };
 
   const handleMetadataSave = () => {
-    addToast({ type: "warning", message: "Listing metadata save is coming soon, not wired up yet" });
+    addToast({
+      type: "warning",
+      message: "Listing metadata save is coming soon, not wired up yet",
+    });
   };
 
   return (
@@ -171,10 +174,7 @@ function ListingCard({
 
   return (
     <div className="rounded-lg border" style={{ borderColor: "var(--border)" }}>
-      <header
-        className="px-sm py-sm border-b"
-        style={{ borderColor: "var(--border)" }}
-      >
+      <header className="px-sm py-sm border-b" style={{ borderColor: "var(--border)" }}>
         <p className="text-subheading text-highlight-10 font-semibold">{listing.name}</p>
         <p className="text-body" style={{ color: "var(--text-secondary)" }}>
           {listing.platform}
@@ -269,9 +269,7 @@ function StaySection() {
       <h3 className="text-body text-highlight-10 font-semibold">Stay rules</h3>
       <div className="gap-sm grid grid-cols-2">
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
-            Min nights
-          </label>
+          <label className="mb-xs text-body text-highlight-10 block font-medium">Min nights</label>
           <input
             type="number"
             placeholder="2"
@@ -280,9 +278,7 @@ function StaySection() {
           />
         </div>
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
-            Max nights
-          </label>
+          <label className="mb-xs text-body text-highlight-10 block font-medium">Max nights</label>
           <input
             type="number"
             placeholder="30"
@@ -306,11 +302,7 @@ function AmenitiesSection({ listingId }: { listingId: string }) {
             className="gap-base text-body text-highlight-10 flex items-center"
             htmlFor={`amenity-${listingId}-${a}`}
           >
-            <input
-              id={`amenity-${listingId}-${a}`}
-              type="checkbox"
-              className="h-sm w-sm rounded"
-            />
+            <input id={`amenity-${listingId}-${a}`} type="checkbox" className="h-sm w-sm rounded" />
             {a}
           </label>
         ))}

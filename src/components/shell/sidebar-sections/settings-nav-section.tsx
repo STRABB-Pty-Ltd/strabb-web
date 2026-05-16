@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  CreditCard,
-  Globe,
-  Inbox,
-  Phone,
-  Radio,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { CreditCard, Globe, Inbox, Phone, Radio, Settings, Sparkles } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAppStore } from "@/stores/app-store";
@@ -32,8 +24,7 @@ export function SettingsNavSection() {
   // /settings/listings) used to appear as sidebar links. They now drill in
   // from cards inside the relevant section. Clicking a section while on
   // any of those sub-routes routes back to /settings root.
-  const onSubRoute =
-    (pathname?.startsWith("/settings/") ?? false) && pathname !== "/settings";
+  const onSubRoute = (pathname?.startsWith("/settings/") ?? false) && pathname !== "/settings";
 
   const handleSectionClick = (id: string) => {
     setSection(id);

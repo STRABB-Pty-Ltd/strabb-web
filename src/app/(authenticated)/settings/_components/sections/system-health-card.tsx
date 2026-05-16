@@ -180,7 +180,12 @@ function SyncErrorsSection() {
     <section className="space-y-sm">
       <h4 className="text-body font-semibold">Recent sync errors</h4>
       {isLoading ? (
-        <p role="status" aria-live="polite" aria-busy="true" className="text-body text-highlight-10">
+        <p
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          className="text-body text-highlight-10"
+        >
           Loading…
         </p>
       ) : (
@@ -275,7 +280,12 @@ function FailedMessagesSection() {
     <section className="space-y-sm">
       <h4 className="text-body font-semibold">Failed messages</h4>
       {isLoading ? (
-        <p role="status" aria-live="polite" aria-busy="true" className="text-body text-highlight-10">
+        <p
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+          className="text-body text-highlight-10"
+        >
           Loading…
         </p>
       ) : (

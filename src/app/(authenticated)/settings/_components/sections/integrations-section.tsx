@@ -154,7 +154,7 @@ export function IntegrationsSection() {
               >
                 <Icon className="text-highlight-10" size={18} aria-hidden="true" />
               </div>
-              <div className="min-w-0 flex-1 space-y-xs">
+              <div className="space-y-xs min-w-0 flex-1">
                 <div className="gap-base flex items-center">
                   <p className="text-body text-highlight-10 font-medium">{it.name}</p>
                   <span

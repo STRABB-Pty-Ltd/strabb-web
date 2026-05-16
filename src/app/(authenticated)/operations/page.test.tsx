@@ -77,5 +77,4 @@ describe("OperationsPage", () => {
     render(<OperationsPage />);
     expect(screen.getByTestId("tickets-view")).toBeInTheDocument();
   });
-
 });

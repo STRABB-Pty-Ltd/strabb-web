@@ -2,7 +2,14 @@
 
 import { useMemo } from "react";
 import { format, parseISO } from "date-fns";
-import { ArrowRight, BrushCleaning, CalendarDays, ShoppingBag, Sparkles, Wrench } from "lucide-react";
+import {
+  ArrowRight,
+  BrushCleaning,
+  CalendarDays,
+  ShoppingBag,
+  Sparkles,
+  Wrench,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
@@ -42,10 +49,10 @@ function ShoppingListPanel() {
   const boughtItems = useAppStore((s) => s.operations.boughtItems);
   const { data: items = [] } = useShoppingList(selectedListings);
 
-  const needed = useMemo(() => items.filter((i) => !boughtItems.includes(i.id)), [
-    items,
-    boughtItems,
-  ]);
+  const needed = useMemo(
+    () => items.filter((i) => !boughtItems.includes(i.id)),
+    [items, boughtItems],
+  );
   // Top 5 by priority (high first) so the panel previews what matters,
   // not what happens to be at the top of the alphabetical list.
   const top = useMemo(() => {
@@ -71,10 +78,7 @@ function ShoppingListPanel() {
                 className="px-base py-xs text-body shrink-0 rounded-md font-medium"
                 style={{
                   backgroundColor: "var(--neutral-30)",
-                  color:
-                    item.priority === "high"
-                      ? "var(--status-danger)"
-                      : "var(--highlight-10)",
+                  color: item.priority === "high" ? "var(--status-danger)" : "var(--highlight-10)",
                 }}
               >
                 {item.priority}
