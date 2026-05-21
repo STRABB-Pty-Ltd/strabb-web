@@ -1,0 +1,82 @@
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import type {
+  DailyListingStateListResponse,
+  DailyListingStateResponse,
+  RateUpdateRequest,
+} from "@/lib/schemas/listing-state";
+
+/**
+ * Hooks for the F.4 + F.7a per-listing daily state surface. Used by the
+ * listings settings page's Rates / Restrictions / Availability tabs.
+ *
+ * All read queries lazy-load via `enabled` so a collapsed listing row
+ * does NOT fetch its calendar data — only when the user expands the row
+ * and lands on the relevant tab.
+ */
+
+/**
+ * GET /listings/{id}/state?date_from=...&date_to=...
+ *
+ * `enabled` is the gate the caller passes: typically
+ * `isAuthReady && isRowExpanded && activeTab === "rates"` so we don't
+ * fetch for collapsed rows or for the wrong tab.
+ */
+export function useListingStateAPI(
+  listingId: string,
+  dateFrom: string,
+  dateTo: string,
+  enabled: boolean = true,
+) {
+  const apiClient = useApiClient();
+  const isReady = useAuthReady();
+
+  return useQuery<DailyListingStateResponse[]>({
+    queryKey: ["listing-state", listingId, dateFrom, dateTo],
+    queryFn: async () => {
+      const response = await apiClient.get<DailyListingStateListResponse>(
+        `/listings/${listingId}/state?date_from=${dateFrom}&date_to=${dateTo}`,
+      );
+      return response.data;
+    },
+    enabled: isReady && enabled,
+  });
+}
+
+/**
+ * PATCH /listings/{id}/rates — set rate for a single date or inclusive
+ * range. Body is the discriminated `RateUpdateRequest`.
+ *
+ * On success we invalidate every `listing-state` query for the affected
+ * listing — the calendar may be looking at a different window than the
+ * one we just edited (e.g. user edited September while viewing October),
+ * so invalidating the whole listing-state namespace is the safe call.
+ */
+export function useUpdateListingRates() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      listingId,
+      body,
+    }: {
+      listingId: string;
+      body: RateUpdateRequest;
+    }): Promise<DailyListingStateResponse[]> => {
+      const response = await apiClient.patch<DailyListingStateListResponse>(
+        `/listings/${listingId}/rates`,
+        body,
+      );
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["listing-state", variables.listingId],
+      });
+    },
+  });
+}
