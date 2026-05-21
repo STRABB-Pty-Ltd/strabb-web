@@ -13,6 +13,18 @@ import { useAppStore } from "@/stores/app-store";
 
 const CHANNEX_MAX_LENGTH = 255;
 
+interface ChannexInputState {
+  propertyId: string;
+  roomTypeId: string;
+  ratePlanId: string;
+}
+
+const EMPTY_CHANNEX_INPUT: ChannexInputState = {
+  propertyId: "",
+  roomTypeId: "",
+  ratePlanId: "",
+};
+
 // Mock amenity list. Real source will be a tenant-level amenity catalogue
 // once the backend ships listing metadata - for now the checkboxes are
 // here to anchor the layout and let Will eyeball the spec.
@@ -40,10 +52,11 @@ export default function SettingsListingsPage() {
 
   const listings = useMemo(() => data?.data ?? [], [data?.data]);
 
-  // Channex mapping inputs (kept at page level so the value survives row
+  // Channex mapping inputs (kept at page level so values survive row
   // collapse/expand — closing a row doesn't blow away a user's in-flight
-  // edit on the Channex tab).
-  const [channexInputs, setChannexInputs] = useState<Record<string, string>>({});
+  // edit on the Channex tab). All three IDs are tracked per listing so
+  // a single Save sends them together.
+  const [channexInputs, setChannexInputs] = useState<Record<string, ChannexInputState>>({});
   const [channexErrors, setChannexErrors] = useState<Record<string, string | null>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
 
@@ -51,38 +64,59 @@ export default function SettingsListingsPage() {
     setChannexInputs((prev) => {
       const next = { ...prev };
       for (const l of listings) {
-        if (next[l.id] === undefined) next[l.id] = l.channexPropertyId ?? "";
+        if (next[l.id] === undefined) {
+          next[l.id] = {
+            propertyId: l.channexPropertyId ?? "",
+            roomTypeId: l.channexRoomTypeId ?? "",
+            ratePlanId: l.channexRatePlanId ?? "",
+          };
+        }
       }
       return next;
     });
   }, [listings]);
 
-  const handleChannexChange = (id: string, value: string) => {
-    setChannexInputs((prev) => ({ ...prev, [id]: value }));
+  const handleChannexFieldChange = (id: string, field: keyof ChannexInputState, value: string) => {
+    setChannexInputs((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] ?? EMPTY_CHANNEX_INPUT), [field]: value },
+    }));
     if (channexErrors[id]) setChannexErrors((prev) => ({ ...prev, [id]: null }));
   };
 
   const handleChannexSave = (listing: ListingResponse) => {
-    const raw = channexInputs[listing.id] ?? "";
-    const trimmed = raw.trim();
-    if (trimmed.length > CHANNEX_MAX_LENGTH) {
-      setChannexErrors((prev) => ({
-        ...prev,
-        [listing.id]: `Max ${CHANNEX_MAX_LENGTH} characters`,
-      }));
-      return;
+    const inputs = channexInputs[listing.id] ?? EMPTY_CHANNEX_INPUT;
+    const property = inputs.propertyId.trim();
+    const room = inputs.roomTypeId.trim();
+    const rate = inputs.ratePlanId.trim();
+
+    for (const [label, raw] of [
+      ["property", property],
+      ["room type", room],
+      ["rate plan", rate],
+    ] as const) {
+      if (raw.length > CHANNEX_MAX_LENGTH) {
+        setChannexErrors((prev) => ({
+          ...prev,
+          [listing.id]: `Channex ${label} ID exceeds ${CHANNEX_MAX_LENGTH} characters`,
+        }));
+        return;
+      }
     }
-    const value = trimmed === "" ? null : trimmed;
+
     setSavingId(listing.id);
     updateMapping.mutate(
-      { listingId: listing.id, channexPropertyId: value },
+      {
+        listingId: listing.id,
+        channexPropertyId: property === "" ? null : property,
+        channexRoomTypeId: room === "" ? null : room,
+        channexRatePlanId: rate === "" ? null : rate,
+      },
       {
         onSuccess: () => {
           addToast({
             type: "success",
-            message: value
-              ? `Channex mapping saved for ${listing.name}`
-              : `Channex mapping cleared for ${listing.name}`,
+            message: `Channex mapping saved for ${listing.name}`,
           });
         },
         onError: (err: unknown) => {
@@ -146,14 +180,15 @@ export default function SettingsListingsPage() {
               channexTabContent={
                 <ChannexMappingSection
                   listingId={listing.id}
-                  value={channexInputs[listing.id] ?? ""}
-                  stored={listing.channexPropertyId ?? ""}
+                  values={channexInputs[listing.id] ?? EMPTY_CHANNEX_INPUT}
+                  stored={{
+                    propertyId: listing.channexPropertyId ?? "",
+                    roomTypeId: listing.channexRoomTypeId ?? "",
+                    ratePlanId: listing.channexRatePlanId ?? "",
+                  }}
                   error={channexErrors[listing.id]}
-                  dirty={
-                    (channexInputs[listing.id] ?? "").trim() !== (listing.channexPropertyId ?? "")
-                  }
                   saving={savingId === listing.id}
-                  onChange={(v) => handleChannexChange(listing.id, v)}
+                  onChange={(field, v) => handleChannexFieldChange(listing.id, field, v)}
                   onSave={() => handleChannexSave(listing)}
                 />
               }
@@ -315,60 +350,73 @@ function DescriptionSection({ listingId }: { listingId: string }) {
 
 interface ChannexMappingSectionProps {
   listingId: string;
-  value: string;
-  stored: string;
+  values: ChannexInputState;
+  stored: ChannexInputState;
   error: string | null | undefined;
-  dirty: boolean;
   saving: boolean;
-  onChange: (v: string) => void;
+  onChange: (field: keyof ChannexInputState, value: string) => void;
   onSave: () => void;
 }
 
 function ChannexMappingSection({
   listingId,
-  value,
+  values,
   stored,
   error,
-  dirty,
   saving,
   onChange,
   onSave,
 }: ChannexMappingSectionProps) {
+  // Dirty = any of the three inputs differs from the stored value.
+  // Empty string and null both count as "unset"; trim before comparing
+  // so trailing whitespace doesn't keep the button enabled forever.
+  const dirty =
+    values.propertyId.trim() !== stored.propertyId ||
+    values.roomTypeId.trim() !== stored.roomTypeId ||
+    values.ratePlanId.trim() !== stored.ratePlanId;
+
   return (
-    <section className="space-y-xs">
+    <section className="space-y-sm">
       <div>
         <h3 className="text-body text-highlight-10 font-semibold">Channel manager mapping</h3>
         <p className="text-body" style={{ color: "var(--text-secondary)" }}>
-          Channex property ID this STRABB listing receives bookings from.
+          All three Channex IDs together identify this STRABB listing inside Channex. All three are
+          required before availability + rates + restrictions can be pushed.
         </p>
       </div>
-      <div className="gap-base flex items-center">
-        <input
-          id={`channex-${listingId}`}
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="abcd1234-aaaa-bbbb-cccc-dddddddddddd"
-          maxLength={CHANNEX_MAX_LENGTH}
-          aria-invalid={error != null}
-          aria-describedby={error ? `channex-${listingId}-error` : undefined}
-          className="font-data px-sm py-base text-body border-neutral-30 flex-1 rounded-lg border"
-          style={{
-            backgroundColor: "var(--surface-60)",
-            color: "var(--highlight-10)",
-          }}
-        />
+      <ChannexIdField
+        id={`channex-prop-${listingId}`}
+        label="Property ID"
+        helper="Channex property this STRABB listing receives bookings from."
+        value={values.propertyId}
+        error={error != null}
+        onChange={(v) => onChange("propertyId", v)}
+      />
+      <ChannexIdField
+        id={`channex-room-${listingId}`}
+        label="Room type ID"
+        helper="Channex room type within the property — the bookable unit."
+        value={values.roomTypeId}
+        error={error != null}
+        onChange={(v) => onChange("roomTypeId", v)}
+      />
+      <ChannexIdField
+        id={`channex-rate-${listingId}`}
+        label="Rate plan ID"
+        helper="Channex rate plan whose pricing + restrictions STRABB writes to."
+        value={values.ratePlanId}
+        error={error != null}
+        onChange={(v) => onChange("ratePlanId", v)}
+      />
+      <div className="flex justify-end">
         <button
           type="button"
           onClick={onSave}
           disabled={!dirty || saving}
           className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-          style={{
-            backgroundColor: "var(--highlight-10)",
-            color: "var(--surface-60)",
-          }}
+          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
         >
-          {saving ? "Saving…" : value.trim() === stored ? "Saved" : "Save"}
+          {saving ? "Saving…" : dirty ? "Save" : "Saved"}
         </button>
       </div>
       {error && (
@@ -377,5 +425,38 @@ function ChannexMappingSection({
         </p>
       )}
     </section>
+  );
+}
+
+interface ChannexIdFieldProps {
+  id: string;
+  label: string;
+  helper: string;
+  value: string;
+  error: boolean;
+  onChange: (v: string) => void;
+}
+
+function ChannexIdField({ id, label, helper, value, error, onChange }: ChannexIdFieldProps) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-xs text-body text-highlight-10 block font-medium">
+        {label}
+      </label>
+      <input
+        id={id}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="abcd1234-aaaa-bbbb-cccc-dddddddddddd"
+        maxLength={CHANNEX_MAX_LENGTH}
+        aria-invalid={error}
+        className="font-data px-sm py-base text-body border-neutral-30 w-full rounded-lg border"
+        style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
+      />
+      <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
+        {helper}
+      </p>
+    </div>
   );
 }

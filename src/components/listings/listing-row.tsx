@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ListingResponse } from "@/lib/schemas/listing";
 
+import { AvailabilityCalendar } from "./availability-calendar";
 import { RatesCalendar } from "./rates-calendar";
 import { RestrictionsCalendar } from "./restrictions-calendar";
 
@@ -106,7 +107,7 @@ export function ListingRow({
             </TabsContent>
 
             <TabsContent value="availability">
-              <PlaceholderTab label="Availability editor lands in F.9." />
+              {activeTab === "availability" && <AvailabilityCalendar listingId={listing.id} />}
             </TabsContent>
 
             <TabsContent value="channex">{channexTabContent}</TabsContent>
@@ -114,13 +115,5 @@ export function ListingRow({
         </div>
       )}
     </div>
-  );
-}
-
-function PlaceholderTab({ label }: { label: string }) {
-  return (
-    <p className="text-body" style={{ color: "var(--text-secondary)" }}>
-      {label}
-    </p>
   );
 }

@@ -97,6 +97,20 @@ export function useListingsAPI(pageSize = 100) {
   });
 }
 
+/**
+ * PATCH /listings/{id}/channex-mapping — accepts up to all three
+ * Channex resource ids (property, room type, rate plan). Each field is
+ * optional: pass a string to set, `null` to clear, or omit it entirely
+ * to leave the existing value alone. The backend distinguishes "absent
+ * from body" from "explicitly null" via `model_fields_set`.
+ */
+export interface ChannexMappingUpdate {
+  listingId: string;
+  channexPropertyId?: string | null;
+  channexRoomTypeId?: string | null;
+  channexRatePlanId?: string | null;
+}
+
 export function useUpdateChannexMapping() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
@@ -104,14 +118,11 @@ export function useUpdateChannexMapping() {
   return useMutation({
     mutationFn: async ({
       listingId,
-      channexPropertyId,
-    }: {
-      listingId: string;
-      channexPropertyId: string | null;
-    }): Promise<ListingResponse> => {
+      ...fields
+    }: ChannexMappingUpdate): Promise<ListingResponse> => {
       const response = await apiClient.patch<{ data: ListingResponse }>(
         `/listings/${listingId}/channex-mapping`,
-        { channexPropertyId },
+        fields,
       );
       return response.data;
     },
