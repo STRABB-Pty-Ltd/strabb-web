@@ -3,6 +3,7 @@
 import { Image as ImageIcon, Inbox } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import { ListingRow } from "@/components/listings/listing-row";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { useListingsAPI, useUpdateChannexMapping } from "@/lib/api-hooks/listings-api";
@@ -39,7 +40,9 @@ export default function SettingsListingsPage() {
 
   const listings = useMemo(() => data?.data ?? [], [data?.data]);
 
-  // Channex mapping (real, persisted via API)
+  // Channex mapping inputs (kept at page level so the value survives row
+  // collapse/expand — closing a row doesn't blow away a user's in-flight
+  // edit on the Channex tab).
   const [channexInputs, setChannexInputs] = useState<Record<string, string>>({});
   const [channexErrors, setChannexErrors] = useState<Record<string, string | null>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -115,7 +118,7 @@ export default function SettingsListingsPage() {
     <div className="p-md space-y-md">
       <PageHeader
         title="Listings"
-        description="Photos, pricing, and amenities for each STRABB listing. Channel manager mapping sits at the bottom of each card."
+        description="Click a listing to expand it and edit pricing, restrictions, availability, and channel-manager mapping."
       />
 
       {isLoading ? (
@@ -131,17 +134,29 @@ export default function SettingsListingsPage() {
           />
         </div>
       ) : (
-        <div className="space-y-md">
+        <div className="space-y-base">
           {listings.map((listing) => (
-            <ListingCard
+            <ListingRow
               key={listing.id}
               listing={listing}
-              channexInput={channexInputs[listing.id] ?? ""}
-              channexError={channexErrors[listing.id]}
-              channexSaving={savingId === listing.id}
-              onChannexChange={(v) => handleChannexChange(listing.id, v)}
-              onChannexSave={() => handleChannexSave(listing)}
-              onMetadataSave={handleMetadataSave}
+              baseNightlyRate={
+                null /* TODO: thread Listing.nightly_rate when API exposes it on response */
+              }
+              generalTabContent={<GeneralTab listingId={listing.id} onSave={handleMetadataSave} />}
+              channexTabContent={
+                <ChannexMappingSection
+                  listingId={listing.id}
+                  value={channexInputs[listing.id] ?? ""}
+                  stored={listing.channexPropertyId ?? ""}
+                  error={channexErrors[listing.id]}
+                  dirty={
+                    (channexInputs[listing.id] ?? "").trim() !== (listing.channexPropertyId ?? "")
+                  }
+                  saving={savingId === listing.id}
+                  onChange={(v) => handleChannexChange(listing.id, v)}
+                  onSave={() => handleChannexSave(listing)}
+                />
+              }
             />
           ))}
         </div>
@@ -150,67 +165,29 @@ export default function SettingsListingsPage() {
   );
 }
 
-interface ListingCardProps {
-  listing: ListingResponse;
-  channexInput: string;
-  channexError: string | null | undefined;
-  channexSaving: boolean;
-  onChannexChange: (v: string) => void;
-  onChannexSave: () => void;
-  onMetadataSave: () => void;
-}
+// ---------------------------------------------------------------------
+// General tab — placeholder metadata sections (not wired to a save
+// endpoint yet; the existing inline form was always mock UI).
+// ---------------------------------------------------------------------
 
-function ListingCard({
-  listing,
-  channexInput,
-  channexError,
-  channexSaving,
-  onChannexChange,
-  onChannexSave,
-  onMetadataSave,
-}: ListingCardProps) {
-  const channexStored = listing.channexPropertyId ?? "";
-  const channexDirty = channexInput.trim() !== channexStored;
-
+function GeneralTab({ listingId, onSave }: { listingId: string; onSave: () => void }) {
   return (
-    <div className="rounded-lg border" style={{ borderColor: "var(--border)" }}>
-      <header className="px-sm py-sm border-b" style={{ borderColor: "var(--border)" }}>
-        <p className="text-subheading text-highlight-10 font-semibold">{listing.name}</p>
-        <p className="text-body" style={{ color: "var(--text-secondary)" }}>
-          {listing.platform}
-        </p>
-      </header>
+    <div className="space-y-md">
+      <PhotosSection />
+      <PricingSection />
+      <StaySection />
+      <AmenitiesSection listingId={listingId} />
+      <DescriptionSection listingId={listingId} />
 
-      <div className="p-sm space-y-md">
-        <PhotosSection />
-        <PricingSection />
-        <StaySection />
-        <AmenitiesSection listingId={listing.id} />
-        <DescriptionSection listingId={listing.id} />
-
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={onMetadataSave}
-            className="px-sm py-base text-body rounded-lg font-medium"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
-            Save metadata
-          </button>
-        </div>
-
-        <hr style={{ borderColor: "var(--border)" }} />
-
-        <ChannexMappingSection
-          listingId={listing.id}
-          value={channexInput}
-          stored={channexStored}
-          error={channexError}
-          dirty={channexDirty}
-          saving={channexSaving}
-          onChange={onChannexChange}
-          onSave={onChannexSave}
-        />
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={onSave}
+          className="px-sm py-base text-body rounded-lg font-medium"
+          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+        >
+          Save metadata
+        </button>
       </div>
     </div>
   );
@@ -330,6 +307,11 @@ function DescriptionSection({ listingId }: { listingId: string }) {
     </section>
   );
 }
+
+// ---------------------------------------------------------------------
+// Channex tab — channel-manager mapping form (existing logic from before
+// the F.7b refactor; unchanged).
+// ---------------------------------------------------------------------
 
 interface ChannexMappingSectionProps {
   listingId: string;
