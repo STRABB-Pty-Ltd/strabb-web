@@ -39,6 +39,8 @@ export interface ListingResponse {
   listingType: ListingType;
   parentId: string | null;
   channexPropertyId: string | null;
+  channexRoomTypeId: string | null;
+  channexRatePlanId: string | null;
   children: string[];
   createdAt: string;
   updatedAt: string;

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
 import type {
+  AvailabilityUpdateRequest,
   DailyListingStateListResponse,
   DailyListingStateResponse,
   RateUpdateRequest,
@@ -105,6 +106,43 @@ export function useUpdateListingRestrictions() {
     }): Promise<DailyListingStateResponse[]> => {
       const response = await apiClient.patch<DailyListingStateListResponse>(
         `/listings/${listingId}/restrictions`,
+        body,
+      );
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["listing-state", variables.listingId],
+      });
+    },
+  });
+}
+
+/**
+ * PATCH /listings/{id}/availability — set the bookable-units count for
+ * a single date or inclusive range. Body shape is the discriminated
+ * `AvailabilityUpdateRequest` (count + date | count + dateFrom/dateTo).
+ *
+ * Driven by the F.9 Availability tab: hosts use this to manually block
+ * a date (count=0) or open multi-unit listings (count >= 2). The
+ * automatic booking-driven decrement from F.6 also lands rows here,
+ * but via a different path (worker -> daily_listing_state, not via the
+ * UI).
+ */
+export function useUpdateListingAvailability() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      listingId,
+      body,
+    }: {
+      listingId: string;
+      body: AvailabilityUpdateRequest;
+    }): Promise<DailyListingStateResponse[]> => {
+      const response = await apiClient.patch<DailyListingStateListResponse>(
+        `/listings/${listingId}/availability`,
         body,
       );
       return response.data;

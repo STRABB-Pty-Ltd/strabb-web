@@ -20,6 +20,14 @@ vi.mock("../restrictions-calendar", () => ({
   },
 }));
 
+const availabilityCalendarMock = vi.fn();
+vi.mock("../availability-calendar", () => ({
+  AvailabilityCalendar: (props: { listingId: string }) => {
+    availabilityCalendarMock(props);
+    return <div data-testid="availability-calendar">availability for {props.listingId}</div>;
+  },
+}));
+
 import { ListingRow } from "../listing-row";
 
 const baseListing: ListingResponse = {
@@ -69,6 +77,7 @@ describe("ListingRow", () => {
     expect(screen.queryByTestId("channex")).not.toBeInTheDocument();
     expect(ratesCalendarMock).not.toHaveBeenCalled();
     expect(restrictionsCalendarMock).not.toHaveBeenCalled();
+    expect(availabilityCalendarMock).not.toHaveBeenCalled();
   });
 
   it("mounts the General tab content when expanded (default tab)", async () => {
@@ -121,6 +130,22 @@ describe("ListingRow", () => {
     expect(restrictionsCalendarMock).not.toHaveBeenCalled();
     await user.click(screen.getByRole("tab", { name: /^Restrictions$/ }));
     expect(restrictionsCalendarMock).toHaveBeenCalledWith({ listingId: "listing-1" });
+  });
+
+  it("lazy-mounts AvailabilityCalendar only when the Availability tab is selected", async () => {
+    const user = userEvent.setup();
+    render(
+      <ListingRow
+        listing={baseListing}
+        generalTabContent={<div data-testid="general">general body</div>}
+        channexTabContent={<div data-testid="channex">channex body</div>}
+        baseNightlyRate={null}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Beach House/ }));
+    expect(availabilityCalendarMock).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("tab", { name: /^Availability$/ }));
+    expect(availabilityCalendarMock).toHaveBeenCalledWith({ listingId: "listing-1" });
   });
 
   it("shows the Channex badge in the header for mapped listings", () => {
