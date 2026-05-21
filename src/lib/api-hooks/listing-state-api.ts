@@ -7,6 +7,7 @@ import type {
   DailyListingStateListResponse,
   DailyListingStateResponse,
   RateUpdateRequest,
+  RestrictionsUpdateRequest,
 } from "@/lib/schemas/listing-state";
 
 /**
@@ -69,6 +70,41 @@ export function useUpdateListingRates() {
     }): Promise<DailyListingStateResponse[]> => {
       const response = await apiClient.patch<DailyListingStateListResponse>(
         `/listings/${listingId}/rates`,
+        body,
+      );
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["listing-state", variables.listingId],
+      });
+    },
+  });
+}
+
+/**
+ * PATCH /listings/{id}/restrictions — set any subset of the 5
+ * restriction fields (minStay, maxStay, closedToArrival,
+ * closedToDeparture, stopSell) for a single date or inclusive range.
+ *
+ * Body shape mirrors the backend RestrictionsUpdate schema: callers
+ * only include fields they want to change, the backend leaves omitted
+ * fields untouched. At least one field is required server-side.
+ */
+export function useUpdateListingRestrictions() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      listingId,
+      body,
+    }: {
+      listingId: string;
+      body: RestrictionsUpdateRequest;
+    }): Promise<DailyListingStateResponse[]> => {
+      const response = await apiClient.patch<DailyListingStateListResponse>(
+        `/listings/${listingId}/restrictions`,
         body,
       );
       return response.data;
