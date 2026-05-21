@@ -12,6 +12,14 @@ vi.mock("../rates-calendar", () => ({
   },
 }));
 
+const restrictionsCalendarMock = vi.fn();
+vi.mock("../restrictions-calendar", () => ({
+  RestrictionsCalendar: (props: { listingId: string }) => {
+    restrictionsCalendarMock(props);
+    return <div data-testid="restrictions-calendar">restrictions for {props.listingId}</div>;
+  },
+}));
+
 import { ListingRow } from "../listing-row";
 
 const baseListing: ListingResponse = {
@@ -60,6 +68,7 @@ describe("ListingRow", () => {
     expect(screen.queryByTestId("general")).not.toBeInTheDocument();
     expect(screen.queryByTestId("channex")).not.toBeInTheDocument();
     expect(ratesCalendarMock).not.toHaveBeenCalled();
+    expect(restrictionsCalendarMock).not.toHaveBeenCalled();
   });
 
   it("mounts the General tab content when expanded (default tab)", async () => {
@@ -94,6 +103,24 @@ describe("ListingRow", () => {
       listingId: "listing-1",
       baseNightlyRate: 250,
     });
+    // The restrictions calendar should NOT mount until its own tab is chosen.
+    expect(restrictionsCalendarMock).not.toHaveBeenCalled();
+  });
+
+  it("lazy-mounts RestrictionsCalendar only when the Restrictions tab is selected", async () => {
+    const user = userEvent.setup();
+    render(
+      <ListingRow
+        listing={baseListing}
+        generalTabContent={<div data-testid="general">general body</div>}
+        channexTabContent={<div data-testid="channex">channex body</div>}
+        baseNightlyRate={null}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Beach House/ }));
+    expect(restrictionsCalendarMock).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("tab", { name: /^Restrictions$/ }));
+    expect(restrictionsCalendarMock).toHaveBeenCalledWith({ listingId: "listing-1" });
   });
 
   it("shows the Channex badge in the header for mapped listings", () => {

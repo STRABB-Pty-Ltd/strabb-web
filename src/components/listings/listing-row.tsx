@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ListingResponse } from "@/lib/schemas/listing";
 
 import { RatesCalendar } from "./rates-calendar";
+import { RestrictionsCalendar } from "./restrictions-calendar";
 
 type TabKey = "general" | "rates" | "restrictions" | "availability" | "channex";
 
@@ -101,7 +102,7 @@ export function ListingRow({
             </TabsContent>
 
             <TabsContent value="restrictions">
-              <PlaceholderTab label="Restrictions editor lands in F.8." />
+              {activeTab === "restrictions" && <RestrictionsCalendar listingId={listing.id} />}
             </TabsContent>
 
             <TabsContent value="availability">
