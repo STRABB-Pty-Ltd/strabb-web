@@ -6,7 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ListingRow } from "@/components/listings/listing-row";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListingsAPI, useUpdateChannexMapping } from "@/lib/api-hooks/listings-api";
+import {
+  useListingsAPI,
+  useUpdateChannexMapping,
+  useUpdateListing,
+} from "@/lib/api-hooks/listings-api";
 import { ApiError } from "@/lib/api-client";
 import type { ListingResponse } from "@/lib/schemas/listing";
 import { useAppStore } from "@/stores/app-store";
@@ -48,6 +52,7 @@ const AMENITIES = [
 export default function SettingsListingsPage() {
   const { data, isLoading } = useListingsAPI();
   const updateMapping = useUpdateChannexMapping();
+  const updateListing = useUpdateListing();
   const addToast = useAppStore((s) => s.addToast);
 
   const listings = useMemo(() => data?.data ?? [], [data?.data]);
@@ -60,6 +65,13 @@ export default function SettingsListingsPage() {
   const [channexErrors, setChannexErrors] = useState<Record<string, string | null>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
 
+  // Per-listing General-tab inputs. Today only `nightlyRate` is wired
+  // to a real save endpoint (PUT /listings/{id}); the other inputs on
+  // that tab remain visual placeholders pending backend support — see
+  // docs/listings-settings-phase-2.md.
+  const [nightlyRateInputs, setNightlyRateInputs] = useState<Record<string, string>>({});
+  const [savingMetadataId, setSavingMetadataId] = useState<string | null>(null);
+
   useEffect(() => {
     setChannexInputs((prev) => {
       const next = { ...prev };
@@ -70,6 +82,15 @@ export default function SettingsListingsPage() {
             roomTypeId: l.channexRoomTypeId ?? "",
             ratePlanId: l.channexRatePlanId ?? "",
           };
+        }
+      }
+      return next;
+    });
+    setNightlyRateInputs((prev) => {
+      const next = { ...prev };
+      for (const l of listings) {
+        if (next[l.id] === undefined) {
+          next[l.id] = l.nightlyRate != null ? String(l.nightlyRate) : "";
         }
       }
       return next;
@@ -141,11 +162,54 @@ export default function SettingsListingsPage() {
     );
   };
 
-  const handleMetadataSave = () => {
-    addToast({
-      type: "warning",
-      message: "Listing metadata save is coming soon, not wired up yet",
-    });
+  const handleMetadataSave = (listing: ListingResponse) => {
+    const raw = (nightlyRateInputs[listing.id] ?? "").trim();
+    // Empty input clears the override (null = use OTA/listing-level
+    // default). Otherwise parse as a non-negative number.
+    let nightlyRate: number | null;
+    if (raw === "") {
+      nightlyRate = null;
+    } else {
+      const parsed = Number(raw);
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        addToast({
+          type: "error",
+          message: "Base nightly rate must be a non-negative number",
+        });
+        return;
+      }
+      nightlyRate = parsed;
+    }
+
+    const stored = listing.nightlyRate;
+    if (nightlyRate === stored) {
+      addToast({ type: "info", message: "Nothing to save" });
+      return;
+    }
+
+    setSavingMetadataId(listing.id);
+    updateListing.mutate(
+      { listingId: listing.id, nightlyRate },
+      {
+        onSuccess: () => {
+          addToast({
+            type: "success",
+            message: `Metadata saved for ${listing.name}`,
+          });
+        },
+        onError: (err: unknown) => {
+          const message = err instanceof Error ? err.message : "Failed to save metadata";
+          addToast({ type: "error", message });
+        },
+        onSettled: () => {
+          setSavingMetadataId(null);
+        },
+      },
+    );
+  };
+
+  const handleNightlyRateChange = (id: string, value: string) => {
+    setNightlyRateInputs((prev) => ({ ...prev, [id]: value }));
   };
 
   return (
@@ -173,10 +237,16 @@ export default function SettingsListingsPage() {
             <ListingRow
               key={listing.id}
               listing={listing}
-              baseNightlyRate={
-                null /* TODO: thread Listing.nightly_rate when API exposes it on response */
+              baseNightlyRate={listing.nightlyRate}
+              generalTabContent={
+                <GeneralTab
+                  listingId={listing.id}
+                  nightlyRateInput={nightlyRateInputs[listing.id] ?? ""}
+                  onNightlyRateChange={(v) => handleNightlyRateChange(listing.id, v)}
+                  saving={savingMetadataId === listing.id}
+                  onSave={() => handleMetadataSave(listing)}
+                />
               }
-              generalTabContent={<GeneralTab listingId={listing.id} onSave={handleMetadataSave} />}
               channexTabContent={
                 <ChannexMappingSection
                   listingId={listing.id}
@@ -201,15 +271,37 @@ export default function SettingsListingsPage() {
 }
 
 // ---------------------------------------------------------------------
-// General tab — placeholder metadata sections (not wired to a save
-// endpoint yet; the existing inline form was always mock UI).
+// General tab.
+//
+// Only the Base nightly rate input is wired to a real save endpoint
+// (PUT /listings/{id}) — the other sections (photos, cleaning fee,
+// default stay rules, amenities, description) remain visual
+// placeholders pending backend support. See
+// docs/listings-settings-phase-2.md for the deferred list.
 // ---------------------------------------------------------------------
 
-function GeneralTab({ listingId, onSave }: { listingId: string; onSave: () => void }) {
+interface GeneralTabProps {
+  listingId: string;
+  nightlyRateInput: string;
+  onNightlyRateChange: (value: string) => void;
+  saving: boolean;
+  onSave: () => void;
+}
+
+function GeneralTab({
+  listingId,
+  nightlyRateInput,
+  onNightlyRateChange,
+  saving,
+  onSave,
+}: GeneralTabProps) {
   return (
     <div className="space-y-md">
       <PhotosSection />
-      <PricingSection />
+      <PricingSection
+        nightlyRateInput={nightlyRateInput}
+        onNightlyRateChange={onNightlyRateChange}
+      />
       <StaySection />
       <AmenitiesSection listingId={listingId} />
       <DescriptionSection listingId={listingId} />
@@ -218,10 +310,11 @@ function GeneralTab({ listingId, onSave }: { listingId: string; onSave: () => vo
         <button
           type="button"
           onClick={onSave}
-          className="px-sm py-base text-body rounded-lg font-medium"
+          disabled={saving}
+          className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
           style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
         >
-          Save metadata
+          {saving ? "Saving…" : "Save metadata"}
         </button>
       </div>
     </div>
@@ -243,21 +336,38 @@ function PhotosSection() {
   );
 }
 
-function PricingSection() {
+interface PricingSectionProps {
+  nightlyRateInput: string;
+  onNightlyRateChange: (value: string) => void;
+}
+
+function PricingSection({ nightlyRateInput, onNightlyRateChange }: PricingSectionProps) {
   return (
     <section className="space-y-xs">
       <h3 className="text-body text-highlight-10 font-semibold">Pricing</h3>
       <div className="gap-sm grid grid-cols-2">
         <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
+          <label
+            htmlFor="base-nightly-rate"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
             Base nightly rate
           </label>
           <input
+            id="base-nightly-rate"
             type="number"
-            placeholder="285"
+            inputMode="decimal"
+            min={0}
+            step="0.01"
+            placeholder="285.00"
+            value={nightlyRateInput}
+            onChange={(e) => onNightlyRateChange(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
             style={{ borderColor: "var(--border)" }}
           />
+          <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
+            Falls back to this rate for any date with no per-date override.
+          </p>
         </div>
         <div>
           <label className="mb-xs text-body text-highlight-10 block font-medium">
@@ -266,9 +376,13 @@ function PricingSection() {
           <input
             type="number"
             placeholder="120"
-            className="px-sm py-base text-body w-full rounded-lg border"
+            disabled
+            className="px-sm py-base text-body w-full rounded-lg border opacity-60"
             style={{ borderColor: "var(--border)" }}
           />
+          <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
+            Coming soon.
+          </p>
         </div>
       </div>
     </section>

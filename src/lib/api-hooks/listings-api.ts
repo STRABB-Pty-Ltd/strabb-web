@@ -111,6 +111,53 @@ export interface ChannexMappingUpdate {
   channexRatePlanId?: string | null;
 }
 
+/**
+ * Body for PUT /listings/{id} — mirrors the backend `ListingUpdate`
+ * schema. Every field is optional; omitted fields are left untouched
+ * on the listing.
+ *
+ * Today only `nightlyRate` is wired into the General tab. The other
+ * fields (name, platform, bedrooms, etc.) are supported by the backend
+ * and could be surfaced in the UI later — see
+ * docs/listings-settings-phase-2.md for the deferred fields list.
+ */
+export interface ListingUpdateRequest {
+  name?: string;
+  platform?: string;
+  externalListingId?: string | null;
+  icalFeedUrl?: string | null;
+  listingType?: string;
+  parentId?: string | null;
+  color?: string | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  maxGuests?: number | null;
+  nightlyRate?: number | null;
+  location?: string | null;
+}
+
+export function useUpdateListing() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      listingId,
+      ...fields
+    }: { listingId: string } & ListingUpdateRequest): Promise<ListingResponse> => {
+      const response = await apiClient.put<{ data: ListingResponse }>(
+        `/listings/${listingId}`,
+        fields,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["listings-hierarchy"] });
+    },
+  });
+}
+
 export function useUpdateChannexMapping() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();

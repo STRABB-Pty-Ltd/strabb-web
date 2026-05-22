@@ -29,6 +29,7 @@ import {
   useListingsAPI,
   useListingsHierarchyAPI,
   useUpdateChannexMapping,
+  useUpdateListing,
   useUpdateListingGroupAPI,
 } from "./listings-api";
 
@@ -131,5 +132,29 @@ describe("listings-api hooks", () => {
       channexPropertyId: "ch-1",
     });
     expect(updated).toEqual({ id: "lst-1", channexPropertyId: "ch-1" });
+  });
+
+  it("useUpdateListing PUTs /listings/{id} with the supplied fields only", async () => {
+    putMock.mockResolvedValue({ data: { id: "lst-1", nightlyRate: 295 } });
+
+    const { result } = renderHook(() => useUpdateListing(), { wrapper: withProvider() });
+    const updated = await result.current.mutateAsync({
+      listingId: "lst-1",
+      nightlyRate: 295,
+    });
+
+    // listingId is consumed by the URL, only the listing-update fields
+    // make it into the body.
+    expect(putMock).toHaveBeenCalledWith("/listings/lst-1", { nightlyRate: 295 });
+    expect(updated).toEqual({ id: "lst-1", nightlyRate: 295 });
+  });
+
+  it("useUpdateListing accepts null to clear nullable fields", async () => {
+    putMock.mockResolvedValue({ data: { id: "lst-1", nightlyRate: null } });
+
+    const { result } = renderHook(() => useUpdateListing(), { wrapper: withProvider() });
+    await result.current.mutateAsync({ listingId: "lst-1", nightlyRate: null });
+
+    expect(putMock).toHaveBeenCalledWith("/listings/lst-1", { nightlyRate: null });
   });
 });
