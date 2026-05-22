@@ -38,6 +38,7 @@ export interface ListingResponse {
   isActive: boolean;
   listingType: ListingType;
   parentId: string | null;
+  nightlyRate: number | null;
   channexPropertyId: string | null;
   channexRoomTypeId: string | null;
   channexRatePlanId: string | null;

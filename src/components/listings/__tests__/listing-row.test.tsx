@@ -43,6 +43,7 @@ const baseListing: ListingResponse = {
   isActive: true,
   listingType: "standalone",
   parentId: null,
+  nightlyRate: null,
   channexPropertyId: null,
   channexRoomTypeId: null,
   channexRatePlanId: null,
