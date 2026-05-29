@@ -132,7 +132,7 @@ export function useUpdateCleaningTaskAPI() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<CleaningTask> }) =>
-      apiClient.patch(`/cleaning-tasks/${id}`, data),
+      apiClient.put(`/cleaning-tasks/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });

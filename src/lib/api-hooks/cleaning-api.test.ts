@@ -130,7 +130,7 @@ describe("cleaning-api hooks", () => {
 
   it("create / update mutations target the cleaning-tasks endpoint", async () => {
     postMock.mockResolvedValue({ data: { id: "ct-new" } });
-    patchMock.mockResolvedValue({ data: { id: "ct-1" } });
+    putMock.mockResolvedValue({ data: { id: "ct-1" } });
 
     const create = renderHook(() => useCreateCleaningTaskAPI(), { wrapper: withProvider() });
     await create.result.current.mutateAsync({ listingId: "lst-1" });
@@ -138,6 +138,6 @@ describe("cleaning-api hooks", () => {
 
     const update = renderHook(() => useUpdateCleaningTaskAPI(), { wrapper: withProvider() });
     await update.result.current.mutateAsync({ id: "ct-1", data: { status: "completed" } });
-    expect(patchMock).toHaveBeenCalledWith("/cleaning-tasks/ct-1", { status: "completed" });
+    expect(putMock).toHaveBeenCalledWith("/cleaning-tasks/ct-1", { status: "completed" });
   });
 });

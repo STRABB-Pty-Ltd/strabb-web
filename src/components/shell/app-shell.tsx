@@ -61,8 +61,6 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
     }
   }, [pathname, currentPage, setCurrentPage, resetPageDefaults]);
 
-  const showSidebarSeparator = currentPage !== "settings";
-
   return (
     <div className="relative flex h-screen overflow-hidden">
       {/* Skip-link for keyboard users. Visually hidden until focused, then
@@ -82,19 +80,17 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
         <LogoSection />
       </div>
       <ContextualSidebar />
-      {showSidebarSeparator && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute z-20"
-          style={{
-            left: "calc(var(--sidebar-width) + 4px)",
-            top: "var(--canvas-top)",
-            bottom: "var(--space-xl)",
-            width: "var(--hairline)",
-            backgroundColor: "var(--neutral-30)",
-          }}
-        />
-      )}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute z-20"
+        style={{
+          left: "calc(var(--sidebar-width) + 4px)",
+          top: "var(--canvas-top)",
+          bottom: "var(--space-xl)",
+          width: "var(--hairline)",
+          backgroundColor: "var(--neutral-30)",
+        }}
+      />
       <div className="flex flex-1 flex-col overflow-hidden">
         <BillingBanner />
         <div

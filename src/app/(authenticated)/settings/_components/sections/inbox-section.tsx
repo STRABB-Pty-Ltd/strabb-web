@@ -121,7 +121,7 @@ export function InboxSection() {
                 aria-invalid={error != null}
                 aria-describedby={error ? "inbox-subdomain-error" : "inbox-subdomain-hint"}
                 className="px-sm py-base text-body border-neutral-30 flex-1 rounded-lg border"
-                style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
+                style={{ backgroundColor: "var(--neutral-30)", color: "var(--highlight-10)" }}
               />
               <span className="text-body" style={{ color: "var(--text-secondary)" }}>
                 @inbox.strabb.io

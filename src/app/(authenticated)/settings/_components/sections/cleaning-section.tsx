@@ -39,7 +39,7 @@ export function CleaningSection() {
             min="0.5"
             step="0.5"
             className="px-sm py-base text-body w-[144px] rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
         </div>
 
@@ -87,7 +87,7 @@ export function CleaningSection() {
             value={defaultCleaner}
             onChange={(e) => setDefaultCleaner(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
         </div>
 
@@ -105,7 +105,7 @@ export function CleaningSection() {
             value={defaultCleanerEmail}
             onChange={(e) => setDefaultCleanerEmail(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
         </div>
       </div>

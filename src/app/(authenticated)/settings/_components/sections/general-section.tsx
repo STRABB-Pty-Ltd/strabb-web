@@ -64,7 +64,7 @@ export function GeneralSection() {
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
         </div>
 
@@ -80,7 +80,7 @@ export function GeneralSection() {
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           >
             {timezones.map((tz) => (
               <option key={tz} value={tz}>
@@ -102,7 +102,7 @@ export function GeneralSection() {
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
             className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           >
             {currencies.map((c) => (
               <option key={c} value={c}>

@@ -211,7 +211,7 @@ export function IntegrationsSection() {
             placeholder="https://example.com/calendar.ics"
             aria-labelledby="integrations-ical-label"
             className="px-sm py-base text-body flex-1 rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
           <button
             type="button"

@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  CalendarCheck,
-  CheckCircle,
-  Clock,
-  Loader,
-  Wrench,
-  XCircle,
-  type LucideIcon,
-} from "lucide-react";
+import { Wrench } from "lucide-react";
 
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
@@ -20,30 +12,6 @@ const priorityColors: Record<string, { bg: string; text: string }> = {
   high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
   medium: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
   low: { bg: "var(--neutral-30)", text: "var(--highlight-10)" },
-};
-
-const statusColors: Record<string, string> = {
-  pending: "var(--status-pending)",
-  confirmed: "var(--status-confirmed)",
-  in_progress: "var(--status-in-progress)",
-  completed: "var(--status-completed)",
-  cancelled: "var(--status-cancelled)",
-};
-
-const statusFgColors: Record<string, string> = {
-  pending: "var(--status-danger-fg)",
-  confirmed: "var(--status-confirmed-fg)",
-  in_progress: "var(--status-success-fg)",
-  completed: "var(--status-success-fg)",
-  cancelled: "var(--status-cancelled-fg)",
-};
-
-const statusIcons: Record<string, LucideIcon> = {
-  pending: Clock,
-  confirmed: CalendarCheck,
-  in_progress: Loader,
-  completed: CheckCircle,
-  cancelled: XCircle,
 };
 
 interface TicketKanbanCardProps {
@@ -75,21 +43,6 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
           >
             {formatEnumLabel(ticket.priority)}
           </span>
-          {(() => {
-            const Icon = statusIcons[ticket.status];
-            return (
-              <span
-                className="gap-xs px-xs py-xs text-body inline-flex items-center rounded-sm font-medium"
-                style={{
-                  backgroundColor: statusColors[ticket.status] ?? "var(--highlight-10)",
-                  color: statusFgColors[ticket.status] ?? "var(--surface-60)",
-                }}
-              >
-                {Icon && <Icon size={10} aria-hidden="true" />}
-                {formatEnumLabel(ticket.status)}
-              </span>
-            );
-          })()}
         </div>
 
         <div className="text-body text-highlight-10">
