@@ -214,7 +214,10 @@ export function PhoneSection() {
               // tracking-widest: known design exception - no project letter-spacing token,
               // OTP inputs need wide tracking for readability.
               className="px-sm py-base text-body font-data w-full rounded-lg border tracking-widest"
-              style={{ borderColor: otpError ? "var(--status-danger)" : "var(--border)" }}
+              style={{
+                backgroundColor: "var(--neutral-30)",
+                borderColor: otpError ? "var(--status-danger)" : "var(--border)",
+              }}
             />
             {otpError && (
               <p className="text-body" style={{ color: "var(--status-danger)" }}>
@@ -268,7 +271,10 @@ export function PhoneSection() {
                 }}
                 placeholder="+61 400 000 000"
                 className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ borderColor: phoneError ? "var(--status-danger)" : "var(--border)" }}
+                style={{
+                  backgroundColor: "var(--neutral-30)",
+                  borderColor: phoneError ? "var(--status-danger)" : "var(--border)",
+                }}
               />
               {phoneError && (
                 <p className="text-body" style={{ color: "var(--status-danger)" }}>

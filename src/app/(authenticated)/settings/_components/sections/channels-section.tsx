@@ -86,6 +86,7 @@ export function ChannelsSection() {
             key={ch.id}
             className="px-sm py-sm rounded-lg border"
             style={{
+              backgroundColor: "var(--surface-60)",
               borderColor: "var(--border)",
               borderLeftWidth: "var(--stripe-width)",
               borderLeftColor: ch.color,
@@ -107,7 +108,7 @@ export function ChannelsSection() {
                   value={ch.syncFrequency}
                   onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
                   className="px-sm py-base text-body w-full rounded-sm border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
                 >
                   {syncOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -128,7 +129,7 @@ export function ChannelsSection() {
                   value={ch.pricingRule}
                   onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
                   className="px-sm py-base text-body w-full rounded-sm border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
                 >
                   {pricingOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
