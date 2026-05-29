@@ -111,12 +111,13 @@ describe("TicketDetailDrawer", () => {
     expect(screen.getByText("Leaking tap")).toBeInTheDocument();
   });
 
-  it("Edit toggles edit mode and Save fires update mutation", async () => {
+  it("editing a field via its edit chip and Save fires update mutation", async () => {
     storeState.drillDownPanel = { open: true, type: "ticket", itemId: baseTicket.id };
     ticketMock.mockReturnValue({ data: baseTicket, isLoading: false });
     render(<TicketDetailDrawer />);
 
-    await userEvent.click(screen.getByRole("button", { name: /^edit$/i }));
+    // Each of the 4 fields now has its own "edit" chip; clicking one reveals Save.
+    await userEvent.click(screen.getAllByRole("button", { name: /^edit$/i })[0]);
     await userEvent.click(screen.getByRole("button", { name: /^save$/i }));
 
     expect(updateMutate).toHaveBeenCalledWith(

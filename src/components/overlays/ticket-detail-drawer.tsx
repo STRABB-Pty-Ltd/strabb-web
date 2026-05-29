@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
@@ -39,14 +39,6 @@ const statusColors: Record<string, string> = {
   cancelled: "var(--status-cancelled)",
 };
 
-const statusFgColors: Record<string, string> = {
-  pending: "var(--status-danger-fg)",
-  confirmed: "var(--status-confirmed-fg)",
-  in_progress: "var(--status-success-fg)",
-  completed: "var(--status-success-fg)",
-  cancelled: "var(--status-cancelled-fg)",
-};
-
 const statusIcons: Record<string, LucideIcon> = {
   pending: Clock,
   confirmed: CalendarCheck,
@@ -68,6 +60,25 @@ function toIsoLocalInput(iso: string | null): string {
   return local.toISOString().slice(0, 16);
 }
 
+function EditableChip({ onEdit, children }: { onEdit: () => void; children: ReactNode }) {
+  return (
+    <div
+      className="px-base py-xs mt-xs gap-base flex items-center justify-between rounded-md"
+      style={{ backgroundColor: "var(--neutral-30)" }}
+    >
+      {children}
+      <button
+        type="button"
+        onClick={onEdit}
+        className="text-body shrink-0 font-medium underline-offset-2 hover:underline"
+        style={{ color: "var(--text-secondary)" }}
+      >
+        edit
+      </button>
+    </div>
+  );
+}
+
 export function TicketDetailDrawer() {
   const drillDownPanel = useAppStore((s) => s.drillDownPanel);
   const closeDrillDownPanel = useAppStore((s) => s.closeDrillDownPanel);
@@ -86,7 +97,7 @@ export function TicketDetailDrawer() {
   const unlinkClean = useUnlinkCleanFromTicket();
   const completeClean = useCompleteCleaningTask();
 
-  const [editing, setEditing] = useState(false);
+  const [editFields, setEditFields] = useState<Record<string, boolean>>({});
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TicketPriority>("medium");
@@ -120,7 +131,7 @@ export function TicketDetailDrawer() {
       setDateScheduled(toIsoLocalInput(ticket.dateScheduled));
       setCost(ticket.cost == null ? "" : String(ticket.cost));
       setNotes(ticket.notes ?? "");
-      setEditing(false);
+      setEditFields({});
       setConfirmDelete(false);
     }
   }, [ticket?.id, ticket]);
@@ -169,7 +180,7 @@ export function TicketDetailDrawer() {
       },
       {
         onSuccess: () => {
-          setEditing(false);
+          setEditFields({});
           addToast({ type: "success", message: "Ticket updated" });
           if (
             status === "completed" &&
@@ -243,8 +254,20 @@ export function TicketDetailDrawer() {
     setDateScheduled(toIsoLocalInput(ticket.dateScheduled));
     setCost(ticket.cost == null ? "" : String(ticket.cost));
     setNotes(ticket.notes ?? "");
-    setEditing(false);
+    setEditFields({});
   };
+
+  const anyEditing = Object.values(editFields).some(Boolean);
+  const startEdit = (field: string) => setEditFields((s) => ({ ...s, [field]: true }));
+  const editAll = () =>
+    setEditFields({
+      priority: true,
+      status: true,
+      scheduled: true,
+      cost: true,
+      description: true,
+      notes: true,
+    });
 
   return (
     <DrillDownPanel
@@ -269,12 +292,12 @@ export function TicketDetailDrawer() {
               <label htmlFor="ticket-drawer-priority" className="text-body text-highlight-10 block">
                 Priority
               </label>
-              {editing ? (
+              {editFields.priority ? (
                 <select
                   id="ticket-drawer-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
+                  className="px-sm py-base text-body bg-neutral-30 mt-xs w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {TICKET_PRIORITY_OPTIONS.map((o) => (
@@ -284,19 +307,23 @@ export function TicketDetailDrawer() {
                   ))}
                 </select>
               ) : (
-                <p className="text-body text-highlight-10 font-medium">{priority}</p>
+                <EditableChip onEdit={() => startEdit("priority")}>
+                  <span className="text-body text-highlight-10 font-medium">
+                    {formatEnumLabel(priority)}
+                  </span>
+                </EditableChip>
               )}
             </div>
             <div>
               <label htmlFor="ticket-drawer-status" className="text-body text-highlight-10 block">
                 Status
               </label>
-              {editing ? (
+              {editFields.status ? (
                 <select
                   id="ticket-drawer-status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TicketStatus)}
-                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
+                  className="px-sm py-base text-body bg-neutral-30 mt-xs w-full rounded-lg border"
                   style={{ borderColor: "var(--border)" }}
                 >
                   {TICKET_STATUS_OPTIONS.map((o) => (
@@ -306,21 +333,20 @@ export function TicketDetailDrawer() {
                   ))}
                 </select>
               ) : (
-                (() => {
-                  const Icon = statusIcons[status];
-                  return (
-                    <span
-                      className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
-                      style={{
-                        backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                        color: statusFgColors[status] ?? "var(--surface-60)",
-                      }}
-                    >
-                      {Icon && <Icon size={11} aria-hidden="true" />}
-                      {status.replace("_", " ")}
-                    </span>
-                  );
-                })()
+                <EditableChip onEdit={() => startEdit("status")}>
+                  {(() => {
+                    const Icon = statusIcons[status];
+                    return (
+                      <span
+                        className="gap-xs text-body inline-flex items-center font-medium"
+                        style={{ color: statusColors[status] ?? "var(--highlight-10)" }}
+                      >
+                        {Icon && <Icon size={11} aria-hidden="true" />}
+                        {formatEnumLabel(status)}
+                      </span>
+                    );
+                  })()}
+                </EditableChip>
               )}
             </div>
           </div>
@@ -337,15 +363,20 @@ export function TicketDetailDrawer() {
               >
                 Scheduled
               </label>
-              {editing ? (
+              {editFields.scheduled ? (
                 <DateTimePicker
                   id="ticket-drawer-date-scheduled"
                   value={dateScheduled}
                   onChange={setDateScheduled}
                   placeholder="Pick date and time"
+                  background="var(--neutral-30)"
                 />
               ) : (
-                <p className="font-data text-body">{fmtDate(displayTicket.dateScheduled, tz)}</p>
+                <EditableChip onEdit={() => startEdit("scheduled")}>
+                  <span className="font-data text-body">
+                    {fmtDate(displayTicket.dateScheduled, tz)}
+                  </span>
+                </EditableChip>
               )}
             </div>
           </div>
@@ -357,7 +388,7 @@ export function TicketDetailDrawer() {
             >
               Description
             </label>
-            {editing ? (
+            {editFields.description ? (
               <textarea
                 id="ticket-drawer-description"
                 value={description}
@@ -378,22 +409,24 @@ export function TicketDetailDrawer() {
               <label htmlFor="ticket-drawer-cost" className="text-body text-highlight-10 block">
                 Cost
               </label>
-              {editing ? (
+              {editFields.cost ? (
                 <input
                   id="ticket-drawer-cost"
                   type="number"
                   step="0.01"
                   value={cost}
                   onChange={(e) => setCost(e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
+                  className="px-sm py-base text-body mt-xs w-full rounded-lg border"
+                  style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
                 />
               ) : (
-                <p className="font-data text-body">
-                  {displayTicket.cost != null
-                    ? formatCurrency(displayTicket.cost, displayTicket.currency)
-                    : "-"}
-                </p>
+                <EditableChip onEdit={() => startEdit("cost")}>
+                  <span className="font-data text-body">
+                    {displayTicket.cost != null
+                      ? formatCurrency(displayTicket.cost, displayTicket.currency)
+                      : "-"}
+                  </span>
+                </EditableChip>
               )}
             </div>
             <div>
@@ -406,7 +439,7 @@ export function TicketDetailDrawer() {
             <label htmlFor="ticket-drawer-notes" className="text-body text-highlight-10 block">
               Notes
             </label>
-            {editing ? (
+            {editFields.notes ? (
               <textarea
                 id="ticket-drawer-notes"
                 value={notes}
@@ -510,11 +543,11 @@ export function TicketDetailDrawer() {
             className="gap-xs pt-sm flex flex-wrap border-t"
             style={{ borderColor: "var(--border)" }}
           >
-            {!editing ? (
+            {!anyEditing ? (
               <>
                 <button
                   type="button"
-                  onClick={() => setEditing(true)}
+                  onClick={editAll}
                   className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
                   style={{ borderColor: "var(--border)" }}
                 >

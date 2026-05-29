@@ -21,6 +21,7 @@ interface DateTimePickerProps {
   "aria-describedby"?: string;
   "aria-labelledby"?: string;
   className?: string;
+  background?: string;
 }
 
 const ISO_DATE = "yyyy-MM-dd";
@@ -52,6 +53,7 @@ export function DateTimePicker({
   showTime = true,
   disabled = false,
   className,
+  background = "var(--surface-60)",
   ...ariaProps
 }: DateTimePickerProps) {
   // Memoise parsed so [parsed] dep lists don't loop on a fresh Date each render.
@@ -155,7 +157,7 @@ export function DateTimePicker({
           "gap-base flex items-center justify-between",
           className,
         )}
-        style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
+        style={{ backgroundColor: background, borderColor: "var(--border)" }}
       >
         <span
           className="truncate"
