@@ -5,7 +5,6 @@ import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hoo
 import { useAppStore } from "@/stores/app-store";
 
 import { AlertStrip } from "./_components/alert-strip";
-import { ComparePanel } from "./_components/compare-panel";
 import { KPIGrid } from "./_components/kpi-grid";
 import { PreviewGrid } from "./_components/preview-grid";
 
@@ -57,9 +56,25 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
+      <KPIGrid kpis={kpis} />
 
-      {isCompare && <ComparePanel current={kpis} comparison={kpis} />}
+      {isCompare && (
+        <div
+          className="p-md rounded-xl"
+          style={{ backgroundColor: "var(--neutral-30)" }}
+          data-testid="compare-coming-soon"
+        >
+          <h3
+            className="mb-sm text-subheading font-semibold"
+            style={{ color: "var(--highlight-10)" }}
+          >
+            Period Comparison
+          </h3>
+          <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+            Coming soon
+          </p>
+        </div>
+      )}
 
       <PreviewGrid data={preview} windowSize={windowSize} />
     </div>
