@@ -178,13 +178,6 @@ export function ShoppingListPopup() {
             </button>
             <button
               type="button"
-              disabled
-              className="px-sm py-base text-body text-highlight-10 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            >
-              Share Link
-            </button>
-            <button
-              type="button"
               onClick={handleCopyList}
               className="px-sm py-base text-body text-surface-60 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
