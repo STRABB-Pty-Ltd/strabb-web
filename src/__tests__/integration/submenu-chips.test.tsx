@@ -48,25 +48,19 @@ describe("Submenu chip integration", () => {
     });
   });
 
-  describe("toggle behavior (Compare)", () => {
-    it("clicking Compare activates it independently", async () => {
+  describe("coming-soon dropdown behavior (Compare)", () => {
+    it("clicking Compare opens a 'Coming soon' dropdown and leaves the canvas alone", async () => {
       const user = userEvent.setup();
       useAppStore.getState().setCurrentPage("dashboard");
 
       render(<SubmenuBar />);
-      expect(useAppStore.getState().dashboard.compare).toBe(false);
+      // Hidden until the chip is opened.
+      expect(screen.queryByText("Coming soon")).not.toBeInTheDocument();
 
       await user.click(screen.getByText("Compare"));
-      expect(useAppStore.getState().dashboard.compare).toBe(true);
-    });
 
-    it("clicking Compare again deactivates it", async () => {
-      const user = userEvent.setup();
-      useAppStore.getState().setCurrentPage("dashboard");
-      useAppStore.getState().toggleCompare(); // activate first
-
-      render(<SubmenuBar />);
-      await user.click(screen.getByText("Compare"));
+      expect(screen.getByText("Coming soon")).toBeInTheDocument();
+      // Compare is a placeholder now - it must not flip any comparison state.
       expect(useAppStore.getState().dashboard.compare).toBe(false);
     });
   });

@@ -19,12 +19,10 @@ export function SubmenuBar() {
   const toggleSubmenuChip = useAppStore((s) => s.toggleSubmenuChip);
   const setSubmenu = useAppStore((s) => s.setSubmenu);
   const setView = useAppStore((s) => s.setView);
-  const toggleCompare = useAppStore((s) => s.toggleCompare);
   const pathname = usePathname();
   const router = useRouter();
 
   const dashboardSubmenu = useAppStore((s) => s.dashboard.submenu);
-  const dashboardCompare = useAppStore((s) => s.dashboard.compare);
   const calendarSubmenu = useAppStore((s) => s.calendar.submenu);
   const messagingSubmenu = useAppStore((s) => s.messaging.submenu);
   const operationsSubmenu = useAppStore((s) => s.operations.submenu);
@@ -56,9 +54,6 @@ export function SubmenuBar() {
     // When the user is on a nav-chip sub-route, no submenu chip is active -
     // the nav chip owns the highlight, including over Overview.
     if (onNavSubRoute) return false;
-    if (chip.behavior === "toggle" && currentPage === "dashboard" && chip.id === "compare") {
-      return dashboardCompare;
-    }
     return activeSubmenu.includes(chip.id);
   };
 
@@ -100,11 +95,7 @@ export function SubmenuBar() {
         setSubmenu(page, ["overview"]);
         break;
       case "toggle":
-        if (page === "dashboard" && chip.id === "compare") {
-          toggleCompare();
-        } else {
-          toggleSubmenuChip(page, chip.id);
-        }
+        toggleSubmenuChip(page, chip.id);
         break;
       case "multi": {
         const isActive = activeSubmenu.includes(chip.id);

@@ -11,8 +11,6 @@ import { PreviewGrid } from "./_components/preview-grid";
 export default function DashboardPage() {
   const windowSize = useAppStore((s) => s.dashboard.windowSize);
   const anchor = useAppStore((s) => s.dashboard.anchor);
-  const submenu = useAppStore((s) => s.dashboard.submenu);
-  const compare = useAppStore((s) => s.dashboard.compare);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
@@ -26,8 +24,6 @@ export default function DashboardPage() {
     windowSize,
     anchor,
   );
-
-  const isCompare = compare || submenu.includes("compare");
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
@@ -57,24 +53,6 @@ export default function DashboardPage() {
       )}
 
       <KPIGrid kpis={kpis} />
-
-      {isCompare && (
-        <div
-          className="p-md rounded-xl"
-          style={{ backgroundColor: "var(--neutral-30)" }}
-          data-testid="compare-coming-soon"
-        >
-          <h3
-            className="mb-sm text-subheading font-semibold"
-            style={{ color: "var(--highlight-10)" }}
-          >
-            Period Comparison
-          </h3>
-          <p className="text-body" style={{ color: "var(--text-secondary)" }}>
-            Coming soon
-          </p>
-        </div>
-      )}
 
       <PreviewGrid data={preview} windowSize={windowSize} />
     </div>

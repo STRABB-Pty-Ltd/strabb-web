@@ -65,7 +65,6 @@ describe("DashboardPage", () => {
     expect(screen.getByTestId("kpi-grid")).toHaveTextContent("kpis");
     expect(screen.getByTestId("preview-grid")).toBeInTheDocument();
     expect(screen.queryByTestId("alert-strip")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("compare-coming-soon")).not.toBeInTheDocument();
   });
 
   it("renders AlertStrip when alerts are present", () => {
@@ -74,18 +73,5 @@ describe("DashboardPage", () => {
     previewMock.mockReturnValue({ data: { miniCalendar: [] }, isLoading: false });
     render(<DashboardPage />);
     expect(screen.getByTestId("alert-strip")).toHaveTextContent("2 alerts");
-  });
-
-  it("renders the compare coming-soon state when dashboard.compare is true", () => {
-    storeMock.mockReturnValue({
-      ...baseStore,
-      dashboard: { ...baseStore.dashboard, compare: true },
-    });
-    kpisMock.mockReturnValue({ data: { revenue: 0 }, isLoading: false });
-    alertsMock.mockReturnValue({ data: [] });
-    previewMock.mockReturnValue({ data: { miniCalendar: [] }, isLoading: false });
-    render(<DashboardPage />);
-    expect(screen.getByTestId("compare-coming-soon")).toBeInTheDocument();
-    expect(screen.getByText(/coming soon/i)).toBeInTheDocument();
   });
 });
