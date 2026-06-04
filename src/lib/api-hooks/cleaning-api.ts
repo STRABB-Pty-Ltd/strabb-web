@@ -13,6 +13,8 @@ interface RawCleaningTask {
   bookingId: string | null;
   propertyId: string;
   listingId: string;
+  listingName: string | null;
+  listingColor: string | null;
   cleanerName: string | null;
   cleanerEmail: string | null;
   scheduledDate: string | null;
@@ -33,8 +35,8 @@ function mapCleaningTask(raw: RawCleaningTask): CleaningTask {
   return {
     id: raw.id,
     listingId: raw.listingId,
-    listingName: "",
-    listingColor: "",
+    listingName: raw.listingName ?? "",
+    listingColor: raw.listingColor ?? "",
     bookingId: raw.bookingId,
     cleanerName: raw.cleanerName,
     cleanerEmail: raw.cleanerEmail,
