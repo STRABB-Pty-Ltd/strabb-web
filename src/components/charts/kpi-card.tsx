@@ -2,17 +2,13 @@
 
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
+import { formatCurrency } from "@/lib/format-currency";
+
 import type { KPIData } from "@/hooks/use-dashboard";
 
 const formatValue = (value: string | number, type: KPIData["type"]) => {
   const num = typeof value === "string" ? parseFloat(value) : value;
-  if (type === "currency") {
-    return new Intl.NumberFormat("en-AU", {
-      style: "currency",
-      currency: "AUD",
-      maximumFractionDigits: 0,
-    }).format(num);
-  }
+  if (type === "currency") return formatCurrency(num);
   if (type === "percentage") return `${num}%`;
   return String(num);
 };

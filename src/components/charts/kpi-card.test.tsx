@@ -40,4 +40,11 @@ describe("KPICard", () => {
     const { container } = renderCard(undefined);
     expect(container.textContent).not.toContain("%");
   });
+
+  it("renders currency values with two decimal places", () => {
+    const { container } = render(
+      <KPICard kpi={{ ...baseKpi, value: 96.5, trend: null }} onClick={vi.fn()} />,
+    );
+    expect(container.textContent).toContain("$96.50");
+  });
 });
