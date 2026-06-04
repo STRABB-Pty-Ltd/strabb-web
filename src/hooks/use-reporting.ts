@@ -41,6 +41,8 @@ export function useReportingChartData(
 
 export function useSavedReports() {
   const setActiveSavedReport = useAppStore((s) => s.setActiveSavedReport);
+  const setTimeframe = useAppStore((s) => s.setTimeframe);
+  const setSubmenu = useAppStore((s) => s.setSubmenu);
   const windowSize = useAppStore((s) => s.reporting.windowSize);
   const submenu = useAppStore((s) => s.reporting.submenu);
 
@@ -53,6 +55,11 @@ export function useSavedReports() {
   const loadReport = (id: string) => {
     const report = savedReports.find((r) => r.id === id);
     if (!report) return;
+    // Actually apply the saved view: its timeframe + active chips. The
+    // reporting queries key off windowSize, so this re-fetches and the
+    // screen updates - not just a stored "active" marker that nothing read.
+    setTimeframe("reporting", report.timeframe);
+    setSubmenu("reporting", report.submenu);
     setActiveSavedReport(id);
   };
 

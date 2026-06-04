@@ -19,6 +19,8 @@ vi.mock("@/hooks/use-api-client", () => ({
   useAuthReady: () => true,
 }));
 
+import { useAppStore } from "@/stores/app-store";
+
 import { useSavedReports } from "./use-reporting";
 
 function withProvider(): (props: { children: ReactNode }) => ReactNode {
@@ -36,6 +38,7 @@ describe("useSavedReports (persisted via /saved-reports)", () => {
     getMock.mockReset();
     postMock.mockReset();
     deleteMock.mockReset();
+    useAppStore.setState(useAppStore.getInitialState());
   });
 
   it("lists saved reports from GET /saved-reports", async () => {
@@ -74,5 +77,20 @@ describe("useSavedReports (persisted via /saved-reports)", () => {
     act(() => result.current.deleteReport("sr-9"));
 
     await waitFor(() => expect(deleteMock).toHaveBeenCalledWith("/saved-reports/sr-9"));
+  });
+
+  it("loadReport applies the saved report's timeframe and submenu to the view", async () => {
+    getMock.mockResolvedValue({
+      data: [{ id: "sr-1", name: "Q1", timeframe: "quarter", submenu: ["revenue", "expenses"] }],
+    });
+    const { result } = renderHook(() => useSavedReports(), { wrapper: withProvider() });
+    await waitFor(() => expect(result.current.savedReports).toHaveLength(1));
+
+    act(() => result.current.loadReport("sr-1"));
+
+    const reporting = useAppStore.getState().reporting;
+    expect(reporting.windowSize).toBe("quarter");
+    expect(reporting.submenu).toEqual(["revenue", "expenses"]);
+    expect(reporting.activeSavedReport).toBe("sr-1");
   });
 });
