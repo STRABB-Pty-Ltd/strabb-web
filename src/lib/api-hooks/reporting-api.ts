@@ -247,14 +247,21 @@ export interface SavedReportPayload {
   submenu: string[];
 }
 
+// Server-persisted saved report. The id is needed to load and delete a
+// report; created_at arrives camelCased via the global keysToCamel.
+export interface SavedReport extends SavedReportPayload {
+  id: string;
+  createdAt?: string;
+}
+
 export function useSavedReportsAPI() {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
 
-  return useQuery<SavedReportPayload[]>({
+  return useQuery<SavedReport[]>({
     queryKey: ["saved-reports"],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: SavedReportPayload[] }>("/saved-reports");
+      const response = await apiClient.get<{ data: SavedReport[] }>("/saved-reports");
       return response.data;
     },
     enabled: isReady,

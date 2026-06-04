@@ -1,6 +1,12 @@
 "use client";
 
-import { useReportingKPIsAPI, useReportingChartDataAPI } from "@/lib/api-hooks/reporting-api";
+import {
+  useReportingKPIsAPI,
+  useReportingChartDataAPI,
+  useSavedReportsAPI,
+  useCreateSavedReportAPI,
+  useDeleteSavedReportAPI,
+} from "@/lib/api-hooks/reporting-api";
 import { useAppStore } from "@/stores/app-store";
 
 export type { ReportingKPI, ChartDataSet } from "@/lib/api-hooks/reporting-api";
@@ -34,12 +40,15 @@ export function useReportingChartData(
 }
 
 export function useSavedReports() {
-  const savedReports = useAppStore((s) => s.reporting.savedReports);
-  const addSavedReport = useAppStore((s) => s.addSavedReport);
-  const deleteSavedReport = useAppStore((s) => s.deleteSavedReport);
   const setActiveSavedReport = useAppStore((s) => s.setActiveSavedReport);
   const windowSize = useAppStore((s) => s.reporting.windowSize);
   const submenu = useAppStore((s) => s.reporting.submenu);
+
+  // Backed by the real /saved-reports endpoints so reports persist across
+  // reloads (previously an in-memory Zustand store that vanished on refresh).
+  const { data: savedReports = [] } = useSavedReportsAPI();
+  const createReport = useCreateSavedReportAPI();
+  const removeReport = useDeleteSavedReportAPI();
 
   const loadReport = (id: string) => {
     const report = savedReports.find((r) => r.id === id);
@@ -48,17 +57,11 @@ export function useSavedReports() {
   };
 
   const saveCurrentReport = (name: string) => {
-    addSavedReport({
-      id: `sr-${Date.now()}`,
-      name,
-      timeframe: windowSize,
-      submenu,
-      createdAt: new Date().toISOString(),
-    });
+    createReport.mutate({ name, timeframe: windowSize, submenu });
   };
 
   const deleteReport = (id: string) => {
-    deleteSavedReport(id);
+    removeReport.mutate(id);
   };
 
   return {
