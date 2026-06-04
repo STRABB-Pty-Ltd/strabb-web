@@ -154,10 +154,13 @@ export function SubmenuBar() {
       style={{
         backgroundColor: "var(--surface-60)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
-        // Match a chip's natural height (py-base × 2 + text-body line-height)
-        // so the absolute-centred chips don't extend above the row's bounding
-        // box and skew the separator line above this row.
-        minHeight: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
+        // Fixed at a chip's natural height (py-base × 2 + text-body line-height)
+        // so the absolute-centred chips and the separator above stay aligned.
+        // A FIXED (not min) height caps the row: the messaging "Scheduled
+        // messages" link keeps its 44px WCAG hit-area by overflowing this row
+        // rather than inflating it (the inflation previously skewed the
+        // separator above, only on messaging).
+        height: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
       }}
     >
       {/* Left: page-specific widget (timeframe stepper, scheduled-messages link, …) */}

@@ -35,8 +35,12 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
       className="flex rounded-lg border"
       style={{
         borderColor: "var(--border)",
-        // canvas-top is the offset of fixed top-nav + submenu-bar
-        height: "calc(100vh - var(--canvas-top))",
+        // Fill the canvas exactly: the viewport minus the canvas-top offset
+        // (fixed top-nav + submenu-bar) AND the canvas's own vertical padding
+        // (paddingTop = space-md - 2px, paddingBottom = space-md). Omitting
+        // that padding made the box and its border-r divider overshoot the
+        // canvas bottom by ~2 * space-md.
+        height: "calc(100vh - var(--canvas-top) - 2 * var(--space-md) + 2px)",
       }}
     >
       {/* Left pane - message list */}
