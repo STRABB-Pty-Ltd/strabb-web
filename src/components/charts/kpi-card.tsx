@@ -68,7 +68,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
         )}
       </div>
 
-      <p className="font-data text-heading" style={{ color: "var(--highlight-10)" }}>
+      <p className="font-data text-subheading" style={{ color: "var(--highlight-10)" }}>
         {formatValue(kpi.value, kpi.type)}
       </p>
 
