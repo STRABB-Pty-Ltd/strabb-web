@@ -60,8 +60,6 @@ describe("Submenu chip integration", () => {
       await user.click(screen.getByText("Compare"));
 
       expect(screen.getByText("Coming soon")).toBeInTheDocument();
-      // Compare is a placeholder now - it must not flip any comparison state.
-      expect(useAppStore.getState().dashboard.compare).toBe(false);
     });
   });
 

@@ -159,14 +159,6 @@ describe("AppStore", () => {
   });
 
   describe("dashboard", () => {
-    it("toggleCompare flips compare flag", () => {
-      expect(useAppStore.getState().dashboard.compare).toBe(false);
-      useAppStore.getState().toggleCompare();
-      expect(useAppStore.getState().dashboard.compare).toBe(true);
-      useAppStore.getState().toggleCompare();
-      expect(useAppStore.getState().dashboard.compare).toBe(false);
-    });
-
     it("setDrillDown and clearDrillDown manage drillDown state", () => {
       useAppStore.getState().setDrillDown({ type: "revenue", itemId: "lst-001", label: "Revenue" });
       expect(useAppStore.getState().dashboard.drillDown).toEqual({

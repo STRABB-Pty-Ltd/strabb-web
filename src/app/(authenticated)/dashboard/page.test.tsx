@@ -35,7 +35,7 @@ vi.mock("./_components/preview-grid", () => ({
 import DashboardPage from "./page";
 
 const baseStore = {
-  dashboard: { windowSize: "month", anchor: null, submenu: [], compare: false },
+  dashboard: { windowSize: "month", anchor: null, submenu: [] },
   selectedListings: [],
 };
 
