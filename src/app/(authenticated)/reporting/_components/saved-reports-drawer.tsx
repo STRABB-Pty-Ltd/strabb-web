@@ -8,7 +8,14 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useSavedReports } from "@/hooks/use-reporting";
 
 export function SavedReportsDrawer() {
-  const { savedReports, loadReport, saveCurrentReport, deleteReport } = useSavedReports();
+  const {
+    savedReports,
+    activeSavedReport,
+    loadReport,
+    saveCurrentReport,
+    deleteReport,
+    resetToDefaultView,
+  } = useSavedReports();
   const [newName, setNewName] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
@@ -28,15 +35,30 @@ export function SavedReportsDrawer() {
     <div className="p-sm bg-surface-60 rounded-lg border" style={{ borderColor: "var(--border)" }}>
       <div className="mb-sm flex items-center justify-between">
         <h3 className="text-body text-highlight-10 font-semibold">Saved Reports</h3>
-        <button
-          type="button"
-          onClick={() => setShowInput(true)}
-          className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-          style={{ color: "var(--highlight-10)" }}
-        >
-          <Plus size={12} aria-hidden="true" />
-          Save Current
-        </button>
+        <div className="gap-xs flex items-center">
+          <button
+            type="button"
+            onClick={resetToDefaultView}
+            className="px-base py-xs text-body rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            style={{
+              backgroundColor: "var(--neutral-30)",
+              color: "var(--highlight-10)",
+              opacity: activeSavedReport === null ? 0.5 : 1,
+            }}
+            disabled={activeSavedReport === null}
+          >
+            Show default
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowInput(true)}
+            className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            style={{ color: "var(--highlight-10)" }}
+          >
+            <Plus size={12} aria-hidden="true" />
+            Save Current
+          </button>
+        </div>
       </div>
 
       {showInput && (
@@ -84,37 +106,56 @@ export function SavedReportsDrawer() {
         />
       ) : (
         <div className="space-y-base">
-          {savedReports.map((report) => (
-            <div
-              key={report.id}
-              className="px-sm py-base hover:bg-neutral-30 flex items-center justify-between rounded-sm"
-            >
-              <div>
-                <p className="text-body text-highlight-10 font-medium">{report.name}</p>
-                <p className="text-body text-highlight-10">{report.timeframe.replace("_", " ")}</p>
+          {savedReports.map((report) => {
+            // The row whose view is currently on the canvas gets the inverted
+            // selected treatment, mirroring the listings selected-row pattern.
+            const isActive = report.id === activeSavedReport;
+            const rowColor = isActive ? "var(--surface-60)" : "var(--highlight-10)";
+            return (
+              <div
+                key={report.id}
+                aria-current={isActive ? "true" : undefined}
+                className={`px-sm py-base flex items-center justify-between rounded-sm ${
+                  isActive ? "" : "hover:bg-neutral-30"
+                }`}
+                style={
+                  isActive
+                    ? { backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }
+                    : undefined
+                }
+              >
+                <div>
+                  <p className="text-body font-medium" style={{ color: rowColor }}>
+                    {report.name}
+                  </p>
+                  <p className="text-body" style={{ color: rowColor }}>
+                    {report.timeframe.replace("_", " ")}
+                  </p>
+                </div>
+                <div className="gap-xs flex">
+                  <button
+                    type="button"
+                    onClick={() => loadReport(report.id)}
+                    className="px-base py-xs text-body rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    style={{ color: rowColor }}
+                    data-no-elevate
+                  >
+                    Load
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPendingDeleteId(report.id)}
+                    aria-label="Delete saved report"
+                    className="p-xs hover:text-status-danger rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    style={{ color: rowColor }}
+                    data-no-elevate
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
               </div>
-              <div className="gap-xs flex">
-                <button
-                  type="button"
-                  onClick={() => loadReport(report.id)}
-                  className="px-base py-xs text-body rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                  style={{ color: "var(--highlight-10)" }}
-                  data-no-elevate
-                >
-                  Load
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPendingDeleteId(report.id)}
-                  aria-label="Delete saved report"
-                  className="p-xs text-highlight-10 hover:text-status-danger rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                  data-no-elevate
-                >
-                  <Trash2 size={12} />
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

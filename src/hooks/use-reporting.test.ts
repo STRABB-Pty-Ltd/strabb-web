@@ -93,4 +93,23 @@ describe("useSavedReports (persisted via /saved-reports)", () => {
     expect(reporting.submenu).toEqual(["revenue", "expenses"]);
     expect(reporting.activeSavedReport).toBe("sr-1");
   });
+
+  it("resetToDefaultView restores the default Overview view and clears the active report", async () => {
+    getMock.mockResolvedValue({
+      data: [{ id: "sr-1", name: "Q1", timeframe: "quarter", submenu: ["revenue", "expenses"] }],
+    });
+    const { result } = renderHook(() => useSavedReports(), { wrapper: withProvider() });
+    await waitFor(() => expect(result.current.savedReports).toHaveLength(1));
+
+    // Load a report first so there is something to reset away from.
+    act(() => result.current.loadReport("sr-1"));
+    expect(useAppStore.getState().reporting.activeSavedReport).toBe("sr-1");
+
+    act(() => result.current.resetToDefaultView());
+
+    const reporting = useAppStore.getState().reporting;
+    expect(reporting.windowSize).toBe("month");
+    expect(reporting.submenu).toEqual(["overview"]);
+    expect(reporting.activeSavedReport).toBeNull();
+  });
 });

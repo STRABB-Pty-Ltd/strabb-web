@@ -45,6 +45,7 @@ export function useSavedReports() {
   const setSubmenu = useAppStore((s) => s.setSubmenu);
   const windowSize = useAppStore((s) => s.reporting.windowSize);
   const submenu = useAppStore((s) => s.reporting.submenu);
+  const activeSavedReport = useAppStore((s) => s.reporting.activeSavedReport);
 
   // Backed by the real /saved-reports endpoints so reports persist across
   // reloads (previously an in-memory Zustand store that vanished on refresh).
@@ -71,10 +72,21 @@ export function useSavedReports() {
     removeReport.mutate(id);
   };
 
+  const resetToDefaultView = () => {
+    // Snap the canvas back to the default Reporting/Overview view and clear
+    // the active saved report so no row stays highlighted. "month" mirrors the
+    // reporting slice's default windowSize; ["overview"] is the default submenu.
+    setTimeframe("reporting", "month");
+    setSubmenu("reporting", ["overview"]);
+    setActiveSavedReport(null);
+  };
+
   return {
     savedReports,
+    activeSavedReport,
     loadReport,
     saveCurrentReport,
     deleteReport,
+    resetToDefaultView,
   };
 }
