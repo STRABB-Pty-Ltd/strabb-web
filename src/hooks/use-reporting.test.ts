@@ -112,4 +112,29 @@ describe("useSavedReports (persisted via /saved-reports)", () => {
     expect(reporting.submenu).toEqual(["overview"]);
     expect(reporting.activeSavedReport).toBeNull();
   });
+
+  it("clears the active saved report when the user manually diverges (granularity or chips), but not on a period step", async () => {
+    getMock.mockResolvedValue({
+      data: [{ id: "sr-1", name: "Q1", timeframe: "quarter", submenu: ["revenue"] }],
+    });
+    const { result } = renderHook(() => useSavedReports(), { wrapper: withProvider() });
+    await waitFor(() => expect(result.current.savedReports).toHaveLength(1));
+
+    // Manual granularity change diverges from the preset -> highlight clears.
+    act(() => result.current.loadReport("sr-1"));
+    expect(useAppStore.getState().reporting.activeSavedReport).toBe("sr-1");
+    act(() => useAppStore.getState().setTimeframe("reporting", "month"));
+    expect(useAppStore.getState().reporting.activeSavedReport).toBeNull();
+
+    // Manual chip toggle also clears.
+    act(() => result.current.loadReport("sr-1"));
+    expect(useAppStore.getState().reporting.activeSavedReport).toBe("sr-1");
+    act(() => useAppStore.getState().toggleSubmenuChip("reporting", "expenses"));
+    expect(useAppStore.getState().reporting.activeSavedReport).toBeNull();
+
+    // Stepping the period (anchor) does NOT clear - a preset is granularity + chips.
+    act(() => result.current.loadReport("sr-1"));
+    act(() => useAppStore.getState().setTimeframeAnchor("reporting", "2026-01"));
+    expect(useAppStore.getState().reporting.activeSavedReport).toBe("sr-1");
+  });
 });

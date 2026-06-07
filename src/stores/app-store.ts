@@ -93,6 +93,10 @@ export const useAppStore = create<AppState>()((...a) => {
       const pageState = { ...get()[page] };
       (pageState as Record<string, unknown>).windowSize = windowSize;
       (pageState as Record<string, unknown>).anchor = anchor;
+      // A manual reporting timeframe (granularity) change diverges from any loaded
+      // saved-report preset, so clear the active highlight. loadReport calls
+      // setActiveSavedReport after this, so a programmatic load keeps its highlight.
+      if (page === "reporting") (pageState as Record<string, unknown>).activeSavedReport = null;
       set({ [page]: pageState } as Partial<AppState>);
     },
 
@@ -110,6 +114,8 @@ export const useAppStore = create<AppState>()((...a) => {
       (pageState as { submenu: string[] }).submenu = current.includes(chip)
         ? current.filter((c: string) => c !== chip)
         : [...current, chip];
+      // Manual chip change diverges from a loaded preset (see setTimeframe).
+      if (page === "reporting") (pageState as Record<string, unknown>).activeSavedReport = null;
       set({ [page]: pageState } as Partial<AppState>);
     },
 
@@ -117,6 +123,9 @@ export const useAppStore = create<AppState>()((...a) => {
     setSubmenu: (page: SubmenuPage, chips: string[]) => {
       const pageState = { ...get()[page] };
       (pageState as { submenu: string[] }).submenu = chips;
+      // Manual submenu change diverges from a loaded preset (see setTimeframe).
+      // loadReport / resetToDefaultView call setActiveSavedReport after this.
+      if (page === "reporting") (pageState as Record<string, unknown>).activeSavedReport = null;
       set({ [page]: pageState } as Partial<AppState>);
     },
 

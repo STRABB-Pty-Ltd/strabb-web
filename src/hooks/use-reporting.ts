@@ -56,15 +56,21 @@ export function useSavedReports() {
   const loadReport = (id: string) => {
     const report = savedReports.find((r) => r.id === id);
     if (!report) return;
-    // Actually apply the saved view: its timeframe + active chips. The
-    // reporting queries key off windowSize, so this re-fetches and the
-    // screen updates - not just a stored "active" marker that nothing read.
+    // Apply the preset: its timeframe granularity + active chips, against the
+    // user's current period/listings. setTimeframe resets the anchor to the
+    // current period (presets don't pin a period). setActiveSavedReport runs
+    // last so the highlight survives the setTimeframe/setSubmenu clears that
+    // those setters apply on the reporting page (see app-store).
     setTimeframe("reporting", report.timeframe);
     setSubmenu("reporting", report.submenu);
     setActiveSavedReport(id);
   };
 
   const saveCurrentReport = (name: string) => {
+    // Saved reports are view PRESETS, not snapshots: we deliberately capture
+    // only the timeframe granularity + active chips, not the anchored period or
+    // listing selection. Loading a preset applies it to the user's current
+    // period/listings (see loadReport).
     createReport.mutate({ name, timeframe: windowSize, submenu });
   };
 
