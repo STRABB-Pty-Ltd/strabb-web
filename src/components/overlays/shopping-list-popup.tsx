@@ -26,6 +26,7 @@ export function ShoppingListPopup() {
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
   const boughtItems = useAppStore((s) => s.operations.boughtItems);
   const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
+  const addToast = useAppStore((s) => s.addToast);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { data: shoppingItemList = [] } = useShoppingList(selectedListings);
   const open = shoppingListPopup.open;
@@ -57,7 +58,10 @@ export function ShoppingListPopup() {
     const text = items
       .map((i) => `${boughtItems.includes(i.id) ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`)
       .join("\n");
-    navigator.clipboard.writeText(text);
+    navigator.clipboard
+      .writeText(text)
+      .then(() => addToast({ type: "success", message: "Shopping list copied to clipboard" }))
+      .catch(() => addToast({ type: "error", message: "Couldn't copy the list" }));
   };
 
   const scrimAnim = !open
