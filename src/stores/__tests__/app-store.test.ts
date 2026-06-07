@@ -232,20 +232,6 @@ describe("AppStore", () => {
       expect(useAppStore.getState().reporting.savedReportsOpen).toBe(true);
     });
 
-    it("addSavedReport and deleteSavedReport manage reports", () => {
-      useAppStore.getState().addSavedReport({
-        id: "sr-001",
-        name: "Monthly Revenue",
-        timeframe: "this_month",
-        submenu: ["overview"],
-        createdAt: "2026-04-01",
-      });
-      expect(useAppStore.getState().reporting.savedReports).toHaveLength(1);
-
-      useAppStore.getState().deleteSavedReport("sr-001");
-      expect(useAppStore.getState().reporting.savedReports).toHaveLength(0);
-    });
-
     it("setActiveSavedReport sets active report", () => {
       useAppStore.getState().setActiveSavedReport("sr-001");
       expect(useAppStore.getState().reporting.activeSavedReport).toBe("sr-001");

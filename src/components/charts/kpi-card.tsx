@@ -15,11 +15,10 @@ const formatValue = (value: string | number, type: KPIData["type"]) => {
 
 interface KPICardProps {
   kpi: KPIData;
-  compareValue?: string | number | null;
   onClick: () => void;
 }
 
-export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
+export function KPICard({ kpi, onClick }: KPICardProps) {
   const hasTrend = typeof kpi.trend === "number" && kpi.trend !== 0;
   const trendPositive = (kpi.trend ?? 0) > 0;
 
@@ -29,9 +28,7 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
   const trendDescription = hasTrend
     ? `, ${trendPositive ? "up" : "down"} ${Math.abs(kpi.trend ?? 0)} percent`
     : "";
-  const compareDescription =
-    compareValue != null ? `, compared to ${formatValue(compareValue, kpi.type)}` : "";
-  const ariaLabel = `${kpi.label}, ${formatValue(kpi.value, kpi.type)}${trendDescription}${compareDescription}`;
+  const ariaLabel = `${kpi.label}, ${formatValue(kpi.value, kpi.type)}${trendDescription}`;
 
   return (
     <button
@@ -71,12 +68,6 @@ export function KPICard({ kpi, compareValue, onClick }: KPICardProps) {
       <p className="font-data text-subheading" style={{ color: "var(--highlight-10)" }}>
         {formatValue(kpi.value, kpi.type)}
       </p>
-
-      {compareValue != null && (
-        <p className="font-data mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
-          vs {formatValue(compareValue, kpi.type)}
-        </p>
-      )}
     </button>
   );
 }

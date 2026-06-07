@@ -18,14 +18,6 @@ export interface DrillDownState {
   label: string;
 }
 
-export interface SavedReport {
-  id: string;
-  name: string;
-  timeframe: string;
-  submenu: string[];
-  createdAt: string;
-}
-
 export interface Toast {
   id: string;
   type: "success" | "error" | "info" | "warning";
