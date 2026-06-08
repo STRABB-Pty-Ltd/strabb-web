@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  applyReportingTrends,
   enumerateMonths,
   financialsToRevenueTrend,
   rawFinancialsToKPIs,
@@ -167,5 +168,41 @@ describe("rawFinancialsToKPIs", () => {
     expect(kpi(rows, "Total Expenses").value).toBe(215); // 100+50+20+30 + 15
     expect(kpi(rows, "Net Income").value).toBe(1285); // 800 + 485
     expect(kpi(rows, "Total Bookings").value).toBe(3);
+  });
+});
+
+describe("applyReportingTrends", () => {
+  const baseKpis = rawFinancialsToKPIs([fin("2026-01", "a", 1000, { nights: 10 })]);
+
+  it("overlays each delta onto the matching KPI by label", () => {
+    const result = applyReportingTrends(baseKpis, {
+      revenue: 12.5,
+      netIncome: -3.1,
+      expenses: 4,
+      occupancyRate: 8,
+      avgNightlyRate: 1.2,
+      totalBookings: 50,
+    });
+    const byLabel = Object.fromEntries(result.map((k) => [k.label, k.trend]));
+    expect(byLabel["Total Revenue"]).toBe(12.5);
+    expect(byLabel["Net Income"]).toBe(-3.1);
+    expect(byLabel["Total Expenses"]).toBe(4);
+    expect(byLabel["Avg Occupancy"]).toBe(8);
+    expect(byLabel["Avg $/night"]).toBe(1.2);
+    expect(byLabel["Total Bookings"]).toBe(50);
+  });
+
+  it("keeps a null delta as null (no arrow) but preserves a real 0%", () => {
+    const result = applyReportingTrends(baseKpis, {
+      revenue: null,
+      netIncome: 0,
+      expenses: null,
+      occupancyRate: null,
+      avgNightlyRate: null,
+      totalBookings: null,
+    });
+    const byLabel = Object.fromEntries(result.map((k) => [k.label, k.trend]));
+    expect(byLabel["Total Revenue"]).toBeNull();
+    expect(byLabel["Net Income"]).toBe(0);
   });
 });

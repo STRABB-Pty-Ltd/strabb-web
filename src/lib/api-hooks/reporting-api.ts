@@ -10,8 +10,21 @@ export interface ReportingKPI {
   label: string;
   value: number;
   type: "currency" | "number" | "percentage";
-  trend: number;
+  // Percentage change vs the previous period, or null when there is no prior
+  // data to compare against (no arrow shown), matching the dashboard.
+  trend: number | null;
   icon: string;
+}
+
+// Per-KPI period-over-period deltas from /reporting/financial-trends, after
+// the global snake_case -> camelCase transform. null = previous period was 0.
+export interface ReportingTrends {
+  revenue: number | null;
+  expenses: number | null;
+  netIncome: number | null;
+  occupancyRate: number | null;
+  avgNightlyRate: number | null;
+  totalBookings: number | null;
 }
 
 export interface ChartDataSet {
@@ -143,6 +156,24 @@ export function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   ];
 }
 
+// Overlay real period-over-period trends (from /reporting/financial-trends)
+// onto the client-aggregated KPI values. A null delta means no prior-period
+// data, so no arrow is shown (item #16). `?? null` keeps a real 0% delta.
+export function applyReportingTrends(
+  kpis: ReportingKPI[],
+  trends: ReportingTrends,
+): ReportingKPI[] {
+  const byLabel: Record<string, number | null | undefined> = {
+    "Total Revenue": trends.revenue,
+    "Net Income": trends.netIncome,
+    "Total Expenses": trends.expenses,
+    "Avg Occupancy": trends.occupancyRate,
+    "Avg $/night": trends.avgNightlyRate,
+    "Total Bookings": trends.totalBookings,
+  };
+  return kpis.map((k) => ({ ...k, trend: byLabel[k.label] ?? null }));
+}
+
 export function useReportingKPIsAPI(
   selectedListings: string[],
   windowSize: string,
@@ -159,10 +190,13 @@ export function useReportingKPIsAPI(
   return useQuery<ReportingKPI[]>({
     queryKey: ["reporting-kpis", startDate, endDate, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawFinancial[] }>(
-        `/reporting/financials?${params.toString()}`,
-      );
-      return rawFinancialsToKPIs(response.data);
+      const [finRes, trendRes] = await Promise.all([
+        apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`),
+        apiClient.get<{ data: ReportingTrends }>(
+          `/reporting/financial-trends?${params.toString()}`,
+        ),
+      ]);
+      return applyReportingTrends(rawFinancialsToKPIs(finRes.data), trendRes.data);
     },
     enabled: isReady,
   });
