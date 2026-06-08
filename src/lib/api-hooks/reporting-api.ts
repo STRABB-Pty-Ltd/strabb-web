@@ -10,8 +10,21 @@ export interface ReportingKPI {
   label: string;
   value: number;
   type: "currency" | "number" | "percentage";
-  trend: number;
+  // Percentage change vs the previous period, or null when there is no prior
+  // data to compare against (no arrow shown), matching the dashboard.
+  trend: number | null;
   icon: string;
+}
+
+// Per-KPI period-over-period deltas from /reporting/financial-trends, after
+// the global snake_case -> camelCase transform. null = previous period was 0.
+export interface ReportingTrends {
+  revenue: number | null;
+  expenses: number | null;
+  netIncome: number | null;
+  occupancyRate: number | null;
+  avgNightlyRate: number | null;
+  totalBookings: number | null;
 }
 
 export interface ChartDataSet {
@@ -25,6 +38,7 @@ export interface ChartDataSet {
   occupancy: { listing: string; occupancy: number }[];
   expenses: { category: string; amount: number }[];
   revenueByListing: { listing: string; revenue: number; color: string }[];
+  expensesByListing: { listing: string; revenue: number; color: string }[];
 }
 
 export interface RawFinancial {
@@ -40,6 +54,9 @@ export interface RawFinancial {
   occupancyRate: number;
   avgNightlyRate: number;
   bookingCount: number;
+  // Total room-nights in this month/listing record. Used to compute a true
+  // weighted average nightly rate (sum of revenue / sum of nights).
+  nights: number;
   currency?: string;
 }
 
@@ -102,7 +119,7 @@ export function financialsToRevenueTrend(
   }));
 }
 
-function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
+export function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   // TODO(currency-precision): switch to server-computed totals when path A
   // migration ships (Stripe payouts / BAS exports). Per currency strategy
   // in CLAUDE.md.
@@ -116,8 +133,11 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
     rows.length > 0
       ? Math.round((rows.reduce((s, r) => s + r.occupancyRate, 0) / rows.length) * 100)
       : 0;
-  const avgRate =
-    rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.avgNightlyRate, 0) / rows.length) : 0;
+  // True weighted average nightly rate: total room revenue / total room-nights
+  // across the filtered set, NOT an average of each record's own average (which
+  // weighted a 1-night and a 30-night record equally). 2dp to match money display.
+  const totalNights = rows.reduce((s, r) => s + r.nights, 0);
+  const avgRate = totalNights > 0 ? Math.round((totalRevenue / totalNights) * 100) / 100 : 0;
   const totalBookings = rows.reduce((s, r) => s + r.bookingCount, 0);
 
   return [
@@ -136,6 +156,26 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   ];
 }
 
+// Overlay real period-over-period trends (from /reporting/financial-trends)
+// onto the client-aggregated KPI values. A null delta means no prior-period
+// data, so no arrow is shown (item #16). `?? null` keeps a real 0% delta.
+export function applyReportingTrends(
+  kpis: ReportingKPI[],
+  trends: ReportingTrends | null,
+): ReportingKPI[] {
+  // trends is null when the trends endpoint failed; every delta then resolves
+  // to null (no arrow), leaving the KPI values themselves untouched.
+  const byLabel: Record<string, number | null | undefined> = {
+    "Total Revenue": trends?.revenue,
+    "Net Income": trends?.netIncome,
+    "Total Expenses": trends?.expenses,
+    "Avg Occupancy": trends?.occupancyRate,
+    "Avg $/night": trends?.avgNightlyRate,
+    "Total Bookings": trends?.totalBookings,
+  };
+  return kpis.map((k) => ({ ...k, trend: byLabel[k.label] ?? null }));
+}
+
 export function useReportingKPIsAPI(
   selectedListings: string[],
   windowSize: string,
@@ -152,10 +192,18 @@ export function useReportingKPIsAPI(
   return useQuery<ReportingKPI[]>({
     queryKey: ["reporting-kpis", startDate, endDate, ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawFinancial[] }>(
-        `/reporting/financials?${params.toString()}`,
-      );
-      return rawFinancialsToKPIs(response.data);
+      // Trends are presentational (just the up/down arrows); their endpoint
+      // must never blank the KPI values, which come from /financials. So the
+      // trends call swallows its own error and degrades to no arrows, while a
+      // /financials failure still (correctly) fails the whole query.
+      const [finRes, trends] = await Promise.all([
+        apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`),
+        apiClient
+          .get<{ data: ReportingTrends }>(`/reporting/financial-trends?${params.toString()}`)
+          .then((r) => r.data)
+          .catch(() => null),
+      ]);
+      return applyReportingTrends(rawFinancialsToKPIs(finRes.data), trends);
     },
     enabled: isReady,
   });
@@ -183,12 +231,13 @@ export function useReportingChartDataAPI(
   return useQuery<ChartDataSet>({
     queryKey: ["reporting-charts", startDate, endDate, trendStart, trendEnd, ...selectedListings],
     queryFn: async () => {
-      const [occupancyRes, revenueRes, expensesRes, trendRes] = await Promise.all([
+      const [occupancyRes, revenueRes, expensesRes, financialsRes, trendRes] = await Promise.all([
         apiClient.get<{ data: RawOccupancy[] }>(`/reporting/occupancy?${params.toString()}`),
         apiClient.get<{ data: RawRevenueBreakdown[] }>(
           `/reporting/revenue-breakdown?${params.toString()}`,
         ),
         apiClient.get<{ data: RawExpense[] }>(`/reporting/expense-breakdown?${params.toString()}`),
+        apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`),
         apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${trendParams.toString()}`),
       ]);
 
@@ -229,12 +278,28 @@ export function useReportingChartDataAPI(
         amount: e.amount,
       }));
 
+      // Real per-listing expenses for the Expenses tab (item #11). The
+      // expense-breakdown endpoint is dimensioned by category, not listing, so
+      // the per-listing figures are summed from the current-period financials
+      // records (cleaning + tickets + supplies + platform fees) per listing.
+      const expenseListingMap = new Map<string, number>();
+      for (const r of financialsRes.data) {
+        const total = r.cleaningCost + r.ticketCost + r.suppliesCost + r.platformFees;
+        expenseListingMap.set(r.listingName, (expenseListingMap.get(r.listingName) ?? 0) + total);
+      }
+      const expensesByListing = [...expenseListingMap.entries()].map(([listing, amount]) => ({
+        listing,
+        revenue: amount,
+        color: "var(--highlight-10)",
+      }));
+
       return {
         revenueTrend: financialsToRevenueTrend(trendRes.data),
         channelBreakdown,
         occupancy,
         expenses,
         revenueByListing,
+        expensesByListing,
       } as ChartDataSet;
     },
     enabled: isReady,
