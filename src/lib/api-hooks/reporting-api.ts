@@ -25,6 +25,7 @@ export interface ChartDataSet {
   occupancy: { listing: string; occupancy: number }[];
   expenses: { category: string; amount: number }[];
   revenueByListing: { listing: string; revenue: number; color: string }[];
+  expensesByListing: { listing: string; revenue: number; color: string }[];
 }
 
 export interface RawFinancial {
@@ -189,12 +190,13 @@ export function useReportingChartDataAPI(
   return useQuery<ChartDataSet>({
     queryKey: ["reporting-charts", startDate, endDate, trendStart, trendEnd, ...selectedListings],
     queryFn: async () => {
-      const [occupancyRes, revenueRes, expensesRes, trendRes] = await Promise.all([
+      const [occupancyRes, revenueRes, expensesRes, financialsRes, trendRes] = await Promise.all([
         apiClient.get<{ data: RawOccupancy[] }>(`/reporting/occupancy?${params.toString()}`),
         apiClient.get<{ data: RawRevenueBreakdown[] }>(
           `/reporting/revenue-breakdown?${params.toString()}`,
         ),
         apiClient.get<{ data: RawExpense[] }>(`/reporting/expense-breakdown?${params.toString()}`),
+        apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`),
         apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${trendParams.toString()}`),
       ]);
 
@@ -235,12 +237,28 @@ export function useReportingChartDataAPI(
         amount: e.amount,
       }));
 
+      // Real per-listing expenses for the Expenses tab (item #11). The
+      // expense-breakdown endpoint is dimensioned by category, not listing, so
+      // the per-listing figures are summed from the current-period financials
+      // records (cleaning + tickets + supplies + platform fees) per listing.
+      const expenseListingMap = new Map<string, number>();
+      for (const r of financialsRes.data) {
+        const total = r.cleaningCost + r.ticketCost + r.suppliesCost + r.platformFees;
+        expenseListingMap.set(r.listingName, (expenseListingMap.get(r.listingName) ?? 0) + total);
+      }
+      const expensesByListing = [...expenseListingMap.entries()].map(([listing, amount]) => ({
+        listing,
+        revenue: amount,
+        color: "var(--highlight-10)",
+      }));
+
       return {
         revenueTrend: financialsToRevenueTrend(trendRes.data),
         channelBreakdown,
         occupancy,
         expenses,
         revenueByListing,
+        expensesByListing,
       } as ChartDataSet;
     },
     enabled: isReady,

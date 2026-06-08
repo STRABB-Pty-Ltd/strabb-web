@@ -20,6 +20,10 @@ interface RevenueByListingData {
 interface RevenueByListingChartProps {
   data: RevenueByListingData[];
   loading?: boolean;
+  // Defaults keep this a revenue chart; the Expenses tab reuses it with
+  // title="Expenses by Listing" / valueLabel="Expenses".
+  title?: string;
+  valueLabel?: string;
 }
 
 const formatAUD = (value: number) =>
@@ -29,25 +33,30 @@ const formatAUD = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-function buildSummary(sorted: RevenueByListingData[]): string {
+function buildSummary(sorted: RevenueByListingData[], valueLabel: string): string {
   if (sorted.length === 0) return "";
   const total = sorted.reduce((sum, d) => sum + d.revenue, 0);
   const top = sorted[0];
   const bottom = sorted[sorted.length - 1];
   return (
-    `Revenue by listing, totalling ${formatAUD(total)} across ${sorted.length} listings. ` +
+    `${valueLabel} by listing, totalling ${formatAUD(total)} across ${sorted.length} listings. ` +
     `${top.listing} leads with ${formatAUD(top.revenue)}, ` +
     `${bottom.listing} lowest at ${formatAUD(bottom.revenue)}.`
   );
 }
 
-export function RevenueByListingChart({ data, loading }: RevenueByListingChartProps) {
+export function RevenueByListingChart({
+  data,
+  loading,
+  title = "Revenue by Listing",
+  valueLabel = "Revenue",
+}: RevenueByListingChartProps) {
   const sorted = [...data].sort((a, b) => b.revenue - a.revenue);
 
   return (
     <ChartContainer
-      title="Revenue by Listing"
-      summary={buildSummary(sorted)}
+      title={title}
+      summary={buildSummary(sorted, valueLabel)}
       loading={loading}
       empty={data.length === 0}
     >
@@ -66,7 +75,7 @@ export function RevenueByListingChart({ data, loading }: RevenueByListingChartPr
           tick={{ fontSize: FONT_SIZE, fill: "var(--highlight-10)" }}
           tickFormatter={formatAUD}
         />
-        <ChartTooltip formatter={(value) => [formatAUD(Number(value)), "Revenue"]} />
+        <ChartTooltip formatter={(value) => [formatAUD(Number(value)), valueLabel]} />
         <Bar dataKey="revenue" radius={[3, 3, 0, 0]}>
           {sorted.map((entry, i) => (
             <Cell key={i} fill={entry.color} />

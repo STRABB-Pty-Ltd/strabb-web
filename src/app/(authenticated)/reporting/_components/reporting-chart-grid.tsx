@@ -84,10 +84,9 @@ export function ReportingChartGrid({ activeSubmenu, data }: ReportingChartGridPr
       <div className="space-y-sm">
         <ExpenseChart data={data.expenses} />
         <RevenueByListingChart
-          data={data.revenueByListing.map((d) => ({
-            ...d,
-            revenue: Math.round(d.revenue * 0.25),
-          }))}
+          data={data.expensesByListing}
+          title="Expenses by Listing"
+          valueLabel="Expenses"
         />
       </div>
     );
