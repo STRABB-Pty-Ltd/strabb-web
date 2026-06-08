@@ -5,15 +5,12 @@ import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hoo
 import { useAppStore } from "@/stores/app-store";
 
 import { AlertStrip } from "./_components/alert-strip";
-import { ComparePanel } from "./_components/compare-panel";
 import { KPIGrid } from "./_components/kpi-grid";
 import { PreviewGrid } from "./_components/preview-grid";
 
 export default function DashboardPage() {
   const windowSize = useAppStore((s) => s.dashboard.windowSize);
   const anchor = useAppStore((s) => s.dashboard.anchor);
-  const submenu = useAppStore((s) => s.dashboard.submenu);
-  const compare = useAppStore((s) => s.dashboard.compare);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
@@ -27,8 +24,6 @@ export default function DashboardPage() {
     windowSize,
     anchor,
   );
-
-  const isCompare = compare || submenu.includes("compare");
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
@@ -57,9 +52,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <KPIGrid kpis={kpis} compareKpis={isCompare ? kpis : undefined} />
-
-      {isCompare && <ComparePanel current={kpis} comparison={kpis} />}
+      <KPIGrid kpis={kpis} />
 
       <PreviewGrid data={preview} windowSize={windowSize} />
     </div>

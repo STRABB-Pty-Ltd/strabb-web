@@ -7,31 +7,26 @@ import { KPICard } from "@/components/charts/kpi-card";
 
 interface KPIGridProps {
   kpis: KPIData[];
-  compareKpis?: KPIData[];
 }
 
-export function KPIGrid({ kpis, compareKpis }: KPIGridProps) {
+export function KPIGrid({ kpis }: KPIGridProps) {
   const setDrillDown = useAppStore((s) => s.setDrillDown);
 
   return (
     <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      {kpis.map((kpi, i) => {
-        const compareVal = compareKpis?.[i]?.value ?? null;
-        return (
-          <KPICard
-            key={kpi.label}
-            kpi={kpi}
-            compareValue={compareVal}
-            onClick={() =>
-              setDrillDown({
-                type: "kpi",
-                itemId: kpi.label,
-                label: kpi.label,
-              })
-            }
-          />
-        );
-      })}
+      {kpis.map((kpi) => (
+        <KPICard
+          key={kpi.label}
+          kpi={kpi}
+          onClick={() =>
+            setDrillDown({
+              type: "kpi",
+              itemId: kpi.label,
+              label: kpi.label,
+            })
+          }
+        />
+      ))}
     </div>
   );
 }

@@ -1,7 +1,5 @@
 import type { StateCreator } from "zustand";
 
-import type { SavedReport } from "../types";
-
 export interface ReportingPageState {
   windowSize: string;
   anchor: string | null;
@@ -9,15 +7,12 @@ export interface ReportingPageState {
   moreOpen: boolean;
   savedReportsOpen: boolean;
   activeSavedReport: string | null;
-  savedReports: SavedReport[];
 }
 
 export interface ReportingSlice {
   reporting: ReportingPageState;
   toggleSavedReports: () => void;
   setActiveSavedReport: (id: string | null) => void;
-  addSavedReport: (report: SavedReport) => void;
-  deleteSavedReport: (id: string) => void;
 }
 
 export const createReportingSlice: StateCreator<ReportingSlice, [], [], ReportingSlice> = (
@@ -31,7 +26,6 @@ export const createReportingSlice: StateCreator<ReportingSlice, [], [], Reportin
     moreOpen: false,
     savedReportsOpen: false,
     activeSavedReport: null,
-    savedReports: [],
   },
   toggleSavedReports: () =>
     set({
@@ -41,18 +35,4 @@ export const createReportingSlice: StateCreator<ReportingSlice, [], [], Reportin
       },
     }),
   setActiveSavedReport: (id) => set({ reporting: { ...get().reporting, activeSavedReport: id } }),
-  addSavedReport: (report) =>
-    set({
-      reporting: {
-        ...get().reporting,
-        savedReports: [...get().reporting.savedReports, report],
-      },
-    }),
-  deleteSavedReport: (id) =>
-    set({
-      reporting: {
-        ...get().reporting,
-        savedReports: get().reporting.savedReports.filter((r) => r.id !== id),
-      },
-    }),
 });

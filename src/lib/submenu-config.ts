@@ -20,7 +20,9 @@ export interface SubmenuChip {
 export const submenuConfigs: Record<Exclude<PageId, "settings">, SubmenuChip[]> = {
   dashboard: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },
-    { id: "compare", label: "Compare", behavior: "toggle" },
+    // Compare is not built yet - render it as a "coming soon" dropdown (same
+    // affordance as the reporting "More" chip) rather than touching the canvas.
+    { id: "compare", label: "Compare", behavior: "more-dropdown" },
   ],
   calendar: [
     { id: "overview", label: "Overview", behavior: "single-default", defaultActive: true },

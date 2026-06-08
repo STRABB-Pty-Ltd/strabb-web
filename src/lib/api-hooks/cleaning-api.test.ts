@@ -115,6 +115,32 @@ describe("cleaning-api hooks", () => {
     });
   });
 
+  it("maps listingName and listingColor from the API response", async () => {
+    getMock.mockResolvedValue({
+      data: [{ ...rawTask, listingName: "Beachfront Villa", listingColor: "#3366FF" }],
+    });
+    const { result } = renderHook(() => useCleaningTasksAPI([], []), { wrapper: withProvider() });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.[0]).toMatchObject({
+      listingName: "Beachfront Villa",
+      listingColor: "#3366FF",
+    });
+  });
+
+  it("falls back to empty strings when listing fields are null", async () => {
+    getMock.mockResolvedValue({
+      data: [{ ...rawTask, listingName: null, listingColor: null }],
+    });
+    const { result } = renderHook(() => useCleaningTasksAPI([], []), { wrapper: withProvider() });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.[0]).toMatchObject({
+      listingName: "",
+      listingColor: "",
+    });
+  });
+
   it("useShoppingListAPI passes listing_ids params to /cleaning-tasks/shopping-list", async () => {
     getMock.mockResolvedValue({ data: [] });
     const { result } = renderHook(() => useShoppingListAPI(["lst-1", "lst-2"]), {

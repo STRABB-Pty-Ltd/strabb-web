@@ -24,4 +24,16 @@ describe("formatCurrency", () => {
   it("formats negative numbers with a minus sign", () => {
     expect(formatCurrency(-50.5)).toBe("-$50.50");
   });
+
+  it("always renders cents, including a half-dollar value", () => {
+    // The reconciliation bug: 96.50 displayed as a whole dollar broke
+    // revenue - expenses = net income on the KPI row.
+    expect(formatCurrency(96.5)).toBe("$96.50");
+  });
+
+  it("keeps cents on whole-dollar amounts so figures reconcile", () => {
+    // 643.00 - 96.50 should visibly equal 546.50.
+    expect(formatCurrency(643)).toBe("$643.00");
+    expect(formatCurrency(546.5)).toBe("$546.50");
+  });
 });

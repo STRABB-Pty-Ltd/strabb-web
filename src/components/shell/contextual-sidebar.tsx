@@ -29,7 +29,8 @@ export function ContextualSidebar() {
   const openShoppingListPopup = useAppStore((s) => s.openShoppingListPopup);
   const savedReportsOpen = useAppStore((s) => s.reporting.savedReportsOpen);
   const toggleSavedReports = useAppStore((s) => s.toggleSavedReports);
-  const { savedReports, saveCurrentReport, loadReport } = useSavedReports();
+  const { savedReports, saveCurrentReport, loadReport, activeSavedReport, resetToDefaultView } =
+    useSavedReports();
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [newReportName, setNewReportName] = useState("");
 
@@ -164,25 +165,42 @@ export function ContextualSidebar() {
                   Save current
                 </button>
               )}
+              <button
+                type="button"
+                onClick={resetToDefaultView}
+                disabled={activeSavedReport === null}
+                className="px-sm py-base text-body w-full rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                style={{
+                  backgroundColor: "var(--neutral-30)",
+                  color: "var(--highlight-10)",
+                  opacity: activeSavedReport === null ? 0.5 : 1,
+                }}
+              >
+                Show default
+              </button>
               {savedReports.length === 0 ? (
                 <p className="px-base text-body" style={{ color: "var(--text-secondary)" }}>
                   No saved reports
                 </p>
               ) : (
-                savedReports.map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => loadReport(r.id)}
-                    className="px-sm py-base text-body block w-full truncate rounded-lg text-left font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                    style={{
-                      backgroundColor: "var(--neutral-30)",
-                      color: "var(--highlight-10)",
-                    }}
-                  >
-                    {r.name}
-                  </button>
-                ))
+                savedReports.map((r) => {
+                  const isActive = r.id === activeSavedReport;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => loadReport(r.id)}
+                      aria-current={isActive ? "true" : undefined}
+                      className="px-sm py-base text-body block w-full truncate rounded-lg text-left font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                      style={{
+                        backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
+                        color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
+                      }}
+                    >
+                      {r.name}
+                    </button>
+                  );
+                })
               )}
             </div>
           )}

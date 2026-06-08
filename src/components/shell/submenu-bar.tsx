@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarClock, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { TimeframeStepper } from "@/components/views/timeframe-stepper";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -19,12 +20,10 @@ export function SubmenuBar() {
   const toggleSubmenuChip = useAppStore((s) => s.toggleSubmenuChip);
   const setSubmenu = useAppStore((s) => s.setSubmenu);
   const setView = useAppStore((s) => s.setView);
-  const toggleCompare = useAppStore((s) => s.toggleCompare);
   const pathname = usePathname();
   const router = useRouter();
 
   const dashboardSubmenu = useAppStore((s) => s.dashboard.submenu);
-  const dashboardCompare = useAppStore((s) => s.dashboard.compare);
   const calendarSubmenu = useAppStore((s) => s.calendar.submenu);
   const messagingSubmenu = useAppStore((s) => s.messaging.submenu);
   const operationsSubmenu = useAppStore((s) => s.operations.submenu);
@@ -32,6 +31,17 @@ export function SubmenuBar() {
 
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+
+  // Close the "Coming soon"/More dropdown when navigating between pages.
+  // SubmenuBar is a persistent shell - it never unmounts, it just re-reads
+  // currentPage from the store - so without this reset the open flag leaks
+  // across pages and the destination's more-dropdown chip renders already-open.
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [currentPage]);
+
+  // Dismiss the dropdown on an outside click, like every other popover.
+  useClickOutside(moreRef, () => setMoreOpen(false), moreOpen);
 
   if (!isSubmenuPage(currentPage)) return null;
 
@@ -56,9 +66,6 @@ export function SubmenuBar() {
     // When the user is on a nav-chip sub-route, no submenu chip is active -
     // the nav chip owns the highlight, including over Overview.
     if (onNavSubRoute) return false;
-    if (chip.behavior === "toggle" && currentPage === "dashboard" && chip.id === "compare") {
-      return dashboardCompare;
-    }
     return activeSubmenu.includes(chip.id);
   };
 
@@ -100,11 +107,7 @@ export function SubmenuBar() {
         setSubmenu(page, ["overview"]);
         break;
       case "toggle":
-        if (page === "dashboard" && chip.id === "compare") {
-          toggleCompare();
-        } else {
-          toggleSubmenuChip(page, chip.id);
-        }
+        toggleSubmenuChip(page, chip.id);
         break;
       case "multi": {
         const isActive = activeSubmenu.includes(chip.id);
@@ -154,10 +157,13 @@ export function SubmenuBar() {
       style={{
         backgroundColor: "var(--surface-60)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
-        // Match a chip's natural height (py-base × 2 + text-body line-height)
-        // so the absolute-centred chips don't extend above the row's bounding
-        // box and skew the separator line above this row.
-        minHeight: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
+        // Fixed at a chip's natural height (py-base × 2 + text-body line-height)
+        // so the absolute-centred chips and the separator above stay aligned.
+        // A FIXED (not min) height caps the row: the messaging "Scheduled
+        // messages" link keeps its 44px WCAG hit-area by overflowing this row
+        // rather than inflating it (the inflation previously skewed the
+        // separator above, only on messaging).
+        height: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
       }}
     >
       {/* Left: page-specific widget (timeframe stepper, scheduled-messages link, …) */}

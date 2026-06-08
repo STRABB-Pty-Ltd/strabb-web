@@ -23,9 +23,6 @@ vi.mock("./_components/alert-strip", () => ({
     <div data-testid="alert-strip">{alerts.length} alerts</div>
   ),
 }));
-vi.mock("./_components/compare-panel", () => ({
-  ComparePanel: () => <div data-testid="compare-panel" />,
-}));
 vi.mock("./_components/kpi-grid", () => ({
   KPIGrid: ({ kpis }: { kpis: unknown }) => (
     <div data-testid="kpi-grid">{kpis ? "kpis" : "no kpis"}</div>
@@ -38,7 +35,7 @@ vi.mock("./_components/preview-grid", () => ({
 import DashboardPage from "./page";
 
 const baseStore = {
-  dashboard: { windowSize: "month", anchor: null, submenu: [], compare: false },
+  dashboard: { windowSize: "month", anchor: null, submenu: [] },
   selectedListings: [],
 };
 
@@ -68,7 +65,6 @@ describe("DashboardPage", () => {
     expect(screen.getByTestId("kpi-grid")).toHaveTextContent("kpis");
     expect(screen.getByTestId("preview-grid")).toBeInTheDocument();
     expect(screen.queryByTestId("alert-strip")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("compare-panel")).not.toBeInTheDocument();
   });
 
   it("renders AlertStrip when alerts are present", () => {
@@ -77,17 +73,5 @@ describe("DashboardPage", () => {
     previewMock.mockReturnValue({ data: { miniCalendar: [] }, isLoading: false });
     render(<DashboardPage />);
     expect(screen.getByTestId("alert-strip")).toHaveTextContent("2 alerts");
-  });
-
-  it("renders the compare panel when dashboard.compare is true", () => {
-    storeMock.mockReturnValue({
-      ...baseStore,
-      dashboard: { ...baseStore.dashboard, compare: true },
-    });
-    kpisMock.mockReturnValue({ data: { revenue: 0 }, isLoading: false });
-    alertsMock.mockReturnValue({ data: [] });
-    previewMock.mockReturnValue({ data: { miniCalendar: [] }, isLoading: false });
-    render(<DashboardPage />);
-    expect(screen.getByTestId("compare-panel")).toBeInTheDocument();
   });
 });

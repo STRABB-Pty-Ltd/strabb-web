@@ -251,28 +251,3 @@ export function useDashboardPreviewAPI(
     enabled: isReady,
   });
 }
-
-export function useDashboardCompareAPI(
-  selectedListings: string[],
-  windowSize: string,
-  anchor: string | null,
-) {
-  const apiClient = useApiClient();
-  const isReady = useAuthReady();
-  const { startDate, endDate } = timeframeToDateRange(windowSize, anchor);
-  const params = new URLSearchParams();
-  selectedListings.forEach((id) => params.append("listing_ids", id));
-  params.set("start_date", startDate);
-  params.set("end_date", endDate);
-
-  return useQuery({
-    queryKey: ["dashboard-compare", windowSize, anchor ?? "now", ...selectedListings],
-    queryFn: async () => {
-      const response = await apiClient.get<{ data: unknown }>(
-        `/dashboard/compare?${params.toString()}`,
-      );
-      return response.data;
-    },
-    enabled: isReady && selectedListings.length > 0,
-  });
-}

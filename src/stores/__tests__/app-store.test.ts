@@ -159,14 +159,6 @@ describe("AppStore", () => {
   });
 
   describe("dashboard", () => {
-    it("toggleCompare flips compare flag", () => {
-      expect(useAppStore.getState().dashboard.compare).toBe(false);
-      useAppStore.getState().toggleCompare();
-      expect(useAppStore.getState().dashboard.compare).toBe(true);
-      useAppStore.getState().toggleCompare();
-      expect(useAppStore.getState().dashboard.compare).toBe(false);
-    });
-
     it("setDrillDown and clearDrillDown manage drillDown state", () => {
       useAppStore.getState().setDrillDown({ type: "revenue", itemId: "lst-001", label: "Revenue" });
       expect(useAppStore.getState().dashboard.drillDown).toEqual({
@@ -238,20 +230,6 @@ describe("AppStore", () => {
       expect(useAppStore.getState().reporting.savedReportsOpen).toBe(false);
       useAppStore.getState().toggleSavedReports();
       expect(useAppStore.getState().reporting.savedReportsOpen).toBe(true);
-    });
-
-    it("addSavedReport and deleteSavedReport manage reports", () => {
-      useAppStore.getState().addSavedReport({
-        id: "sr-001",
-        name: "Monthly Revenue",
-        timeframe: "this_month",
-        submenu: ["overview"],
-        createdAt: "2026-04-01",
-      });
-      expect(useAppStore.getState().reporting.savedReports).toHaveLength(1);
-
-      useAppStore.getState().deleteSavedReport("sr-001");
-      expect(useAppStore.getState().reporting.savedReports).toHaveLength(0);
     });
 
     it("setActiveSavedReport sets active report", () => {
