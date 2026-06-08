@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -60,6 +60,41 @@ describe("Submenu chip integration", () => {
       await user.click(screen.getByText("Compare"));
 
       expect(screen.getByText("Coming soon")).toBeInTheDocument();
+    });
+
+    it("clicking outside closes the 'Coming soon' dropdown", async () => {
+      const user = userEvent.setup();
+      useAppStore.getState().setCurrentPage("dashboard");
+
+      render(
+        <div>
+          <SubmenuBar />
+          <button>outside</button>
+        </div>,
+      );
+      await user.click(screen.getByText("Compare"));
+      expect(screen.getByText("Coming soon")).toBeInTheDocument();
+
+      await user.click(screen.getByText("outside"));
+
+      expect(screen.queryByText("Coming soon")).not.toBeInTheDocument();
+    });
+
+    it("navigating to another page closes an open dropdown", async () => {
+      const user = userEvent.setup();
+      useAppStore.getState().setCurrentPage("dashboard");
+
+      render(<SubmenuBar />);
+      await user.click(screen.getByText("Compare"));
+      expect(screen.getByText("Coming soon")).toBeInTheDocument();
+
+      // SubmenuBar is a persistent shell - navigation flips currentPage in
+      // place without unmounting, so the open flag must be reset explicitly.
+      act(() => {
+        useAppStore.getState().setCurrentPage("reporting");
+      });
+
+      expect(screen.queryByText("Coming soon")).not.toBeInTheDocument();
     });
   });
 

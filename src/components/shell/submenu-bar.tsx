@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarClock, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { TimeframeStepper } from "@/components/views/timeframe-stepper";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -30,6 +31,17 @@ export function SubmenuBar() {
 
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+
+  // Close the "Coming soon"/More dropdown when navigating between pages.
+  // SubmenuBar is a persistent shell - it never unmounts, it just re-reads
+  // currentPage from the store - so without this reset the open flag leaks
+  // across pages and the destination's more-dropdown chip renders already-open.
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [currentPage]);
+
+  // Dismiss the dropdown on an outside click, like every other popover.
+  useClickOutside(moreRef, () => setMoreOpen(false), moreOpen);
 
   if (!isSubmenuPage(currentPage)) return null;
 
