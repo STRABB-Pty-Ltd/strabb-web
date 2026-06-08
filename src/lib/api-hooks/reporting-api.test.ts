@@ -205,4 +205,10 @@ describe("applyReportingTrends", () => {
     expect(byLabel["Total Revenue"]).toBeNull();
     expect(byLabel["Net Income"]).toBe(0);
   });
+
+  it("returns null trends (no arrows) when the trends payload is null", () => {
+    const result = applyReportingTrends(baseKpis, null);
+    expect(result).toHaveLength(baseKpis.length);
+    for (const k of result) expect(k.trend).toBeNull();
+  });
 });

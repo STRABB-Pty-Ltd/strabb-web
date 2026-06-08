@@ -161,15 +161,17 @@ export function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
 // data, so no arrow is shown (item #16). `?? null` keeps a real 0% delta.
 export function applyReportingTrends(
   kpis: ReportingKPI[],
-  trends: ReportingTrends,
+  trends: ReportingTrends | null,
 ): ReportingKPI[] {
+  // trends is null when the trends endpoint failed; every delta then resolves
+  // to null (no arrow), leaving the KPI values themselves untouched.
   const byLabel: Record<string, number | null | undefined> = {
-    "Total Revenue": trends.revenue,
-    "Net Income": trends.netIncome,
-    "Total Expenses": trends.expenses,
-    "Avg Occupancy": trends.occupancyRate,
-    "Avg $/night": trends.avgNightlyRate,
-    "Total Bookings": trends.totalBookings,
+    "Total Revenue": trends?.revenue,
+    "Net Income": trends?.netIncome,
+    "Total Expenses": trends?.expenses,
+    "Avg Occupancy": trends?.occupancyRate,
+    "Avg $/night": trends?.avgNightlyRate,
+    "Total Bookings": trends?.totalBookings,
   };
   return kpis.map((k) => ({ ...k, trend: byLabel[k.label] ?? null }));
 }
@@ -190,13 +192,18 @@ export function useReportingKPIsAPI(
   return useQuery<ReportingKPI[]>({
     queryKey: ["reporting-kpis", startDate, endDate, ...selectedListings],
     queryFn: async () => {
-      const [finRes, trendRes] = await Promise.all([
+      // Trends are presentational (just the up/down arrows); their endpoint
+      // must never blank the KPI values, which come from /financials. So the
+      // trends call swallows its own error and degrades to no arrows, while a
+      // /financials failure still (correctly) fails the whole query.
+      const [finRes, trends] = await Promise.all([
         apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${params.toString()}`),
-        apiClient.get<{ data: ReportingTrends }>(
-          `/reporting/financial-trends?${params.toString()}`,
-        ),
+        apiClient
+          .get<{ data: ReportingTrends }>(`/reporting/financial-trends?${params.toString()}`)
+          .then((r) => r.data)
+          .catch(() => null),
       ]);
-      return applyReportingTrends(rawFinancialsToKPIs(finRes.data), trendRes.data);
+      return applyReportingTrends(rawFinancialsToKPIs(finRes.data), trends);
     },
     enabled: isReady,
   });
