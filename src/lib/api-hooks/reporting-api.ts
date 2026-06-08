@@ -40,6 +40,9 @@ export interface RawFinancial {
   occupancyRate: number;
   avgNightlyRate: number;
   bookingCount: number;
+  // Total room-nights in this month/listing record. Used to compute a true
+  // weighted average nightly rate (sum of revenue / sum of nights).
+  nights: number;
   currency?: string;
 }
 
@@ -102,7 +105,7 @@ export function financialsToRevenueTrend(
   }));
 }
 
-function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
+export function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
   // TODO(currency-precision): switch to server-computed totals when path A
   // migration ships (Stripe payouts / BAS exports). Per currency strategy
   // in CLAUDE.md.
@@ -116,8 +119,11 @@ function rawFinancialsToKPIs(rows: RawFinancial[]): ReportingKPI[] {
     rows.length > 0
       ? Math.round((rows.reduce((s, r) => s + r.occupancyRate, 0) / rows.length) * 100)
       : 0;
-  const avgRate =
-    rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.avgNightlyRate, 0) / rows.length) : 0;
+  // True weighted average nightly rate: total room revenue / total room-nights
+  // across the filtered set, NOT an average of each record's own average (which
+  // weighted a 1-night and a 30-night record equally). 2dp to match money display.
+  const totalNights = rows.reduce((s, r) => s + r.nights, 0);
+  const avgRate = totalNights > 0 ? Math.round((totalRevenue / totalNights) * 100) / 100 : 0;
   const totalBookings = rows.reduce((s, r) => s + r.bookingCount, 0);
 
   return [

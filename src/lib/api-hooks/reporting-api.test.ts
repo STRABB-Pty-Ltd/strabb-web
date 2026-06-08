@@ -1,8 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { enumerateMonths, financialsToRevenueTrend, type RawFinancial } from "./reporting-api";
+import {
+  enumerateMonths,
+  financialsToRevenueTrend,
+  rawFinancialsToKPIs,
+  type RawFinancial,
+} from "./reporting-api";
 
-function fin(month: string, listingId: string, revenue: number): RawFinancial {
+function fin(
+  month: string,
+  listingId: string,
+  revenue: number,
+  overrides: Partial<RawFinancial> = {},
+): RawFinancial {
   return {
     month,
     listingId,
@@ -16,7 +26,15 @@ function fin(month: string, listingId: string, revenue: number): RawFinancial {
     occupancyRate: 0,
     avgNightlyRate: 0,
     bookingCount: 0,
+    nights: 0,
+    ...overrides,
   };
+}
+
+function kpi(rows: RawFinancial[], label: string) {
+  const found = rawFinancialsToKPIs(rows).find((k) => k.label === label);
+  if (!found) throw new Error(`KPI not found: ${label}`);
+  return found;
 }
 
 describe("financialsToRevenueTrend", () => {
@@ -95,5 +113,59 @@ describe("enumerateMonths", () => {
 
   it("returns an empty array on malformed input", () => {
     expect(enumerateMonths("nope", "2026-01")).toEqual([]);
+  });
+});
+
+describe("rawFinancialsToKPIs", () => {
+  it("computes a weighted average nightly rate (revenue / nights), not an average of averages", () => {
+    const rows = [
+      fin("2026-01", "a", 1000, { nights: 10, avgNightlyRate: 100 }),
+      fin("2026-01", "b", 600, { nights: 5, avgNightlyRate: 120 }),
+    ];
+    // Average of averages would be (100 + 120) / 2 = 110.
+    // Weighted is total revenue / total nights = 1600 / 15 = 106.67.
+    expect(kpi(rows, "Avg $/night").value).toBe(106.67);
+  });
+
+  it("returns 0 for avg nightly rate when there are no room-nights", () => {
+    const rows = [fin("2026-01", "a", 0, { nights: 0 })];
+    expect(kpi(rows, "Avg $/night").value).toBe(0);
+  });
+
+  it("returns zeroed KPIs in a stable order for an empty record set", () => {
+    const kpis = rawFinancialsToKPIs([]);
+    expect(kpis.map((k) => k.label)).toEqual([
+      "Total Revenue",
+      "Net Income",
+      "Total Expenses",
+      "Avg Occupancy",
+      "Avg $/night",
+      "Total Bookings",
+    ]);
+    for (const k of kpis) expect(k.value).toBe(0);
+  });
+
+  it("sums revenue, expenses, net income and bookings across records", () => {
+    const rows = [
+      fin("2026-01", "a", 1000, {
+        nights: 10,
+        cleaningCost: 100,
+        ticketCost: 50,
+        suppliesCost: 20,
+        platformFees: 30,
+        netIncome: 800,
+        bookingCount: 2,
+      }),
+      fin("2026-02", "a", 500, {
+        nights: 5,
+        platformFees: 15,
+        netIncome: 485,
+        bookingCount: 1,
+      }),
+    ];
+    expect(kpi(rows, "Total Revenue").value).toBe(1500);
+    expect(kpi(rows, "Total Expenses").value).toBe(215); // 100+50+20+30 + 15
+    expect(kpi(rows, "Net Income").value).toBe(1285); // 800 + 485
+    expect(kpi(rows, "Total Bookings").value).toBe(3);
   });
 });
