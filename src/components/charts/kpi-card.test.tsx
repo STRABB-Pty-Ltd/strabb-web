@@ -26,9 +26,9 @@ describe("KPICard", () => {
     expect(container.textContent).toContain("8.2%");
   });
 
-  it("renders no chip when trend is 0", () => {
+  it("renders a flat 0% chip when trend is a real zero", () => {
     const { container } = renderCard(0);
-    expect(container.textContent).not.toContain("%");
+    expect(container.textContent).toContain("0%");
   });
 
   it("renders no chip when trend is null", () => {

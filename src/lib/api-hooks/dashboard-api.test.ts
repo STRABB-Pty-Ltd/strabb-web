@@ -2,10 +2,41 @@ import { describe, expect, it } from "vitest";
 
 import {
   rawAlertsToAlertItems,
+  rawKPIsToKPIData,
   rawPreviewToPreviewData,
   type RawAlertResponse,
+  type RawKPIResponse,
   type RawPreviewResponse,
 } from "./dashboard-api";
+
+const KPI_RESPONSE: RawKPIResponse = {
+  revenue: 17685.0,
+  expenses: 2907.35,
+  netIncome: 14777.65,
+  occupancyRate: 0.5376,
+  avgNightlyRate: 333.68,
+  totalBookings: 15,
+};
+
+describe("rawKPIsToKPIData", () => {
+  it("passes money values through untouched (no whole-dollar pre-rounding)", () => {
+    const byLabel = Object.fromEntries(
+      rawKPIsToKPIData(KPI_RESPONSE).map((k) => [k.label, k.value]),
+    );
+    // Regression: Avg $/night was Math.round()ed to 334 while reporting
+    // showed the true 333.68 for the same period.
+    expect(byLabel["Avg $/night"]).toBe(333.68);
+    expect(byLabel["Total Revenue"]).toBe(17685.0);
+    expect(byLabel["Net Income"]).toBe(14777.65);
+  });
+
+  it("displays occupancy as a whole percent from the 0..1 decimal, same as reporting", () => {
+    const byLabel = Object.fromEntries(
+      rawKPIsToKPIData(KPI_RESPONSE).map((k) => [k.label, k.value]),
+    );
+    expect(byLabel["Avg Occupancy"]).toBe(54);
+  });
+});
 
 function emptyRaw(overrides: Partial<RawPreviewResponse> = {}): RawPreviewResponse {
   return {

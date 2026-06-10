@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  applyReportingTrends,
   enumerateMonths,
   financialsToRevenueTrend,
-  rawFinancialsToKPIs,
+  serverKPIsToCards,
   type RawFinancial,
+  type RawKPIValues,
+  type RawReportingKPIs,
 } from "./reporting-api";
 
 function fin(
@@ -30,12 +31,6 @@ function fin(
     nights: 0,
     ...overrides,
   };
-}
-
-function kpi(rows: RawFinancial[], label: string) {
-  const found = rawFinancialsToKPIs(rows).find((k) => k.label === label);
-  if (!found) throw new Error(`KPI not found: ${label}`);
-  return found;
 }
 
 describe("financialsToRevenueTrend", () => {
@@ -117,25 +112,45 @@ describe("enumerateMonths", () => {
   });
 });
 
-describe("rawFinancialsToKPIs", () => {
-  it("computes a weighted average nightly rate (revenue / nights), not an average of averages", () => {
-    const rows = [
-      fin("2026-01", "a", 1000, { nights: 10, avgNightlyRate: 100 }),
-      fin("2026-01", "b", 600, { nights: 5, avgNightlyRate: 120 }),
-    ];
-    // Average of averages would be (100 + 120) / 2 = 110.
-    // Weighted is total revenue / total nights = 1600 / 15 = 106.67.
-    expect(kpi(rows, "Avg $/night").value).toBe(106.67);
-  });
+function values(overrides: Partial<RawKPIValues> = {}): RawKPIValues {
+  return {
+    revenue: 0,
+    expenses: 0,
+    netIncome: 0,
+    occupancyRate: 0,
+    avgNightlyRate: 0,
+    totalBookings: 0,
+    ...overrides,
+  };
+}
 
-  it("returns 0 for avg nightly rate when there are no room-nights", () => {
-    const rows = [fin("2026-01", "a", 0, { nights: 0 })];
-    expect(kpi(rows, "Avg $/night").value).toBe(0);
-  });
+function serverKPIs(
+  current: Partial<RawKPIValues> = {},
+  trends: RawReportingKPIs["trends"] = {
+    revenue: null,
+    expenses: null,
+    netIncome: null,
+    occupancyRate: null,
+    avgNightlyRate: null,
+    totalBookings: null,
+  },
+): RawReportingKPIs {
+  return { ...values(current), previous: values(), trends };
+}
 
-  it("returns zeroed KPIs in a stable order for an empty record set", () => {
-    const kpis = rawFinancialsToKPIs([]);
-    expect(kpis.map((k) => k.label)).toEqual([
+describe("serverKPIsToCards", () => {
+  it("maps the server values onto the six cards in a stable order", () => {
+    const cards = serverKPIsToCards(
+      serverKPIs({
+        revenue: 1500,
+        expenses: 215,
+        netIncome: 1285,
+        occupancyRate: 0.3226,
+        avgNightlyRate: 106.67,
+        totalBookings: 3,
+      }),
+    );
+    expect(cards.map((k) => k.label)).toEqual([
       "Total Revenue",
       "Net Income",
       "Total Expenses",
@@ -143,47 +158,34 @@ describe("rawFinancialsToKPIs", () => {
       "Avg $/night",
       "Total Bookings",
     ]);
-    for (const k of kpis) expect(k.value).toBe(0);
+    const byLabel = Object.fromEntries(cards.map((k) => [k.label, k.value]));
+    expect(byLabel["Total Revenue"]).toBe(1500);
+    expect(byLabel["Net Income"]).toBe(1285);
+    expect(byLabel["Total Expenses"]).toBe(215);
+    expect(byLabel["Avg $/night"]).toBe(106.67);
+    expect(byLabel["Total Bookings"]).toBe(3);
   });
 
-  it("sums revenue, expenses, net income and bookings across records", () => {
-    const rows = [
-      fin("2026-01", "a", 1000, {
-        nights: 10,
-        cleaningCost: 100,
-        ticketCost: 50,
-        suppliesCost: 20,
-        platformFees: 30,
-        netIncome: 800,
-        bookingCount: 2,
-      }),
-      fin("2026-02", "a", 500, {
-        nights: 5,
-        platformFees: 15,
-        netIncome: 485,
-        bookingCount: 1,
-      }),
-    ];
-    expect(kpi(rows, "Total Revenue").value).toBe(1500);
-    expect(kpi(rows, "Total Expenses").value).toBe(215); // 100+50+20+30 + 15
-    expect(kpi(rows, "Net Income").value).toBe(1285); // 800 + 485
-    expect(kpi(rows, "Total Bookings").value).toBe(3);
+  it("displays occupancy as a whole percent from the 0..1 decimal", () => {
+    const cards = serverKPIsToCards(serverKPIs({ occupancyRate: 0.3226 }));
+    expect(cards.find((k) => k.label === "Avg Occupancy")?.value).toBe(32);
   });
-});
 
-describe("applyReportingTrends", () => {
-  const baseKpis = rawFinancialsToKPIs([fin("2026-01", "a", 1000, { nights: 10 })]);
-
-  it("overlays each delta onto the matching KPI by label", () => {
-    const result = applyReportingTrends(baseKpis, {
-      revenue: 12.5,
-      netIncome: -3.1,
-      expenses: 4,
-      occupancyRate: 8,
-      avgNightlyRate: 1.2,
-      totalBookings: 50,
-    });
-    const byLabel = Object.fromEntries(result.map((k) => [k.label, k.trend]));
+  it("overlays each trend delta onto the matching card", () => {
+    const cards = serverKPIsToCards(
+      serverKPIs(
+        {},
+        {
+          revenue: 12.5,
+          netIncome: -3.1,
+          expenses: 4,
+          occupancyRate: 8,
+          avgNightlyRate: 1.2,
+          totalBookings: 50,
+        },
+      ),
+    );
+    const byLabel = Object.fromEntries(cards.map((k) => [k.label, k.trend]));
     expect(byLabel["Total Revenue"]).toBe(12.5);
     expect(byLabel["Net Income"]).toBe(-3.1);
     expect(byLabel["Total Expenses"]).toBe(4);
@@ -193,22 +195,39 @@ describe("applyReportingTrends", () => {
   });
 
   it("keeps a null delta as null (no arrow) but preserves a real 0%", () => {
-    const result = applyReportingTrends(baseKpis, {
-      revenue: null,
-      netIncome: 0,
-      expenses: null,
-      occupancyRate: null,
-      avgNightlyRate: null,
-      totalBookings: null,
-    });
-    const byLabel = Object.fromEntries(result.map((k) => [k.label, k.trend]));
+    const cards = serverKPIsToCards(
+      serverKPIs(
+        {},
+        {
+          revenue: null,
+          netIncome: 0,
+          expenses: null,
+          occupancyRate: null,
+          avgNightlyRate: null,
+          totalBookings: null,
+        },
+      ),
+    );
+    const byLabel = Object.fromEntries(cards.map((k) => [k.label, k.trend]));
     expect(byLabel["Total Revenue"]).toBeNull();
     expect(byLabel["Net Income"]).toBe(0);
   });
 
-  it("returns null trends (no arrows) when the trends payload is null", () => {
-    const result = applyReportingTrends(baseKpis, null);
-    expect(result).toHaveLength(baseKpis.length);
-    for (const k of result) expect(k.trend).toBeNull();
+  it("returns zeroed cards for an empty period", () => {
+    const cards = serverKPIsToCards(serverKPIs());
+    for (const k of cards) {
+      expect(k.value).toBe(0);
+      expect(k.trend).toBeNull();
+    }
+  });
+
+  it("degrades to no arrows when the trends object itself is missing", () => {
+    // The api contract guarantees trends today; this pins the defensive
+    // t?. path in case that contract ever loosens.
+    const raw = { ...values(), previous: values() } as RawReportingKPIs;
+    const cards = serverKPIsToCards(raw);
+    for (const k of cards) {
+      expect(k.trend).toBeNull();
+    }
   });
 });

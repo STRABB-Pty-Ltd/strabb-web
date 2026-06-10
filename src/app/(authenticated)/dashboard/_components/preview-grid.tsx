@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { PreviewData } from "@/hooks/use-dashboard";
 import { useShoppingList } from "@/hooks/use-cleaning";
+import { trendDirection } from "@/lib/trend";
 import { useAppStore } from "@/stores/app-store";
 
 interface PreviewGridProps {
@@ -169,12 +170,7 @@ function buildSparklineSummary(bars: PreviewData["revenueSparkline"]): string {
   const peak = bars.reduce((a, b) => (b.revenue > a.revenue ? b : a));
   const latest = bars[bars.length - 1];
   const first = bars[0].revenue;
-  const direction =
-    latest.revenue > first * 1.05
-      ? "trending up"
-      : latest.revenue < first * 0.95
-        ? "trending down"
-        : "broadly flat";
+  const direction = trendDirection(first, latest.revenue);
   return (
     `Revenue sparkline across ${bars.length} periods, ${direction}. ` +
     `Latest ${formatBarLabel(latest.label)}: ${formatAUDShort(latest.revenue)}. ` +
