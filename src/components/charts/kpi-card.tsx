@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { formatCurrency } from "@/lib/format-currency";
 
@@ -19,14 +19,20 @@ interface KPICardProps {
 }
 
 export function KPICard({ kpi, onClick }: KPICardProps) {
-  const hasTrend = typeof kpi.trend === "number" && kpi.trend !== 0;
+  // A real 0% delta renders a flat chip; null/undefined (no prior-period
+  // data) renders no chip at all - mirrors the server's null-vs-zero trend
+  // contract instead of collapsing both to "nothing".
+  const hasTrend = typeof kpi.trend === "number";
+  const trendFlat = kpi.trend === 0;
   const trendPositive = (kpi.trend ?? 0) > 0;
 
   // Single explicit aria-label so screen readers announce one tidy string
   // rather than concatenating each child node (which produced "value, button,
   // group" - VoiceOver inferring grouping from the CSS Grid parent).
   const trendDescription = hasTrend
-    ? `, ${trendPositive ? "up" : "down"} ${Math.abs(kpi.trend ?? 0)} percent`
+    ? trendFlat
+      ? ", unchanged"
+      : `, ${trendPositive ? "up" : "down"} ${Math.abs(kpi.trend ?? 0)} percent`
     : "";
   const ariaLabel = `${kpi.label}, ${formatValue(kpi.value, kpi.type)}${trendDescription}`;
 
@@ -52,10 +58,16 @@ export function KPICard({ kpi, onClick }: KPICardProps) {
             className="gap-xs px-base py-xs text-body flex shrink-0 items-center rounded-full font-medium"
             style={{
               backgroundColor: "var(--neutral-30)",
-              color: trendPositive ? "var(--status-completed)" : "var(--status-issues)",
+              color: trendFlat
+                ? "var(--highlight-10)"
+                : trendPositive
+                  ? "var(--status-completed)"
+                  : "var(--status-issues)",
             }}
           >
-            {trendPositive ? (
+            {trendFlat ? (
+              <ArrowRight size={13} aria-hidden="true" />
+            ) : trendPositive ? (
               <ArrowUpRight size={13} aria-hidden="true" />
             ) : (
               <ArrowDownRight size={13} aria-hidden="true" />

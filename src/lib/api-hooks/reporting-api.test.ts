@@ -220,4 +220,14 @@ describe("serverKPIsToCards", () => {
       expect(k.trend).toBeNull();
     }
   });
+
+  it("degrades to no arrows when the trends object itself is missing", () => {
+    // The api contract guarantees trends today; this pins the defensive
+    // t?. path in case that contract ever loosens.
+    const raw = { ...values(), previous: values() } as RawReportingKPIs;
+    const cards = serverKPIsToCards(raw);
+    for (const k of cards) {
+      expect(k.trend).toBeNull();
+    }
+  });
 });
