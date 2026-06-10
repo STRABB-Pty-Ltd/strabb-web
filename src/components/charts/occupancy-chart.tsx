@@ -11,9 +11,14 @@ import { ChartTooltip } from "./chart-tooltip";
 // documented while staying compatible.
 const FONT_SIZE = 13; // mirrors var(--text-body)
 
-interface OccupancyData {
+export interface OccupancyData {
   listing: string;
   occupancy: number;
+  // Nights from the api's OccupancyRecord, so the summary can report the true
+  // weighted aggregate (sum of booked / sum of sellable) instead of an
+  // unweighted mean of the listing rates.
+  bookedDays: number;
+  availableDays: number;
 }
 
 interface OccupancyChartProps {
@@ -27,11 +32,13 @@ function getOccupancyColor(rate: number): string {
   return "var(--status-success)";
 }
 
-function buildSummary(data: OccupancyData[]): string {
+export function buildSummary(data: OccupancyData[]): string {
   if (data.length === 0) return "";
   const max = data.reduce((a, b) => (b.occupancy > a.occupancy ? b : a));
   const min = data.reduce((a, b) => (b.occupancy < a.occupancy ? b : a));
-  const avg = Math.round(data.reduce((sum, d) => sum + d.occupancy, 0) / data.length);
+  const totalBooked = data.reduce((sum, d) => sum + d.bookedDays, 0);
+  const totalAvailable = data.reduce((sum, d) => sum + d.availableDays, 0);
+  const avg = totalAvailable > 0 ? Math.round((totalBooked / totalAvailable) * 100) : 0;
   return (
     `Occupancy across ${data.length} listings, averaging ${avg} percent. ` +
     `Highest is ${max.listing} at ${max.occupancy} percent, ` +

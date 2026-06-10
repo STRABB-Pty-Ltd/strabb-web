@@ -35,7 +35,7 @@ export interface ChartDataSet {
     percentage: number;
     color: string;
   }[];
-  occupancy: { listing: string; occupancy: number }[];
+  occupancy: { listing: string; occupancy: number; bookedDays: number; availableDays: number }[];
   expenses: { category: string; amount: number }[];
   revenueByListing: { listing: string; revenue: number; color: string }[];
   expensesByListing: { listing: string; revenue: number; color: string }[];
@@ -63,6 +63,8 @@ export interface RawFinancial {
 interface RawOccupancy {
   listingName: string;
   occupancyRate: number;
+  bookedDays: number;
+  availableDays: number;
 }
 
 interface RawRevenueBreakdown {
@@ -251,10 +253,13 @@ export function useReportingChartDataAPI(
         apiClient.get<{ data: RawFinancial[] }>(`/reporting/financials?${trendParams.toString()}`),
       ]);
 
-      // Build occupancy by listing
+      // Build occupancy by listing. Booked/available nights ride along so the
+      // chart summary can report the weighted aggregate, not a mean of rates.
       const occupancy = occupancyRes.data.map((o) => ({
         listing: o.listingName,
         occupancy: Math.round(o.occupancyRate * 100),
+        bookedDays: o.bookedDays,
+        availableDays: o.availableDays,
       }));
 
       // Build channel breakdown and revenue by listing
