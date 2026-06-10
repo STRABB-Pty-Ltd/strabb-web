@@ -22,6 +22,7 @@ export function useReportingKPIs(
     data: apiResult.data,
     isLoading: apiResult.isLoading,
     error: apiResult.error,
+    refetch: apiResult.refetch,
   };
 }
 
@@ -36,6 +37,7 @@ export function useReportingChartData(
     data: apiResult.data,
     isLoading: apiResult.isLoading,
     error: apiResult.error,
+    refetch: apiResult.refetch,
   };
 }
 

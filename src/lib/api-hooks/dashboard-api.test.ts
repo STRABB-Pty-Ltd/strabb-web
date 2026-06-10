@@ -5,17 +5,33 @@ import {
   rawKPIsToKPIData,
   rawPreviewToPreviewData,
   type RawAlertResponse,
-  type RawKPIResponse,
+  type RawKPIReport,
   type RawPreviewResponse,
 } from "./dashboard-api";
 
-const KPI_RESPONSE: RawKPIResponse = {
+const KPI_RESPONSE: RawKPIReport = {
   revenue: 17685.0,
   expenses: 2907.35,
   netIncome: 14777.65,
   occupancyRate: 0.5376,
   avgNightlyRate: 333.68,
   totalBookings: 15,
+  previous: {
+    revenue: 0,
+    expenses: 0,
+    netIncome: 0,
+    occupancyRate: 0,
+    avgNightlyRate: 0,
+    totalBookings: 0,
+  },
+  trends: {
+    revenue: null,
+    expenses: null,
+    netIncome: null,
+    occupancyRate: null,
+    avgNightlyRate: null,
+    totalBookings: null,
+  },
 };
 
 describe("rawKPIsToKPIData", () => {

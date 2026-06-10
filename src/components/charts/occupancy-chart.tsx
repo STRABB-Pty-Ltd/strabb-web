@@ -2,6 +2,8 @@
 
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
 
+import { occupancyRateToPercent } from "@/lib/percent";
+
 import { ChartContainer } from "./chart-container";
 import { ChartTooltip } from "./chart-tooltip";
 
@@ -38,7 +40,7 @@ export function buildSummary(data: OccupancyData[]): string {
   const min = data.reduce((a, b) => (b.occupancy < a.occupancy ? b : a));
   const totalBooked = data.reduce((sum, d) => sum + d.bookedDays, 0);
   const totalAvailable = data.reduce((sum, d) => sum + d.availableDays, 0);
-  const avg = totalAvailable > 0 ? Math.round((totalBooked / totalAvailable) * 100) : 0;
+  const avg = totalAvailable > 0 ? occupancyRateToPercent(totalBooked / totalAvailable) : 0;
   return (
     `Occupancy across ${data.length} listings, averaging ${avg} percent. ` +
     `Highest is ${max.listing} at ${max.occupancy} percent, ` +

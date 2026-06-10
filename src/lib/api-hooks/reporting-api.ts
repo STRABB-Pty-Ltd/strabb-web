@@ -3,7 +3,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import { buildKPICards, REPORTING_KPI_CARDS, type RawKPIReport } from "@/lib/api-hooks/kpi-cards";
 import { formatChannel } from "@/lib/channels";
+import { occupancyRateToPercent } from "@/lib/percent";
 import { timeframeToDateRange, trendDateRange } from "@/lib/timeframe-utils";
 
 export interface ReportingKPI {
@@ -16,16 +18,14 @@ export interface ReportingKPI {
   icon: string;
 }
 
-// Per-KPI period-over-period deltas from /reporting/financial-trends, after
-// the global snake_case -> camelCase transform. null = previous period was 0.
-export interface ReportingTrends {
-  revenue: number | null;
-  expenses: number | null;
-  netIncome: number | null;
-  occupancyRate: number | null;
-  avgNightlyRate: number | null;
-  totalBookings: number | null;
-}
+// Payload types live in kpi-cards.ts (shared with the dashboard, since both
+// endpoints return the api's DashboardKPIs schema); re-exported here under
+// their established names for existing consumers.
+export type {
+  RawKPIReport as RawReportingKPIs,
+  RawKPITrends as ReportingTrends,
+  RawKPIValues,
+} from "@/lib/api-hooks/kpi-cards";
 
 export interface ChartDataSet {
   revenueTrend: { label: string; revenue: number }[];
@@ -121,76 +121,12 @@ export function financialsToRevenueTrend(
   }));
 }
 
-// One period's KPI values from /reporting/kpis, after the global
-// snake_case -> camelCase transform. Server-computed via the shared
-// MetricsService definition (identical to /dashboard/kpis).
-export interface RawKPIValues {
-  revenue: number;
-  expenses: number;
-  netIncome: number;
-  // Decimal 0..1 from the api (4 dp = 2 dp as a percent).
-  occupancyRate: number;
-  avgNightlyRate: number;
-  totalBookings: number;
-  currency?: string;
-}
-
-export interface RawReportingKPIs extends RawKPIValues {
-  previous: RawKPIValues;
-  trends: ReportingTrends;
-}
-
-// Map the server KPI payload onto the six reporting cards. No client-side
-// re-aggregation: the api owns the formulas (weighted avg rate, occupancy
-// net of owner blocks, cancelled costs excluded), the web just displays.
-// A null trend delta means no prior-period data, so no arrow is shown;
-// `?? null` keeps a real 0% delta.
-export function serverKPIsToCards(raw: RawReportingKPIs): ReportingKPI[] {
-  const t = raw.trends;
-  return [
-    {
-      label: "Total Revenue",
-      value: raw.revenue,
-      icon: "dollar-sign",
-      trend: t?.revenue ?? null,
-      type: "currency",
-    },
-    {
-      label: "Net Income",
-      value: raw.netIncome,
-      icon: "trending-up",
-      trend: t?.netIncome ?? null,
-      type: "currency",
-    },
-    {
-      label: "Total Expenses",
-      value: raw.expenses,
-      icon: "receipt",
-      trend: t?.expenses ?? null,
-      type: "currency",
-    },
-    {
-      label: "Avg Occupancy",
-      value: Math.round(raw.occupancyRate * 100),
-      icon: "percent",
-      trend: t?.occupancyRate ?? null,
-      type: "percentage",
-    },
-    {
-      label: "Avg $/night",
-      value: raw.avgNightlyRate,
-      icon: "bed",
-      trend: t?.avgNightlyRate ?? null,
-      type: "currency",
-    },
-    {
-      label: "Total Bookings",
-      value: raw.totalBookings,
-      icon: "calendar",
-      trend: t?.totalBookings ?? null,
-      type: "number",
-    },
-  ];
+// Map the server KPI payload onto the six reporting cards via the shared
+// builder (kpi-cards.ts). No client-side re-aggregation: the api owns the
+// formulas (weighted avg rate, occupancy net of owner blocks, cancelled
+// costs excluded), the web just displays.
+export function serverKPIsToCards(raw: RawKPIReport): ReportingKPI[] {
+  return buildKPICards(raw, REPORTING_KPI_CARDS);
 }
 
 export function useReportingKPIsAPI(
@@ -212,7 +148,7 @@ export function useReportingKPIsAPI(
       // Server-computed totals + trends in one call (shared definition with
       // the dashboard via MetricsService). No client-side re-aggregation, so
       // the old mixed-currency summing risk is gone with it.
-      const res = await apiClient.get<{ data: RawReportingKPIs }>(
+      const res = await apiClient.get<{ data: RawKPIReport }>(
         `/reporting/kpis?${params.toString()}`,
       );
       return serverKPIsToCards(res.data);
@@ -257,7 +193,7 @@ export function useReportingChartDataAPI(
       // chart summary can report the weighted aggregate, not a mean of rates.
       const occupancy = occupancyRes.data.map((o) => ({
         listing: o.listingName,
-        occupancy: Math.round(o.occupancyRate * 100),
+        occupancy: occupancyRateToPercent(o.occupancyRate),
         bookedDays: o.bookedDays,
         availableDays: o.availableDays,
       }));
