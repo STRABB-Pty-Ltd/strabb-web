@@ -179,3 +179,25 @@ export function useUpdateChannexMapping() {
     },
   });
 }
+
+// Force a fresh 500-day push of the listing's full daily state to
+// Channex. Wraps the admin endpoint that enqueues a `full_resync`
+// outbox row; the worker picks it up and performs the push
+// asynchronously. The hook returns once the row is enqueued (202),
+// not once the push completes — callers should show a "queued"
+// toast, not "synced".
+export function useChannexResyncListing() {
+  const apiClient = useApiClient();
+
+  return useMutation({
+    mutationFn: async (listingId: string): Promise<{ syncLogId: string }> => {
+      const response = await apiClient.post<{ data: { syncLogId: string } }>(
+        `/admin/channex/resync/${listingId}`,
+        // Endpoint takes no body; empty object keeps the api-client
+        // signature happy without sending stray fields.
+        {},
+      );
+      return response.data;
+    },
+  });
+}

@@ -23,6 +23,7 @@ vi.mock("@/hooks/use-api-client", () => ({
 }));
 
 import {
+  useChannexResyncListing,
   useCreateListingGroupAPI,
   useDeleteListingGroupAPI,
   useListingGroupsAPI,
@@ -132,6 +133,16 @@ describe("listings-api hooks", () => {
       channexPropertyId: "ch-1",
     });
     expect(updated).toEqual({ id: "lst-1", channexPropertyId: "ch-1" });
+  });
+
+  it("useChannexResyncListing POSTs the admin resync route with the listing id", async () => {
+    postMock.mockResolvedValue({ data: { syncLogId: "log-abc" } });
+
+    const { result } = renderHook(() => useChannexResyncListing(), { wrapper: withProvider() });
+    const queued = await result.current.mutateAsync("lst-1");
+
+    expect(postMock).toHaveBeenCalledWith("/admin/channex/resync/lst-1", {});
+    expect(queued).toEqual({ syncLogId: "log-abc" });
   });
 
   it("useUpdateListing PUTs /listings/{id} with the supplied fields only", async () => {
