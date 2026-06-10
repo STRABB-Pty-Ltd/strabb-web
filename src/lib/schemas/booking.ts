@@ -12,6 +12,13 @@ export interface BookingResponse {
   source: string;
   guestName: string | null;
   guestEmail: string | null;
+  guestPhone: string | null;
+  guestCount: number | null;
+  totalAmount: number | null;
+  nightlyRate: number | null;
+  currency?: string;
+  specialRequests: string | null;
+  otaCommission: number | null;
   rawSummary: string | null;
   notes: string | null;
   createdAt: string;

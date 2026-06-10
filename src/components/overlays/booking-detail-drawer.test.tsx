@@ -25,6 +25,10 @@ vi.mock("@/hooks/use-bookings", () => ({
   useBooking: () => bookingMock(),
   useUpdateBookingNotes: () => ({ mutate: updateNotesMock, isPending: false }),
   useDismissConflict: () => ({ mutate: dismissConflictMock, isPending: false }),
+  // BookingFormDrawer (mounted alongside the detail panel) uses these.
+  // Stubbed here so the drawer renders without firing real fetches.
+  useCreateBooking: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useUpdateBooking: () => ({ mutateAsync: vi.fn(), isPending: false }),
 }));
 
 vi.mock("@/hooks/use-property-timezone", () => ({
@@ -54,6 +58,12 @@ const baseBooking: BookingResponse = {
   source: "airbnb",
   guestName: "Sam Guest",
   guestEmail: "sam@example.com",
+  guestPhone: null,
+  guestCount: null,
+  totalAmount: null,
+  nightlyRate: null,
+  specialRequests: null,
+  otaCommission: null,
   rawSummary: null,
   notes: "Late check-in agreed",
   createdAt: "2026-04-20T00:00:00Z",

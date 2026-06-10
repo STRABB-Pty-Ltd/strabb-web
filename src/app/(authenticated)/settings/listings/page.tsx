@@ -4,6 +4,7 @@ import { Image as ImageIcon, Inbox } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ListingRow } from "@/components/listings/listing-row";
+import { BookingFormDrawer } from "@/components/overlays/booking-form-drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -72,6 +73,11 @@ export default function SettingsListingsPage() {
   // docs/listings-settings-phase-2.md.
   const [nightlyRateInputs, setNightlyRateInputs] = useState<Record<string, string>>({});
   const [savingMetadataId, setSavingMetadataId] = useState<string | null>(null);
+
+  // Manual-booking create flow. The Add Booking button per listing
+  // opens the shared form drawer (also used in edit mode from the
+  // /bookings detail drawer) pre-filled with that listing.
+  const [addBookingListingId, setAddBookingListingId] = useState<string | null>(null);
 
   useEffect(() => {
     setChannexInputs((prev) => {
@@ -246,6 +252,7 @@ export default function SettingsListingsPage() {
                   onNightlyRateChange={(v) => handleNightlyRateChange(listing.id, v)}
                   saving={savingMetadataId === listing.id}
                   onSave={() => handleMetadataSave(listing)}
+                  onAddBooking={() => setAddBookingListingId(listing.id)}
                 />
               }
               channexTabContent={
@@ -267,6 +274,11 @@ export default function SettingsListingsPage() {
           ))}
         </div>
       )}
+      <BookingFormDrawer
+        open={addBookingListingId !== null}
+        onClose={() => setAddBookingListingId(null)}
+        mode={addBookingListingId ? { kind: "create", listingId: addBookingListingId } : null}
+      />
     </div>
   );
 }
@@ -287,6 +299,7 @@ interface GeneralTabProps {
   onNightlyRateChange: (value: string) => void;
   saving: boolean;
   onSave: () => void;
+  onAddBooking: () => void;
 }
 
 function GeneralTab({
@@ -295,6 +308,7 @@ function GeneralTab({
   onNightlyRateChange,
   saving,
   onSave,
+  onAddBooking,
 }: GeneralTabProps) {
   return (
     <div className="space-y-md">
@@ -306,6 +320,26 @@ function GeneralTab({
       <StaySection />
       <AmenitiesSection listingId={listingId} />
       <DescriptionSection listingId={listingId} />
+
+      <section
+        className="pt-sm border-t"
+        style={{ borderColor: "var(--border)" }}
+        data-testid={`add-booking-${listingId}`}
+      >
+        <h3 className="text-body text-highlight-10 font-semibold">Manual booking</h3>
+        <p className="text-body mb-xs" style={{ color: "var(--text-secondary)" }}>
+          Create a host-side booking against this listing. STRABB pushes the availability change to
+          Channex automatically.
+        </p>
+        <button
+          type="button"
+          onClick={onAddBooking}
+          className="px-sm py-base text-body rounded-lg border font-medium"
+          style={{ borderColor: "var(--border)", color: "var(--highlight-10)" }}
+        >
+          + Add booking
+        </button>
+      </section>
 
       <div className="flex justify-end">
         <button

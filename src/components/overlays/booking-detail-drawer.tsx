@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { BookingFormDrawer } from "@/components/overlays/booking-form-drawer";
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
 import { useListings } from "@/hooks/use-listings";
@@ -43,6 +44,12 @@ export function BookingDetailDrawer() {
   const dismissConflict = useDismissConflict();
 
   const [notes, setNotes] = useState("");
+  // Edit / cancel are scoped to manual bookings (source=direct). Editing
+  // a Channex-sourced booking from STRABB would drift from Channex's
+  // view and get reverted on the next pull, so we hide the affordances
+  // there. The form drawer is mounted alongside this detail panel and
+  // refreshes its own state from the booking record each time it opens.
+  const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (booking) setNotes(booking.notes ?? "");
@@ -204,8 +211,31 @@ export function BookingDetailDrawer() {
               </button>
             </div>
           </div>
+
+          {displayBooking.source === "direct" && displayBooking.status !== "cancelled" && (
+            <div className="pt-sm border-t" style={{ borderColor: "var(--border)" }}>
+              <p className="text-body text-highlight-10 mb-xs font-semibold">Manage booking</p>
+              <p className="text-body mb-xs" style={{ color: "var(--text-secondary)" }}>
+                Edit dates / guest fields or cancel this booking. Channex availability updates
+                automatically.
+              </p>
+              <button
+                type="button"
+                onClick={() => setEditingBookingId(displayBooking.id)}
+                className="px-sm py-base text-body rounded-lg border font-medium"
+                style={{ borderColor: "var(--border)", color: "var(--highlight-10)" }}
+              >
+                Edit booking details
+              </button>
+            </div>
+          )}
         </div>
       )}
+      <BookingFormDrawer
+        open={editingBookingId !== null}
+        onClose={() => setEditingBookingId(null)}
+        mode={editingBookingId && booking ? { kind: "edit", booking } : null}
+      />
     </DrillDownPanel>
   );
 }

@@ -20,7 +20,13 @@ vi.mock("next-auth/react", () => ({
   useSession: () => ({ data: { accessToken: "mock" }, status: "authenticated" }),
 }));
 
-import { useBooking, useDismissConflict, useUpdateBookingNotes } from "./use-bookings";
+import {
+  useBooking,
+  useCreateBooking,
+  useDismissConflict,
+  useUpdateBooking,
+  useUpdateBookingNotes,
+} from "./use-bookings";
 
 function makeWrapper(): {
   client: QueryClient;
@@ -102,5 +108,36 @@ describe("use-bookings hooks", () => {
     await result.current.mutateAsync({ id: "book-1", notes: "hello" });
 
     expect(patchMock).toHaveBeenCalledWith("/bookings/book-1/notes", { notes: "hello" });
+  });
+
+  it("useCreateBooking POSTs /bookings with the request body", async () => {
+    postMock.mockResolvedValue({ data: { id: "book-new", source: "direct" } });
+
+    const { Wrapper } = makeWrapper();
+    const { result } = renderHook(() => useCreateBooking(), { wrapper: Wrapper });
+    const created = await result.current.mutateAsync({
+      listingId: "lst-1",
+      checkIn: "2026-07-15T14:00:00Z",
+      checkOut: "2026-07-17T10:00:00Z",
+      guestName: "Walk-in",
+    });
+
+    expect(postMock).toHaveBeenCalledWith("/bookings", {
+      listingId: "lst-1",
+      checkIn: "2026-07-15T14:00:00Z",
+      checkOut: "2026-07-17T10:00:00Z",
+      guestName: "Walk-in",
+    });
+    expect(created).toMatchObject({ id: "book-new", source: "direct" });
+  });
+
+  it("useUpdateBooking PATCHes /bookings/{id} with the request body", async () => {
+    patchMock.mockResolvedValue({ data: { id: "book-1", status: "cancelled" } });
+
+    const { Wrapper } = makeWrapper();
+    const { result } = renderHook(() => useUpdateBooking(), { wrapper: Wrapper });
+    await result.current.mutateAsync({ id: "book-1", status: "cancelled" });
+
+    expect(patchMock).toHaveBeenCalledWith("/bookings/book-1", { status: "cancelled" });
   });
 });
