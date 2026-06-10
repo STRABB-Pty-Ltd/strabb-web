@@ -58,7 +58,7 @@ interface RawKPITrends {
   totalBookings: number | null;
 }
 
-interface RawKPIResponse extends RawKPIMetrics {
+export interface RawKPIResponse extends RawKPIMetrics {
   previous?: RawKPIMetrics;
   trends?: RawKPITrends;
 }
@@ -71,7 +71,7 @@ export interface RawAlertResponse {
   syncErrors: number;
 }
 
-function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
+export function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
   const t = raw.trends;
   return [
     {
@@ -97,7 +97,10 @@ function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
     },
     {
       label: "Avg $/night",
-      value: Math.round(raw.avgNightlyRate),
+      // Pass through as-is: the api already rounds money to 2 dp, and
+      // pre-rounding to whole dollars here made the dashboard show $334.00
+      // while reporting showed the true $333.68 for the same period.
+      value: raw.avgNightlyRate,
       icon: "bed",
       trend: t?.avgNightlyRate,
       type: "currency",
