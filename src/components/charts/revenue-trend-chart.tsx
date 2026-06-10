@@ -3,6 +3,8 @@
 import { format, parse } from "date-fns";
 import { Area, AreaChart, CartesianGrid, Customized, XAxis, YAxis } from "recharts";
 
+import { trendDirection } from "@/lib/trend";
+
 import { ChartContainer } from "./chart-container";
 import { ChartTooltip } from "./chart-tooltip";
 
@@ -127,8 +129,7 @@ function buildSummary(data: RevenueTrendData[]): string {
   const min = data.reduce((a, b) => (b.revenue < a.revenue ? b : a));
   const first = data[0].revenue;
   const last = data[data.length - 1].revenue;
-  const direction =
-    last > first * 1.05 ? "trending up" : last < first * 0.95 ? "trending down" : "broadly flat";
+  const direction = trendDirection(first, last);
   return (
     `Revenue trend across ${data.length} months. ` +
     `Highest in ${formatMonthLabel(max.label)} at ${formatAUD(max.revenue)}, ` +
