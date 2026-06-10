@@ -7,6 +7,11 @@ import { decodeJwtPayload, isTokenExpiringSoon } from "./auth-utils";
 
 const API_URL = process.env.INTERNAL_API_URL ?? "http://localhost:8000";
 
+// The refresh token itself was rejected (revoked, rotated away, or the dev
+// DB was re-seeded). Distinct from transient failures (backend down, 5xx)
+// so a one-off hiccup never logs anyone out.
+class FatalRefreshError extends Error {}
+
 async function refreshAccessToken(refreshToken: string) {
   const response = await fetch(`${API_URL}/auth/refresh`, {
     method: "POST",
@@ -15,7 +20,10 @@ async function refreshAccessToken(refreshToken: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to refresh token");
+    if (response.status >= 400 && response.status < 500) {
+      throw new FatalRefreshError(`Refresh rejected (${response.status})`);
+    }
+    throw new Error(`Refresh failed (${response.status})`);
   }
 
   return (await response.json()) as TokenPair;
@@ -118,27 +126,49 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       // Access token expired or expiring soon - refresh it
+      let tokens: TokenPair;
       try {
-        const tokens = await refreshAccessToken(token.refreshToken);
-        const payload = decodeJwtPayload(tokens.access_token);
-        const currentUser = await fetchCurrentUser(tokens.access_token);
+        tokens = await refreshAccessToken(token.refreshToken);
+      } catch (err) {
+        if (err instanceof FatalRefreshError) {
+          // Dead refresh token: flag it and let SessionGuard sign the user
+          // out, instead of leaving a zombie session that renders every page
+          // authenticated-but-empty.
+          return {
+            ...token,
+            error: "RefreshTokenError" as const,
+          };
+        }
+        // Transient (backend restarting / network blip): keep the session
+        // untouched and retry on the next request.
+        return token;
+      }
 
+      // Tokens rotated successfully; from here the session must keep the new
+      // pair even if the profile re-fetch below fails (the old refresh token
+      // is already revoked by the rotation).
+      const payload = decodeJwtPayload(tokens.access_token);
+      const rotated = {
+        ...token,
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        accessTokenExpires: payload.exp,
+        error: undefined,
+      };
+
+      try {
+        const currentUser = await fetchCurrentUser(tokens.access_token);
         return {
-          ...token,
-          accessToken: tokens.access_token,
-          refreshToken: tokens.refresh_token,
+          ...rotated,
           tenantId: currentUser.tenantId,
           userId: currentUser.id,
           role: currentUser.role,
           currentUser,
-          accessTokenExpires: payload.exp,
-          error: undefined,
         };
       } catch {
-        return {
-          ...token,
-          error: "RefreshTokenError" as const,
-        };
+        // Profile refresh is cosmetic - keep the rotated tokens and the
+        // cached currentUser rather than discarding a live session.
+        return rotated;
       }
     },
     async session({ session, token }) {
