@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   useListingsAPI,
+  useChannexResyncListing,
   useUpdateChannexMapping,
   useUpdateListing,
 } from "@/lib/api-hooks/listings-api";
@@ -489,6 +490,19 @@ function ChannexMappingSection({
     values.roomTypeId.trim() !== stored.roomTypeId ||
     values.ratePlanId.trim() !== stored.ratePlanId;
 
+  const resync = useChannexResyncListing();
+  const canResync = stored.propertyId.length > 0;
+  const handleResync = async () => {
+    try {
+      await resync.mutateAsync(listingId);
+      useAppStore.getState().addToast({ type: "success", message: "Full sync queued for Channex" });
+    } catch (err) {
+      const message =
+        err instanceof Error && err.message ? err.message : "Failed to queue full sync";
+      useAppStore.getState().addToast({ type: "error", message });
+    }
+  };
+
   return (
     <section className="space-y-sm">
       <div>
@@ -538,6 +552,27 @@ function ChannexMappingSection({
           {error}
         </p>
       )}
+
+      <div
+        className="pt-sm border-t"
+        style={{ borderColor: "var(--border)" }}
+        data-testid={`channex-resync-${listingId}`}
+      >
+        <h4 className="text-body text-highlight-10 font-semibold">Force full sync</h4>
+        <p className="text-body mb-xs" style={{ color: "var(--text-secondary)" }}>
+          Re-pushes 500 days of availability + rates + restrictions to Channex. Use after fixing a
+          mapping or if a previous sync failed. Requires the Property ID to be saved first.
+        </p>
+        <button
+          type="button"
+          onClick={handleResync}
+          disabled={!canResync || resync.isPending}
+          className="px-sm py-base text-body rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ borderColor: "var(--border)", color: "var(--highlight-10)" }}
+        >
+          {resync.isPending ? "Queuing…" : "Force full sync now"}
+        </button>
+      </div>
     </section>
   );
 }
