@@ -53,8 +53,16 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     throw new ApiError(response.status, message, code);
   }
 
-  const json = await response.json();
-  return keysToCamel<T>(json);
+  // 204 No Content (deletes) and any other empty body have nothing to parse;
+  // calling response.json() on them throws "Unexpected end of JSON input".
+  if (response.status === 204) {
+    return undefined as T;
+  }
+  const text = await response.text();
+  if (!text) {
+    return undefined as T;
+  }
+  return keysToCamel<T>(JSON.parse(text));
 }
 
 export const apiClient = {
