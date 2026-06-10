@@ -76,6 +76,71 @@ export function useUpdateBookingNotes() {
   });
 }
 
+// Payload for POST /bookings. The backend stamps source=direct +
+// generates a manual:<uuid> idempotency key server-side, so the form
+// only collects the human-facing fields. Dates are ISO strings
+// matching the backend's datetime parsing.
+export interface CreateBookingRequest {
+  listingId: string;
+  checkIn: string;
+  checkOut: string;
+  guestName?: string | null;
+  guestEmail?: string | null;
+  guestPhone?: string | null;
+  guestCount?: number | null;
+  totalAmount?: number | null;
+  notes?: string | null;
+  status?: "confirmed" | "pending";
+}
+
+// Payload for PATCH /bookings/{id}. All fields optional. Pass
+// `status: "cancelled"` to cancel — the backend's F.6 hook restores
+// stay-night availability and pushes to Channex from there.
+export interface UpdateBookingRequest {
+  checkIn?: string;
+  checkOut?: string;
+  guestName?: string | null;
+  guestEmail?: string | null;
+  guestPhone?: string | null;
+  guestCount?: number | null;
+  totalAmount?: number | null;
+  notes?: string | null;
+  status?: "confirmed" | "pending" | "cancelled" | "checked_in" | "checked_out";
+}
+
+export function useCreateBooking() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: CreateBookingRequest) => {
+      const response = await apiClient.post<{ data: Record<string, unknown> }>("/bookings", data);
+      return keysToCamel<BookingResponse>(response.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
+    },
+  });
+}
+
+export function useUpdateBooking() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...data }: { id: string } & UpdateBookingRequest) => {
+      const response = await apiClient.patch<{ data: Record<string, unknown> }>(
+        `/bookings/${id}`,
+        data,
+      );
+      return keysToCamel<BookingResponse>(response.data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
+    },
+  });
+}
+
 export function useDismissConflict() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();
