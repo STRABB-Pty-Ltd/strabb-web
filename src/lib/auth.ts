@@ -9,7 +9,8 @@ import type {
   TokenPair,
 } from "@/types/auth";
 
-import { decodeJwtPayload, isTokenExpiringSoon } from "./auth-utils";
+import { REFRESH_FAILURE_GRACE_MS, REFRESH_TOKEN_ERROR } from "./auth-constants";
+import { decodeJwtPayload, isFatalRefreshStatus, isTokenExpiringSoon } from "./auth-utils";
 
 const API_URL = process.env.INTERNAL_API_URL ?? "http://localhost:8000";
 
@@ -26,7 +27,7 @@ async function refreshAccessToken(refreshToken: string) {
   });
 
   if (!response.ok) {
-    if (response.status >= 400 && response.status < 500) {
+    if (isFatalRefreshStatus(response.status)) {
       throw new FatalRefreshError(`Refresh rejected (${response.status})`);
     }
     throw new Error(`Refresh failed (${response.status})`);
@@ -142,12 +143,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // authenticated-but-empty.
           return {
             ...token,
-            error: "RefreshTokenError" as const,
+            error: REFRESH_TOKEN_ERROR,
           };
         }
-        // Transient (backend restarting / network blip): keep the session
-        // untouched and retry on the next request.
-        return token;
+        // Transient (backend restarting / 5xx / network blip): keep the
+        // session and retry next request, but give up once the failures have
+        // persisted past the grace window, so a prolonged outage ends the
+        // session instead of looping forever with an expired access token.
+        const failedSince = token.refreshFailedSince ?? Date.now();
+        if (Date.now() - failedSince > REFRESH_FAILURE_GRACE_MS) {
+          return { ...token, error: REFRESH_TOKEN_ERROR };
+        }
+        return { ...token, refreshFailedSince: failedSince };
       }
 
       // Tokens rotated successfully; from here the session must keep the new
@@ -172,6 +179,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         refreshToken: tokens.refresh_token,
         accessTokenExpires: payload.exp,
         error: undefined,
+        refreshFailedSince: undefined,
       };
 
       try {

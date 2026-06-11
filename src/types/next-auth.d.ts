@@ -1,6 +1,7 @@
 import "next-auth";
 import "next-auth/jwt";
 
+import type { RefreshTokenErrorFlag } from "@/lib/auth-constants";
 import type { CurrentUser, UserRole } from "@/types/auth";
 
 declare module "next-auth" {
@@ -10,7 +11,7 @@ declare module "next-auth" {
     userId: string;
     role: UserRole;
     currentUser: CurrentUser;
-    error?: "RefreshTokenError";
+    error?: RefreshTokenErrorFlag;
   }
 
   interface User {
@@ -33,6 +34,7 @@ declare module "next-auth/jwt" {
     role: UserRole;
     currentUser: CurrentUser;
     accessTokenExpires: number;
-    error?: "RefreshTokenError";
+    error?: RefreshTokenErrorFlag;
+    refreshFailedSince?: number;
   }
 }
