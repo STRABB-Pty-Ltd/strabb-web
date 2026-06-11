@@ -27,9 +27,9 @@ export interface RawKPITrends {
   totalBookings: number | null;
 }
 
-// The server always returns previous + trends alongside the current values.
+// The server also returns a `previous` block, but the web reads only the
+// current values + trends, so the report type carries just those.
 export interface RawKPIReport extends RawKPIValues {
-  previous: RawKPIValues;
   trends: RawKPITrends;
 }
 
@@ -56,10 +56,11 @@ export function buildKPICards(raw: RawKPIReport, specs: readonly KPICardSpec[]):
     label: spec.label,
     icon: spec.icon,
     type: spec.type,
-    // Occupancy arrives as a 0..1 decimal; every other field displays as-is
-    // (money is already rounded to 2 dp by the api).
+    // A percentage card arrives as a 0..1 decimal; every other field displays
+    // as-is (money is already rounded to 2 dp by the api). Gating on the card
+    // type, not the field name, keeps a future percentage card correct.
     value:
-      spec.field === "occupancyRate" ? occupancyRateToPercent(raw.occupancyRate) : raw[spec.field],
+      spec.type === "percentage" ? occupancyRateToPercent(raw[spec.field]) : raw[spec.field],
     // `?? null` maps a defensively-absent trends object to no-arrow while
     // keeping a real 0% delta.
     trend: t?.[spec.field] ?? null,

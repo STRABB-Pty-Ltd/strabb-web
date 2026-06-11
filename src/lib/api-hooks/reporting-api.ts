@@ -18,15 +18,6 @@ export interface ReportingKPI {
   icon: string;
 }
 
-// Payload types live in kpi-cards.ts (shared with the dashboard, since both
-// endpoints return the api's DashboardKPIs schema); re-exported here under
-// their established names for existing consumers.
-export type {
-  RawKPIReport as RawReportingKPIs,
-  RawKPITrends as ReportingTrends,
-  RawKPIValues,
-} from "@/lib/api-hooks/kpi-cards";
-
 export interface ChartDataSet {
   revenueTrend: { label: string; revenue: number }[];
   channelBreakdown: {

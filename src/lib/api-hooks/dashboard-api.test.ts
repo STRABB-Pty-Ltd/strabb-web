@@ -16,14 +16,6 @@ const KPI_RESPONSE: RawKPIReport = {
   occupancyRate: 0.5376,
   avgNightlyRate: 333.68,
   totalBookings: 15,
-  previous: {
-    revenue: 0,
-    expenses: 0,
-    netIncome: 0,
-    occupancyRate: 0,
-    avgNightlyRate: 0,
-    totalBookings: 0,
-  },
   trends: {
     revenue: null,
     expenses: null,
