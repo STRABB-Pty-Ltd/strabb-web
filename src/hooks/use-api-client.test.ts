@@ -11,6 +11,8 @@ vi.mock("@/lib/api-client", () => ({
   createAuthenticatedClient: (token: string) => createClientMock(token),
 }));
 
+import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
+
 import { useApiClient, useAuthReady } from "./use-api-client";
 
 describe("useApiClient", () => {
@@ -134,5 +136,16 @@ describe("useAuthReady", () => {
     const { result } = renderHook(() => useAuthReady());
 
     expect(result.current).toBe(true);
+  });
+
+  it("returns false when the session carries a RefreshTokenError flag", () => {
+    useSessionMock.mockReturnValue({
+      data: { accessToken: "tok", error: REFRESH_TOKEN_ERROR },
+      status: "authenticated",
+    });
+
+    const { result } = renderHook(() => useAuthReady());
+
+    expect(result.current).toBe(false);
   });
 });

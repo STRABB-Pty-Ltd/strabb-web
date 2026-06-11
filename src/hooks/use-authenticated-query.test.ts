@@ -16,6 +16,8 @@ vi.mock("next-auth/react", () => ({
   useSession: () => useSessionMock(),
 }));
 
+import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
+
 import { useAuthenticatedQuery } from "./use-authenticated-query";
 
 function makeWrapper(): {
@@ -65,6 +67,22 @@ describe("useAuthenticatedQuery", () => {
 
   it("does not fire query when authenticated but accessToken is missing", () => {
     useSessionMock.mockReturnValue({ data: {}, status: "authenticated" });
+
+    const { Wrapper } = makeWrapper();
+    const { result } = renderHook(
+      () => useAuthenticatedQuery<{ id: string }>(["thing"], "/thing"),
+      { wrapper: Wrapper },
+    );
+
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(getMock).not.toHaveBeenCalled();
+  });
+
+  it("does not fire query when the session carries a RefreshTokenError flag", () => {
+    useSessionMock.mockReturnValue({
+      data: { accessToken: "token-123", error: REFRESH_TOKEN_ERROR },
+      status: "authenticated",
+    });
 
     const { Wrapper } = makeWrapper();
     const { result } = renderHook(

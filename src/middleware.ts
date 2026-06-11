@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
 
 // No client-side admin routes currently - admin endpoints are gated by the
 // backend, and the System Health UI lives inside the General settings section
@@ -7,7 +8,12 @@ const ADMIN_ROUTE_PREFIXES: string[] = [];
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isAuthenticated = !!req.auth;
+  // A session carrying RefreshTokenError is dead (the backend refresh failed
+  // fatally), so treat it as unauthenticated: routing sends it to /login
+  // server-side instead of rendering an authenticated-but-empty page while the
+  // client SessionGuard catches up, and a dead session can no longer bounce off
+  // /login back into the app shell.
+  const isAuthenticated = !!req.auth && req.auth.error !== REFRESH_TOKEN_ERROR;
   const role = req.auth?.role;
 
   const isLoginPage = nextUrl.pathname === "/login";

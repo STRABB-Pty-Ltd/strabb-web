@@ -53,8 +53,14 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     throw new ApiError(response.status, message, code);
   }
 
-  const json = await response.json();
-  return keysToCamel<T>(json);
+  // 204 No Content (deletes) and any other empty or whitespace-only body have
+  // nothing to parse; calling JSON.parse on them throws. response.text() on a
+  // 204 yields "", so this one check covers both.
+  const text = await response.text();
+  if (!text.trim()) {
+    return undefined as T;
+  }
+  return keysToCamel<T>(JSON.parse(text));
 }
 
 export const apiClient = {

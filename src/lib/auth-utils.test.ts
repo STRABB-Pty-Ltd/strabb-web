@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { decodeJwtPayload, isTokenExpiringSoon } from "./auth-utils";
+import { decodeJwtPayload, isFatalRefreshStatus, isTokenExpiringSoon } from "./auth-utils";
 
 // A real-ish JWT structure (header.payload.signature) with base64url-encoded payload
 function makeJwt(payload: Record<string, unknown>): string {
@@ -64,5 +64,25 @@ describe("isTokenExpiringSoon", () => {
   it("returns false when token has plenty of time", () => {
     const futureExp = Math.floor(Date.now() / 1000) + 3600; // 1hr from now
     expect(isTokenExpiringSoon(futureExp, 60)).toBe(false);
+  });
+});
+
+describe("isFatalRefreshStatus", () => {
+  it("treats a rejected refresh token (4xx, non-transient) as fatal", () => {
+    expect(isFatalRefreshStatus(400)).toBe(true);
+    expect(isFatalRefreshStatus(401)).toBe(true);
+    expect(isFatalRefreshStatus(403)).toBe(true);
+  });
+
+  it("treats transient 4xx (408/425/429) as NOT fatal", () => {
+    expect(isFatalRefreshStatus(408)).toBe(false);
+    expect(isFatalRefreshStatus(425)).toBe(false);
+    expect(isFatalRefreshStatus(429)).toBe(false);
+  });
+
+  it("treats 5xx as NOT fatal (backend down, keep retrying within the grace window)", () => {
+    expect(isFatalRefreshStatus(500)).toBe(false);
+    expect(isFatalRefreshStatus(502)).toBe(false);
+    expect(isFatalRefreshStatus(503)).toBe(false);
   });
 });
