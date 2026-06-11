@@ -67,6 +67,23 @@ describe("ReportingPage", () => {
     expect(screen.getByTestId("kpi-row")).toHaveTextContent("0 kpis");
   });
 
+  it("shows a charts error with retry when only the charts query fails", () => {
+    kpisMock.mockReturnValue({ data: [{ id: "k-1" }], isLoading: false });
+    chartsMock.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error("charts boom"),
+      refetch: vi.fn(),
+    });
+    render(<ReportingPage />);
+    // KPIs still render; the charts half now shows an error + retry instead
+    // of a silent blank area.
+    expect(screen.getByTestId("kpi-row")).toHaveTextContent("1 kpis");
+    expect(screen.getByText(/charts unavailable/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /retry/i })).toBeInTheDocument();
+    expect(screen.queryByTestId("chart-grid")).not.toBeInTheDocument();
+  });
+
   it("renders the saved reports drawer when savedReportsOpen is true", () => {
     storeMock.mockReturnValue(storeFor(true));
     kpisMock.mockReturnValue({ data: [], isLoading: false });

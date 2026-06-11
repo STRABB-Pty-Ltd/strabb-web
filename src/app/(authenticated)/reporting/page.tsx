@@ -83,10 +83,22 @@ export default function ReportingPage() {
         <ReportingKPIRow kpis={kpis ?? []} />
       )}
 
-      {chartData && (
+      {chartData ? (
         <div className="mt-md">
           <ReportingChartGrid activeSubmenu={submenu} data={chartData} />
         </div>
+      ) : (
+        chartsError && (
+          <div className="mt-md">
+            <EmptyState
+              compact
+              icon={AlertTriangle}
+              title="Charts unavailable"
+              description="The headline numbers loaded; retry to fetch the reporting charts."
+              action={{ label: "Retry", onClick: () => void refetchCharts() }}
+            />
+          </div>
+        )
       )}
 
       {savedReportsOpen && (
