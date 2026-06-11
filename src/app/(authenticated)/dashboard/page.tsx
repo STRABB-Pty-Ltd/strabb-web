@@ -2,6 +2,7 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
+import { DASHBOARD_KPI_CARDS } from "@/lib/api-hooks/kpi-cards";
 import { useAppStore } from "@/stores/app-store";
 
 import { AlertStrip } from "./_components/alert-strip";
@@ -29,8 +30,9 @@ export default function DashboardPage() {
     return (
       <div className="space-y-sm" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading dashboard</span>
-        <div className="gap-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-          {Array.from({ length: 6 }).map((_, i) => (
+        {/* Mirrors KPIGrid: same grid, one tile per card spec. */}
+        <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: DASHBOARD_KPI_CARDS.length }).map((_, i) => (
             <Skeleton key={i} h={89} />
           ))}
         </div>

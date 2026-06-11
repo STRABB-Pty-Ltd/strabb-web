@@ -8,6 +8,7 @@ import { ReportingChartGrid } from "./_components/reporting-chart-grid";
 import { ReportingKPIRow } from "./_components/reporting-kpi-row";
 import { SavedReportsDrawer } from "./_components/saved-reports-drawer";
 import { useReportingChartData, useReportingKPIs } from "@/hooks/use-reporting";
+import { REPORTING_KPI_CARDS } from "@/lib/api-hooks/kpi-cards";
 import { useAppStore } from "@/stores/app-store";
 
 export default function ReportingPage() {
@@ -34,8 +35,9 @@ export default function ReportingPage() {
     return (
       <div className="space-y-lg" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading reports</span>
-        <div className="gap-sm grid grid-cols-2 sm:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+        {/* Mirrors ReportingKPIRow: same grid, one tile per card spec. */}
+        <div className="gap-sm grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {Array.from({ length: REPORTING_KPI_CARDS.length }).map((_, i) => (
             <Skeleton key={i} h={89} />
           ))}
         </div>
