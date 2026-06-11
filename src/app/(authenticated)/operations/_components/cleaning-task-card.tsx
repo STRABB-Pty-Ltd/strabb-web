@@ -33,10 +33,6 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
     <button type="button" onClick={onClick} className="w-full text-left" data-no-elevate>
       <div className="space-y-xs">
         <div className="gap-base flex items-center">
-          <span
-            className="h-base w-base shrink-0 rounded-full"
-            style={{ backgroundColor: task.listingColor }}
-          />
           <span className="text-body text-highlight-10 truncate font-medium">
             {task.listingName}
           </span>

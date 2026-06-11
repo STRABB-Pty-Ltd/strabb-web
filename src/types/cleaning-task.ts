@@ -8,7 +8,6 @@ export interface CleaningTask {
   id: string;
   listingId: string;
   listingName: string;
-  listingColor: string;
   bookingId: string | null;
   cleanerName: string | null;
   cleanerEmail: string | null;
