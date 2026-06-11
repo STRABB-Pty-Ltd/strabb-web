@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 
 import { createAuthenticatedClient } from "@/lib/api-client";
+import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
 
 /**
  * Hook that returns an API client pre-bound with the current session's access token.
@@ -24,5 +25,9 @@ export function useApiClient() {
  */
 export function useAuthReady() {
   const { data: session, status } = useSession();
-  return status === "authenticated" && !!session?.accessToken;
+  return (
+    status === "authenticated" &&
+    !!session?.accessToken &&
+    session?.error !== REFRESH_TOKEN_ERROR
+  );
 }
