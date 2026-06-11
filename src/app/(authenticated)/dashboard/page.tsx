@@ -1,5 +1,8 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
+
+import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
 import { DASHBOARD_KPI_CARDS } from "@/lib/api-hooks/kpi-cards";
@@ -14,17 +17,40 @@ export default function DashboardPage() {
   const anchor = useAppStore((s) => s.dashboard.anchor);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
-  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
-    windowSize,
-    anchor,
-    selectedListings,
-  );
+  const {
+    data: kpis,
+    isLoading: kpisLoading,
+    error: kpisError,
+    refetch: refetchKpis,
+  } = useDashboardKPIs(windowSize, anchor, selectedListings);
   const { data: alerts } = useDashboardAlerts(selectedListings);
-  const { data: preview, isLoading: previewLoading } = useDashboardPreview(
-    selectedListings,
-    windowSize,
-    anchor,
-  );
+  const {
+    data: preview,
+    isLoading: previewLoading,
+    error: previewError,
+    refetch: refetchPreview,
+  } = useDashboardPreview(selectedListings, windowSize, anchor);
+
+  // Surface query failures instead of looping on the loading skeleton (review
+  // finding: the dashboard dropped the KPI/preview error, so a failed
+  // /dashboard/kpis call - e.g. web deployed ahead of the api - rendered an
+  // infinite skeleton). Mirrors the reporting page's error state.
+  if ((kpisError || previewError) && (!kpis || !preview)) {
+    return (
+      <EmptyState
+        icon={AlertTriangle}
+        title="Couldn't load the dashboard"
+        description="The dashboard service didn't respond. Retry, or check the api server if it keeps happening."
+        action={{
+          label: "Retry",
+          onClick: () => {
+            void refetchKpis();
+            void refetchPreview();
+          },
+        }}
+      />
+    );
+  }
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (

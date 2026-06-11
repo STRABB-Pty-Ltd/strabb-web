@@ -74,4 +74,20 @@ describe("DashboardPage", () => {
     render(<DashboardPage />);
     expect(screen.getByTestId("alert-strip")).toHaveTextContent("2 alerts");
   });
+
+  it("shows an error with retry when a query fails, not an infinite skeleton", () => {
+    kpisMock.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error("kpis boom"),
+      refetch: vi.fn(),
+    });
+    alertsMock.mockReturnValue({ data: [] });
+    previewMock.mockReturnValue({ data: { miniCalendar: [] }, isLoading: false });
+    render(<DashboardPage />);
+    expect(screen.getByText(/couldn't load the dashboard/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /retry/i })).toBeInTheDocument();
+    expect(screen.queryByText(/loading dashboard/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("kpi-grid")).not.toBeInTheDocument();
+  });
 });
