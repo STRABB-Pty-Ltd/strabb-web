@@ -53,13 +53,13 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     throw new ApiError(response.status, message, code);
   }
 
-  // 204 No Content (deletes) and any other empty body have nothing to parse;
-  // calling response.json() on them throws "Unexpected end of JSON input".
+  // 204 No Content (deletes) and any other empty or whitespace-only body
+  // have nothing to parse; calling JSON.parse on them throws.
   if (response.status === 204) {
     return undefined as T;
   }
   const text = await response.text();
-  if (!text) {
+  if (!text.trim()) {
     return undefined as T;
   }
   return keysToCamel<T>(JSON.parse(text));

@@ -1,7 +1,13 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import type { CurrentUser, CurrentUserResponse, DataResponse, TokenPair } from "@/types/auth";
+import type {
+  CurrentUser,
+  CurrentUserResponse,
+  DataResponse,
+  JwtPayload,
+  TokenPair,
+} from "@/types/auth";
 
 import { decodeJwtPayload, isTokenExpiringSoon } from "./auth-utils";
 
@@ -147,7 +153,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Tokens rotated successfully; from here the session must keep the new
       // pair even if the profile re-fetch below fails (the old refresh token
       // is already revoked by the rotation).
-      const payload = decodeJwtPayload(tokens.access_token);
+      let payload: JwtPayload;
+      try {
+        payload = decodeJwtPayload(tokens.access_token);
+      } catch {
+        // A 200 refresh whose access token cannot be decoded is unusable,
+        // and the old pair is already revoked by the rotation. Flag the
+        // session so SessionGuard signs out deliberately instead of relying
+        // on the framework to swallow the throw.
+        return {
+          ...token,
+          error: "RefreshTokenError" as const,
+        };
+      }
       const rotated = {
         ...token,
         accessToken: tokens.access_token,
