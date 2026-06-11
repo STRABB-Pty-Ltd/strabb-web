@@ -19,9 +19,7 @@ export function useAuthenticatedQuery<T>(
   const { data: session, status } = useSession();
   const apiClient = useApiClient();
   const isReady =
-    status === "authenticated" &&
-    !!session?.accessToken &&
-    session?.error !== REFRESH_TOKEN_ERROR;
+    status === "authenticated" && !!session?.accessToken && session?.error !== REFRESH_TOKEN_ERROR;
 
   return useQuery<T>({
     queryKey,

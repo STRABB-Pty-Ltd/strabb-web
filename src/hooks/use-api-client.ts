@@ -26,8 +26,6 @@ export function useApiClient() {
 export function useAuthReady() {
   const { data: session, status } = useSession();
   return (
-    status === "authenticated" &&
-    !!session?.accessToken &&
-    session?.error !== REFRESH_TOKEN_ERROR
+    status === "authenticated" && !!session?.accessToken && session?.error !== REFRESH_TOKEN_ERROR
   );
 }
