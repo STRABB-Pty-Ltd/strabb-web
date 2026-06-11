@@ -19,6 +19,7 @@ export function useDashboardKPIs(
     data: apiResult.data,
     isLoading: apiResult.isPending,
     error: apiResult.error,
+    refetch: apiResult.refetch,
   };
 }
 
@@ -43,5 +44,6 @@ export function useDashboardPreview(
     data: apiResult.data,
     isLoading: apiResult.isPending,
     error: apiResult.error,
+    refetch: apiResult.refetch,
   };
 }

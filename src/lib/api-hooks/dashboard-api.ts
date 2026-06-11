@@ -3,7 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import { buildKPICards, DASHBOARD_KPI_CARDS, type RawKPIReport } from "@/lib/api-hooks/kpi-cards";
 import { timeframeToDateRange } from "@/lib/timeframe-utils";
+
+export type { RawKPIReport } from "@/lib/api-hooks/kpi-cards";
 
 export interface KPIData {
   label: string;
@@ -39,30 +42,6 @@ export interface PreviewData {
   }[];
 }
 
-interface RawKPIMetrics {
-  revenue: number;
-  expenses: number;
-  netIncome: number;
-  occupancyRate: number;
-  avgNightlyRate: number;
-  totalBookings: number;
-  currency?: string;
-}
-
-interface RawKPITrends {
-  revenue: number | null;
-  expenses: number | null;
-  netIncome: number | null;
-  occupancyRate: number | null;
-  avgNightlyRate: number | null;
-  totalBookings: number | null;
-}
-
-export interface RawKPIResponse extends RawKPIMetrics {
-  previous?: RawKPIMetrics;
-  trends?: RawKPITrends;
-}
-
 export interface RawAlertResponse {
   unreadMessages: number;
   unscheduledCleans: number;
@@ -71,41 +50,10 @@ export interface RawAlertResponse {
   syncErrors: number;
 }
 
-export function rawKPIsToKPIData(raw: RawKPIResponse): KPIData[] {
-  const t = raw.trends;
-  return [
-    {
-      label: "Total Revenue",
-      value: raw.revenue,
-      icon: "dollar-sign",
-      trend: t?.revenue,
-      type: "currency",
-    },
-    {
-      label: "Net Income",
-      value: raw.netIncome,
-      icon: "trending-up",
-      trend: t?.netIncome,
-      type: "currency",
-    },
-    {
-      label: "Avg Occupancy",
-      value: Math.round(raw.occupancyRate * 100),
-      icon: "percent",
-      trend: t?.occupancyRate,
-      type: "percentage",
-    },
-    {
-      label: "Avg $/night",
-      // Pass through as-is: the api already rounds money to 2 dp, and
-      // pre-rounding to whole dollars here made the dashboard show $334.00
-      // while reporting showed the true $333.68 for the same period.
-      value: raw.avgNightlyRate,
-      icon: "bed",
-      trend: t?.avgNightlyRate,
-      type: "currency",
-    },
-  ];
+// Thin per-surface wrapper over the shared card builder (kpi-cards.ts):
+// the dashboard shows 4 of the 6 KPI cards.
+export function rawKPIsToKPIData(raw: RawKPIReport): KPIData[] {
+  return buildKPICards(raw, DASHBOARD_KPI_CARDS);
 }
 
 export function rawAlertsToAlertItems(raw: RawAlertResponse): AlertItem[] {
@@ -170,7 +118,7 @@ export function useDashboardKPIsAPI(
   return useQuery<KPIData[]>({
     queryKey: ["dashboard-kpis", windowSize, anchor ?? "now", ...selectedListings],
     queryFn: async () => {
-      const response = await apiClient.get<{ data: RawKPIResponse }>(
+      const response = await apiClient.get<{ data: RawKPIReport }>(
         `/dashboard/kpis?${params.toString()}`,
       );
       return rawKPIsToKPIData(response.data);

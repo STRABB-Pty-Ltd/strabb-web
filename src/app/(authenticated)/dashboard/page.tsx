@@ -1,7 +1,11 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
+
+import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardAlerts, useDashboardKPIs, useDashboardPreview } from "@/hooks/use-dashboard";
+import { DASHBOARD_KPI_CARDS } from "@/lib/api-hooks/kpi-cards";
 import { useAppStore } from "@/stores/app-store";
 
 import { AlertStrip } from "./_components/alert-strip";
@@ -13,24 +17,48 @@ export default function DashboardPage() {
   const anchor = useAppStore((s) => s.dashboard.anchor);
   const selectedListings = useAppStore((s) => s.selectedListings);
 
-  const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs(
-    windowSize,
-    anchor,
-    selectedListings,
-  );
+  const {
+    data: kpis,
+    isLoading: kpisLoading,
+    error: kpisError,
+    refetch: refetchKpis,
+  } = useDashboardKPIs(windowSize, anchor, selectedListings);
   const { data: alerts } = useDashboardAlerts(selectedListings);
-  const { data: preview, isLoading: previewLoading } = useDashboardPreview(
-    selectedListings,
-    windowSize,
-    anchor,
-  );
+  const {
+    data: preview,
+    isLoading: previewLoading,
+    error: previewError,
+    refetch: refetchPreview,
+  } = useDashboardPreview(selectedListings, windowSize, anchor);
+
+  // Surface query failures instead of looping on the loading skeleton (review
+  // finding: the dashboard dropped the KPI/preview error, so a failed
+  // /dashboard/kpis call - e.g. web deployed ahead of the api - rendered an
+  // infinite skeleton). Mirrors the reporting page's error state.
+  if ((kpisError || previewError) && (!kpis || !preview)) {
+    return (
+      <EmptyState
+        icon={AlertTriangle}
+        title="Couldn't load the dashboard"
+        description="The dashboard service didn't respond. Retry, or check the api server if it keeps happening."
+        action={{
+          label: "Retry",
+          onClick: () => {
+            void refetchKpis();
+            void refetchPreview();
+          },
+        }}
+      />
+    );
+  }
 
   if (kpisLoading || previewLoading || !kpis || !preview) {
     return (
       <div className="space-y-sm" role="status" aria-live="polite" aria-busy="true">
         <span className="sr-only">Loading dashboard</span>
-        <div className="gap-sm grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-          {Array.from({ length: 6 }).map((_, i) => (
+        {/* Mirrors KPIGrid: same grid, one tile per card spec. */}
+        <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: DASHBOARD_KPI_CARDS.length }).map((_, i) => (
             <Skeleton key={i} h={89} />
           ))}
         </div>

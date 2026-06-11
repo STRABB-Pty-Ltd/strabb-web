@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import { type RawKPIReport, type RawKPIValues } from "@/lib/api-hooks/kpi-cards";
+
 import {
   enumerateMonths,
   financialsToRevenueTrend,
   serverKPIsToCards,
   type RawFinancial,
-  type RawKPIValues,
-  type RawReportingKPIs,
 } from "./reporting-api";
 
 function fin(
@@ -126,7 +126,7 @@ function values(overrides: Partial<RawKPIValues> = {}): RawKPIValues {
 
 function serverKPIs(
   current: Partial<RawKPIValues> = {},
-  trends: RawReportingKPIs["trends"] = {
+  trends: RawKPIReport["trends"] = {
     revenue: null,
     expenses: null,
     netIncome: null,
@@ -134,8 +134,8 @@ function serverKPIs(
     avgNightlyRate: null,
     totalBookings: null,
   },
-): RawReportingKPIs {
-  return { ...values(current), previous: values(), trends };
+): RawKPIReport {
+  return { ...values(current), trends };
 }
 
 describe("serverKPIsToCards", () => {
@@ -224,7 +224,7 @@ describe("serverKPIsToCards", () => {
   it("degrades to no arrows when the trends object itself is missing", () => {
     // The api contract guarantees trends today; this pins the defensive
     // t?. path in case that contract ever loosens.
-    const raw = { ...values(), previous: values() } as RawReportingKPIs;
+    const raw = { ...values() } as RawKPIReport;
     const cards = serverKPIsToCards(raw);
     for (const k of cards) {
       expect(k.trend).toBeNull();
