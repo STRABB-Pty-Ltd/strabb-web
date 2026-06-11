@@ -59,8 +59,7 @@ export function buildKPICards(raw: RawKPIReport, specs: readonly KPICardSpec[]):
     // A percentage card arrives as a 0..1 decimal; every other field displays
     // as-is (money is already rounded to 2 dp by the api). Gating on the card
     // type, not the field name, keeps a future percentage card correct.
-    value:
-      spec.type === "percentage" ? occupancyRateToPercent(raw[spec.field]) : raw[spec.field],
+    value: spec.type === "percentage" ? occupancyRateToPercent(raw[spec.field]) : raw[spec.field],
     // `?? null` maps a defensively-absent trends object to no-arrow while
     // keeping a real 0% delta.
     trend: t?.[spec.field] ?? null,
