@@ -3,6 +3,8 @@
 import { useSession } from "next-auth/react";
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 
+import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
+
 import { useApiClient } from "./use-api-client";
 
 /**
@@ -16,7 +18,8 @@ export function useAuthenticatedQuery<T>(
 ) {
   const { data: session, status } = useSession();
   const apiClient = useApiClient();
-  const isReady = status === "authenticated" && !!session?.accessToken;
+  const isReady =
+    status === "authenticated" && !!session?.accessToken && session?.error !== REFRESH_TOKEN_ERROR;
 
   return useQuery<T>({
     queryKey,
