@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import { KanbanCard } from "@/components/views/kanban-card";
+import { cleaningStatusColor } from "@/lib/cleaning-status";
 import type { CleaningTask } from "@/types/cleaning-task";
 import { useAppStore } from "@/stores/app-store";
 
@@ -34,7 +35,7 @@ export function OperationsCleansView({ tasks }: OperationsCleansViewProps) {
   }, [tasks]);
 
   const renderTask = (t: CleaningTask) => (
-    <KanbanCard key={t.id} borderColor={t.listingColor}>
+    <KanbanCard key={t.id} borderColor={cleaningStatusColor(t.status)}>
       <CleaningTaskCard task={t} onClick={() => openDrillDownPanel("cleaning", t.id)} />
     </KanbanCard>
   );

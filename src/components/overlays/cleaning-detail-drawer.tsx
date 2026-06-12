@@ -20,19 +20,12 @@ import { useProperties } from "@/hooks/use-properties";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { ApiError } from "@/lib/api-client";
 import { useLinkTicketToClean, useUnlinkTicketFromClean } from "@/lib/api-hooks/cleaning-api";
+import { cleaningStatusColors as statusColors } from "@/lib/cleaning-status";
 import { useTicket, useTicketsAPI, useUpdateTicketAPI } from "@/lib/api-hooks/tickets-api";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { formatEnumLabel } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Ticket } from "@/types/ticket";
-
-const statusColors: Record<string, string> = {
-  pending: "var(--status-pending)",
-  confirmed: "var(--status-confirmed)",
-  in_progress: "var(--status-in-progress)",
-  completed: "var(--status-completed)",
-  cancelled: "var(--status-cancelled)",
-};
 
 const statusFgColors: Record<string, string> = {
   pending: "var(--status-danger-fg)",
