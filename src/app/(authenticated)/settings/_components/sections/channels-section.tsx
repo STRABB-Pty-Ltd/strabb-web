@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
-import { useAppStore } from "@/stores/app-store";
+import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
 interface ChannelConfig {
   id: string;
@@ -59,15 +57,15 @@ const pricingOptions = [
 ];
 
 export function ChannelsSection() {
-  const addToast = useAppStore((s) => s.addToast);
-  const [channels, setChannels] = useState(mockChannels);
+  const { values, patch, save, isSaving, dirty } = useSettingsForm<{ channels: ChannelConfig[] }>(
+    "channels",
+    { channels: mockChannels },
+  );
 
   const updateChannel = (id: string, field: "syncFrequency" | "pricingRule", value: string) => {
-    setChannels((ch) => ch.map((c) => (c.id === id ? { ...c, [field]: value } : c)));
-  };
-
-  const handleSave = () => {
-    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
+    patch({
+      channels: values.channels.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
+    });
   };
 
   return (
@@ -81,7 +79,7 @@ export function ChannelsSection() {
       </div>
 
       <div className="space-y-sm">
-        {channels.map((ch) => (
+        {values.channels.map((ch) => (
           <div
             key={ch.id}
             className="px-sm py-sm rounded-lg border"
@@ -145,11 +143,12 @@ export function ChannelsSection() {
 
       <button
         type="button"
-        onClick={handleSave}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
+        onClick={save}
+        disabled={!dirty || isSaving}
+        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
         style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
-        Save Changes
+        {isSaving ? "Saving…" : "Save Changes"}
       </button>
     </div>
   );

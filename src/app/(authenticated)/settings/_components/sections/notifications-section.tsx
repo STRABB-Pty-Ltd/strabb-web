@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
-import { useAppStore } from "@/stores/app-store";
+import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
 interface NotificationToggle {
   id: string;
@@ -12,7 +10,7 @@ interface NotificationToggle {
 
 const toggles: NotificationToggle[] = [
   {
-    id: "new_booking",
+    id: "newBooking",
     label: "New Booking",
     description: "Email when a new booking is synced",
   },
@@ -22,35 +20,30 @@ const toggles: NotificationToggle[] = [
     description: "Email when overlapping bookings are detected",
   },
   {
-    id: "cleaning_due",
+    id: "cleaningDue",
     label: "Cleaning Due",
     description: "Email when a cleaning task is due within 24 hours",
   },
   {
-    id: "sync_error",
+    id: "syncError",
     label: "Sync Error",
     description: "Email when an iCal sync fails",
   },
 ];
 
 export function NotificationsSection() {
-  const addToast = useAppStore((s) => s.addToast);
-  const [settings, setSettings] = useState<Record<string, boolean>>({
-    new_booking: true,
-    conflict: true,
-    cleaning_due: true,
-    sync_error: true,
-  });
+  const { values, patch, save, isSaving, dirty } = useSettingsForm<Record<string, boolean>>(
+    "notifications",
+    {
+      newBooking: true,
+      conflict: true,
+      cleaningDue: true,
+      syncError: true,
+    },
+  );
 
   const toggle = (id: string) => {
-    setSettings((s) => ({ ...s, [id]: !s[id] }));
-  };
-
-  const handleSave = () => {
-    addToast({
-      type: "warning",
-      message: "Settings save is coming soon, not wired up yet",
-    });
+    patch({ [id]: !values[id] });
   };
 
   return (
@@ -63,7 +56,7 @@ export function NotificationsSection() {
       <div className="space-y-sm">
         {toggles.map((t) => {
           const labelId = `notify-${t.id}-label`;
-          const checked = settings[t.id] ?? false;
+          const checked = values[t.id] ?? false;
           return (
             <div
               key={t.id}
@@ -100,11 +93,12 @@ export function NotificationsSection() {
 
       <button
         type="button"
-        onClick={handleSave}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
+        onClick={save}
+        disabled={!dirty || isSaving}
+        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
         style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
-        Save Preferences
+        {isSaving ? "Saving…" : "Save Preferences"}
       </button>
     </div>
   );

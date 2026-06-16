@@ -1,19 +1,14 @@
 "use client";
 
-import { useState } from "react";
-
-import { useAppStore } from "@/stores/app-store";
+import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
 export function CleaningSection() {
-  const addToast = useAppStore((s) => s.addToast);
-  const [defaultDuration, setDefaultDuration] = useState("2");
-  const [autoAssign, setAutoAssign] = useState(false);
-  const [defaultCleaner, setDefaultCleaner] = useState("Maria Santos");
-  const [defaultCleanerEmail, setDefaultCleanerEmail] = useState("maria.s@cleanteam.com");
-
-  const handleSave = () => {
-    addToast({ type: "warning", message: "Settings save is coming soon, not wired up yet" });
-  };
+  const { values, patch, save, isSaving, dirty } = useSettingsForm("cleaning", {
+    defaultDuration: "2",
+    autoAssign: false,
+    defaultCleaner: "",
+    defaultCleanerEmail: "",
+  });
 
   return (
     <div className="space-y-md">
@@ -34,8 +29,8 @@ export function CleaningSection() {
           <input
             id="cleaning-default-duration"
             type="number"
-            value={defaultDuration}
-            onChange={(e) => setDefaultDuration(e.target.value)}
+            value={values.defaultDuration}
+            onChange={(e) => patch({ defaultDuration: e.target.value })}
             min="0.5"
             step="0.5"
             className="px-sm py-base text-body w-[144px] rounded-lg border"
@@ -58,18 +53,18 @@ export function CleaningSection() {
           <button
             type="button"
             role="switch"
-            aria-checked={autoAssign}
+            aria-checked={values.autoAssign}
             aria-labelledby="auto-assign-label"
-            onClick={() => setAutoAssign(!autoAssign)}
+            onClick={() => patch({ autoAssign: !values.autoAssign })}
             className="h-md relative w-lg rounded-full transition-colors outline-none before:absolute before:top-1/2 before:left-1/2 before:h-[var(--touch-target-min)] before:w-[var(--touch-target-min)] before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             style={{
-              backgroundColor: autoAssign ? "var(--highlight-10)" : "var(--neutral-30)",
+              backgroundColor: values.autoAssign ? "var(--highlight-10)" : "var(--neutral-30)",
             }}
           >
             {/* Thumb 14x14 with locked left positions (2 / 18) gives symmetric 2px margins inside a w-lg (34px) track. */}
             <span
               className="bg-surface-60 absolute top-[3px] h-[14px] w-[14px] rounded-full shadow transition-transform"
-              style={{ left: autoAssign ? 18 : 2 }}
+              style={{ left: values.autoAssign ? 18 : 2 }}
             />
           </button>
         </div>
@@ -84,8 +79,8 @@ export function CleaningSection() {
           <input
             id="cleaning-default-cleaner-name"
             type="text"
-            value={defaultCleaner}
-            onChange={(e) => setDefaultCleaner(e.target.value)}
+            value={values.defaultCleaner}
+            onChange={(e) => patch({ defaultCleaner: e.target.value })}
             className="px-sm py-base text-body w-full rounded-lg border"
             style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
@@ -102,8 +97,8 @@ export function CleaningSection() {
             id="default-cleaner-email"
             type="email"
             autoComplete="email"
-            value={defaultCleanerEmail}
-            onChange={(e) => setDefaultCleanerEmail(e.target.value)}
+            value={values.defaultCleanerEmail}
+            onChange={(e) => patch({ defaultCleanerEmail: e.target.value })}
             className="px-sm py-base text-body w-full rounded-lg border"
             style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
@@ -130,11 +125,12 @@ export function CleaningSection() {
 
       <button
         type="button"
-        onClick={handleSave}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
+        onClick={save}
+        disabled={!dirty || isSaving}
+        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
         style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
       >
-        Save Changes
+        {isSaving ? "Saving…" : "Save Changes"}
       </button>
     </div>
   );
