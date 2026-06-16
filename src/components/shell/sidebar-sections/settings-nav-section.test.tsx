@@ -30,13 +30,13 @@ describe("SettingsNavSection", () => {
     pathnameMock.mockReturnValue("/settings");
   });
 
-  it("renders only section buttons, no sub-route links", () => {
+  it("renders section tabs including Listings, but not the card-only sub-routes", () => {
     render(<SettingsNavSection />);
     expect(screen.getByRole("button", { name: /general/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /phone/i })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /sync logs/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /shareable links/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /listings/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /listings/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /sync logs/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /shareable links/i })).not.toBeInTheDocument();
   });
 
   it("clicking a section on /settings does not navigate, only updates state", async () => {
@@ -52,5 +52,22 @@ describe("SettingsNavSection", () => {
     await userEvent.click(screen.getByRole("button", { name: /phone/i }));
     expect(setSectionMock).toHaveBeenCalledWith("phone");
     expect(pushMock).toHaveBeenCalledWith("/settings");
+  });
+
+  it("clicking Listings navigates to its page without touching section state", async () => {
+    render(<SettingsNavSection />);
+    await userEvent.click(screen.getByRole("button", { name: /listings/i }));
+    expect(pushMock).toHaveBeenCalledWith("/settings/listings");
+    expect(setSectionMock).not.toHaveBeenCalled();
+  });
+
+  it("marks Listings active on its route, with state sections inactive", () => {
+    pathnameMock.mockReturnValue("/settings/listings");
+    render(<SettingsNavSection />);
+    expect(screen.getByRole("button", { name: /listings/i })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("button", { name: /general/i })).not.toHaveAttribute("aria-current");
   });
 });

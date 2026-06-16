@@ -1,16 +1,29 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getMock, putMock } = vi.hoisted(() => ({ getMock: vi.fn(), putMock: vi.fn() }));
+const { getMock, putMock, addToastMock } = vi.hoisted(() => ({
+  getMock: vi.fn(),
+  putMock: vi.fn(),
+  addToastMock: vi.fn(),
+}));
 
 vi.mock("@/hooks/use-api-client", () => ({
   useApiClient: () => ({ get: getMock, put: putMock }),
   useAuthReady: () => true,
 }));
 
-import { useSettingsSectionAPI, useUpdateSettingsSectionAPI } from "./settings-api";
+vi.mock("@/stores/app-store", () => ({
+  useAppStore: (selector: (s: { addToast: typeof addToastMock }) => unknown) =>
+    selector({ addToast: addToastMock }),
+}));
+
+import {
+  useSettingsForm,
+  useSettingsSectionAPI,
+  useUpdateSettingsSectionAPI,
+} from "./settings-api";
 
 function withProvider(): (props: { children: ReactNode }) => ReactNode {
   const client = new QueryClient({
@@ -51,12 +64,15 @@ describe("settings-api hooks", () => {
       return { data: {} };
     });
 
+    // One shared client so the test exercises query-KEY scoping, not the trivial
+    // isolation you'd get from two separate QueryClient instances.
+    const wrapper = withProvider();
     const general = renderHook(() => useSettingsSectionAPI<GeneralSettings>("general"), {
-      wrapper: withProvider(),
+      wrapper,
     });
     const notifications = renderHook(
       () => useSettingsSectionAPI<{ emailEnabled: boolean }>("notifications"),
-      { wrapper: withProvider() },
+      { wrapper },
     );
     await waitFor(() => expect(general.result.current.isSuccess).toBe(true));
     await waitFor(() => expect(notifications.result.current.isSuccess).toBe(true));
@@ -76,5 +92,143 @@ describe("settings-api hooks", () => {
       companyName: "STRABB",
       timezone: "Australia/Sydney",
     });
+  });
+});
+
+const FORM_DEFAULTS = { companyName: "STRABB Properties", timezone: "Australia/Sydney" };
+
+describe("useSettingsForm", () => {
+  beforeEach(() => {
+    getMock.mockReset();
+    putMock.mockReset();
+    addToastMock.mockReset();
+  });
+
+  it("falls back to defaults when the server has no saved settings", async () => {
+    getMock.mockResolvedValue({ data: { settings: {} } });
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(getMock).toHaveBeenCalled());
+
+    expect(result.current.values).toEqual(FORM_DEFAULTS);
+    expect(result.current.dirty).toBe(false);
+  });
+
+  it("merges saved server values over defaults, leaving unset keys at default", async () => {
+    getMock.mockResolvedValue({ data: { settings: { companyName: "Acme Co" } } });
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(result.current.values.companyName).toBe("Acme Co"));
+
+    expect(result.current.values.timezone).toBe("Australia/Sydney");
+    expect(result.current.dirty).toBe(false);
+  });
+
+  it("patch makes the section dirty and edits win over server values", async () => {
+    getMock.mockResolvedValue({ data: { settings: { companyName: "Acme Co" } } });
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(result.current.values.companyName).toBe("Acme Co"));
+
+    act(() => result.current.patch({ companyName: "Edited" }));
+
+    expect(result.current.values.companyName).toBe("Edited");
+    expect(result.current.dirty).toBe(true);
+  });
+
+  it("save PUTs merged values wrapped under settings, then clears dirty and toasts success", async () => {
+    getMock.mockResolvedValue({ data: { settings: {} } });
+    putMock.mockResolvedValue({ data: { settings: {} } });
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(getMock).toHaveBeenCalled());
+
+    act(() => result.current.patch({ companyName: "Edited" }));
+    expect(result.current.dirty).toBe(true);
+
+    act(() => result.current.save());
+
+    await waitFor(() =>
+      expect(putMock).toHaveBeenCalledWith("/settings/general", {
+        settings: { companyName: "Edited", timezone: "Australia/Sydney" },
+      }),
+    );
+    await waitFor(() => expect(result.current.dirty).toBe(false));
+    expect(addToastMock).toHaveBeenCalledWith({ type: "success", message: "Settings saved" });
+    // Cache is seeded from the PUT response, so no redundant refetch fires.
+    expect(getMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("surfaces a save failure as an error toast and stays dirty", async () => {
+    getMock.mockResolvedValue({ data: { settings: {} } });
+    putMock.mockRejectedValue(new Error("boom"));
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(getMock).toHaveBeenCalled());
+
+    act(() => result.current.patch({ companyName: "Edited" }));
+    act(() => result.current.save());
+
+    await waitFor(() =>
+      expect(addToastMock).toHaveBeenCalledWith({ type: "error", message: "boom" }),
+    );
+    expect(result.current.dirty).toBe(true);
+  });
+
+  it("ignores edits while a save is in flight, so a mid-save edit is not discarded", async () => {
+    getMock.mockResolvedValue({ data: { settings: {} } });
+    let resolvePut: (value: unknown) => void = () => {};
+    putMock.mockReturnValue(
+      new Promise((resolve) => {
+        resolvePut = resolve;
+      }),
+    );
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(getMock).toHaveBeenCalled());
+
+    act(() => result.current.patch({ companyName: "First" }));
+    act(() => result.current.save());
+    await waitFor(() => expect(result.current.isSaving).toBe(true));
+
+    // Edit attempted while the PUT is in flight: must be ignored, not silently
+    // wiped when save() clears the draft on success.
+    act(() => result.current.patch({ companyName: "Second" }));
+    expect(result.current.values.companyName).toBe("First");
+
+    await act(async () => {
+      resolvePut({ data: { settings: { companyName: "First" } } });
+    });
+    await waitFor(() => expect(result.current.dirty).toBe(false));
+    expect(result.current.values.companyName).toBe("First");
+  });
+
+  it("patch accepts a functional updater that derives from the current values", async () => {
+    getMock.mockResolvedValue({ data: { settings: { items: ["a", "b"] } } });
+
+    const { result } = renderHook(
+      () => useSettingsForm<{ items: string[] }>("listy", { items: [] }),
+      {
+        wrapper: withProvider(),
+      },
+    );
+    await waitFor(() => expect(result.current.values.items).toEqual(["a", "b"]));
+
+    act(() => result.current.patch((current) => ({ items: [...current.items, "c"] })));
+
+    expect(result.current.values.items).toEqual(["a", "b", "c"]);
+    expect(result.current.dirty).toBe(true);
   });
 });

@@ -1,12 +1,25 @@
 "use client";
 
-import { CreditCard, Globe, Inbox, Phone, Radio, Settings, Sparkles } from "lucide-react";
+import {
+  Building2,
+  CreditCard,
+  Globe,
+  Inbox,
+  Phone,
+  Radio,
+  Settings,
+  Sparkles,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAppStore } from "@/stores/app-store";
 
+// Most tabs switch an in-page section via store state. Listings is route-driven
+// (`href`): it lives at its own /settings/listings page, so its tab navigates
+// there and lights up on that route rather than toggling section state.
 const sections = [
   { id: "general", label: "General", icon: Settings },
+  { id: "listings", label: "Listings", icon: Building2, href: "/settings/listings" },
   { id: "billing", label: "Billing", icon: CreditCard },
   { id: "phone", label: "Phone", icon: Phone },
   { id: "inbox", label: "Inbox", icon: Inbox },
@@ -20,10 +33,9 @@ export function SettingsNavSection() {
   const setSection = useAppStore((s) => s.setSection);
   const pathname = usePathname();
   const router = useRouter();
-  // Sub-routes (/settings/sync-logs, /settings/shareable-links,
-  // /settings/listings) used to appear as sidebar links. They now drill in
-  // from cards inside the relevant section. Clicking a section while on
-  // any of those sub-routes routes back to /settings root.
+  // The remaining sub-routes (/settings/sync-logs, /settings/shareable-links)
+  // have no tab - they drill in from cards inside a section. Clicking a
+  // state-driven section while on any sub-route routes back to /settings root.
   const onSubRoute = (pathname?.startsWith("/settings/") ?? false) && pathname !== "/settings";
 
   const handleSectionClick = (id: string) => {
@@ -36,12 +48,13 @@ export function SettingsNavSection() {
       <div className="gap-xs flex flex-col">
         {sections.map((s) => {
           const Icon = s.icon;
-          const active = !onSubRoute && section === s.id;
+          const href = "href" in s ? s.href : undefined;
+          const active = href ? pathname === href : !onSubRoute && section === s.id;
           return (
             <button
               key={s.id}
               type="button"
-              onClick={() => handleSectionClick(s.id)}
+              onClick={() => (href ? router.push(href) : handleSectionClick(s.id))}
               aria-current={active ? "page" : undefined}
               className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
               style={{
