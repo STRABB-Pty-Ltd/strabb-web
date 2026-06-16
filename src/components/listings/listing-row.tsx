@@ -6,11 +6,9 @@ import { useState, type ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ListingResponse } from "@/lib/schemas/listing";
 
-import { AvailabilityCalendar } from "./availability-calendar";
-import { RatesCalendar } from "./rates-calendar";
-import { RestrictionsCalendar } from "./restrictions-calendar";
+import { ListingCalendar } from "./listing-calendar";
 
-type TabKey = "general" | "rates" | "restrictions" | "availability" | "channex";
+type TabKey = "general" | "calendar" | "channex";
 
 interface ListingRowProps {
   listing: ListingResponse;
@@ -20,20 +18,20 @@ interface ListingRowProps {
   /** Channex-mapping form (already wired to the existing
    *  `useUpdateChannexMapping` hook). */
   channexTabContent: ReactNode;
-  /** Listing's base nightly rate for the Rates tab's fallback display. */
+  /** Listing's base nightly rate for the Calendar tab's rate fallback. */
   baseNightlyRate: number | null;
 }
 
 /**
  * Accordion row for a single listing on the /settings/listings page.
  *
- * Collapsed state shows just the listing's name + platform + a sync
- * status badge — clicking expands the body. The body lazy-mounts:
- * collapsed rows render nothing inside, so listing-state queries don't
- * fire for the eight other listings the user isn't editing.
+ * Collapsed state shows just the listing's name + platform + a Channex
+ * badge — clicking expands the body. The body lazy-mounts: collapsed
+ * rows render nothing inside, so listing-state queries don't fire for
+ * the eight other listings the user isn't editing.
  *
- * The body's active tab is also lazy: the Rates calendar only fetches
- * its window when the user actually selects the Rates tab on this row.
+ * The Calendar tab's API call is gated on `activeTab === "calendar"`
+ * so the listing-state query only fires when the user opens that tab.
  */
 export function ListingRow({
   listing,
@@ -88,26 +86,16 @@ export function ListingRow({
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TabKey)}>
             <TabsList>
               <TabsTrigger value="general">General</TabsTrigger>
-              <TabsTrigger value="rates">Rates</TabsTrigger>
-              <TabsTrigger value="restrictions">Restrictions</TabsTrigger>
-              <TabsTrigger value="availability">Availability</TabsTrigger>
+              <TabsTrigger value="calendar">Calendar</TabsTrigger>
               <TabsTrigger value="channex">Channex</TabsTrigger>
             </TabsList>
 
             <TabsContent value="general">{generalTabContent}</TabsContent>
 
-            <TabsContent value="rates">
-              {activeTab === "rates" && (
-                <RatesCalendar listingId={listing.id} baseNightlyRate={baseNightlyRate} />
+            <TabsContent value="calendar">
+              {activeTab === "calendar" && (
+                <ListingCalendar listingId={listing.id} baseNightlyRate={baseNightlyRate} />
               )}
-            </TabsContent>
-
-            <TabsContent value="restrictions">
-              {activeTab === "restrictions" && <RestrictionsCalendar listingId={listing.id} />}
-            </TabsContent>
-
-            <TabsContent value="availability">
-              {activeTab === "availability" && <AvailabilityCalendar listingId={listing.id} />}
             </TabsContent>
 
             <TabsContent value="channex">{channexTabContent}</TabsContent>
