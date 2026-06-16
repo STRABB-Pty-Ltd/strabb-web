@@ -7,9 +7,11 @@ import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useShoppingList } from "@/hooks/use-cleaning";
+import { useUpdateShoppingItemAPI } from "@/lib/api-hooks/cleaning-api";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
 import { useAppStore } from "@/stores/app-store";
+import type { ShoppingItem } from "@/types/shopping-item";
 
 const priorityBadge: Record<string, { bg: string; text: string }> = {
   high: { bg: "var(--neutral-30)", text: "var(--status-danger)" },
@@ -19,16 +21,92 @@ const priorityBadge: Record<string, { bg: string; text: string }> = {
 
 const EXIT_MS = 200;
 
+function ShoppingRow({
+  item,
+  onMark,
+  onUnmark,
+  isPending,
+}: {
+  item: ShoppingItem;
+  onMark: (unitCost: number) => void;
+  onUnmark: () => void;
+  isPending: boolean;
+}) {
+  const [price, setPrice] = useState(item.unitCost != null ? String(item.unitCost) : "");
+  const priceInputRef = useRef<HTMLInputElement>(null);
+  const isBought = item.status === "purchased";
+  const badge = priorityBadge[item.priority];
+
+  const handleToggle = () => {
+    if (isBought) {
+      onUnmark();
+      return;
+    }
+    const value = Number(price);
+    if (!Number.isFinite(value) || value <= 0) {
+      priceInputRef.current?.focus();
+      return;
+    }
+    onMark(value);
+  };
+
+  return (
+    <label className="gap-base px-base py-xs hover:bg-neutral-30 flex items-center rounded">
+      <input
+        type="checkbox"
+        checked={isBought}
+        disabled={isPending}
+        onChange={handleToggle}
+        className="h-sm border-neutral-30 w-sm rounded"
+      />
+      <span
+        className="text-body flex-1"
+        style={{ textDecoration: isBought ? "line-through" : "none" }}
+      >
+        {item.item}
+      </span>
+      <span className="font-data text-body text-highlight-10">x{item.quantity}</span>
+      {isBought ? (
+        item.unitCost != null && (
+          <span className="font-data text-body text-highlight-10">${item.unitCost.toFixed(2)}</span>
+        )
+      ) : (
+        <span className="gap-xs text-body text-highlight-10 flex items-center">
+          $
+          <input
+            ref={priceInputRef}
+            type="number"
+            inputMode="decimal"
+            min="0"
+            step="0.01"
+            value={price}
+            disabled={isPending}
+            onChange={(e) => setPrice(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Price for ${item.item}`}
+            className="font-data text-body border-neutral-30 px-base py-xs w-[64px] rounded border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+          />
+        </span>
+      )}
+      <span
+        className="px-base py-xs text-body rounded-md"
+        style={{ backgroundColor: badge.bg, color: badge.text }}
+      >
+        {item.priority}
+      </span>
+    </label>
+  );
+}
+
 export function ShoppingListPopup() {
   const popupRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
-  const boughtItems = useAppStore((s) => s.operations.boughtItems);
-  const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
   const addToast = useAppStore((s) => s.addToast);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const { data: shoppingItemList = [] } = useShoppingList(selectedListings);
+  const updateItem = useUpdateShoppingItemAPI();
   const open = shoppingListPopup.open;
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
@@ -41,7 +119,7 @@ export function ShoppingListPopup() {
 
   const items = showAll
     ? shoppingItemList
-    : shoppingItemList.filter((i) => !boughtItems.includes(i.id));
+    : shoppingItemList.filter((i) => i.status !== "purchased");
 
   // Group by listing
   const grouped = items.reduce(
@@ -56,7 +134,7 @@ export function ShoppingListPopup() {
 
   const handleCopyList = () => {
     const text = items
-      .map((i) => `${boughtItems.includes(i.id) ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`)
+      .map((i) => `${i.status === "purchased" ? "[x]" : "[ ]"} ${i.item} (x${i.quantity})`)
       .join("\n");
     navigator.clipboard
       .writeText(text)
@@ -129,41 +207,19 @@ export function ShoppingListPopup() {
                   {listing}
                 </h3>
                 <div className="space-y-xs">
-                  {listItems.map((item) => {
-                    const isBought = boughtItems.includes(item.id);
-                    const badge = priorityBadge[item.priority];
-                    return (
-                      <label
-                        key={item.id}
-                        className="gap-base px-base py-xs hover:bg-neutral-30 flex items-center rounded"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isBought}
-                          onChange={() => toggleBoughtItem(item.id)}
-                          className="h-sm border-neutral-30 w-sm rounded"
-                        />
-                        <span
-                          className="text-body flex-1"
-                          style={{
-                            textDecoration: isBought ? "line-through" : "none",
-                            color: isBought ? "var(--highlight-10)" : "var(--highlight-10)",
-                          }}
-                        >
-                          {item.item}
-                        </span>
-                        <span className="font-data text-body text-highlight-10">
-                          x{item.quantity}
-                        </span>
-                        <span
-                          className="px-base py-xs text-body rounded-md"
-                          style={{ backgroundColor: badge.bg, color: badge.text }}
-                        >
-                          {item.priority}
-                        </span>
-                      </label>
-                    );
-                  })}
+                  {listItems.map((item) => (
+                    <ShoppingRow
+                      key={item.id}
+                      item={item}
+                      onMark={(unitCost) =>
+                        updateItem.mutate({ id: item.id, data: { status: "purchased", unitCost } })
+                      }
+                      onUnmark={() =>
+                        updateItem.mutate({ id: item.id, data: { status: "approved" } })
+                      }
+                      isPending={updateItem.isPending && updateItem.variables?.id === item.id}
+                    />
+                  ))}
                 </div>
               </div>
             ))}

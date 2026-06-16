@@ -7,7 +7,6 @@ import {
   useShoppingListAPI,
   useUpdateCleaningTaskAPI,
 } from "@/lib/api-hooks/cleaning-api";
-import { useAppStore } from "@/stores/app-store";
 import type { CleaningTask } from "@/types/cleaning-task";
 
 export function useCleaningTasks(submenuFilters: string[], selectedListings: string[]) {
@@ -31,7 +30,6 @@ export function useShoppingList(selectedListings: string[]) {
 }
 
 export function useCleaningActions() {
-  const toggleBoughtItem = useAppStore((s) => s.toggleBoughtItem);
   const updateTaskMutation = useUpdateCleaningTaskAPI();
 
   const updateTaskStatus = useCallback(
@@ -51,5 +49,5 @@ export function useCleaningActions() {
     [updateTaskMutation],
   );
 
-  return { updateTaskStatus, toggleBoughtItem, assignTask };
+  return { updateTaskStatus, assignTask };
 }

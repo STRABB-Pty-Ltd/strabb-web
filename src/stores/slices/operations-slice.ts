@@ -8,14 +8,12 @@ export interface OperationsPageState {
   moreOpen: boolean;
   listSort: string;
   shoppingDrawerOpen: boolean;
-  boughtItems: string[];
 }
 
 export interface OperationsSlice {
   operations: OperationsPageState;
   setOperationsListSort: (sort: string) => void;
   toggleShoppingDrawer: () => void;
-  toggleBoughtItem: (id: string) => void;
 }
 
 export const createOperationsSlice: StateCreator<OperationsSlice, [], [], OperationsSlice> = (
@@ -30,7 +28,6 @@ export const createOperationsSlice: StateCreator<OperationsSlice, [], [], Operat
     moreOpen: false,
     listSort: "date_asc",
     shoppingDrawerOpen: false,
-    boughtItems: [],
   },
   setOperationsListSort: (sort) => set({ operations: { ...get().operations, listSort: sort } }),
   toggleShoppingDrawer: () =>
@@ -40,13 +37,4 @@ export const createOperationsSlice: StateCreator<OperationsSlice, [], [], Operat
         shoppingDrawerOpen: !get().operations.shoppingDrawerOpen,
       },
     }),
-  toggleBoughtItem: (id) => {
-    const current = get().operations.boughtItems;
-    set({
-      operations: {
-        ...get().operations,
-        boughtItems: current.includes(id) ? current.filter((i) => i !== id) : [...current, id],
-      },
-    });
-  },
 });

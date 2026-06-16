@@ -215,14 +215,6 @@ describe("AppStore", () => {
       useAppStore.getState().toggleShoppingDrawer();
       expect(useAppStore.getState().operations.shoppingDrawerOpen).toBe(false);
     });
-
-    it("toggleBoughtItem adds and removes items", () => {
-      useAppStore.getState().toggleBoughtItem("si-001");
-      expect(useAppStore.getState().operations.boughtItems).toEqual(["si-001"]);
-
-      useAppStore.getState().toggleBoughtItem("si-001");
-      expect(useAppStore.getState().operations.boughtItems).toEqual([]);
-    });
   });
 
   describe("reporting", () => {

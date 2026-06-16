@@ -47,13 +47,9 @@ function PanelHeader({ title, onView }: { title: string; onView?: () => void }) 
 function ShoppingListPanel() {
   const selectedListings = useAppStore((s) => s.selectedListings);
   const openShoppingListPopup = useAppStore((s) => s.openShoppingListPopup);
-  const boughtItems = useAppStore((s) => s.operations.boughtItems);
   const { data: items = [] } = useShoppingList(selectedListings);
 
-  const needed = useMemo(
-    () => items.filter((i) => !boughtItems.includes(i.id)),
-    [items, boughtItems],
-  );
+  const needed = useMemo(() => items.filter((i) => i.status !== "purchased"), [items]);
   // Top 5 by priority (high first) so the panel previews what matters,
   // not what happens to be at the top of the alphabetical list.
   const top = useMemo(() => {
