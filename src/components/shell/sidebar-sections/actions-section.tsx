@@ -1,6 +1,7 @@
 "use client";
 
 import { Cog, Share2, Zap } from "lucide-react";
+import Link from "next/link";
 
 import { useAppStore } from "@/stores/app-store";
 
@@ -28,19 +29,17 @@ export function ActionsSection() {
           <Share2 size={13} />
           Share
         </button>
-        <button
-          type="button"
-          disabled
+        <Link
+          href="/settings/listings"
           className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
             backgroundColor: "var(--neutral-30)",
             color: "var(--highlight-10)",
-            opacity: 0.6,
           }}
         >
           <Cog size={13} aria-hidden="true" />
           Configure
-        </button>
+        </Link>
         <button
           type="button"
           disabled
