@@ -25,9 +25,12 @@ export function useUpdateSettingsSectionAPI<T = Record<string, unknown>>(section
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: T) => apiClient.put(`/settings/${section}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["settings", section] });
+    mutationFn: (data: T) => apiClient.put<{ data: unknown }>(`/settings/${section}`, data),
+    onSuccess: (result) => {
+      // Seed the cache straight from the PUT response (the freshly-saved record)
+      // so the section can't flicker back to stale data before a refetch lands,
+      // and we skip the redundant GET entirely.
+      queryClient.setQueryData(["settings", section], result.data);
     },
   });
 }
@@ -35,8 +38,8 @@ export function useUpdateSettingsSectionAPI<T = Record<string, unknown>>(section
 interface SettingsForm<T> {
   /** Defaults <- saved server values <- unsaved user edits, merged in that order. */
   values: T;
-  /** Merge a partial edit into the working draft. */
-  patch: (partial: Partial<T>) => void;
+  /** Merge an edit into the working draft: an object, or an updater given the current values. */
+  patch: (partial: Partial<T> | ((current: T) => Partial<T>)) => void;
   /** Persist the current values to /settings/{section}. */
   save: () => void;
   isLoading: boolean;
@@ -72,7 +75,16 @@ export function useSettingsForm<T extends Record<string, unknown>>(
   const values = { ...saved, ...(draft ?? {}) } as T;
   const dirty = draft !== null && JSON.stringify(values) !== JSON.stringify(saved);
 
-  const patch = (partial: Partial<T>) => setDraft((d) => ({ ...(d ?? {}), ...partial }));
+  const patch = (partial: Partial<T> | ((current: T) => Partial<T>)) => {
+    // Ignore edits while a save is in flight: save() clears the draft on success,
+    // so a mid-save edit would otherwise be silently discarded.
+    if (update.isPending) return;
+    setDraft((d) => {
+      const current = { ...saved, ...(d ?? {}) } as T;
+      const next = typeof partial === "function" ? partial(current) : partial;
+      return { ...(d ?? {}), ...next };
+    });
+  };
 
   const save = () => {
     update.mutate(

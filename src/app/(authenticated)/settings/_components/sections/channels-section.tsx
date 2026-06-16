@@ -57,15 +57,18 @@ const pricingOptions = [
 ];
 
 export function ChannelsSection() {
+  // Persisting the whole channel array (static id/name/colour included) means a
+  // saved user won't pick up channels later added to `mockChannels` - acceptable
+  // for v1; revisit with a merge-by-id if the channel set becomes dynamic.
   const { values, patch, save, isSaving, dirty } = useSettingsForm<{ channels: ChannelConfig[] }>(
     "channels",
     { channels: mockChannels },
   );
 
   const updateChannel = (id: string, field: "syncFrequency" | "pricingRule", value: string) => {
-    patch({
-      channels: values.channels.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
-    });
+    patch((current) => ({
+      channels: current.channels.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
+    }));
   };
 
   return (

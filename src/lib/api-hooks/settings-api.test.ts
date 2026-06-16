@@ -64,12 +64,15 @@ describe("settings-api hooks", () => {
       return { data: {} };
     });
 
+    // One shared client so the test exercises query-KEY scoping, not the trivial
+    // isolation you'd get from two separate QueryClient instances.
+    const wrapper = withProvider();
     const general = renderHook(() => useSettingsSectionAPI<GeneralSettings>("general"), {
-      wrapper: withProvider(),
+      wrapper,
     });
     const notifications = renderHook(
       () => useSettingsSectionAPI<{ emailEnabled: boolean }>("notifications"),
-      { wrapper: withProvider() },
+      { wrapper },
     );
     await waitFor(() => expect(general.result.current.isSuccess).toBe(true));
     await waitFor(() => expect(notifications.result.current.isSuccess).toBe(true));
@@ -160,6 +163,8 @@ describe("useSettingsForm", () => {
     );
     await waitFor(() => expect(result.current.dirty).toBe(false));
     expect(addToastMock).toHaveBeenCalledWith({ type: "success", message: "Settings saved" });
+    // Cache is seeded from the PUT response, so no redundant refetch fires.
+    expect(getMock).toHaveBeenCalledTimes(1);
   });
 
   it("surfaces a save failure as an error toast and stays dirty", async () => {
@@ -177,6 +182,53 @@ describe("useSettingsForm", () => {
     await waitFor(() =>
       expect(addToastMock).toHaveBeenCalledWith({ type: "error", message: "boom" }),
     );
+    expect(result.current.dirty).toBe(true);
+  });
+
+  it("ignores edits while a save is in flight, so a mid-save edit is not discarded", async () => {
+    getMock.mockResolvedValue({ data: { settings: {} } });
+    let resolvePut: (value: unknown) => void = () => {};
+    putMock.mockReturnValue(
+      new Promise((resolve) => {
+        resolvePut = resolve;
+      }),
+    );
+
+    const { result } = renderHook(() => useSettingsForm("general", FORM_DEFAULTS), {
+      wrapper: withProvider(),
+    });
+    await waitFor(() => expect(getMock).toHaveBeenCalled());
+
+    act(() => result.current.patch({ companyName: "First" }));
+    act(() => result.current.save());
+    await waitFor(() => expect(result.current.isSaving).toBe(true));
+
+    // Edit attempted while the PUT is in flight: must be ignored, not silently
+    // wiped when save() clears the draft on success.
+    act(() => result.current.patch({ companyName: "Second" }));
+    expect(result.current.values.companyName).toBe("First");
+
+    await act(async () => {
+      resolvePut({ data: { settings: { companyName: "First" } } });
+    });
+    await waitFor(() => expect(result.current.dirty).toBe(false));
+    expect(result.current.values.companyName).toBe("First");
+  });
+
+  it("patch accepts a functional updater that derives from the current values", async () => {
+    getMock.mockResolvedValue({ data: { settings: { items: ["a", "b"] } } });
+
+    const { result } = renderHook(
+      () => useSettingsForm<{ items: string[] }>("listy", { items: [] }),
+      {
+        wrapper: withProvider(),
+      },
+    );
+    await waitFor(() => expect(result.current.values.items).toEqual(["a", "b"]));
+
+    act(() => result.current.patch((current) => ({ items: [...current.items, "c"] })));
+
+    expect(result.current.values.items).toEqual(["a", "b", "c"]);
     expect(result.current.dirty).toBe(true);
   });
 });
