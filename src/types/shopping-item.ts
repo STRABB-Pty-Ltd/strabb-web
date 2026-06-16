@@ -12,4 +12,6 @@ export interface ShoppingItem {
   requestedDate: string;
   priority: ShoppingItemPriority;
   notes: string | null;
+  unitCost: number | null;
+  purchasedDate: string | null;
 }
