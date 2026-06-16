@@ -27,6 +27,7 @@ import {
   useCreateCleaningTaskAPI,
   useShoppingListAPI,
   useUpdateCleaningTaskAPI,
+  useUpdateShoppingItemAPI,
 } from "./cleaning-api";
 
 function withProvider(): (props: { children: ReactNode }) => ReactNode {
@@ -163,5 +164,19 @@ describe("cleaning-api hooks", () => {
     const update = renderHook(() => useUpdateCleaningTaskAPI(), { wrapper: withProvider() });
     await update.result.current.mutateAsync({ id: "ct-1", data: { status: "completed" } });
     expect(putMock).toHaveBeenCalledWith("/cleaning-tasks/ct-1", { status: "completed" });
+  });
+
+  it("useUpdateShoppingItemAPI PUTs the body to the shopping-list item endpoint", async () => {
+    putMock.mockResolvedValue({ data: { id: "si-1" } });
+
+    const update = renderHook(() => useUpdateShoppingItemAPI(), { wrapper: withProvider() });
+    await update.result.current.mutateAsync({
+      id: "si-1",
+      data: { status: "purchased", unitCost: 4.5 },
+    });
+    expect(putMock).toHaveBeenCalledWith("/cleaning-tasks/shopping-list/si-1", {
+      status: "purchased",
+      unitCost: 4.5,
+    });
   });
 });
