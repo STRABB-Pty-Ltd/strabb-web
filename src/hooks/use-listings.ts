@@ -47,6 +47,14 @@ export function useListings({ propertyId, page = 1, pageSize = 100 }: UseListing
   );
 }
 
+// Resolve the property a listing belongs to. Returns undefined until the
+// listings load or if the listing is not found.
+export function usePropertyIdForListing(listingId: string | null | undefined): string | undefined {
+  const { data } = useListings();
+  if (!listingId) return undefined;
+  return data?.data.find((l) => l.id === listingId)?.propertyId;
+}
+
 export function useCreateListing() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();

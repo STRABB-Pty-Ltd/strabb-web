@@ -16,12 +16,14 @@ interface TicketFormDialogProps {
   trigger?: React.ReactElement;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  initialPropertyId?: string;
 }
 
 export function TicketFormDialog({
   trigger,
   open: controlledOpen,
   onOpenChange,
+  initialPropertyId,
 }: TicketFormDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
@@ -38,7 +40,7 @@ export function TicketFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <TicketForm onSuccess={() => setOpen(false)} />
+        <TicketForm onSuccess={() => setOpen(false)} initialPropertyId={initialPropertyId} />
       </DialogContent>
     </Dialog>
   );

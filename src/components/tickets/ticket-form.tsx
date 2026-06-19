@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Input } from "@/components/ui/input";
@@ -17,9 +19,11 @@ import { TICKET_PRIORITY_OPTIONS } from "@/types/ticket";
 
 interface TicketFormProps {
   onSuccess?: () => void;
+  // Pre-select the property (e.g. derived from a conversation's listing).
+  initialPropertyId?: string;
 }
 
-export function TicketForm({ onSuccess }: TicketFormProps) {
+export function TicketForm({ onSuccess, initialPropertyId }: TicketFormProps) {
   const addToast = useAppStore((s) => s.addToast);
   const createTicket = useCreateTicketAPI();
   const { data: propertiesData } = useProperties();
@@ -37,7 +41,7 @@ export function TicketForm({ onSuccess }: TicketFormProps) {
     setValue,
     formState: { errors, isSubmitting },
   } = useFormWithSchema(ticketCreateSchema, {
-    propertyId: "",
+    propertyId: initialPropertyId ?? "",
     listingId: "",
     description: "",
     priority: "medium",
@@ -46,6 +50,15 @@ export function TicketForm({ onSuccess }: TicketFormProps) {
     notes: "",
     autoLinkToNext: false,
   });
+
+  // Apply the pre-selected property once it resolves (the listing -> property
+  // lookup may land after first render). Only keys on initialPropertyId, so it
+  // never overwrites a choice the user has since made.
+  useEffect(() => {
+    if (initialPropertyId) {
+      setValue("propertyId", initialPropertyId);
+    }
+  }, [initialPropertyId, setValue]);
 
   async function onSubmit(data: TicketCreateFormData) {
     try {

@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
+import { usePropertyIdForListing } from "@/hooks/use-listings";
 import { useAppStore } from "@/stores/app-store";
 
 export default function MessagingPage() {
@@ -73,6 +74,9 @@ export default function MessagingPage() {
   if (liveThreadMessages) lastThreadMessagesRef.current = liveThreadMessages;
   const threadMessages = liveThreadMessages ?? lastThreadMessagesRef.current;
 
+  // Pre-select the ticket form's property from the open conversation's listing.
+  const ticketPropertyId = usePropertyIdForListing(threadMsg?.listingId);
+
   if (isLoading) {
     return (
       <div className="space-y-xs" role="status" aria-live="polite" aria-busy="true">
@@ -109,7 +113,11 @@ export default function MessagingPage() {
         />
       )}
 
-      <TicketDrawer open={ticketDrawerOpen} onClose={() => setTicketDrawerOpen(false)} />
+      <TicketDrawer
+        open={ticketDrawerOpen}
+        onClose={() => setTicketDrawerOpen(false)}
+        initialPropertyId={ticketPropertyId}
+      />
     </div>
   );
 }

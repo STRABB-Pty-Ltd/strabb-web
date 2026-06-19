@@ -38,6 +38,9 @@ vi.mock("@/components/overlays/ticket-drawer", () => ({
     <div data-testid="ticket-drawer">{open ? "open" : "closed"}</div>
   ),
 }));
+vi.mock("@/hooks/use-listings", () => ({
+  usePropertyIdForListing: () => undefined,
+}));
 
 import MessagingPage from "./page";
 
