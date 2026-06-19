@@ -10,7 +10,6 @@ import {
   useConvertToTicketAPI,
 } from "@/lib/api-hooks/messaging-api";
 import type { Message, MessageStatus } from "@/types/message";
-import { useAppStore } from "@/stores/app-store";
 
 export function useMessages(
   channels: string[],
@@ -41,7 +40,6 @@ export function useMessageActions() {
   const sendMessageMutation = useSendMessageAPI();
   const updateStatusMutation = useUpdateConversationStatusAPI();
   const convertMutation = useConvertToTicketAPI();
-  const noteConversationAction = useAppStore((s) => s.noteConversationAction);
 
   const markAsRead = useCallback(
     (id: string) => {
@@ -54,17 +52,6 @@ export function useMessageActions() {
     [updateStatusMutation],
   );
 
-  const markAsUnread = useCallback(
-    (id: string) => {
-      setLocalUpdates((prev) => ({
-        ...prev,
-        [id]: { ...prev[id], status: "unread" as MessageStatus },
-      }));
-      updateStatusMutation.mutate({ id, status: "unread" });
-    },
-    [updateStatusMutation],
-  );
-
   const toggleFlag = useCallback(
     (id: string) => {
       setLocalUpdates((prev) => {
@@ -73,9 +60,8 @@ export function useMessageActions() {
         updateStatusMutation.mutate({ id, status: newStatus });
         return { ...prev, [id]: { ...prev[id], status: newStatus } };
       });
-      noteConversationAction(id);
     },
-    [updateStatusMutation, noteConversationAction],
+    [updateStatusMutation],
   );
 
   const archive = useCallback(
@@ -85,31 +71,26 @@ export function useMessageActions() {
         [id]: { ...prev[id], status: "archived" as MessageStatus },
       }));
       updateStatusMutation.mutate({ id, status: "archived" });
-      noteConversationAction(id);
     },
-    [updateStatusMutation, noteConversationAction],
+    [updateStatusMutation],
   );
 
   const sendReply = useCallback(
     (conversationId: string, content: string) => {
       sendMessageMutation.mutate({ conversationId, content });
-      // Cancel any pending read-on-open revert: the host has actioned it.
-      noteConversationAction(conversationId);
     },
-    [sendMessageMutation, noteConversationAction],
+    [sendMessageMutation],
   );
 
   const convertToTicket = useCallback(
     (conversationId: string) => {
       convertMutation.mutate(conversationId);
-      noteConversationAction(conversationId);
     },
-    [convertMutation, noteConversationAction],
+    [convertMutation],
   );
 
   return {
     markAsRead,
-    markAsUnread,
     toggleFlag,
     archive,
     sendReply,

@@ -1,5 +1,5 @@
-import { act, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { messagesMock, threadMock, actionsMock, storeMock } = vi.hoisted(() => ({
   messagesMock: vi.fn(),
@@ -105,22 +105,14 @@ describe("MessagingPage", () => {
   });
 });
 
-describe("MessagingPage read-on-open + grace revert", () => {
-  const GRACE_MS = 5000;
+describe("MessagingPage read-on-open", () => {
   const markAsRead = vi.fn();
-  const markAsUnread = vi.fn();
 
-  // List-view store with a conversation open (selectedMessage) and an optional
-  // host-action pulse.
-  const openStore = (
-    selectedMessage: string | null,
-    conversationActionSignal: { conversationId: string; nonce: number } | null = null,
-  ) => ({
+  const openStore = (selectedMessage: string | null) => ({
     messaging: { view: "list", submenu: [], channels: [], selectedMessage },
     selectedListings: [],
     threadOverlay: null,
     closeThreadOverlay: vi.fn(),
-    conversationActionSignal,
   });
 
   const conv = (status: string) => ({
@@ -132,78 +124,33 @@ describe("MessagingPage read-on-open + grace revert", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers();
     messagesMock.mockReset();
     threadMock.mockReset();
     actionsMock.mockReset();
     storeMock.mockReset();
     markAsRead.mockReset();
-    markAsUnread.mockReset();
-    actionsMock.mockReturnValue({ markAsRead, markAsUnread });
+    actionsMock.mockReturnValue({ markAsRead });
     threadMock.mockReturnValue({ data: undefined });
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("marks an unread conversation read on open and reverts to unread after the grace window", () => {
+  it("marks an unread conversation read when it is opened", () => {
     storeMock.mockReturnValue(openStore("c-1"));
     messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
     render(<MessagingPage />);
     expect(markAsRead).toHaveBeenCalledWith("c-1");
-
-    act(() => vi.advanceTimersByTime(GRACE_MS));
-    expect(markAsUnread).toHaveBeenCalledWith("c-1");
   });
 
-  it("does not revert when the host actions the conversation within the grace window", () => {
-    storeMock.mockReturnValue(openStore("c-1"));
-    messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
-    const { rerender } = render(<MessagingPage />);
-    expect(markAsRead).toHaveBeenCalledWith("c-1");
-
-    // A host action (reply/flag/...) fires a fresh pulse for this conversation.
-    storeMock.mockReturnValue(openStore("c-1", { conversationId: "c-1", nonce: 1 }));
-    rerender(<MessagingPage />);
-
-    act(() => vi.advanceTimersByTime(GRACE_MS));
-    expect(markAsUnread).not.toHaveBeenCalled();
-  });
-
-  it("leaves a conversation that was already read untouched on open", () => {
+  it("leaves an already-read conversation untouched on open", () => {
     storeMock.mockReturnValue(openStore("c-1"));
     messagesMock.mockReturnValue({ data: [conv("read")], isLoading: false });
     render(<MessagingPage />);
-
-    act(() => vi.advanceTimersByTime(GRACE_MS));
     expect(markAsRead).not.toHaveBeenCalled();
-    expect(markAsUnread).not.toHaveBeenCalled();
   });
 
-  it("does not revert if the host leaves before the grace window elapses", () => {
-    storeMock.mockReturnValue(openStore("c-1"));
-    messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
-    const { rerender } = render(<MessagingPage />);
-    expect(markAsRead).toHaveBeenCalledWith("c-1");
-
-    // Host closes the conversation before 5s (selection cleared).
+  it("does not mark anything read when nothing is open", () => {
     storeMock.mockReturnValue(openStore(null));
-    rerender(<MessagingPage />);
-
-    act(() => vi.advanceTimersByTime(GRACE_MS));
-    expect(markAsUnread).not.toHaveBeenCalled();
-  });
-
-  it("still reverts when only a stale action signal (from before open) is present", () => {
-    // A pulse left over from a prior session: its nonce is the baseline at
-    // arm time, so it must NOT cancel the freshly armed timer.
-    storeMock.mockReturnValue(openStore("c-1", { conversationId: "c-1", nonce: 5 }));
     messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
     render(<MessagingPage />);
-    expect(markAsRead).toHaveBeenCalledWith("c-1");
-
-    act(() => vi.advanceTimersByTime(GRACE_MS));
-    expect(markAsUnread).toHaveBeenCalledWith("c-1");
+    expect(markAsRead).not.toHaveBeenCalled();
   });
 });

@@ -9,10 +9,6 @@ import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
 import { useAppStore } from "@/stores/app-store";
 
-// Grace window after opening an unread conversation: if the host hasn't
-// replied within this, it reverts to unread so it stays on the radar.
-const REPLY_GRACE_MS = 5000;
-
 export default function MessagingPage() {
   const view = useAppStore((s) => s.messaging.view);
   const submenu = useAppStore((s) => s.messaging.submenu);
@@ -21,10 +17,9 @@ export default function MessagingPage() {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
-  const conversationActionSignal = useAppStore((s) => s.conversationActionSignal);
 
   const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
-  const { markAsRead, markAsUnread } = useMessageActions();
+  const { markAsRead, sendReply, toggleFlag, archive, convertToTicket } = useMessageActions();
 
   // List view: viewing = right-pane selection. Kanban: viewing = thread
   // overlay open state. Closing the overlay or switching messages ends the
@@ -32,60 +27,26 @@ export default function MessagingPage() {
   const viewingMessageId =
     view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
 
-  // markAsRead/markAsUnread identities change each render (their useCallback
-  // dep is the mutation object); route through refs so the open effect can
-  // depend only on the viewed id. messagesRef gives the open effect the live
-  // status without re-running it on every status change. actionNonceRef tracks
-  // the latest host-action pulse so the timer can be armed against a baseline.
+  // markAsRead's identity changes each render (its useCallback dep is the
+  // mutation object); route through a ref so the open effect can depend only
+  // on the viewed id. messagesRef gives the effect the open-time status
+  // without re-running it on every status change.
   const markAsReadRef = useRef(markAsRead);
-  const markAsUnreadRef = useRef(markAsUnread);
   const messagesRef = useRef(messages);
-  const actionNonceRef = useRef(conversationActionSignal?.nonce ?? 0);
   useEffect(() => {
     markAsReadRef.current = markAsRead;
-    markAsUnreadRef.current = markAsUnread;
     messagesRef.current = messages;
-    actionNonceRef.current = conversationActionSignal?.nonce ?? 0;
   });
 
-  // Read-on-open with a grace window. Opening a conversation that was unread
-  // marks it read immediately, then arms a timer that reverts it to unread
-  // after REPLY_GRACE_MS so it stays on the radar. The revert is cancelled if
-  // the host actions the conversation (reply/flag/archive/convert) within the
-  // window, or if they leave (cleanup). Read/flagged/archived conversations
-  // are left untouched on open.
-  const revertTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const armedNonceRef = useRef(0);
+  // Mark a conversation read when the host opens it (list selection or kanban
+  // overlay). Only conversations that were unread on open are touched; once
+  // read they stay read.
   useEffect(() => {
     if (!viewingMessageId) return;
     const id = viewingMessageId;
-    const openStatus = messagesRef.current?.find((m) => m.id === id)?.status;
-    if (openStatus !== "unread") return;
+    if (messagesRef.current?.find((m) => m.id === id)?.status !== "unread") return;
     markAsReadRef.current(id);
-    armedNonceRef.current = actionNonceRef.current;
-    revertTimerRef.current = setTimeout(() => {
-      markAsUnreadRef.current(id);
-      revertTimerRef.current = null;
-    }, REPLY_GRACE_MS);
-    return () => {
-      if (revertTimerRef.current) clearTimeout(revertTimerRef.current);
-      revertTimerRef.current = null;
-    };
   }, [viewingMessageId]);
-
-  // A host action on the viewed conversation cancels its pending revert. The
-  // nonce-baseline guard ignores a stale signal carried over from an earlier
-  // session, so reopening a re-unread conversation still reverts.
-  useEffect(() => {
-    if (!conversationActionSignal || !revertTimerRef.current) return;
-    if (
-      conversationActionSignal.conversationId === viewingMessageId &&
-      conversationActionSignal.nonce > armedNonceRef.current
-    ) {
-      clearTimeout(revertTimerRef.current);
-      revertTimerRef.current = null;
-    }
-  }, [conversationActionSignal, viewingMessageId]);
 
   // Cache the live thread message so the overlay keeps rendering with the
   // last conversation through its 300ms close animation. Without this the
@@ -129,6 +90,16 @@ export default function MessagingPage() {
           checkOut={threadMsg.checkOut}
           channel={threadMsg.channel}
           messages={threadMessages ?? []}
+          onSendReply={(content) => sendReply(threadMsg.id, content)}
+          onFlag={() => toggleFlag(threadMsg.id)}
+          onArchive={() => {
+            archive(threadMsg.id);
+            closeThreadOverlay();
+          }}
+          onConvertTicket={() => {
+            convertToTicket(threadMsg.id);
+            closeThreadOverlay();
+          }}
         />
       )}
     </div>
