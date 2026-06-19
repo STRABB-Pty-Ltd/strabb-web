@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
+import { TicketDrawer } from "@/components/overlays/ticket-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
-import {
-  useMessages,
-  useMessageActions,
-  useMessageThread,
-  ticketDescriptionFor,
-} from "@/hooks/use-messaging";
+import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
 import { useAppStore } from "@/stores/app-store";
 
 export default function MessagingPage() {
@@ -22,6 +18,7 @@ export default function MessagingPage() {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
+  const [ticketDrawerOpen, setTicketDrawerOpen] = useState(false);
 
   // List view: viewing = right-pane selection. Kanban: viewing = thread
   // overlay open state. Closing the overlay or switching messages ends the
@@ -30,7 +27,7 @@ export default function MessagingPage() {
     view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
 
   const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
-  const { markAsRead, sendReply, toggleFlag, archive, convertToTicket } = useMessageActions();
+  const { markAsRead, sendReply, toggleFlag, archive } = useMessageActions();
 
   // markAsRead's identity changes each render (its useCallback dep is the
   // mutation object); route through a ref so the effect can depend only on the
@@ -108,12 +105,11 @@ export default function MessagingPage() {
             archive(threadMsg.id);
             closeThreadOverlay();
           }}
-          onConvertTicket={() => {
-            convertToTicket(threadMsg.id, ticketDescriptionFor(threadMsg));
-            closeThreadOverlay();
-          }}
+          onConvertTicket={() => setTicketDrawerOpen(true)}
         />
       )}
+
+      <TicketDrawer open={ticketDrawerOpen} onClose={() => setTicketDrawerOpen(false)} />
     </div>
   );
 }

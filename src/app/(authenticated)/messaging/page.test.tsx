@@ -12,7 +12,6 @@ vi.mock("@/hooks/use-messaging", () => ({
   useMessages: (...args: unknown[]) => messagesMock(...args),
   useMessageThread: (...args: unknown[]) => threadMock(...args),
   useMessageActions: () => actionsMock(),
-  ticketDescriptionFor: () => "desc",
 }));
 
 vi.mock("@/stores/app-store", () => ({
@@ -32,6 +31,11 @@ vi.mock("./_components/messaging-list-view", () => ({
 vi.mock("@/components/overlays/thread-overlay", () => ({
   ThreadOverlay: ({ open }: { open: boolean }) => (
     <div data-testid="thread-overlay">{open ? "open" : "closed"}</div>
+  ),
+}));
+vi.mock("@/components/overlays/ticket-drawer", () => ({
+  TicketDrawer: ({ open }: { open: boolean }) => (
+    <div data-testid="ticket-drawer">{open ? "open" : "closed"}</div>
   ),
 }));
 
