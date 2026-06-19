@@ -29,20 +29,13 @@ export default function MessagingPage() {
   const viewingMessageId =
     view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
 
-  // Pin the open conversation so it stays listed even after read-on-open moves
-  // it out of the active status filter (e.g. the Unread view).
-  const { data: messages, isLoading } = useMessages(
-    channels,
-    submenu,
-    selectedListings,
-    viewingMessageId,
-  );
+  const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
   const { markAsRead, sendReply, toggleFlag, archive, convertToTicket } = useMessageActions();
 
   // markAsRead's identity changes each render (its useCallback dep is the
-  // mutation object); route through a ref so the open effect can depend only
-  // on the viewed id. messagesRef gives the effect the open-time status
-  // without re-running it on every status change.
+  // mutation object); route through a ref so the effect can depend only on the
+  // viewed id. messagesRef gives the cleanup the live status without re-running
+  // on every status change.
   const markAsReadRef = useRef(markAsRead);
   const messagesRef = useRef(messages);
   useEffect(() => {
@@ -50,14 +43,21 @@ export default function MessagingPage() {
     messagesRef.current = messages;
   });
 
-  // Mark a conversation read when the host opens it (list selection or kanban
-  // overlay). Only conversations that were unread on open are touched; once
-  // read they stay read.
+  // Mark a conversation read when the host LEAVES it (switches conversation,
+  // closes the kanban overlay, or navigates away) rather than on open. This
+  // keeps it visible in a filtered view (e.g. Unread) while being read, and
+  // drops it out on exit instead of vanishing on click or waiting for a
+  // refresh. Re-check status at cleanup so an explicit Flag during the session
+  // is not overwritten back to read.
   useEffect(() => {
     if (!viewingMessageId) return;
     const id = viewingMessageId;
     if (messagesRef.current?.find((m) => m.id === id)?.status !== "unread") return;
-    markAsReadRef.current(id);
+    return () => {
+      if (messagesRef.current?.find((m) => m.id === id)?.status === "unread") {
+        markAsReadRef.current(id);
+      }
+    };
   }, [viewingMessageId]);
 
   // Cache the live thread message so the overlay keeps rendering with the

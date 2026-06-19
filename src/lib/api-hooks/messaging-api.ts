@@ -71,7 +71,6 @@ export function useMessagesAPI(
   channels: string[],
   submenuFilters: string[],
   selectedListings: string[],
-  pinnedId?: string | null,
 ) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
@@ -100,11 +99,8 @@ export function useMessagesAPI(
     }
     const active = submenuFilters.filter((f) => (STATUS_FILTERS as readonly string[]).includes(f));
     if (active.length === 0) return query.data;
-    // Keep the currently-open conversation in view even if its status no
-    // longer matches the filter (e.g. read-on-open moves it out of Unread),
-    // so it does not vanish from under the user mid-read.
-    return query.data.filter((m) => active.includes(m.status) || m.id === pinnedId);
-  }, [query.data, submenuFilters, pinnedId]);
+    return query.data.filter((m) => active.includes(m.status));
+  }, [query.data, submenuFilters]);
 
   return { ...query, data: filtered };
 }

@@ -137,17 +137,4 @@ describe("messaging-api hooks", () => {
       description: "Broken AC",
     });
   });
-
-  it("useMessagesAPI keeps the pinned conversation in view despite the status filter", async () => {
-    getMock.mockResolvedValue({
-      data: [rawConvo("unread"), rawConvo("read"), rawConvo("flagged")],
-    });
-    const { result } = renderHook(() => useMessagesAPI([], ["unread"], [], "c-read"), {
-      wrapper: withProvider(),
-    });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    // c-read does not match the Unread filter but is pinned, so it stays.
-    expect(result.current.data?.map((m) => m.id).sort()).toEqual(["c-read", "c-unread"]);
-  });
 });

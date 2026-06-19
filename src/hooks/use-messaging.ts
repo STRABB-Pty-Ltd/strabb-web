@@ -29,9 +29,8 @@ export function useMessages(
   channels: string[],
   submenuFilters: string[],
   selectedListings: string[],
-  pinnedId?: string | null,
 ) {
-  const apiResult = useMessagesAPI(channels, submenuFilters, selectedListings, pinnedId);
+  const apiResult = useMessagesAPI(channels, submenuFilters, selectedListings);
 
   return {
     data: apiResult.data,

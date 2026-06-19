@@ -106,7 +106,7 @@ describe("MessagingPage", () => {
   });
 });
 
-describe("MessagingPage read-on-open", () => {
+describe("MessagingPage mark-read-on-leave", () => {
   const markAsRead = vi.fn();
 
   const openStore = (selectedMessage: string | null) => ({
@@ -134,24 +134,32 @@ describe("MessagingPage read-on-open", () => {
     threadMock.mockReturnValue({ data: undefined });
   });
 
-  it("marks an unread conversation read when it is opened", () => {
+  it("does not mark an unread conversation read while it is still open", () => {
     storeMock.mockReturnValue(openStore("c-1"));
     messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
-    render(<MessagingPage />);
-    expect(markAsRead).toHaveBeenCalledWith("c-1");
-  });
-
-  it("leaves an already-read conversation untouched on open", () => {
-    storeMock.mockReturnValue(openStore("c-1"));
-    messagesMock.mockReturnValue({ data: [conv("read")], isLoading: false });
     render(<MessagingPage />);
     expect(markAsRead).not.toHaveBeenCalled();
   });
 
-  it("does not mark anything read when nothing is open", () => {
-    storeMock.mockReturnValue(openStore(null));
+  it("marks the conversation read when the host leaves it", () => {
+    storeMock.mockReturnValue(openStore("c-1"));
     messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
-    render(<MessagingPage />);
+    const { rerender } = render(<MessagingPage />);
+    expect(markAsRead).not.toHaveBeenCalled();
+
+    // Host leaves the conversation (selection cleared).
+    storeMock.mockReturnValue(openStore(null));
+    rerender(<MessagingPage />);
+    expect(markAsRead).toHaveBeenCalledWith("c-1");
+  });
+
+  it("does not re-mark a conversation that became read during the session", () => {
+    storeMock.mockReturnValue(openStore("c-1"));
+    messagesMock.mockReturnValue({ data: [conv("read")], isLoading: false });
+    const { rerender } = render(<MessagingPage />);
+
+    storeMock.mockReturnValue(openStore(null));
+    rerender(<MessagingPage />);
     expect(markAsRead).not.toHaveBeenCalled();
   });
 });
