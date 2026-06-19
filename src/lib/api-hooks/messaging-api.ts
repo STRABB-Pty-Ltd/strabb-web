@@ -71,6 +71,7 @@ export function useMessagesAPI(
   channels: string[],
   submenuFilters: string[],
   selectedListings: string[],
+  pinnedId?: string | null,
 ) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
@@ -99,8 +100,11 @@ export function useMessagesAPI(
     }
     const active = submenuFilters.filter((f) => (STATUS_FILTERS as readonly string[]).includes(f));
     if (active.length === 0) return query.data;
-    return query.data.filter((m) => active.includes(m.status));
-  }, [query.data, submenuFilters]);
+    // Keep the currently-open conversation in view even if its status no
+    // longer matches the filter (e.g. read-on-open moves it out of Unread),
+    // so it does not vanish from under the user mid-read.
+    return query.data.filter((m) => active.includes(m.status) || m.id === pinnedId);
+  }, [query.data, submenuFilters, pinnedId]);
 
   return { ...query, data: filtered };
 }
@@ -164,9 +168,24 @@ export function useUpdateConversationPriorityAPI() {
 
 export function useConvertToTicketAPI() {
   const apiClient = useApiClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (conversationId: string) =>
-      apiClient.post(`/conversations/${conversationId}/convert-to-ticket`, {}),
+    mutationFn: ({
+      conversationId,
+      description,
+      priority,
+    }: {
+      conversationId: string;
+      description: string;
+      priority?: string;
+    }) =>
+      apiClient.post(`/conversations/${conversationId}/convert-to-ticket`, {
+        description,
+        ...(priority ? { priority } : {}),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+    },
   });
 }

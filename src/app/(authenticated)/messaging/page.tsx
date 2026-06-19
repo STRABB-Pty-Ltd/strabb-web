@@ -6,7 +6,12 @@ import { ThreadOverlay } from "@/components/overlays/thread-overlay";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
-import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
+import {
+  useMessages,
+  useMessageActions,
+  useMessageThread,
+  ticketDescriptionFor,
+} from "@/hooks/use-messaging";
 import { useAppStore } from "@/stores/app-store";
 
 export default function MessagingPage() {
@@ -18,14 +23,21 @@ export default function MessagingPage() {
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
 
-  const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
-  const { markAsRead, sendReply, toggleFlag, archive, convertToTicket } = useMessageActions();
-
   // List view: viewing = right-pane selection. Kanban: viewing = thread
   // overlay open state. Closing the overlay or switching messages ends the
   // viewing session.
   const viewingMessageId =
     view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
+
+  // Pin the open conversation so it stays listed even after read-on-open moves
+  // it out of the active status filter (e.g. the Unread view).
+  const { data: messages, isLoading } = useMessages(
+    channels,
+    submenu,
+    selectedListings,
+    viewingMessageId,
+  );
+  const { markAsRead, sendReply, toggleFlag, archive, convertToTicket } = useMessageActions();
 
   // markAsRead's identity changes each render (its useCallback dep is the
   // mutation object); route through a ref so the open effect can depend only
@@ -97,7 +109,7 @@ export default function MessagingPage() {
             closeThreadOverlay();
           }}
           onConvertTicket={() => {
-            convertToTicket(threadMsg.id);
+            convertToTicket(threadMsg.id, ticketDescriptionFor(threadMsg));
             closeThreadOverlay();
           }}
         />

@@ -12,6 +12,7 @@ vi.mock("@/hooks/use-messaging", () => ({
   useMessages: (...args: unknown[]) => messagesMock(...args),
   useMessageThread: (...args: unknown[]) => threadMock(...args),
   useMessageActions: () => actionsMock(),
+  ticketDescriptionFor: () => "desc",
 }));
 
 vi.mock("@/stores/app-store", () => ({

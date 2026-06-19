@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
 import { EmptyState } from "@/components/ui/empty-state";
-import { useMessageActions, useMessageThread } from "@/hooks/use-messaging";
+import { useMessageActions, useMessageThread, ticketDescriptionFor } from "@/hooks/use-messaging";
 import type { Message } from "@/types/message";
 import { useAppStore } from "@/stores/app-store";
 
@@ -121,7 +121,9 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
             thread={thread}
             onSendReply={sendReply}
             onFlag={() => toggleFlag(selectedMsg.id)}
-            onConvertTicket={() => convertToTicket(selectedMsg.id)}
+            onConvertTicket={() =>
+              convertToTicket(selectedMsg.id, ticketDescriptionFor(selectedMsg))
+            }
           />
         )}
       </div>

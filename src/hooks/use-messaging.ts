@@ -9,14 +9,29 @@ import {
   useUpdateConversationStatusAPI,
   useConvertToTicketAPI,
 } from "@/lib/api-hooks/messaging-api";
+import { ApiError } from "@/lib/api-client";
 import type { Message, MessageStatus } from "@/types/message";
+import { useAppStore } from "@/stores/app-store";
+
+// Build a sensible ticket description from a conversation, since the
+// convert-to-ticket endpoint requires a non-empty description.
+export function ticketDescriptionFor(
+  message: Pick<Message, "subject" | "previewText" | "guestName">,
+): string {
+  return (
+    message.subject?.trim() ||
+    message.previewText?.trim() ||
+    (message.guestName ? `Guest enquiry from ${message.guestName}` : "Converted from conversation")
+  );
+}
 
 export function useMessages(
   channels: string[],
   submenuFilters: string[],
   selectedListings: string[],
+  pinnedId?: string | null,
 ) {
-  const apiResult = useMessagesAPI(channels, submenuFilters, selectedListings);
+  const apiResult = useMessagesAPI(channels, submenuFilters, selectedListings, pinnedId);
 
   return {
     data: apiResult.data,
@@ -40,6 +55,7 @@ export function useMessageActions() {
   const sendMessageMutation = useSendMessageAPI();
   const updateStatusMutation = useUpdateConversationStatusAPI();
   const convertMutation = useConvertToTicketAPI();
+  const addToast = useAppStore((s) => s.addToast);
 
   const markAsRead = useCallback(
     (id: string) => {
@@ -83,10 +99,19 @@ export function useMessageActions() {
   );
 
   const convertToTicket = useCallback(
-    (conversationId: string) => {
-      convertMutation.mutate(conversationId);
+    (conversationId: string, description: string) => {
+      convertMutation.mutate(
+        { conversationId, description },
+        {
+          onSuccess: () => addToast({ type: "success", message: "Ticket created" }),
+          onError: (err: unknown) => {
+            const message = err instanceof ApiError ? err.message : "Failed to create ticket";
+            addToast({ type: "error", message });
+          },
+        },
+      );
     },
-    [convertMutation],
+    [convertMutation, addToast],
   );
 
   return {
