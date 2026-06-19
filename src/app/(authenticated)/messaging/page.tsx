@@ -21,7 +21,7 @@ export default function MessagingPage() {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
-  const replySignal = useAppStore((s) => s.replySignal);
+  const conversationActionSignal = useAppStore((s) => s.conversationActionSignal);
 
   const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
   const { markAsRead, markAsUnread } = useMessageActions();
@@ -34,33 +34,37 @@ export default function MessagingPage() {
 
   // markAsRead/markAsUnread identities change each render (their useCallback
   // dep is the mutation object); route through refs so the open effect can
-  // depend only on the viewed id. messagesRef gives both effects the live
-  // status without re-running them on every status change.
+  // depend only on the viewed id. messagesRef gives the open effect the live
+  // status without re-running it on every status change. actionNonceRef tracks
+  // the latest host-action pulse so the timer can be armed against a baseline.
   const markAsReadRef = useRef(markAsRead);
   const markAsUnreadRef = useRef(markAsUnread);
   const messagesRef = useRef(messages);
+  const actionNonceRef = useRef(conversationActionSignal?.nonce ?? 0);
   useEffect(() => {
     markAsReadRef.current = markAsRead;
     markAsUnreadRef.current = markAsUnread;
     messagesRef.current = messages;
+    actionNonceRef.current = conversationActionSignal?.nonce ?? 0;
   });
 
-  // Read-on-open with a reply grace window. Opening a conversation that was
-  // unread marks it read immediately; if the host doesn't reply within
-  // REPLY_GRACE_MS it reverts to unread. Read/flagged/archived conversations
-  // are left untouched, and an explicit Flag/Archive during the session is
-  // never clobbered. Leaving before the window elapses keeps it read.
+  // Read-on-open with a grace window. Opening a conversation that was unread
+  // marks it read immediately, then arms a timer that reverts it to unread
+  // after REPLY_GRACE_MS so it stays on the radar. The revert is cancelled if
+  // the host actions the conversation (reply/flag/archive/convert) within the
+  // window, or if they leave (cleanup). Read/flagged/archived conversations
+  // are left untouched on open.
   const revertTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const armedNonceRef = useRef(0);
   useEffect(() => {
     if (!viewingMessageId) return;
     const id = viewingMessageId;
     const openStatus = messagesRef.current?.find((m) => m.id === id)?.status;
     if (openStatus !== "unread") return;
     markAsReadRef.current(id);
+    armedNonceRef.current = actionNonceRef.current;
     revertTimerRef.current = setTimeout(() => {
-      if (messagesRef.current?.find((m) => m.id === id)?.status === "read") {
-        markAsUnreadRef.current(id);
-      }
+      markAsUnreadRef.current(id);
       revertTimerRef.current = null;
     }, REPLY_GRACE_MS);
     return () => {
@@ -69,14 +73,19 @@ export default function MessagingPage() {
     };
   }, [viewingMessageId]);
 
-  // A host reply (any view) cancels the pending revert for that conversation.
+  // A host action on the viewed conversation cancels its pending revert. The
+  // nonce-baseline guard ignores a stale signal carried over from an earlier
+  // session, so reopening a re-unread conversation still reverts.
   useEffect(() => {
-    if (!replySignal || !revertTimerRef.current) return;
-    if (replySignal.conversationId === viewingMessageId) {
+    if (!conversationActionSignal || !revertTimerRef.current) return;
+    if (
+      conversationActionSignal.conversationId === viewingMessageId &&
+      conversationActionSignal.nonce > armedNonceRef.current
+    ) {
       clearTimeout(revertTimerRef.current);
       revertTimerRef.current = null;
     }
-  }, [replySignal, viewingMessageId]);
+  }, [conversationActionSignal, viewingMessageId]);
 
   // Cache the live thread message so the overlay keeps rendering with the
   // last conversation through its 300ms close animation. Without this the

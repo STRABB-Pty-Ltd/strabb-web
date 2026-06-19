@@ -41,7 +41,7 @@ export function useMessageActions() {
   const sendMessageMutation = useSendMessageAPI();
   const updateStatusMutation = useUpdateConversationStatusAPI();
   const convertMutation = useConvertToTicketAPI();
-  const noteReply = useAppStore((s) => s.noteReply);
+  const noteConversationAction = useAppStore((s) => s.noteConversationAction);
 
   const markAsRead = useCallback(
     (id: string) => {
@@ -73,8 +73,9 @@ export function useMessageActions() {
         updateStatusMutation.mutate({ id, status: newStatus });
         return { ...prev, [id]: { ...prev[id], status: newStatus } };
       });
+      noteConversationAction(id);
     },
-    [updateStatusMutation],
+    [updateStatusMutation, noteConversationAction],
   );
 
   const archive = useCallback(
@@ -84,24 +85,26 @@ export function useMessageActions() {
         [id]: { ...prev[id], status: "archived" as MessageStatus },
       }));
       updateStatusMutation.mutate({ id, status: "archived" });
+      noteConversationAction(id);
     },
-    [updateStatusMutation],
+    [updateStatusMutation, noteConversationAction],
   );
 
   const sendReply = useCallback(
     (conversationId: string, content: string) => {
       sendMessageMutation.mutate({ conversationId, content });
       // Cancel any pending read-on-open revert: the host has actioned it.
-      noteReply(conversationId);
+      noteConversationAction(conversationId);
     },
-    [sendMessageMutation, noteReply],
+    [sendMessageMutation, noteConversationAction],
   );
 
   const convertToTicket = useCallback(
     (conversationId: string) => {
       convertMutation.mutate(conversationId);
+      noteConversationAction(conversationId);
     },
-    [convertMutation],
+    [convertMutation, noteConversationAction],
   );
 
   return {
