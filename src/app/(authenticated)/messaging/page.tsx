@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
+import { TicketDrawer } from "@/components/overlays/ticket-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
+import { usePropertyIdForListing } from "@/hooks/use-listings";
 import { useAppStore } from "@/stores/app-store";
 
 export default function MessagingPage() {
@@ -17,47 +19,44 @@ export default function MessagingPage() {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
-
-  const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
-  const { markAsRead } = useMessageActions();
+  const [ticketDrawerOpen, setTicketDrawerOpen] = useState(false);
 
   // List view: viewing = right-pane selection. Kanban: viewing = thread
-  // overlay open state. Closing the overlay or switching messages should end
-  // the viewing session.
+  // overlay open state. Closing the overlay or switching messages ends the
+  // viewing session.
   const viewingMessageId =
     view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
 
-  const viewingStatus = useMemo(() => {
-    if (!viewingMessageId || !messages) return null;
-    return messages.find((m) => m.id === viewingMessageId)?.status ?? null;
-  }, [viewingMessageId, messages]);
+  const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
+  const { markAsRead, sendReply, toggleFlag, archive } = useMessageActions();
 
   // markAsRead's identity changes each render (its useCallback dep is the
-  // mutation object); route through a ref so the cleanup below stays stable.
+  // mutation object); route through a ref so the effect can depend only on the
+  // viewed id. messagesRef gives the cleanup the live status without re-running
+  // on every status change.
   const markAsReadRef = useRef(markAsRead);
-  useEffect(() => {
-    markAsReadRef.current = markAsRead;
-  });
-
-  // Mark a message read when the user leaves it: switching to a different
-  // message, closing the kanban overlay, or navigating away from the page
-  // (component unmount). Re-check status at cleanup time so an explicit Flag
-  // during the viewing session isn't overwritten back to read.
   const messagesRef = useRef(messages);
   useEffect(() => {
+    markAsReadRef.current = markAsRead;
     messagesRef.current = messages;
   });
 
+  // Mark a conversation read when the host LEAVES it (switches conversation,
+  // closes the kanban overlay, or navigates away) rather than on open. This
+  // keeps it visible in a filtered view (e.g. Unread) while being read, and
+  // drops it out on exit instead of vanishing on click or waiting for a
+  // refresh. Re-check status at cleanup so an explicit Flag during the session
+  // is not overwritten back to read.
   useEffect(() => {
-    if (!viewingMessageId || viewingStatus !== "unread") return;
+    if (!viewingMessageId) return;
     const id = viewingMessageId;
+    if (messagesRef.current?.find((m) => m.id === id)?.status !== "unread") return;
     return () => {
-      const currentStatus = messagesRef.current?.find((m) => m.id === id)?.status;
-      if (currentStatus === "unread") {
+      if (messagesRef.current?.find((m) => m.id === id)?.status === "unread") {
         markAsReadRef.current(id);
       }
     };
-  }, [viewingMessageId, viewingStatus]);
+  }, [viewingMessageId]);
 
   // Cache the live thread message so the overlay keeps rendering with the
   // last conversation through its 300ms close animation. Without this the
@@ -74,6 +73,9 @@ export default function MessagingPage() {
   const lastThreadMessagesRef = useRef(liveThreadMessages);
   if (liveThreadMessages) lastThreadMessagesRef.current = liveThreadMessages;
   const threadMessages = liveThreadMessages ?? lastThreadMessagesRef.current;
+
+  // Pre-select the ticket form's property from the open conversation's listing.
+  const ticketPropertyId = usePropertyIdForListing(threadMsg?.listingId);
 
   if (isLoading) {
     return (
@@ -101,8 +103,21 @@ export default function MessagingPage() {
           checkOut={threadMsg.checkOut}
           channel={threadMsg.channel}
           messages={threadMessages ?? []}
+          onSendReply={(content) => sendReply(threadMsg.id, content)}
+          onFlag={() => toggleFlag(threadMsg.id)}
+          onArchive={() => {
+            archive(threadMsg.id);
+            closeThreadOverlay();
+          }}
+          onConvertTicket={() => setTicketDrawerOpen(true)}
         />
       )}
+
+      <TicketDrawer
+        open={ticketDrawerOpen}
+        onClose={() => setTicketDrawerOpen(false)}
+        initialPropertyId={ticketPropertyId}
+      />
     </div>
   );
 }

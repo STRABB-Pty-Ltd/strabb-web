@@ -164,9 +164,24 @@ export function useUpdateConversationPriorityAPI() {
 
 export function useConvertToTicketAPI() {
   const apiClient = useApiClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (conversationId: string) =>
-      apiClient.post(`/conversations/${conversationId}/convert-to-ticket`, {}),
+    mutationFn: ({
+      conversationId,
+      description,
+      priority,
+    }: {
+      conversationId: string;
+      description: string;
+      priority?: string;
+    }) =>
+      apiClient.post(`/conversations/${conversationId}/convert-to-ticket`, {
+        description,
+        ...(priority ? { priority } : {}),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+    },
   });
 }

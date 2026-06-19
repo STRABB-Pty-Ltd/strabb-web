@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
+import { TicketFormDialog } from "@/app/(authenticated)/operations/_components/ticket-form-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useMessageActions, useMessageThread } from "@/hooks/use-messaging";
+import { usePropertyIdForListing } from "@/hooks/use-listings";
 import type { Message } from "@/types/message";
 import { useAppStore } from "@/stores/app-store";
 
@@ -24,11 +27,13 @@ interface MessagingListViewProps {
 export function MessagingListView({ messages }: MessagingListViewProps) {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const setSelectedMessage = useAppStore((s) => s.setSelectedMessage);
-  const { toggleFlag, sendReply, convertToTicket } = useMessageActions();
+  const { toggleFlag, sendReply } = useMessageActions();
+  const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
 
   const selectedMsg = messages.find((m) => m.id === selectedMessage) ?? null;
   const { data: rawThread } = useMessageThread(selectedMessage);
   const thread = rawThread ?? [];
+  const ticketPropertyId = usePropertyIdForListing(selectedMsg?.listingId);
 
   return (
     <div
@@ -121,10 +126,16 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
             thread={thread}
             onSendReply={sendReply}
             onFlag={() => toggleFlag(selectedMsg.id)}
-            onConvertTicket={() => convertToTicket(selectedMsg.id)}
+            onConvertTicket={() => setTicketDialogOpen(true)}
           />
         )}
       </div>
+
+      <TicketFormDialog
+        open={ticketDialogOpen}
+        onOpenChange={setTicketDialogOpen}
+        initialPropertyId={ticketPropertyId}
+      />
     </div>
   );
 }

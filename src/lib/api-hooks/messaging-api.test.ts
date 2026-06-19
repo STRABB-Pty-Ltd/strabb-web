@@ -132,7 +132,9 @@ describe("messaging-api hooks", () => {
     expect(patchMock).toHaveBeenCalledWith("/conversations/c-1/status", { status: "read" });
 
     const convert = renderHook(() => useConvertToTicketAPI(), { wrapper: withProvider() });
-    await convert.result.current.mutateAsync("c-1");
-    expect(postMock).toHaveBeenCalledWith("/conversations/c-1/convert-to-ticket", {});
+    await convert.result.current.mutateAsync({ conversationId: "c-1", description: "Broken AC" });
+    expect(postMock).toHaveBeenCalledWith("/conversations/c-1/convert-to-ticket", {
+      description: "Broken AC",
+    });
   });
 });

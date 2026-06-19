@@ -33,6 +33,14 @@ vi.mock("@/components/overlays/thread-overlay", () => ({
     <div data-testid="thread-overlay">{open ? "open" : "closed"}</div>
   ),
 }));
+vi.mock("@/components/overlays/ticket-drawer", () => ({
+  TicketDrawer: ({ open }: { open: boolean }) => (
+    <div data-testid="ticket-drawer">{open ? "open" : "closed"}</div>
+  ),
+}));
+vi.mock("@/hooks/use-listings", () => ({
+  usePropertyIdForListing: () => undefined,
+}));
 
 import MessagingPage from "./page";
 
@@ -54,7 +62,7 @@ describe("MessagingPage", () => {
     threadMock.mockReset();
     actionsMock.mockReset();
     storeMock.mockReset();
-    actionsMock.mockReturnValue({ markAsRead: vi.fn() });
+    actionsMock.mockReturnValue({ markAsRead: vi.fn(), markAsUnread: vi.fn() });
     threadMock.mockReturnValue({ data: undefined });
   });
 
@@ -102,5 +110,63 @@ describe("MessagingPage", () => {
     threadMock.mockReturnValue({ data: [] });
     render(<MessagingPage />);
     expect(screen.getByTestId("thread-overlay")).toHaveTextContent("open");
+  });
+});
+
+describe("MessagingPage mark-read-on-leave", () => {
+  const markAsRead = vi.fn();
+
+  const openStore = (selectedMessage: string | null) => ({
+    messaging: { view: "list", submenu: [], channels: [], selectedMessage },
+    selectedListings: [],
+    threadOverlay: null,
+    closeThreadOverlay: vi.fn(),
+  });
+
+  const conv = (status: string) => ({
+    id: "c-1",
+    status,
+    guestName: "A",
+    listingName: "L",
+    channel: "airbnb",
+  });
+
+  beforeEach(() => {
+    messagesMock.mockReset();
+    threadMock.mockReset();
+    actionsMock.mockReset();
+    storeMock.mockReset();
+    markAsRead.mockReset();
+    actionsMock.mockReturnValue({ markAsRead });
+    threadMock.mockReturnValue({ data: undefined });
+  });
+
+  it("does not mark an unread conversation read while it is still open", () => {
+    storeMock.mockReturnValue(openStore("c-1"));
+    messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
+    render(<MessagingPage />);
+    expect(markAsRead).not.toHaveBeenCalled();
+  });
+
+  it("marks the conversation read when the host leaves it", () => {
+    storeMock.mockReturnValue(openStore("c-1"));
+    messagesMock.mockReturnValue({ data: [conv("unread")], isLoading: false });
+    const { rerender } = render(<MessagingPage />);
+    expect(markAsRead).not.toHaveBeenCalled();
+
+    // Host leaves the conversation (selection cleared).
+    storeMock.mockReturnValue(openStore(null));
+    rerender(<MessagingPage />);
+    expect(markAsRead).toHaveBeenCalledWith("c-1");
+  });
+
+  it("does not re-mark a conversation that became read during the session", () => {
+    storeMock.mockReturnValue(openStore("c-1"));
+    messagesMock.mockReturnValue({ data: [conv("read")], isLoading: false });
+    const { rerender } = render(<MessagingPage />);
+
+    storeMock.mockReturnValue(openStore(null));
+    rerender(<MessagingPage />);
+    expect(markAsRead).not.toHaveBeenCalled();
   });
 });

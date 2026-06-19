@@ -20,6 +20,10 @@ interface ThreadOverlayProps {
   checkOut: string;
   channel: string;
   messages: ThreadMessage[];
+  onSendReply: (content: string) => void;
+  onFlag: () => void;
+  onArchive: () => void;
+  onConvertTicket: () => void;
 }
 
 const channelColors: Record<string, string> = {
@@ -40,11 +44,21 @@ export function ThreadOverlay({
   checkOut,
   channel,
   messages,
+  onSendReply,
+  onFlag,
+  onArchive,
+  onConvertTicket,
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
+
+  const handleSend = () => {
+    if (!compose.trim()) return;
+    onSendReply(compose);
+    setCompose("");
+  };
 
   useClickOutside(panelRef, onClose, open);
   // Side drawer: rails stay live, no Tab trap. App-shell handles Esc globally.
@@ -166,6 +180,7 @@ export function ThreadOverlay({
         >
           <button
             type="button"
+            onClick={onFlag}
             className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
             <Flag size={12} aria-hidden="true" />
@@ -173,6 +188,7 @@ export function ThreadOverlay({
           </button>
           <button
             type="button"
+            onClick={onConvertTicket}
             className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:border-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
             <TicketPlus size={12} aria-hidden="true" />
@@ -180,6 +196,7 @@ export function ThreadOverlay({
           </button>
           <button
             type="button"
+            onClick={onArchive}
             className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-full border transition-colors"
           >
             <Archive size={12} aria-hidden="true" />
@@ -203,6 +220,7 @@ export function ThreadOverlay({
           />
           <button
             type="button"
+            onClick={handleSend}
             aria-label="Send reply"
             className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
