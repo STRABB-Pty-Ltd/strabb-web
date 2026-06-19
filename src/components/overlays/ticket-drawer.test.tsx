@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -55,5 +55,13 @@ describe("TicketDrawer", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /close ticket form/i }));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls onClose on a mousedown outside the panel", () => {
+    const onClose = vi.fn();
+    render(<TicketDrawer open onClose={onClose} />);
+
+    fireEvent.mouseDown(document.body);
+    expect(onClose).toHaveBeenCalled();
   });
 });

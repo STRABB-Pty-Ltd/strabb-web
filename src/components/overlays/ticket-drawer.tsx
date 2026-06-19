@@ -4,6 +4,7 @@ import { useId, useRef } from "react";
 import { X } from "lucide-react";
 
 import { TicketForm } from "@/components/tickets/ticket-form";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Z } from "@/lib/z-index";
@@ -23,6 +24,11 @@ export function TicketDrawer({ open, onClose, initialPropertyId }: TicketDrawerP
 
   // Side drawer: rails stay live, no Tab trap. App-shell handles Esc globally.
   useFocusTrap(panelRef, { active: open, trap: false });
+
+  // Click-away to dismiss. The panel stops mousedown propagation, so clicks
+  // inside the form never reach this document listener (they cannot close the
+  // drawer); only clicks outside the panel do.
+  useClickOutside(panelRef, onClose, open);
 
   if (!shouldRender) return null;
 
