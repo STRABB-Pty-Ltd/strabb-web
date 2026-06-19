@@ -10,6 +10,7 @@ import {
   useConvertToTicketAPI,
 } from "@/lib/api-hooks/messaging-api";
 import type { Message, MessageStatus } from "@/types/message";
+import { useAppStore } from "@/stores/app-store";
 
 export function useMessages(
   channels: string[],
@@ -40,6 +41,7 @@ export function useMessageActions() {
   const sendMessageMutation = useSendMessageAPI();
   const updateStatusMutation = useUpdateConversationStatusAPI();
   const convertMutation = useConvertToTicketAPI();
+  const noteReply = useAppStore((s) => s.noteReply);
 
   const markAsRead = useCallback(
     (id: string) => {
@@ -48,6 +50,17 @@ export function useMessageActions() {
         [id]: { ...prev[id], status: "read" as MessageStatus },
       }));
       updateStatusMutation.mutate({ id, status: "read" });
+    },
+    [updateStatusMutation],
+  );
+
+  const markAsUnread = useCallback(
+    (id: string) => {
+      setLocalUpdates((prev) => ({
+        ...prev,
+        [id]: { ...prev[id], status: "unread" as MessageStatus },
+      }));
+      updateStatusMutation.mutate({ id, status: "unread" });
     },
     [updateStatusMutation],
   );
@@ -78,8 +91,10 @@ export function useMessageActions() {
   const sendReply = useCallback(
     (conversationId: string, content: string) => {
       sendMessageMutation.mutate({ conversationId, content });
+      // Cancel any pending read-on-open revert: the host has actioned it.
+      noteReply(conversationId);
     },
-    [sendMessageMutation],
+    [sendMessageMutation, noteReply],
   );
 
   const convertToTicket = useCallback(
@@ -91,6 +106,7 @@ export function useMessageActions() {
 
   return {
     markAsRead,
+    markAsUnread,
     toggleFlag,
     archive,
     sendReply,
