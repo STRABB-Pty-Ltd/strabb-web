@@ -68,12 +68,11 @@ export function useUpdateListingRates() {
     }: {
       listingId: string;
       body: RateUpdateRequest;
-    }): Promise<DailyListingStateResponse[]> => {
-      const response = await apiClient.patch<DailyListingStateListResponse>(
-        `/listings/${listingId}/rates`,
-        body,
-      );
-      return response.data;
+    }): Promise<void> => {
+      // Backend returns 204 No Content; the calendar refreshes from the
+      // GET /state invalidation in onSuccess. (Returning one row per
+      // affected date timed out large-range edits client-side — bug #4.)
+      await apiClient.patch(`/listings/${listingId}/rates`, body);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
@@ -103,12 +102,10 @@ export function useUpdateListingRestrictions() {
     }: {
       listingId: string;
       body: RestrictionsUpdateRequest;
-    }): Promise<DailyListingStateResponse[]> => {
-      const response = await apiClient.patch<DailyListingStateListResponse>(
-        `/listings/${listingId}/restrictions`,
-        body,
-      );
-      return response.data;
+    }): Promise<void> => {
+      // Backend returns 204; calendar refreshes via the GET /state
+      // invalidation in onSuccess (bug #4).
+      await apiClient.patch(`/listings/${listingId}/restrictions`, body);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
@@ -140,12 +137,10 @@ export function useUpdateListingAvailability() {
     }: {
       listingId: string;
       body: AvailabilityUpdateRequest;
-    }): Promise<DailyListingStateResponse[]> => {
-      const response = await apiClient.patch<DailyListingStateListResponse>(
-        `/listings/${listingId}/availability`,
-        body,
-      );
-      return response.data;
+    }): Promise<void> => {
+      // Backend returns 204; calendar refreshes via the GET /state
+      // invalidation in onSuccess (bug #4).
+      await apiClient.patch(`/listings/${listingId}/availability`, body);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
