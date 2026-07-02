@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ApiError } from "@/lib/api-client";
 import type { BookingResponse } from "@/lib/schemas/booking";
 
 const addToastMock = vi.fn();
@@ -149,5 +150,20 @@ describe("BookingDetailDrawer", () => {
     render(<BookingDetailDrawer />);
 
     expect(screen.getByText(/booking not found/i)).toBeInTheDocument();
+  });
+
+  it("degrades quietly to a permission notice on a 403, with no toast (B.4)", () => {
+    storeState.drillDownPanel = { open: true, type: "booking", itemId: baseBooking.id };
+    bookingMock.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new ApiError(403, "Insufficient role"),
+    });
+    render(<BookingDetailDrawer />);
+
+    expect(screen.getByText(/do not have access to booking details/i)).toBeInTheDocument();
+    // Not the misleading "not found", and never a toast/banner for an expected 403.
+    expect(screen.queryByText(/booking not found/i)).not.toBeInTheDocument();
+    expect(addToastMock).not.toHaveBeenCalled();
   });
 });
