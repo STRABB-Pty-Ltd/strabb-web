@@ -91,29 +91,3 @@ jobs:
         run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:staging --image strabb-web:${{ github.sha }} --build-arg NEXTAUTH_URL=https://staging.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.staging.strabb.io --build-arg INTERNAL_API_URL=https://strabb-api-staging.icywave-6a962c16.australiaeast.azurecontainerapps.io .
       - name: Deploy to Container App
         run: az containerapp update --name strabb-web-staging --resource-group strabb-staging --image strabbregistry.azurecr.io/strabb-web:${{ github.sha }}
-
-  # Runs alongside the Azure deploy during the staging cutover to the iMeg
-  # Coolify (02-07-2026). Coolify pulls main and builds on the iMeg itself
-  # (NEXT_PUBLIC_API_URL etc. are set as build-time vars on the Coolify
-  # app, mirroring the --build-arg list above), so this job only queues the
-  # deployment. The runner joins the tailnet because the Coolify API is
-  # Tailscale-only. Remove the Azure `deploy` job (or gate it) once DNS
-  # points staging at the tunnel and Chris signs off.
-  deploy-coolify-staging:
-    name: Deploy to Coolify Staging (iMeg)
-    needs: [lint, test, typecheck, build]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Join tailnet
-        uses: tailscale/github-action@v3
-        with:
-          authkey: ${{ secrets.TS_AUTHKEY }}
-          version: 1.98.4
-      - name: Trigger Coolify deploy (web)
-        run: |
-          resp=$(curl -sf -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-            "http://100.117.139.108:8000/api/v1/deploy?uuid=y9gkr1m6xby8zvuvi4nompl2&force=false")
-          echo "$resp"
-          echo "$resp" | jq -e '.deployments | length == 1' >/dev/null \
-            || { echo "Coolify did not queue the web deployment"; exit 1; }

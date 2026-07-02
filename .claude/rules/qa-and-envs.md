@@ -1,14 +1,17 @@
 # Rule: environments and the QA loop
 
-## Environments
+## Environments (decision 02-07-2026: staging stays on Azure through launch)
 - **QA (branch testing):** `qa.strabb.io` - api/worker/web trio on the
   iMeg Coolify (self-hosted, behind a Cloudflare tunnel + Cloudflare
   Access). Re-point-one-env model: point the apps at a branch, deploy,
-  test, reset to main.
-- **Staging:** `staging.strabb.io` + `api.staging.strabb.io` - deployed
-  on every main push by CI. Migrations run on container boot via the
+  test, reset to main. QA is the only live environment on the iMeg.
+- **Staging:** `staging.strabb.io` + `api.staging.strabb.io` - Azure
+  Container Apps, deployed on every main push by CI. Staging mirrors
+  production (also Azure) and is the launch gate; do not propose moving
+  it off Azure pre-launch. Migrations run on container boot via the
   Dockerfile CMD (`alembic upgrade head`), not in CI.
-- **Production:** Chris only. A session never deploys anywhere.
+- **Production:** Azure Container Apps, Chris only. A session never
+  deploys anywhere.
 
 ## The QA loop replaces "verify locally" (Will's machine)
 Do not reach for local Docker to verify a branch. Push the branch, then
