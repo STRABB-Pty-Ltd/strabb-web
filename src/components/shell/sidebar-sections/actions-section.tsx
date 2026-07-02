@@ -40,19 +40,17 @@ export function ActionsSection() {
           <Cog size={13} aria-hidden="true" />
           Configure
         </Link>
-        <button
-          type="button"
-          disabled
+        <Link
+          href="/messaging/templates"
           className="gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors"
           style={{
             backgroundColor: "var(--neutral-30)",
             color: "var(--highlight-10)",
-            opacity: 0.6,
           }}
         >
           <Zap size={13} aria-hidden="true" />
           Automations
-        </button>
+        </Link>
       </div>
     </div>
   );
