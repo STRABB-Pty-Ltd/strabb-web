@@ -8,6 +8,7 @@ import {
   useCreatePortal,
   useStartTrial,
 } from "@/hooks/use-billing";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { ApiError } from "@/lib/api-client";
 import {
   BILLING_STATUS_COLORS,
@@ -37,6 +38,7 @@ function statusLabel(status: string | undefined): string {
 }
 
 export function BillingSection() {
+  const { role } = useCurrentUser();
   const { data, isLoading } = useBillingStatus();
   const startTrial = useStartTrial();
   const createCheckout = useCreateCheckout();
@@ -77,6 +79,14 @@ export function BillingSection() {
       onError: handleError,
     });
   };
+
+  // Defence in depth: billing is an owner/admin surface. Settings is already
+  // blocked for cleaners by middleware + nav hiding, and the API returns 403 on
+  // /billing/*, but guard here too so billing controls never render for a
+  // non-owner role even if they somehow reach this section.
+  if (role !== null && role !== "owner" && role !== "admin") {
+    return null;
+  }
 
   if (isLoading || !data) {
     return (
