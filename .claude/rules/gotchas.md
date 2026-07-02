@@ -5,6 +5,7 @@ after any correction, surprise, or dead end; prune entries that stop
 being true. One bullet per trap, specific enough to act on.
 
 ## Build / deploy
+
 - `INTERNAL_API_URL`, `NEXTAUTH_URL`, and `NEXT_PUBLIC_API_URL` are baked
   at BUILD time: `next.config.ts` is evaluated during `next build` for
   standalone output, so the `/be` rewrite destination lives in the image.
@@ -19,6 +20,7 @@ being true. One bullet per trap, specific enough to act on.
   path - a direct-to-API curl skips the hop and hides the cap.
 
 ## Dev server
+
 - Stale `.next/` after rapid edit bursts (uninstall/install cycles, large
   refactors, many sequential edits to imported modules): the in-memory
   module map desyncs from disk and the page renders unstyled because a
@@ -26,6 +28,7 @@ being true. One bullet per trap, specific enough to act on.
   Single edits should never need this.
 
 ## Working copies (Will's machine)
+
 - Canonical clones live on the USB stick
   `/Volumes/WILLS-STICK/STRABB-REPOS/`. They are SHARED and mutable by
   another actor mid-session: commit + push each layer early (commits
@@ -38,6 +41,7 @@ being true. One bullet per trap, specific enough to act on.
   `origin/main`, not the working tree, when auditing.
 
 ## Data / team
+
 - `src/lib/mock-team.ts` is still live - team pages render mock data, not
   API data. Do not build on it as if it were real; the provisioning work
   replaces it.

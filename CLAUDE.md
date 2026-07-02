@@ -33,6 +33,7 @@ justification.
 ## Workflow orchestration
 
 ### 1. Plan first
+
 - Define the objective in 1-2 sentences before touching code. Any
   multi-step or ambiguous task gets a plan before implementation.
 - Confirm the work fits the current phase and v1 scope - do not expand
@@ -41,6 +42,7 @@ justification.
   pushing through.
 
 ### 2. Delegate to keep the main context clean (load-bearing)
+
 - The main thread is for orchestration, judgement, and diff review - not
   raw file bodies. Never pull whole or large files into the main context.
 - Offload heavy reading (multi-file surveys, "where is X", audits,
@@ -55,6 +57,7 @@ justification.
   in their prompt; fan parallel build-agents over disjoint files only.
 
 ### 3. Verify before done - in the real medium, with a false-pass guard
+
 - A green tsc, lint, curl, or 200 is NOT verification. For UI work:
   screenshot the affected pages (headless Chrome) and LOOK at the PNGs -
   layout, tokens, empty and loading states. For data flow: exercise the
@@ -67,11 +70,13 @@ justification.
 - Bar: would a staff engineer sign this off?
 
 ### 4. Self-improvement loop
+
 - After any correction, surprise, or dead end: add the trap to
   `.claude/rules/gotchas.md` as one mechanical, specific bullet.
 - Review gotchas at session start; prune entries that stop being true.
 
 ### 5. Demand elegance (balanced)
+
 - On non-trivial changes, pause: is there a simpler way? If a fix feels
   hacky, redo it right.
 - Skip this for simple, obvious fixes - no over-engineering. V1
@@ -81,6 +86,7 @@ justification.
   manual work, mental load, or booking friction.
 
 ### 6. Autonomous bug fixing
+
 - Given a bug report or failing CI: reproduce, find the root cause, fix
   it, add the regression test. No hand-holding, no workaround that
   disables a safeguard, no temporary fix left behind.
