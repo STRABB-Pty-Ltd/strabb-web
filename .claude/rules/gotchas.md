@@ -1,0 +1,43 @@
+# Gotchas - living lessons ledger (strabb-web)
+
+Mechanical, codebase-specific traps. Review before planning; add a bullet
+after any correction, surprise, or dead end; prune entries that stop
+being true. One bullet per trap, specific enough to act on.
+
+## Build / deploy
+- `INTERNAL_API_URL`, `NEXTAUTH_URL`, and `NEXT_PUBLIC_API_URL` are baked
+  at BUILD time: `next.config.ts` is evaluated during `next build` for
+  standalone output, so the `/be` rewrite destination lives in the image.
+  Setting them only at runtime falls back to `http://localhost:8000` and
+  every `/be/*` call dies with ECONNREFUSED. Any env change to these
+  needs a rebuild, not a restart.
+- Next.js caps PROXIED request bodies (default ~10 MB via
+  `experimental.middlewareClientMaxBodySize`): a larger upload through
+  the `/be` rewrite truncates and 500s (socket hang up) in dev AND the
+  standalone prod server. For any upload feature, raise the cap in
+  `next.config.ts` AND test through the real browser -> `/be` -> API
+  path - a direct-to-API curl skips the hop and hides the cap.
+
+## Dev server
+- Stale `.next/` after rapid edit bursts (uninstall/install cycles, large
+  refactors, many sequential edits to imported modules): the in-memory
+  module map desyncs from disk and the page renders unstyled because a
+  hashed CSS URL 404s. Stop the dev server, `rm -rf .next`, restart.
+  Single edits should never need this.
+
+## Working copies (Will's machine)
+- Canonical clones live on the USB stick
+  `/Volumes/WILLS-STICK/STRABB-REPOS/`. They are SHARED and mutable by
+  another actor mid-session: commit + push each layer early (commits
+  survive a branch switch); if your edits seem to vanish, check
+  `git branch --show-current` + `git status` before assuming a bug, and
+  do not switch the repo back (your pushed branch is safe on origin).
+  To run your branch without disturbing the checkout, use
+  `git worktree add`.
+- Stick clones can lag origin - `git fetch` first; read code from
+  `origin/main`, not the working tree, when auditing.
+
+## Data / team
+- `src/lib/mock-team.ts` is still live - team pages render mock data, not
+  API data. Do not build on it as if it were real; the provisioning work
+  replaces it.

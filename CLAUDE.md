@@ -1,156 +1,158 @@
-# STRABB Web — Claude Code Context
+# strabb-web - CLAUDE.md (team instructions, committed, auto-loaded each session)
 
-Canonical guidance for AI coding agents working in `strabb-web`. Read
-before planning or editing anything. If context is missing, ask before
-proceeding.
+Keep this stable. Modular detail lives in `.claude/rules/`. The living
+lessons ledger is `.claude/rules/gotchas.md` - review it before planning,
+update it after any correction. Personal overrides go in `CLAUDE.local.md`
+and `.claude/settings.local.json` (both gitignored).
 
 ## Project
 
-STRABB frontend — Next.js app for short-term rental booking
-aggregation and automation.
+STRABB frontend - Next.js app for short-term rental booking aggregation
+and automation. Pairs with `strabb-api`: frontend work must respect
+backend contracts.
 
-## Tech Stack
+## Tech stack
 
 - Next.js 15 (App Router), React 19, TypeScript
 - Auth.js (next-auth v5) for session management
-- TanStack Query for server state
-- Tailwind CSS v4 for styling
-- Zod for validation
+- TanStack Query for server state, Tailwind CSS v4, Zod
 - Vitest + Testing Library for tests
 
 ## Architecture
 
-- `src/app/` — App Router pages and layouts
-- `src/components/` — UI and feature components
-- `src/hooks/` — React Query and client hooks
-- `src/lib/` — auth, API client, schemas, utilities
-- `src/types/` — shared TypeScript types
-- `src/test-utils/` — shared test helpers
+- `src/app/` - App Router pages and layouts
+- `src/components/` - UI and feature components
+- `src/hooks/` - React Query and client hooks
+- `src/lib/` - auth, API client, schemas, utilities
+- `src/types/` - shared TypeScript types
+- `src/test-utils/` - shared test helpers
 
-Use existing folder conventions. Do not create parallel patterns
-without justification.
+Use existing folder conventions. Do not create parallel patterns without
+justification.
 
-## Read First (if relevant)
+## Workflow orchestration
 
-- `developer-checklist.md` — mandatory development and QA workflow
-- `README.md` — setup, commands, structure, page map
-- Product specs and phase plans live in the `strabb-internal` repo. Ask
-  Will if you need them.
+### 1. Plan first
+- Define the objective in 1-2 sentences before touching code. Any
+  multi-step or ambiguous task gets a plan before implementation.
+- Confirm the work fits the current phase and v1 scope - do not expand
+  scope without approval.
+- If something goes sideways mid-task, stop and re-plan rather than
+  pushing through.
 
-## V1 Scope Guardrails
+### 2. Delegate to keep the main context clean (load-bearing)
+- The main thread is for orchestration, judgement, and diff review - not
+  raw file bodies. Never pull whole or large files into the main context.
+- Offload heavy reading (multi-file surveys, "where is X", audits,
+  research) to subagents that return conclusions only, one focused task
+  per subagent. Fan out parallel read-only subagents for independent
+  questions.
+- Locate with `rg`/`grep`, size with `git diff --stat`/`wc -l`, read only
+  the slice you need. Throw more compute at hard problems via subagents,
+  not more context at the main thread.
+- Delegate safely: COMMIT your own work before spawning any background or
+  parallel agent; give write-agents worktree isolation OR forbid git ops
+  in their prompt; fan parallel build-agents over disjoint files only.
 
-STRABB v1 prioritises simplicity, automation, reliability, and speed
-of iteration. Do not introduce:
+### 3. Verify before done - in the real medium, with a false-pass guard
+- A green tsc, lint, curl, or 200 is NOT verification. For UI work:
+  screenshot the affected pages (headless Chrome) and LOOK at the PNGs -
+  layout, tokens, empty and loading states. For data flow: exercise the
+  real request path (browser -> `/be` proxy -> API), not a direct-to-API
+  smoke that skips the proxy hop.
+- Guard against false passes: an empty page, an unstyled render, or a
+  trivially-short response must not count as success.
+- Tests for any logic change land in the same PR - never deferred. Suite
+  stays green; every bug fix gets a regression test.
+- Bar: would a staff engineer sign this off?
 
-- enterprise abstractions or over-engineered config systems
-- speculative infrastructure or premature generalisation
-- features that don't clearly reduce manual work, mental load, or
-  booking friction
+### 4. Self-improvement loop
+- After any correction, surprise, or dead end: add the trap to
+  `.claude/rules/gotchas.md` as one mechanical, specific bullet.
+- Review gotchas at session start; prune entries that stop being true.
 
-Manual fallback is acceptable in v1.
+### 5. Demand elegance (balanced)
+- On non-trivial changes, pause: is there a simpler way? If a fix feels
+  hacky, redo it right.
+- Skip this for simple, obvious fixes - no over-engineering. V1
+  prioritises simplicity, automation, reliability, and speed of
+  iteration; manual fallback is acceptable. No enterprise abstractions,
+  speculative infrastructure, or features that don't clearly reduce
+  manual work, mental load, or booking friction.
 
-## Mandatory Workflow
+### 6. Autonomous bug fixing
+- Given a bug report or failing CI: reproduce, find the root cause, fix
+  it, add the regression test. No hand-holding, no workaround that
+  disables a safeguard, no temporary fix left behind.
 
-- Define the objective in 1–2 sentences before touching code
-- Confirm work is in current phase and v1 scope — do not expand scope
-  without approval
-- Prefer small, targeted changes over broad refactors
-- Add or update tests for any logic change in the same PR — never
-  deferred
-- Review your diff for unrelated edits before finishing
-- Do not mark work complete if the repo is in an inconsistent state
+## Core principles
 
-## Key Rules
+- Simplicity first: the smallest change that solves the problem; minimal
+  blast radius.
+- No laziness: root causes, not band-aids; senior-engineer standard.
+- Minimal impact: no unrelated edits, broad renames, or drive-by
+  refactors; review your diff for stray changes before finishing. Do not
+  mark work complete with the repo in an inconsistent state.
 
-- **Auth flow**: Auth.js stores backend JWT in session. Every API call
-  includes the JWT in the `Authorization` header. Do not invent
-  alternate auth flows.
-- **Tenant context**: `tenant_id` is embedded in the JWT — never send
-  it as a separate request field.
-- **Dates**: API dates are UTC. Use established date/timezone utilities
-  (`date-fns-tz`) to convert for display. Do not hand-roll date
-  handling.
-- **Imports**: use `@/` path alias for all `src/` imports.
-- **Testing**: test meaningful behaviour — hooks, transforms,
-  validation, auth/session, data flow. Don't unit-test trivial
-  presentational UI; that's what E2E covers.
+## Key rules (non-negotiable)
 
-## Locked Product Decisions
+- **Auth flow:** Auth.js stores the backend JWT in the session; every API
+  call sends it in the `Authorization` header. Do not invent alternate
+  auth flows.
+- **Tenant context:** `tenant_id` is embedded in the JWT - never send it
+  as a separate request field.
+- **Dates:** API dates are UTC; convert for display with `date-fns-tz`.
+  Do not hand-roll date handling.
+- **Imports:** use the `@/` path alias for all `src/` imports.
+- **Testing:** test meaningful behaviour - hooks, transforms, validation,
+  auth/session, data flow. Don't unit-test trivial presentational UI.
+- **Type safety stays intact.** New utilities/hooks must solve a repeated
+  problem, live in the established location, and have a small obvious
+  API. No new dependencies without justification.
 
-Not up for revision without explicit approval:
+## Locked product decisions (not up for revision without approval)
 
-- Desktop-first shell
-- Top-nav-first structure
+- Desktop-first shell; top-nav-first structure
 - Contextual sidebar behaviour where applicable
 - Trusted current-user auth/session model
-- This repo pairs with `strabb-api` — frontend work must respect
-  backend contracts
 
-## R&D Tagging (Australian R&D Tax Incentive contemporaneous evidence)
+## Deployment infrastructure - do not touch without Chris's sign-off
 
-- Prefix the commit subject with `[R&D] ` when the change contributes
-  to R&D-eligible work (novel technical experimentation, new
-  integrations, architectural development, performance/correctness
-  research). Example: `[R&D] feat: gantt-style cell ratios`.
-- Apply the GitHub `R&D` label to PRs that contain any
-  `[R&D]`-prefixed commits.
-- Untagged commits/PRs are BAU/non-R&D (routine bug fixes, dep bumps,
-  formatting, copy changes, doc edits).
-- Mixed PRs: prefer splitting into separate commits so the prefix is
-  accurate per commit. Apply the PR label if any commit in the PR is
-  R&D.
-- Do not retroactively tag historical commits.
-- Excluded repos: `strabb-waitlist`.
+- Anything under `.github/` (including `.github/workflows/ci.yml`)
+- `Dockerfile`, `.dockerignore`, `next.config.ts` build/deploy seams
 
 ## Commands
 
-- `npm install` — install deps
-- `npm run dev` — dev server (port 3000)
-- `npm run build` — production build
-- `npm run lint` — ESLint
-- `npm run format` — Prettier check
-- `npm run test` — run tests
-- `npm run test:watch` — tests in watch mode
+- `npm install` - install deps
+- `npm run dev` - dev server (port 3000)
+- `npm run build` - production build
+- `npm run lint` / `npm run format` - ESLint / Prettier check
+- `npm run test` / `npm run test:watch` - tests
 
 ## Environment
 
-Copy `.env.example` to `.env.local` for local development. Never
-commit `.env` files.
+Secrets are `op://` 1Password references resolved via `op run` - no
+`.env` file is used in the QA environment (qa.strabb.io). For local
+development only, copy `.env.example` to `.env.local`. Never commit
+`.env` files. Never print, log, persist, or bake a secret into an image;
+flag any exposed credential for rotation immediately.
 
-## Git and PR Rules
+## Git, PRs, authority
 
-- `main` is protected — branch from latest `main`, never develop on it
-- Keep branches focused and short-lived
-- All CI and QA gates must pass before merge
-- Every PR states: objective, scope/phase alignment, files changed,
-  tests added/updated with counts, manual QA, risks
-- Will pushes feature branches — Chris owns the PR and merge process
+- `main` is protected - branch from latest `origin/main`, never develop
+  on it. Keep branches focused and short-lived.
+- **Will pushes feature branches; Chris owns PR merges and deploys.** A
+  Claude session NEVER merges (`gh pr merge` is denied in settings) and
+  NEVER deploys - it prepares, opens the PR, and stops.
+- Every PR states: objective, scope/phase alignment, files changed, tests
+  added/updated with counts, manual QA evidence, risks.
+- R&D commit tagging is mandatory where eligible: `.claude/rules/rd-tagging.md`.
 
-## Implementation Standards
+## Style
 
-- Follow existing naming conventions and component patterns
-- Avoid unrelated cleanup or broad renames in feature PRs
-- Keep type safety intact
-- New utilities/hooks must solve a repeated problem, live in the
-  established location, and have a small obvious API
-- Do not hardcode secrets, credentials, or environment-specific values
-
-## What Not To Do
-
-- Change architecture without explanation
-- Add dependencies without justification
-- Bypass existing utilities or conventions
-- Claim completion without validating lint, tests, and build
-- Silently ignore failures — leave a note if uncertain
-
-## Dev gotchas
-
-- **Stale `.next/` after rapid edits.** When the `next dev` server
-  runs through several quick file edits (especially across
-  `npm uninstall`/`install`, large refactors, or many sequential edits
-  to imported modules), the in-memory webpack module map can desync
-  from disk. The HTML keeps referencing CSS hashes (e.g.
-  `/_next/static/css/app/layout.css?v=...`) that 404, so the page
-  renders unstyled (raw HTML). Stop the dev server, `rm -rf .next`,
-  restart. Should not be necessary on a single edit, only after a
-  burst.
+- Match existing naming and component patterns; bypass no existing
+  utility or convention.
+- No em dashes anywhere, including generated copy, comments, and UI text
+  (use hyphen, comma, or colon). DD-MM-YYYY dates in prose and filenames.
+- Silently ignoring a failure is never acceptable - leave a note if
+  uncertain.
