@@ -75,6 +75,23 @@ export function useSeedDefaults() {
   });
 }
 
+export function useDeleteTemplate() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // The API refuses to delete a tenant-wide default (property_id is null) and
+    // returns 400; the UI only offers delete on property-scoped templates, but
+    // the caller should still surface any error via a toast.
+    mutationFn: async (id: string) => {
+      await apiClient.delete(`/messages/templates/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TEMPLATES_KEY });
+    },
+  });
+}
+
 export interface ScheduledMessagesFilter {
   status?: string;
   bookingId?: string;
