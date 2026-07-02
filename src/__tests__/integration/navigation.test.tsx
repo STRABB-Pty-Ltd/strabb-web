@@ -17,6 +17,12 @@ vi.mock("@/hooks/use-billing", () => ({
   useBillingStatus: () => ({ data: undefined }),
 }));
 
+// TopNav now filters nav items by the session role (useCurrentUser → useSession).
+// Stub an owner session so every item (all 5 tabs + Settings) stays visible.
+vi.mock("next-auth/react", () => ({
+  useSession: () => ({ data: { role: "owner" }, status: "authenticated" }),
+}));
+
 // Mock next/link to render a plain <a>
 vi.mock("next/link", () => ({
   default: ({
