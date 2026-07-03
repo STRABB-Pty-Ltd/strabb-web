@@ -67,4 +67,23 @@ describe("middleware role-aware routing", () => {
     const res = run(req("/calendar", { role: "owner", error: REFRESH_TOKEN_ERROR }));
     expect(location(res)).toContain("/login");
   });
+
+  // C.5: the emailed auth links must reach an unauthenticated visitor, so the
+  // public allowlist has to let them straight through (no bounce to /login).
+  const PUBLIC_AUTH_ROUTES = ["/forgot-password", "/reset-password/abc123", "/invite/xyz789"];
+
+  it.each(PUBLIC_AUTH_ROUTES)(
+    "lets an unauthenticated visitor reach %s without redirecting to login",
+    (path) => {
+      expect(run(req(path, null))).toBeUndefined();
+    },
+  );
+
+  it("does not treat a lookalike path as public (/reset-password without a token still bounces)", () => {
+    // The allowlist prefix is "/reset-password/" with a trailing slash, so the
+    // bare "/reset-password" (no token) is NOT public and an unauthenticated hit
+    // is sent to login - proving the guard is a prefix match, not a substring.
+    const res = run(req("/reset-password", null));
+    expect(location(res)).toContain("/login");
+  });
 });
