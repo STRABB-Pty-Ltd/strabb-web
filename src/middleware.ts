@@ -7,15 +7,21 @@ import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
 const ADMIN_ROUTE_PREFIXES: string[] = [];
 
 // Financial/owner surfaces: only `owner` and `admin` may reach these; a cleaner
-// is bounced to /operations. This is UX + deep-link protection ONLY - the API
+// is bounced to their portal. This is UX + deep-link protection ONLY - the API
 // role matrix (Phase B.1) is the real enforcement, returning 403 to a cleaner
 // regardless of what the client renders.
 const OWNER_ADMIN_ROUTE_PREFIXES: string[] = ["/dashboard", "/reporting", "/settings"];
 
-// The post-auth landing page differs by role: a cleaner has no dashboard, so
-// send them to /operations; owner/admin land on /dashboard.
+// The cleaner portal (Phase D1). CLEANER-only: a non-cleaner deep-linking
+// /portal is bounced to /dashboard, and a cleaner's landing/redirects resolve
+// here. The API /portal/* endpoints are require_role(CLEANER), so this is UX +
+// deep-link routing, not the enforcement boundary.
+const PORTAL_ROUTE_PREFIXES: string[] = ["/portal"];
+
+// The post-auth landing page differs by role: a cleaner's home is the mobile
+// portal; owner/admin land on /dashboard.
 function landingPathForRole(role: string | null | undefined): string {
-  return role === "cleaner" ? "/operations" : "/dashboard";
+  return role === "cleaner" ? "/portal" : "/dashboard";
 }
 
 // Public pages reachable without a session. The three C.5 auth flows land here
@@ -45,6 +51,7 @@ export default auth((req) => {
   const isRoot = nextUrl.pathname === "/";
   const isAdminRoute = ADMIN_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
   const isOwnerAdminRoute = OWNER_ADMIN_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
+  const isPortalRoute = PORTAL_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
 
   // Allow auth API routes, public pages, and public share links through
   if (isAuthRoute || isPublicPage || isShareLink) return;
@@ -73,12 +80,21 @@ export default auth((req) => {
     return Response.redirect(new URL("/settings", nextUrl));
   }
 
-  // Owner/admin financial surfaces: a cleaner is bounced to /operations. The API
-  // matrix (Phase B.1) still enforces 403 on the underlying endpoints; this stops
-  // a cleaner deep-linking /dashboard, /reporting, or /settings and rendering a
-  // shell that then fires a wall of 403-bound calls.
+  // The cleaner portal is CLEANER-only: a non-cleaner (owner/admin) deep-linking
+  // /portal/* is sent to /dashboard. The API gates /portal/* with
+  // require_role(CLEANER), so this is deep-link UX, not the enforcement layer.
+  if (isPortalRoute && role !== "cleaner") {
+    return Response.redirect(new URL("/dashboard", nextUrl));
+  }
+
+  // Owner/admin financial surfaces: a cleaner is bounced to their portal; any
+  // other non-owner/admin role falls back to /operations (which is not itself an
+  // owner/admin route, so there is no redirect loop). The API matrix (Phase B.1)
+  // still enforces 403 on the underlying endpoints; this stops a cleaner
+  // deep-linking /dashboard, /reporting, or /settings and firing a wall of
+  // 403-bound calls.
   if (isOwnerAdminRoute && role !== "owner" && role !== "admin") {
-    return Response.redirect(new URL("/operations", nextUrl));
+    return Response.redirect(new URL(role === "cleaner" ? "/portal" : "/operations", nextUrl));
   }
 });
 
