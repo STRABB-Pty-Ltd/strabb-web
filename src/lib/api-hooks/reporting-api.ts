@@ -248,10 +248,25 @@ export function useReportingChartDataAPI(
   });
 }
 
+// Free-form config blob (stored in saved_reports.config_json). Carries the
+// pinned reporting period so a saved report reloads the SAME month it was
+// saved on, not the current one. `anchor` mirrors the store's reporting
+// anchor: null = "current period" (relative), a date = that fixed period.
+// `customRange` is only meaningful when timeframe === "custom".
+export interface SavedReportConfig {
+  anchor?: string | null;
+  customRange?: { start: string; end: string } | null;
+}
+
 export interface SavedReportPayload {
   name: string;
   timeframe: string;
   submenu: string[];
+  // The listing filter + pinned period captured at save time, so a saved
+  // report reloads with the same listings + month (not current-month /
+  // whole-portfolio). Optional so older rows without them still load.
+  listingIds?: string[];
+  configJson?: SavedReportConfig;
 }
 
 // Server-persisted saved report. The id is needed to load and delete a

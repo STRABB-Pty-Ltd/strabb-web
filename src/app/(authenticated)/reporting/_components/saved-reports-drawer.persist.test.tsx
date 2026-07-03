@@ -83,6 +83,8 @@ describe("SavedReportsDrawer integration (real useSavedReports)", () => {
         name: "My Report",
         timeframe: "year",
         submenu: ["expenses"],
+        listingIds: [],
+        configJson: { anchor: null },
       }),
     );
   });
