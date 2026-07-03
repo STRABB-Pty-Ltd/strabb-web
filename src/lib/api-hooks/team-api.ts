@@ -63,6 +63,22 @@ export function useUpdateUserRole() {
   });
 }
 
+// Same PATCH /users/{id} endpoint as the role change, carrying the cleaner pay
+// rate. The client keysToSnake-converts hourlyRate -> hourly_rate, which is what
+// the api's UserRoleUpdateRequest expects (owner/admin-only, ge=0).
+export function useUpdateUserHourlyRate() {
+  const apiClient = useApiClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, hourlyRate }: { id: string; hourlyRate: number }) =>
+      apiClient.patch(`/users/${id}`, { hourlyRate }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TEAM_USERS_KEY });
+    },
+  });
+}
+
 export function useDeactivateUser() {
   const apiClient = useApiClient();
   const queryClient = useQueryClient();

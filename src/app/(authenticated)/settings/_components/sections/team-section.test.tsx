@@ -12,6 +12,7 @@ const {
   revokeMock,
   resendMock,
   updateRoleMock,
+  updateRateMock,
   deactivateMock,
   reactivateMock,
   addToastMock,
@@ -22,6 +23,7 @@ const {
   revokeMock: vi.fn(),
   resendMock: vi.fn(),
   updateRoleMock: vi.fn(),
+  updateRateMock: vi.fn(),
   deactivateMock: vi.fn(),
   reactivateMock: vi.fn(),
   addToastMock: vi.fn(),
@@ -37,6 +39,7 @@ vi.mock("@/lib/api-hooks/team-api", () => ({
   useRevokeInvite: () => ({ mutate: revokeMock, isPending: false }),
   useResendInvite: () => ({ mutate: resendMock, isPending: false }),
   useUpdateUserRole: () => ({ mutate: updateRoleMock, isPending: false }),
+  useUpdateUserHourlyRate: () => ({ mutate: updateRateMock, isPending: false }),
   useDeactivateUser: () => ({ mutate: deactivateMock, isPending: false }),
   useReactivateUser: () => ({ mutate: reactivateMock, isPending: false }),
 }));
@@ -56,6 +59,7 @@ function member(overrides: Partial<TeamMember> = {}): TeamMember {
     role: "owner",
     isActive: true,
     lastLoginAt: "2026-06-30T09:00:00Z",
+    hourlyRate: null,
     ...overrides,
   };
 }
@@ -83,6 +87,7 @@ describe("TeamSection", () => {
     revokeMock.mockReset();
     resendMock.mockReset();
     updateRoleMock.mockReset();
+    updateRateMock.mockReset();
     deactivateMock.mockReset();
     reactivateMock.mockReset();
     addToastMock.mockReset();
@@ -164,6 +169,24 @@ describe("TeamSection", () => {
     await userEvent.click(screen.getByRole("button", { name: /reactivate/i }));
 
     expect(reactivateMock).toHaveBeenCalledWith("u-1", expect.anything());
+  });
+
+  it("saves a cleaner's hourly rate on blur (sent as hourlyRate)", async () => {
+    setup([member({ id: "u-2", fullName: "Cara Cleaner", role: "cleaner", hourlyRate: null })], []);
+    render(<TeamSection />);
+
+    const input = screen.getByLabelText("Hourly rate for Cara Cleaner");
+    await userEvent.type(input, "45");
+    await userEvent.tab();
+
+    expect(updateRateMock).toHaveBeenCalledTimes(1);
+    expect(updateRateMock.mock.calls[0][0]).toEqual({ id: "u-2", hourlyRate: 45 });
+  });
+
+  it("does not render a rate input for owners/admins", () => {
+    setup([member({ role: "owner" })], []);
+    render(<TeamSection />);
+    expect(screen.queryByLabelText(/hourly rate for/i)).not.toBeInTheDocument();
   });
 
   it("resends and revokes pending invites", async () => {

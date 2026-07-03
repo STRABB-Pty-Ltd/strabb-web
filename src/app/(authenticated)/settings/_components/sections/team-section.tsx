@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Plus, X } from "lucide-react";
 
@@ -11,6 +11,7 @@ import {
   useReactivateUser,
   useResendInvite,
   useRevokeInvite,
+  useUpdateUserHourlyRate,
   useUpdateUserRole,
 } from "@/lib/api-hooks/team-api";
 import { ApiError } from "@/lib/api-client";
@@ -18,6 +19,7 @@ import {
   inviteFormSchema,
   TEAM_ROLE_LABELS,
   TEAM_ROLE_OPTIONS,
+  type TeamMember,
   type TeamRole,
 } from "@/lib/schemas/team";
 import { useAppStore } from "@/stores/app-store";
@@ -52,6 +54,74 @@ function errorMessage(err: unknown, fallback: string): string {
   return err instanceof ApiError && err.message ? err.message : fallback;
 }
 
+// Editable AUD/hour cell for a cleaner. Local draft state so typing does not
+// fire a request per keystroke; commits on blur (and Enter) when the value is a
+// valid non-negative number that actually changed. Kept as its own component so
+// each row owns its draft and re-syncs when the server value changes.
+function HourlyRateCell({
+  member,
+  onSave,
+  saving,
+}: {
+  member: TeamMember;
+  onSave: (id: string, hourlyRate: number) => void;
+  saving: boolean;
+}) {
+  const initial = member.hourlyRate != null ? String(member.hourlyRate) : "";
+  const [value, setValue] = useState(initial);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setValue(member.hourlyRate != null ? String(member.hourlyRate) : "");
+  }, [member.hourlyRate]);
+
+  const commit = () => {
+    const trimmed = value.trim();
+    // Empty = leave as-is; there is no "clear the rate" path at launch.
+    if (trimmed === "") {
+      setError(false);
+      return;
+    }
+    const num = Number(trimmed);
+    if (!Number.isFinite(num) || num < 0) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    if (num === (member.hourlyRate ?? null)) return;
+    onSave(member.id, num);
+  };
+
+  return (
+    <div className="gap-xs flex items-center">
+      <span className="text-highlight-10" aria-hidden="true">
+        $
+      </span>
+      <input
+        type="number"
+        inputMode="decimal"
+        min="0"
+        step="0.01"
+        aria-label={`Hourly rate for ${member.fullName}`}
+        aria-invalid={error}
+        value={value}
+        disabled={saving}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            commit();
+          }
+        }}
+        placeholder="0.00"
+        className="px-base py-xs text-body bg-surface-60 w-24 rounded-md border font-medium disabled:opacity-60"
+        style={{ borderColor: error ? "var(--status-danger)" : "var(--border)" }}
+      />
+    </div>
+  );
+}
+
 export function TeamSection() {
   const addToast = useAppStore((s) => s.addToast);
 
@@ -64,6 +134,7 @@ export function TeamSection() {
   const revokeInvite = useRevokeInvite();
   const resendInvite = useResendInvite();
   const updateRole = useUpdateUserRole();
+  const updateRate = useUpdateUserHourlyRate();
   const deactivate = useDeactivateUser();
   const reactivate = useReactivateUser();
 
@@ -98,6 +169,17 @@ export function TeamSection() {
         onSuccess: () => addToast({ type: "success", message: "Role updated" }),
         onError: (err) =>
           addToast({ type: "error", message: errorMessage(err, "Failed to update role") }),
+      },
+    );
+  };
+
+  const handleRateChange = (id: string, hourlyRate: number) => {
+    updateRate.mutate(
+      { id, hourlyRate },
+      {
+        onSuccess: () => addToast({ type: "success", message: "Hourly rate updated" }),
+        onError: (err) =>
+          addToast({ type: "error", message: errorMessage(err, "Failed to update hourly rate") }),
       },
     );
   };
@@ -241,6 +323,9 @@ export function TeamSection() {
                   Role
                 </th>
                 <th scope="col" className={headerCellClass}>
+                  Rate (/hr)
+                </th>
+                <th scope="col" className={headerCellClass}>
                   Email
                 </th>
                 <th scope="col" className={headerCellClass}>
@@ -282,6 +367,17 @@ export function TeamSection() {
                           </option>
                         ))}
                       </select>
+                    </td>
+                    <td className="px-sm py-sm whitespace-nowrap">
+                      {member.role === "cleaner" ? (
+                        <HourlyRateCell
+                          member={member}
+                          onSave={handleRateChange}
+                          saving={updateRate.isPending}
+                        />
+                      ) : (
+                        <span className="text-highlight-10">-</span>
+                      )}
                     </td>
                     <td className="px-sm py-sm text-highlight-10 whitespace-nowrap">
                       {member.email}
