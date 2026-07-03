@@ -48,6 +48,7 @@ export function useSavedReports() {
   const windowSize = useAppStore((s) => s.reporting.windowSize);
   const submenu = useAppStore((s) => s.reporting.submenu);
   const activeSavedReport = useAppStore((s) => s.reporting.activeSavedReport);
+  const addToast = useAppStore((s) => s.addToast);
 
   // Backed by the real /saved-reports endpoints so reports persist across
   // reloads (previously an in-memory Zustand store that vanished on refresh).
@@ -73,11 +74,34 @@ export function useSavedReports() {
     // only the timeframe granularity + active chips, not the anchored period or
     // listing selection. Loading a preset applies it to the user's current
     // period/listings (see loadReport).
-    createReport.mutate({ name, timeframe: windowSize, submenu });
+    //
+    // Surface the outcome: the mutation was previously fire-and-forget, so a
+    // failed POST (403 for a non-owner, a validation 422, a rate-limit, a
+    // dropped request) left the user with no error and no new row - i.e. "save
+    // silently does nothing". A success toast also confirms the (async) persist
+    // before the list refetch lands.
+    createReport.mutate(
+      { name, timeframe: windowSize, submenu },
+      {
+        onSuccess: () => addToast({ type: "success", message: `Saved report "${name}"` }),
+        onError: (err: unknown) =>
+          addToast({
+            type: "error",
+            message: err instanceof Error ? err.message : "Failed to save report",
+          }),
+      },
+    );
   };
 
   const deleteReport = (id: string) => {
-    removeReport.mutate(id);
+    removeReport.mutate(id, {
+      onSuccess: () => addToast({ type: "success", message: "Report deleted" }),
+      onError: (err: unknown) =>
+        addToast({
+          type: "error",
+          message: err instanceof Error ? err.message : "Failed to delete report",
+        }),
+    });
   };
 
   const resetToDefaultView = () => {

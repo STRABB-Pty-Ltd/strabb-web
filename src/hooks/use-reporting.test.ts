@@ -52,18 +52,42 @@ describe("useSavedReports (persisted via /saved-reports)", () => {
     expect(result.current.savedReports[0]).toMatchObject({ id: "sr-1", name: "Q1 review" });
   });
 
-  it("saveCurrentReport POSTs the current name, timeframe and submenu", async () => {
+  it("saveCurrentReport POSTs the current name, timeframe and submenu and confirms with a toast", async () => {
     getMock.mockResolvedValue({ data: [] });
     postMock.mockResolvedValue({ data: {} });
+    // Put the reporting view in a known state so the persisted preset is checked.
+    act(() => useAppStore.getState().setTimeframe("reporting", "quarter"));
+    act(() => useAppStore.getState().setSubmenu("reporting", ["revenue"]));
     const { result } = renderHook(() => useSavedReports(), { wrapper: withProvider() });
     await waitFor(() => expect(result.current.savedReports).toHaveLength(0));
 
     act(() => result.current.saveCurrentReport("My Report"));
 
     await waitFor(() =>
-      expect(postMock).toHaveBeenCalledWith(
-        "/saved-reports",
-        expect.objectContaining({ name: "My Report" }),
+      expect(postMock).toHaveBeenCalledWith("/saved-reports", {
+        name: "My Report",
+        timeframe: "quarter",
+        submenu: ["revenue"],
+      }),
+    );
+    await waitFor(() =>
+      expect(useAppStore.getState().toasts).toContainEqual(
+        expect.objectContaining({ type: "success", message: 'Saved report "My Report"' }),
+      ),
+    );
+  });
+
+  it("saveCurrentReport surfaces a failed POST as an error toast (no silent failure)", async () => {
+    getMock.mockResolvedValue({ data: [] });
+    postMock.mockRejectedValue(new Error("Forbidden"));
+    const { result } = renderHook(() => useSavedReports(), { wrapper: withProvider() });
+    await waitFor(() => expect(result.current.savedReports).toHaveLength(0));
+
+    act(() => result.current.saveCurrentReport("My Report"));
+
+    await waitFor(() =>
+      expect(useAppStore.getState().toasts).toContainEqual(
+        expect.objectContaining({ type: "error", message: "Forbidden" }),
       ),
     );
   });
