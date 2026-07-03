@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ApiError, apiClient } from "./api-client";
+import { ApiError, apiClient, isForbidden } from "./api-client";
 
 // Minimal stand-in for the fetch Response surface api-client touches
 // (jsdom provides no Response constructor).
@@ -64,5 +64,24 @@ describe("apiClient response handling", () => {
     expect(err).toBeInstanceOf(ApiError);
     expect((err as ApiError).status).toBe(502);
     expect((err as ApiError).message).toBe("API error: Bad Gateway");
+  });
+});
+
+describe("isForbidden", () => {
+  it("is true only for an ApiError with status 403", () => {
+    expect(isForbidden(new ApiError(403, "Insufficient role"))).toBe(true);
+  });
+
+  it("is false for other ApiError statuses", () => {
+    expect(isForbidden(new ApiError(401, "Unauthorized"))).toBe(false);
+    expect(isForbidden(new ApiError(404, "Not found"))).toBe(false);
+    expect(isForbidden(new ApiError(500, "Server error"))).toBe(false);
+  });
+
+  it("is false for non-ApiError values", () => {
+    expect(isForbidden(new Error("boom"))).toBe(false);
+    expect(isForbidden(null)).toBe(false);
+    expect(isForbidden(undefined)).toBe(false);
+    expect(isForbidden({ status: 403 })).toBe(false);
   });
 });

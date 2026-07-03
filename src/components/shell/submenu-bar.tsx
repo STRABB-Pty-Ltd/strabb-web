@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, ChevronDown } from "lucide-react";
+import { CalendarClock, ChevronDown, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -166,16 +166,31 @@ export function SubmenuBar() {
         height: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
       }}
     >
-      {/* Left: page-specific widget (timeframe stepper, scheduled-messages link, …) */}
-      <div className="px-md flex shrink-0 items-center">
+      {/* Left: page-specific widget (timeframe stepper, or the messaging
+          sub-route links: Templates + Scheduled). */}
+      <div className="px-md gap-xs flex shrink-0 items-center">
         {currentPage === "messaging" ? (
-          <Link
-            href="/messaging/scheduled"
-            className="gap-xs px-base py-base text-body hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold"
-          >
-            <CalendarClock size={16} aria-hidden="true" />
-            Scheduled messages
-          </Link>
+          [
+            { href: "/messaging/templates", label: "Templates", icon: FileText },
+            { href: "/messaging/scheduled", label: "Scheduled messages", icon: CalendarClock },
+          ].map(({ href, label, icon: Icon }) => {
+            const active = pathname === href || pathname.startsWith(href + "/");
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className="gap-xs px-base py-base text-body hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold"
+                style={{
+                  backgroundColor: active ? "var(--neutral-30)" : undefined,
+                  color: "var(--highlight-10)",
+                }}
+              >
+                <Icon size={16} aria-hidden="true" />
+                {label}
+              </Link>
+            );
+          })
         ) : (
           <TimeframeStepper />
         )}

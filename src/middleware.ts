@@ -6,6 +6,18 @@ import { REFRESH_TOKEN_ERROR } from "@/lib/auth-constants";
 // (which hides itself for non-admin roles via the underlying API 403s).
 const ADMIN_ROUTE_PREFIXES: string[] = [];
 
+// Financial/owner surfaces: only `owner` and `admin` may reach these; a cleaner
+// is bounced to /operations. This is UX + deep-link protection ONLY - the API
+// role matrix (Phase B.1) is the real enforcement, returning 403 to a cleaner
+// regardless of what the client renders.
+const OWNER_ADMIN_ROUTE_PREFIXES: string[] = ["/dashboard", "/reporting", "/settings"];
+
+// The post-auth landing page differs by role: a cleaner has no dashboard, so
+// send them to /operations; owner/admin land on /dashboard.
+function landingPathForRole(role: string | null | undefined): string {
+  return role === "cleaner" ? "/operations" : "/dashboard";
+}
+
 export default auth((req) => {
   const { nextUrl } = req;
   // A session carrying RefreshTokenError is dead (the backend refresh failed
@@ -22,18 +34,19 @@ export default auth((req) => {
   const isShareLink = nextUrl.pathname.startsWith("/share/");
   const isRoot = nextUrl.pathname === "/";
   const isAdminRoute = ADMIN_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
+  const isOwnerAdminRoute = OWNER_ADMIN_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
 
   // Allow auth API routes, public pages, and public share links through
   if (isAuthRoute || isPublicPage || isShareLink) return;
 
-  // Redirect authenticated users away from login
+  // Redirect authenticated users away from login, to their role's landing page
   if (isLoginPage && isAuthenticated) {
-    return Response.redirect(new URL("/dashboard", nextUrl));
+    return Response.redirect(new URL(landingPathForRole(role), nextUrl));
   }
 
-  // Redirect root to dashboard
+  // Redirect root to the role's landing page (cleaner -> /operations)
   if (isRoot) {
-    return Response.redirect(new URL("/dashboard", nextUrl));
+    return Response.redirect(new URL(landingPathForRole(role), nextUrl));
   }
 
   // Redirect unauthenticated users to login
@@ -48,6 +61,14 @@ export default auth((req) => {
   // rendering and firing 403-bound API calls for non-admins.
   if (isAdminRoute && role !== "admin") {
     return Response.redirect(new URL("/settings", nextUrl));
+  }
+
+  // Owner/admin financial surfaces: a cleaner is bounced to /operations. The API
+  // matrix (Phase B.1) still enforces 403 on the underlying endpoints; this stops
+  // a cleaner deep-linking /dashboard, /reporting, or /settings and rendering a
+  // shell that then fires a wall of 403-bound calls.
+  if (isOwnerAdminRoute && role !== "owner" && role !== "admin") {
+    return Response.redirect(new URL("/operations", nextUrl));
   }
 });
 

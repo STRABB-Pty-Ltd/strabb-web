@@ -3,13 +3,14 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getMock, postMock } = vi.hoisted(() => ({
+const { getMock, postMock, deleteMock } = vi.hoisted(() => ({
   getMock: vi.fn(),
   postMock: vi.fn(),
+  deleteMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-api-client", () => ({
-  useApiClient: () => ({ get: getMock, post: postMock }),
+  useApiClient: () => ({ get: getMock, post: postMock, delete: deleteMock }),
   useAuthReady: () => true,
 }));
 
@@ -20,7 +21,12 @@ vi.mock("next-auth/react", () => ({
   }),
 }));
 
-import { useMessageLogs, useResendMessage, useScheduledMessages } from "./use-messages";
+import {
+  useDeleteTemplate,
+  useMessageLogs,
+  useResendMessage,
+  useScheduledMessages,
+} from "./use-messages";
 
 function withProvider(): (props: { children: ReactNode }) => ReactNode {
   const client = new QueryClient({
@@ -36,6 +42,7 @@ describe("use-messages hooks", () => {
   beforeEach(() => {
     getMock.mockReset();
     postMock.mockReset();
+    deleteMock.mockReset();
   });
 
   it("useScheduledMessages defaults to page 1, page_size 20, no status", async () => {
@@ -100,5 +107,14 @@ describe("use-messages hooks", () => {
     await result.current.mutateAsync("msg-1");
 
     expect(postMock).toHaveBeenCalledWith("/messages/scheduled/msg-1/resend", {});
+  });
+
+  it("useDeleteTemplate DELETEs the template by id", async () => {
+    deleteMock.mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useDeleteTemplate(), { wrapper: withProvider() });
+    await result.current.mutateAsync("tpl-9");
+
+    expect(deleteMock).toHaveBeenCalledWith("/messages/templates/tpl-9");
   });
 });

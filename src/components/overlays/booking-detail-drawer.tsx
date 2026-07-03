@@ -7,7 +7,7 @@ import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
 import { useListings } from "@/hooks/use-listings";
 import { useTimezoneForListing } from "@/hooks/use-property-timezone";
-import { ApiError } from "@/lib/api-client";
+import { ApiError, isForbidden } from "@/lib/api-client";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { useAppStore } from "@/stores/app-store";
 
@@ -37,7 +37,12 @@ export function BookingDetailDrawer() {
   const open = !!drillDownPanel?.open && drillDownPanel.type === "booking";
   const itemId = open ? drillDownPanel.itemId : null;
 
-  const { data: booking, isLoading } = useBooking(itemId);
+  const { data: booking, isLoading, error } = useBooking(itemId);
+  // Bookings carry money fields (nightly rate, OTA commission), so the API gates
+  // them to owner/admin. A cleaner can still open this drawer from a calendar
+  // booking bar; when the endpoint 403s, degrade quietly to a permission notice
+  // rather than the misleading "Booking not found" or an error toast (B.4).
+  const forbidden = isForbidden(error);
   const tz = useTimezoneForListing(booking?.listingId);
   const { data: listingsData } = useListings();
   const updateNotes = useUpdateBookingNotes();
@@ -98,7 +103,10 @@ export function BookingDetailDrawer() {
       accentColor={statusColors[status] ?? "var(--highlight-10)"}
     >
       {open && isLoading && <p className="text-body text-highlight-10">Loading booking…</p>}
-      {open && !isLoading && !booking && (
+      {open && !isLoading && !booking && forbidden && (
+        <p className="text-body text-highlight-10">You do not have access to booking details.</p>
+      )}
+      {open && !isLoading && !booking && !forbidden && (
         <p className="text-body text-highlight-10">Booking not found.</p>
       )}
       {displayBooking && (

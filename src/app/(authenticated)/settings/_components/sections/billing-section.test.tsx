@@ -22,6 +22,12 @@ vi.mock("@/stores/app-store", () => ({
     selector({ addToast: addToastMock }),
 }));
 
+// BillingSection now reads the session role (owner/admin defence-in-depth);
+// stub an owner session so the billing controls render.
+vi.mock("next-auth/react", () => ({
+  useSession: () => ({ data: { role: "owner" }, status: "authenticated" }),
+}));
+
 import { BillingSection } from "./billing-section";
 
 function sub(overrides: Partial<SubscriptionResponse> = {}): SubscriptionResponse {

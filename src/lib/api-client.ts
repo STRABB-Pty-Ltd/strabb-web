@@ -18,6 +18,16 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * True when an error is an API 403 (role-gated / forbidden). Widgets that call
+ * endpoints gated by the role matrix use this to render a quiet empty state or
+ * null instead of a toast or error banner: a 403 is an expected, deterministic
+ * outcome for a role that lacks access, not a failure worth surfacing.
+ */
+export function isForbidden(error: unknown): error is ApiError {
+  return error instanceof ApiError && error.status === 403;
+}
+
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { body, token, ...init } = options;
 
