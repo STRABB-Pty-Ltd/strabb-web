@@ -3,15 +3,15 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getMock, postMock, patchMock, deleteMock } = vi.hoisted(() => ({
+const { getMock, postMock, putMock, deleteMock } = vi.hoisted(() => ({
   getMock: vi.fn(),
   postMock: vi.fn(),
-  patchMock: vi.fn(),
+  putMock: vi.fn(),
   deleteMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-api-client", () => ({
-  useApiClient: () => ({ get: getMock, post: postMock, patch: patchMock, delete: deleteMock }),
+  useApiClient: () => ({ get: getMock, post: postMock, put: putMock, delete: deleteMock }),
   useAuthReady: () => true,
 }));
 
@@ -48,7 +48,7 @@ describe("expenses-api queries", () => {
   beforeEach(() => {
     getMock.mockReset();
     postMock.mockReset().mockResolvedValue(undefined);
-    patchMock.mockReset().mockResolvedValue(undefined);
+    putMock.mockReset().mockResolvedValue(undefined);
     deleteMock.mockReset().mockResolvedValue(undefined);
   });
 
@@ -75,7 +75,7 @@ describe("expenses-api queries", () => {
 describe("expenses-api mutations", () => {
   beforeEach(() => {
     postMock.mockReset().mockResolvedValue(undefined);
-    patchMock.mockReset().mockResolvedValue(undefined);
+    putMock.mockReset().mockResolvedValue(undefined);
     deleteMock.mockReset().mockResolvedValue(undefined);
   });
 
@@ -100,11 +100,18 @@ describe("expenses-api mutations", () => {
     }
   });
 
-  it("useUpdateExpense PATCHes a partial (deactivate = isActive:false)", async () => {
+  it("useUpdateExpense PUTs the update (the api exposes PUT, not PATCH)", async () => {
     const { result } = renderHook(() => useUpdateExpense(), { wrapper: providerFor(newClient()) });
     result.current.mutate({ id: "e1", data: { isActive: false } });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(patchMock).toHaveBeenCalledWith("/expenses/e1", { isActive: false });
+    expect(putMock).toHaveBeenCalledWith("/expenses/e1", { isActive: false });
+  });
+
+  it("useUpdateExpense PUTs the full edit-form payload", async () => {
+    const { result } = renderHook(() => useUpdateExpense(), { wrapper: providerFor(newClient()) });
+    result.current.mutate({ id: "e1", data: form });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(putMock).toHaveBeenCalledWith("/expenses/e1", form);
   });
 
   it("useDeleteExpense DELETEs by id", async () => {

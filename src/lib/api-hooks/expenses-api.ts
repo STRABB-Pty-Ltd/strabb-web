@@ -80,10 +80,12 @@ export function useUpdateExpense() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // Partial update: edits and the deactivate toggle (isActive:false) both go
-    // through here, so no data is lost by preferring soft-deactivate over delete.
+    // The api exposes PUT /expenses/{id} (no PATCH), but its handler applies the
+    // body with exclude_unset, so a PUT is a partial update in practice: the full
+    // edit-form payload and the deactivate toggle ({ isActive:false }) both send
+    // only what they mean to change, and unspecified fields are left untouched.
     mutationFn: ({ id, data }: { id: string; data: Partial<ExpenseFormData> }) =>
-      apiClient.patch(`/expenses/${id}`, data),
+      apiClient.put(`/expenses/${id}`, data),
     onSuccess: () => invalidateDerived(queryClient),
   });
 }
