@@ -76,6 +76,12 @@ vi.mock("@/hooks/use-properties", () => ({
   }),
 }));
 
+// The embedded cleaner picker fetches the cleaner roster; stub it so the drawer
+// test does not depend on a session/query provider for that child hook.
+vi.mock("@/hooks/use-team", () => ({
+  useTeamMembers: () => ({ data: { data: [] }, isLoading: false }),
+}));
+
 import { CleaningDetailDrawer } from "./cleaning-detail-drawer";
 
 const baseTask: CleaningTaskResponse = {
@@ -86,6 +92,7 @@ const baseTask: CleaningTaskResponse = {
   cleanerName: "Jane Cleaner",
   cleanerEmail: "jane@example.com",
   cleanerPhone: "+61400111222",
+  assignedUserId: null,
   scheduledDate: "2026-04-26T09:00:00Z",
   status: "pending",
   notes: "Bring eco supplies",

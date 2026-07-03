@@ -1,14 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Pencil, Users, X } from "lucide-react";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
-import { getCleaners, type MockTeamMember } from "@/lib/mock-team";
+import { useTeamMembers } from "@/hooks/use-team";
+import type { TeamMember } from "@/lib/schemas/team";
 import { Z } from "@/lib/z-index";
 
 export interface CleanerAssignment {
+  // Set when a real team cleaner is chosen; null for a one-off free-text cleaner.
+  assignedUserId: string | null;
   cleanerName: string;
   cleanerEmail: string;
   cleanerPhone: string;
@@ -33,10 +36,11 @@ export function CleanerPickerDialog({
   onSave,
   saving = false,
 }: CleanerPickerDialogProps) {
-  // getCleaners returns a fresh array each call (filter is non-memoised);
-  // wrap in useMemo so the reference is stable across renders and downstream
-  // effects depending on it don't re-fire.
-  const cleaners = useMemo(() => getCleaners(), []);
+  // The picker's "choose from team" list is the real cleaner roster from
+  // GET /users?role=cleaner (owner/admin surface). The API denormalises the
+  // chosen user's name/email/phone into the task's free-text trio on assign.
+  const membersQuery = useTeamMembers({ role: "cleaner", enabled: open });
+  const cleaners = membersQuery.data?.data ?? [];
   const panelRef = useRef<HTMLDivElement>(null);
   const { shouldRender } = useDelayedClose(open, EXIT_MS);
 
@@ -46,21 +50,21 @@ export function CleanerPickerDialog({
   const [email, setEmail] = useState(initial.cleanerEmail);
   const [phone, setPhone] = useState(initial.cleanerPhone);
 
-  // Reset state only on the false-to-true transition of `open` so clicking
-  // a mode button doesn't immediately reset mode back to "choose" via this
-  // effect. `initial` is recreated by the parent on every render; reading
-  // it inside the effect is intentional.
+  // Reset state only on the false-to-true transition of `open` so clicking a
+  // mode button doesn't immediately reset mode back to "choose" via this effect.
+  // `initial` is recreated by the parent on every render; reading it inside the
+  // effect is intentional. Preselect the assigned user directly by its FK.
   const wasOpen = useRef(false);
   useEffect(() => {
     if (open && !wasOpen.current) {
       setMode("choose");
-      setSelectedId(matchExistingId(cleaners, initial));
+      setSelectedId(initial.assignedUserId ?? "");
       setName(initial.cleanerName);
       setEmail(initial.cleanerEmail);
       setPhone(initial.cleanerPhone);
     }
     wasOpen.current = open;
-  }, [open, initial, cleaners]);
+  }, [open, initial]);
 
   const handleClose = useCallback(() => onOpenChange(false), [onOpenChange]);
 
@@ -82,15 +86,28 @@ export function CleanerPickerDialog({
 
   if (!shouldRender) return null;
 
-  const handlePickExisting = (member: MockTeamMember) => {
+  const handlePickExisting = (member: TeamMember) => {
     setSelectedId(member.id);
-    setName(member.name);
+    setName(member.fullName);
     setEmail(member.email);
-    setPhone(member.phone ?? "");
+    // The user roster carries no phone; the API fills it from the user record
+    // on assign, so leave it blank here rather than guessing.
+    setPhone("");
   };
 
   const handleSave = () => {
-    onSave({ cleanerName: name, cleanerEmail: email, cleanerPhone: phone });
+    if (mode === "pick-existing") {
+      const picked = cleaners.find((c) => c.id === selectedId);
+      onSave({
+        assignedUserId: selectedId,
+        cleanerName: picked?.fullName ?? name,
+        cleanerEmail: picked?.email ?? email,
+        cleanerPhone: "",
+      });
+      return;
+    }
+    // Manual mode: a one-off cleaner with no account - free-text trio, null FK.
+    onSave({ assignedUserId: null, cleanerName: name, cleanerEmail: email, cleanerPhone: phone });
   };
 
   return (
@@ -147,7 +164,9 @@ export function CleanerPickerDialog({
               <div>
                 <p className="text-body text-highlight-10 font-semibold">Choose from team</p>
                 <p className="text-body text-highlight-10">
-                  {cleaners.length} cleaner{cleaners.length === 1 ? "" : "s"} available
+                  {membersQuery.isLoading
+                    ? "Loading cleaners..."
+                    : `${cleaners.length} cleaner${cleaners.length === 1 ? "" : "s"} available`}
                 </p>
               </div>
             </button>
@@ -176,9 +195,12 @@ export function CleanerPickerDialog({
               <ArrowLeft size={14} aria-hidden="true" />
               Back
             </button>
-            {cleaners.length === 0 ? (
+            {membersQuery.isLoading ? (
+              <p className="text-body text-highlight-10">Loading cleaners...</p>
+            ) : cleaners.length === 0 ? (
               <p className="text-body text-highlight-10">
-                No cleaners on the team yet. Add one in Settings → Team, or enter details manually.
+                No cleaners on the team yet. Invite one in Settings &gt; Team, or enter details
+                manually.
               </p>
             ) : (
               <div className="gap-xs flex flex-col">
@@ -198,9 +220,8 @@ export function CleanerPickerDialog({
                           : "var(--surface-60)",
                       }}
                     >
-                      <span className="text-body text-highlight-10 font-medium">{c.name}</span>
+                      <span className="text-body text-highlight-10 font-medium">{c.fullName}</span>
                       <span className="text-body text-highlight-10">{c.email}</span>
-                      {c.phone && <span className="text-body text-highlight-10">{c.phone}</span>}
                     </button>
                   );
                 })}
@@ -314,12 +335,4 @@ export function CleanerPickerDialog({
       )}
     </div>
   );
-}
-
-function matchExistingId(cleaners: MockTeamMember[], initial: CleanerAssignment): string {
-  if (!initial.cleanerEmail && !initial.cleanerName) return "";
-  const match = cleaners.find(
-    (c) => c.email === initial.cleanerEmail || c.name === initial.cleanerName,
-  );
-  return match?.id ?? "";
 }

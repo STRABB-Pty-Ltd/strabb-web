@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * The REAL role vocabulary the API speaks. The retired mock-team used
+ * The REAL role vocabulary the API speaks. The retired mock team fixture used
  * `admin | manager | cleaner | viewer`; `manager` and `viewer` never existed
  * on the backend. Owner/admin/cleaner is the whole set (see the Phase B role
  * matrix). Order is the order shown in the invite role picker.

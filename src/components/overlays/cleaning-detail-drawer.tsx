@@ -104,14 +104,21 @@ export function CleaningDetailDrawer() {
 
   const handleSaveCleaner = (next: CleanerAssignment) => {
     if (!task) return;
-    updateTask.mutate(
-      {
-        id: task.id,
-        data: {
+    // Real team cleaner: send only the FK and let the API denormalise the
+    // name/email/phone from the user record. One-off cleaner: null the FK and
+    // persist the free-text trio as entered.
+    const data = next.assignedUserId
+      ? { assignedUserId: next.assignedUserId }
+      : {
+          assignedUserId: null,
           cleanerName: next.cleanerName || null,
           cleanerEmail: next.cleanerEmail || null,
           cleanerPhone: next.cleanerPhone || null,
-        },
+        };
+    updateTask.mutate(
+      {
+        id: task.id,
+        data,
       },
       {
         onSuccess: () => {
@@ -477,6 +484,7 @@ export function CleaningDetailDrawer() {
           open={cleanerDialogOpen}
           onOpenChange={setCleanerDialogOpen}
           initial={{
+            assignedUserId: displayTask.assignedUserId ?? null,
             cleanerName: displayTask.cleanerName ?? "",
             cleanerEmail: displayTask.cleanerEmail ?? "",
             cleanerPhone: displayTask.cleanerPhone ?? "",
