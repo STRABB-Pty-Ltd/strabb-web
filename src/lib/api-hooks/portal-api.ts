@@ -31,7 +31,11 @@ export function portalTaskKey(id: string): readonly [string, string, string] {
   return ["portal", "tasks", id];
 }
 
-export function usePortalTasks(window: PortalWindow, status?: string) {
+export function usePortalTasks(
+  window: PortalWindow,
+  status?: string,
+  options?: { enabled?: boolean },
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const params = new URLSearchParams();
@@ -44,7 +48,9 @@ export function usePortalTasks(window: PortalWindow, status?: string) {
       const res = await apiClient.get<{ data: PortalTask[] }>(`/portal/tasks?${params.toString()}`);
       return res.data;
     },
-    enabled: isReady,
+    // Gate on both auth readiness and the caller's opt-in so a hidden window
+    // (e.g. Past) does not fetch until the cleaner switches to it.
+    enabled: isReady && (options?.enabled ?? true),
   });
 }
 
