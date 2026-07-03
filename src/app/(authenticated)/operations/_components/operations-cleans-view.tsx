@@ -17,6 +17,7 @@ interface OperationsCleansViewProps {
 const STATUSES: { id: CleaningTask["status"]; label: string }[] = [
   { id: "pending", label: "Pending" },
   { id: "confirmed", label: "Confirmed" },
+  { id: "accepted", label: "Accepted" },
   { id: "in_progress", label: "In progress" },
   { id: "completed", label: "Completed" },
   { id: "cancelled", label: "Cancelled" },

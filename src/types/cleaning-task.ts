@@ -1,4 +1,10 @@
-export type CleaningStatus = "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+export type CleaningStatus =
+  | "pending"
+  | "confirmed"
+  | "accepted"
+  | "in_progress"
+  | "completed"
+  | "cancelled";
 
 export type CleaningPriority = "low" | "medium" | "high" | "urgent";
 
