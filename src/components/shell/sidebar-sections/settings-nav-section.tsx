@@ -7,6 +7,7 @@ import {
   Inbox,
   Phone,
   Radio,
+  Receipt,
   Settings,
   Sparkles,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const sections = [
   { id: "inbox", label: "Inbox", icon: Inbox },
   { id: "integrations", label: "Integrations", icon: Globe },
   { id: "cleaning", label: "Cleaning", icon: Sparkles },
+  { id: "expenses", label: "Expenses", icon: Receipt },
   { id: "channels", label: "Channels", icon: Radio },
 ] as const;
 
