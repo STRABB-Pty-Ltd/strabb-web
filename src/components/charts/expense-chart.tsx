@@ -15,12 +15,28 @@ interface ExpenseChartProps {
   loading?: boolean;
 }
 
-const COLORS = [
+// Phase D adds up to eight expense categories (rent, utilities, insurance,
+// subscriptions, supplies, maintenance, wages_other, other) plus the derived
+// cleaning row, so the palette must carry enough distinct, both-theme-safe
+// tokens to avoid two adjacent slices sharing a colour. The index still wraps
+// (expenseSliceColor), so any overflow beyond the palette cycles rather than
+// crashing.
+export const EXPENSE_CHART_COLORS = [
   "var(--highlight-10)",
   "var(--channel-direct)",
   "var(--status-success)",
   "var(--status-danger)",
+  "var(--status-warning)",
+  "var(--channel-airbnb)",
+  "var(--channel-booking)",
+  "var(--channel-vrbo)",
 ];
+
+// Colour for the nth pie slice, cycling the palette so more categories than
+// colours never throw and the first EXPENSE_CHART_COLORS.length are distinct.
+export function expenseSliceColor(index: number): string {
+  return EXPENSE_CHART_COLORS[index % EXPENSE_CHART_COLORS.length];
+}
 
 const formatAUD = (value: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -64,7 +80,7 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
           label={({ name, value }) => `${name}: ${formatAUD(Number(value))}`}
         >
           {data.map((_, i) => (
-            <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            <Cell key={i} fill={expenseSliceColor(i)} />
           ))}
         </Pie>
         <ChartTooltip formatter={(value) => formatAUD(Number(value))} />
