@@ -28,6 +28,13 @@ describe("LoginForm", () => {
     expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
   });
 
+  it("renders a Forgot password link pointing at /forgot-password", () => {
+    render(<LoginForm />);
+    const link = screen.getByRole("link", { name: /forgot password/i });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", "/forgot-password");
+  });
+
   it("calls signIn with valid credentials", async () => {
     mockSignIn.mockResolvedValue({ error: null });
 

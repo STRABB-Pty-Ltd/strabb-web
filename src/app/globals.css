@@ -93,6 +93,7 @@
      either base text token in either theme). */
   --status-pending: var(--status-danger);
   --status-confirmed: var(--highlight-10);
+  --status-accepted: var(--status-warning);
   --status-in-progress: var(--status-success);
   --status-completed: var(--status-success);
   --status-issues: var(--status-danger);

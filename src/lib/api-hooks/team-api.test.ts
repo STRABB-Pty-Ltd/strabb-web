@@ -10,12 +10,15 @@ vi.mock("@/hooks/use-api-client", () => ({
   useAuthReady: () => true,
 }));
 
+import { keysToSnake } from "@/lib/case-utils";
+
 import {
   useCreateInvite,
   useDeactivateUser,
   useReactivateUser,
   useResendInvite,
   useRevokeInvite,
+  useUpdateUserHourlyRate,
   useUpdateUserRole,
 } from "./team-api";
 
@@ -62,6 +65,16 @@ describe("team-api mutations", () => {
     result.current.mutate({ id: "u-1", role: "admin" });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(patchMock).toHaveBeenCalledWith("/users/u-1", { role: "admin" });
+  });
+
+  it("useUpdateUserHourlyRate PATCHes the rate, serialised as hourly_rate", async () => {
+    const { result } = renderHook(() => useUpdateUserHourlyRate(), { wrapper: withProvider() });
+    result.current.mutate({ id: "u-2", hourlyRate: 45 });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    // The hook passes camelCase; the api client keysToSnake-converts before the
+    // wire, so the body the api receives carries hourly_rate.
+    expect(patchMock).toHaveBeenCalledWith("/users/u-2", { hourlyRate: 45 });
+    expect(keysToSnake({ hourlyRate: 45 })).toEqual({ hourly_rate: 45 });
   });
 
   it("useDeactivateUser POSTs to /users/{id}/deactivate", async () => {

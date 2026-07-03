@@ -26,9 +26,9 @@ function location(res: Response | undefined): string | null {
 describe("middleware role-aware routing", () => {
   const OWNER_ADMIN_PREFIXES = ["/dashboard", "/reporting", "/settings"];
 
-  it.each(OWNER_ADMIN_PREFIXES)("bounces a cleaner off %s to /operations", (prefix) => {
+  it.each(OWNER_ADMIN_PREFIXES)("bounces a cleaner off %s to /portal", (prefix) => {
     const res = run(req(prefix, { role: "cleaner" }));
-    expect(location(res)).toBe("http://localhost:3000/operations");
+    expect(location(res)).toBe("http://localhost:3000/portal");
   });
 
   it.each(OWNER_ADMIN_PREFIXES)("lets an owner through %s (no redirect)", (prefix) => {
@@ -44,16 +44,34 @@ describe("middleware role-aware routing", () => {
     expect(run(req("/calendar", { role: "cleaner" }))).toBeUndefined();
   });
 
-  it("sends a cleaner from root to /operations and an owner to /dashboard", () => {
-    expect(location(run(req("/", { role: "cleaner" })))).toBe("http://localhost:3000/operations");
+  it("sends a cleaner from root to /portal and an owner to /dashboard", () => {
+    expect(location(run(req("/", { role: "cleaner" })))).toBe("http://localhost:3000/portal");
     expect(location(run(req("/", { role: "owner" })))).toBe("http://localhost:3000/dashboard");
   });
 
-  it("redirects an authenticated cleaner off /login to /operations, owner to /dashboard", () => {
-    expect(location(run(req("/login", { role: "cleaner" })))).toBe(
-      "http://localhost:3000/operations",
-    );
+  it("redirects an authenticated cleaner off /login to /portal, owner to /dashboard", () => {
+    expect(location(run(req("/login", { role: "cleaner" })))).toBe("http://localhost:3000/portal");
     expect(location(run(req("/login", { role: "owner" })))).toBe("http://localhost:3000/dashboard");
+  });
+
+  // D1.3: /portal is the CLEANER-only mobile portal.
+  it("lets a cleaner through /portal and a nested task detail (no redirect)", () => {
+    expect(run(req("/portal", { role: "cleaner" }))).toBeUndefined();
+    expect(run(req("/portal/tasks/abc", { role: "cleaner" }))).toBeUndefined();
+    expect(run(req("/portal/availability", { role: "cleaner" }))).toBeUndefined();
+  });
+
+  it.each(["owner", "admin"])("bounces a %s off /portal to /dashboard", (role) => {
+    expect(location(run(req("/portal", { role })))).toBe("http://localhost:3000/dashboard");
+    expect(location(run(req("/portal/tasks/abc", { role })))).toBe(
+      "http://localhost:3000/dashboard",
+    );
+  });
+
+  it("sends an unauthenticated visitor from /portal to /login with a callbackUrl", () => {
+    const loc = location(run(req("/portal", null)));
+    expect(loc).toContain("/login");
+    expect(loc).toContain("callbackUrl=%2Fportal");
   });
 
   it("redirects an unauthenticated request to /login with a callbackUrl", () => {

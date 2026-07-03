@@ -28,6 +28,9 @@ export interface TeamMember {
   role: TeamRole;
   isActive: boolean;
   lastLoginAt: string | null;
+  // Cleaner pay rate in AUD/hour. Owner/admin-writable only (never on a
+  // cleaner-facing surface); null when unset. Feeds the derived cleaning cost.
+  hourlyRate: number | null;
 }
 
 /** A pending invite as returned by GET /invites (after keysToCamel). */

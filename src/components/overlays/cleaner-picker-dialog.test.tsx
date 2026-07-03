@@ -20,6 +20,7 @@ const cleaners: TeamMember[] = [
     role: "cleaner",
     isActive: true,
     lastLoginAt: null,
+    hourlyRate: null,
   },
   {
     id: "u-sam",
@@ -28,6 +29,7 @@ const cleaners: TeamMember[] = [
     role: "cleaner",
     isActive: true,
     lastLoginAt: null,
+    hourlyRate: null,
   },
 ];
 

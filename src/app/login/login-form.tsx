@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -66,6 +67,12 @@ export function LoginForm() {
           {...register("password")}
         />
         {errors.password && <p className="text-destructive text-body">{errors.password.message}</p>}
+      </div>
+
+      <div className="text-right">
+        <Link href="/forgot-password" className="text-body text-primary hover:underline">
+          Forgot password?
+        </Link>
       </div>
 
       {error && <p className="text-destructive text-body">{error}</p>}

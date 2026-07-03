@@ -1,14 +1,33 @@
 "use client";
 
+import { useTeamMembers } from "@/hooks/use-team";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
 export function CleaningSection() {
   const { values, patch, save, isSaving, dirty } = useSettingsForm("cleaning", {
     defaultDuration: "2",
     autoAssign: false,
+    // The chosen cleaner's user id is the source of truth; name + email are
+    // denormalised alongside it so any consumer of the blob has them without a
+    // second lookup. Legacy blobs may carry only the free-text name/email.
+    defaultCleanerId: "",
     defaultCleaner: "",
     defaultCleanerEmail: "",
   });
+
+  // Real cleaner roster (GET /users?role=cleaner) - same source the booking
+  // drawer's cleaner picker uses, replacing the old free-text name/email fields.
+  const cleanersQuery = useTeamMembers({ role: "cleaner" });
+  const cleaners = cleanersQuery.data?.data ?? [];
+
+  const handleCleanerChange = (id: string) => {
+    const chosen = cleaners.find((c) => c.id === id);
+    patch({
+      defaultCleanerId: id,
+      defaultCleaner: chosen?.fullName ?? "",
+      defaultCleanerEmail: chosen?.email ?? "",
+    });
+  };
 
   return (
     <div className="space-y-md">
@@ -71,37 +90,36 @@ export function CleaningSection() {
 
         <div>
           <label
-            htmlFor="cleaning-default-cleaner-name"
+            htmlFor="cleaning-default-cleaner"
             className="mb-xs text-body text-highlight-10 block font-medium"
           >
-            Default Cleaner Name
+            Default Cleaner
           </label>
-          <input
-            id="cleaning-default-cleaner-name"
-            type="text"
-            value={values.defaultCleaner}
-            onChange={(e) => patch({ defaultCleaner: e.target.value })}
-            className="px-sm py-base text-body w-full rounded-lg border"
+          <select
+            id="cleaning-default-cleaner"
+            value={values.defaultCleanerId}
+            onChange={(e) => handleCleanerChange(e.target.value)}
+            disabled={cleanersQuery.isLoading}
+            className="px-sm py-base text-body w-full rounded-lg border disabled:opacity-60"
             style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="default-cleaner-email"
-            className="mb-xs text-body text-highlight-10 block font-medium"
           >
-            Default Cleaner Email
-          </label>
-          <input
-            id="default-cleaner-email"
-            type="email"
-            autoComplete="email"
-            value={values.defaultCleanerEmail}
-            onChange={(e) => patch({ defaultCleanerEmail: e.target.value })}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
-          />
+            <option value="">None</option>
+            {cleaners.map((cleaner) => (
+              <option key={cleaner.id} value={cleaner.id}>
+                {cleaner.fullName}
+              </option>
+            ))}
+          </select>
+          {values.defaultCleanerEmail && (
+            <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
+              {values.defaultCleanerEmail}
+            </p>
+          )}
+          {!cleanersQuery.isLoading && cleaners.length === 0 && (
+            <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
+              No cleaners on the team yet. Invite one from the Team settings.
+            </p>
+          )}
         </div>
       </div>
 

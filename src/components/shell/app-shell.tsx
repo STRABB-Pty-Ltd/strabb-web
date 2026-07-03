@@ -50,6 +50,16 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { helpOpen, setHelpOpen } = useKeyboardShortcuts();
 
+  // Load persisted filter/timeframe selections on the client only. The store
+  // uses skipHydration so SSR + the first client paint both render from
+  // defaults (no hydration mismatch); this pulls the user's saved listing
+  // filter + reporting period back in right after mount, so a reload or a
+  // Cloudflare-Access re-auth no longer resets the report to current-month /
+  // all-listings.
+  useEffect(() => {
+    void useAppStore.persist.rehydrate();
+  }, []);
+
   // Sync store's currentPage with URL on mount and navigation. Every
   // top-level page change also resets that page's chip + view to defaults
   // so each entry feels fresh (no leaked filter from the last visit).

@@ -5,6 +5,7 @@ import { useAppStore } from "@/stores/app-store";
 import { BillingSection } from "./sections/billing-section";
 import { ChannelsSection } from "./sections/channels-section";
 import { CleaningSection } from "./sections/cleaning-section";
+import { ExpensesSection } from "./sections/expenses-section";
 import { GeneralSection } from "./sections/general-section";
 import { InboxSection } from "./sections/inbox-section";
 import { IntegrationsSection } from "./sections/integrations-section";
@@ -17,6 +18,7 @@ const sectionComponents: Record<string, React.ComponentType> = {
   inbox: InboxSection,
   integrations: IntegrationsSection,
   cleaning: CleaningSection,
+  expenses: ExpensesSection,
   channels: ChannelsSection,
 };
 
