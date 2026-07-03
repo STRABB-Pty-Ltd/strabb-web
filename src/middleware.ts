@@ -18,6 +18,14 @@ function landingPathForRole(role: string | null | undefined): string {
   return role === "cleaner" ? "/operations" : "/dashboard";
 }
 
+// Public pages reachable without a session. The three C.5 auth flows land here
+// from emailed links, so they MUST be allowlisted or an unauthenticated visitor
+// is bounced to /login and the reset/invite link dead-ends. `/forgot-password`
+// is an exact match; `/reset-password/` and `/invite/` are prefixes because the
+// token is a dynamic path segment.
+const PUBLIC_PAGE_EXACT: string[] = ["/privacy", "/terms", "/forgot-password"];
+const PUBLIC_PAGE_PREFIXES: string[] = ["/reset-password/", "/invite/"];
+
 export default auth((req) => {
   const { nextUrl } = req;
   // A session carrying RefreshTokenError is dead (the backend refresh failed
@@ -30,7 +38,9 @@ export default auth((req) => {
 
   const isLoginPage = nextUrl.pathname === "/login";
   const isAuthRoute = nextUrl.pathname.startsWith("/api/auth");
-  const isPublicPage = nextUrl.pathname === "/privacy" || nextUrl.pathname === "/terms";
+  const isPublicPage =
+    PUBLIC_PAGE_EXACT.includes(nextUrl.pathname) ||
+    PUBLIC_PAGE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
   const isShareLink = nextUrl.pathname.startsWith("/share/");
   const isRoot = nextUrl.pathname === "/";
   const isAdminRoute = ADMIN_ROUTE_PREFIXES.some((p) => nextUrl.pathname.startsWith(p));
