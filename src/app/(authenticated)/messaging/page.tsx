@@ -28,7 +28,8 @@ export default function MessagingPage() {
     view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
 
   const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
-  const { markAsRead, sendReply, toggleFlag, archive } = useMessageActions();
+  const { markAsRead, sendReply, toggleFlag, archive, replyErrors, clearReplyError } =
+    useMessageActions();
 
   // markAsRead's identity changes each render (its useCallback dep is the
   // mutation object); route through a ref so the effect can depend only on the
@@ -110,6 +111,8 @@ export default function MessagingPage() {
             closeThreadOverlay();
           }}
           onConvertTicket={() => setTicketDrawerOpen(true)}
+          replyError={replyErrors[threadMsg.id] ?? null}
+          onDismissReplyError={() => clearReplyError(threadMsg.id)}
         />
       )}
 

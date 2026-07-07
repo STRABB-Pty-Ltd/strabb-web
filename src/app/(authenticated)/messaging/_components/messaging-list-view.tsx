@@ -27,7 +27,7 @@ interface MessagingListViewProps {
 export function MessagingListView({ messages }: MessagingListViewProps) {
   const selectedMessage = useAppStore((s) => s.messaging.selectedMessage);
   const setSelectedMessage = useAppStore((s) => s.setSelectedMessage);
-  const { toggleFlag, sendReply } = useMessageActions();
+  const { toggleFlag, sendReply, replyErrors, clearReplyError } = useMessageActions();
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
 
   const selectedMsg = messages.find((m) => m.id === selectedMessage) ?? null;
@@ -127,6 +127,8 @@ export function MessagingListView({ messages }: MessagingListViewProps) {
             onSendReply={sendReply}
             onFlag={() => toggleFlag(selectedMsg.id)}
             onConvertTicket={() => setTicketDialogOpen(true)}
+            replyError={replyErrors[selectedMsg.id] ?? null}
+            onDismissReplyError={() => clearReplyError(selectedMsg.id)}
           />
         )}
       </div>

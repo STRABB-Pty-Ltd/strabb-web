@@ -62,7 +62,12 @@ describe("MessagingPage", () => {
     threadMock.mockReset();
     actionsMock.mockReset();
     storeMock.mockReset();
-    actionsMock.mockReturnValue({ markAsRead: vi.fn(), markAsUnread: vi.fn() });
+    actionsMock.mockReturnValue({
+      markAsRead: vi.fn(),
+      markAsUnread: vi.fn(),
+      replyErrors: {},
+      clearReplyError: vi.fn(),
+    });
     threadMock.mockReturnValue({ data: undefined });
   });
 
@@ -137,7 +142,7 @@ describe("MessagingPage mark-read-on-leave", () => {
     actionsMock.mockReset();
     storeMock.mockReset();
     markAsRead.mockReset();
-    actionsMock.mockReturnValue({ markAsRead });
+    actionsMock.mockReturnValue({ markAsRead, replyErrors: {}, clearReplyError: vi.fn() });
     threadMock.mockReturnValue({ data: undefined });
   });
 

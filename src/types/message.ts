@@ -29,4 +29,5 @@ export interface ThreadMessage {
   sentAt: string;
   isGuest: boolean;
   senderName: string;
+  deliveryStatus: "sent" | "failed";
 }
