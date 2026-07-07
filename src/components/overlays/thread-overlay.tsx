@@ -174,10 +174,7 @@ export function ThreadOverlay({
                     {format(new Date(msg.sentAt), "d MMM, HH:mm")}
                   </p>
                   {msg.deliveryStatus === "failed" && (
-                    <p
-                      className="text-body font-medium"
-                      style={{ color: "var(--status-danger)" }}
-                    >
+                    <p className="text-body font-medium" style={{ color: "var(--status-danger)" }}>
                       Failed to send
                     </p>
                   )}
