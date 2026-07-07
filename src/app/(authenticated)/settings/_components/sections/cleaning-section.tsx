@@ -6,6 +6,10 @@ import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 export function CleaningSection() {
   const { values, patch, save, isSaving, dirty } = useSettingsForm("cleaning", {
     defaultDuration: "2",
+    // Empty = no default start time; an auto-generated task is left unscheduled
+    // for that field. Consumed api-side as scheduled_time once the auto-schedule
+    // work lands.
+    defaultTime: "",
     autoAssign: false,
     // The chosen cleaner's user id is the source of truth; name + email are
     // denormalised alongside it so any consumer of the blob has them without a
@@ -52,6 +56,23 @@ export function CleaningSection() {
             onChange={(e) => patch({ defaultDuration: e.target.value })}
             min="0.5"
             step="0.5"
+            className="px-sm py-base text-body w-[144px] rounded-lg border"
+            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="cleaning-default-time"
+            className="mb-xs text-body text-highlight-10 block font-medium"
+          >
+            Default Start Time
+          </label>
+          <input
+            id="cleaning-default-time"
+            type="time"
+            value={values.defaultTime}
+            onChange={(e) => patch({ defaultTime: e.target.value })}
             className="px-sm py-base text-body w-[144px] rounded-lg border"
             style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />

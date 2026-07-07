@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,6 +42,7 @@ function setup(
   settingsFormMock.mockReturnValue({
     values: {
       defaultDuration: "2",
+      defaultTime: "",
       autoAssign: false,
       defaultCleanerId: "",
       defaultCleaner: "",
@@ -101,5 +102,25 @@ describe("CleaningSection default-cleaner dropdown", () => {
     setup({}, []);
     render(<CleaningSection />);
     expect(screen.getByText(/no cleaners on the team yet/i)).toBeInTheDocument();
+  });
+});
+
+describe("CleaningSection default start time", () => {
+  beforeEach(() => {
+    membersMock.mockReset();
+    settingsFormMock.mockReset();
+    patchMock.mockReset();
+    saveMock.mockReset();
+  });
+
+  it("renders the saved default start time and patches edits back", () => {
+    setup({ defaultTime: "11:00" });
+    render(<CleaningSection />);
+
+    const input = screen.getByLabelText("Default Start Time") as HTMLInputElement;
+    expect(input.value).toBe("11:00");
+
+    fireEvent.change(input, { target: { value: "09:30" } });
+    expect(patchMock).toHaveBeenCalledWith({ defaultTime: "09:30" });
   });
 });
