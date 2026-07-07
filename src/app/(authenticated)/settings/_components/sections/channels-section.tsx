@@ -1,6 +1,35 @@
 "use client";
 
+import { format } from "date-fns";
+import { AlertCircle, CheckCircle, CircleDashed, Loader, type LucideIcon } from "lucide-react";
+
+import { useSyncLogs, useTriggerSync } from "@/hooks/use-sync";
+import { ApiError } from "@/lib/api-client";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
+import { useAppStore } from "@/stores/app-store";
+
+// Same status set as the Sync Logs page (strabb-api PR #3 shared primitives):
+// synced | failed | in_progress | skipped.
+const statusColors: Record<string, string> = {
+  synced: "var(--status-completed)",
+  skipped: "var(--status-issues)",
+  failed: "var(--status-danger)",
+  in_progress: "var(--status-in-progress)",
+};
+
+const statusFgColors: Record<string, string> = {
+  synced: "var(--status-success-fg)",
+  skipped: "var(--status-danger-fg)",
+  failed: "var(--status-danger-fg)",
+  in_progress: "var(--status-success-fg)",
+};
+
+const statusIcons: Record<string, LucideIcon> = {
+  synced: CheckCircle,
+  skipped: CircleDashed,
+  failed: AlertCircle,
+  in_progress: Loader,
+};
 
 interface ChannelConfig {
   id: string;
@@ -65,6 +94,35 @@ export function ChannelsSection() {
     { channels: mockChannels },
   );
 
+  // Real Channex sync status, sourced the same way as the Sync Logs page.
+  // Channex does not expose a per-OTA (Airbnb/Booking.com/VRBO) sync
+  // breakdown - only a single channel-manager-wide sync run - so this shows
+  // the most recent run, not one row per channel below.
+  const { data: logsData, isLoading: logsLoading } = useSyncLogs(1, 1);
+  const trigger = useTriggerSync();
+  const addToast = useAppStore((s) => s.addToast);
+  const lastLog = logsData?.data[0];
+
+  const handleTriggerSync = () => {
+    trigger.mutate(undefined, {
+      onSuccess: (result) => {
+        addToast({
+          type: "success",
+          message: `Sync complete - ${result.listingsSynced} listings, ${result.bookingsCreated} new bookings, ${result.conflictsDetected} conflicts.`,
+        });
+      },
+      onError: (err: unknown) => {
+        const message =
+          err instanceof ApiError
+            ? err.message
+            : err instanceof Error
+              ? err.message
+              : "Failed to trigger sync";
+        addToast({ type: "error", message });
+      },
+    });
+  };
+
   const updateChannel = (id: string, field: "syncFrequency" | "pricingRule", value: string) => {
     patch((current) => ({
       channels: current.channels.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
@@ -79,6 +137,48 @@ export function ChannelsSection() {
           How often each OTA polls and what pricing rule it inherits. Channel manager and other
           third-party software connections live under Integrations.
         </p>
+      </div>
+
+      <div
+        className="px-sm py-sm gap-base flex items-center justify-between rounded-lg border"
+        style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
+      >
+        <div className="gap-sm flex items-center">
+          {!logsLoading && lastLog
+            ? (() => {
+                const StatusIcon = statusIcons[lastLog.status] ?? CircleDashed;
+                return (
+                  <span
+                    className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+                    style={{
+                      backgroundColor: statusColors[lastLog.status] ?? "var(--neutral-30)",
+                      color: statusFgColors[lastLog.status] ?? "var(--text-secondary)",
+                    }}
+                  >
+                    <StatusIcon size={12} aria-hidden="true" />
+                    {lastLog.status}
+                  </span>
+                );
+              })()
+            : null}
+          <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+            {logsLoading
+              ? "Loading last sync..."
+              : lastLog
+                ? `Last Channex sync ${format(new Date(lastLog.startedAt), "d MMM yyyy, HH:mm:ss")}`
+                : "No sync runs recorded yet"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleTriggerSync}
+          disabled={trigger.isPending}
+          title="Limited to 3 syncs per 5 minutes"
+          className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
+        >
+          {trigger.isPending ? "Syncing..." : "Sync Now"}
+        </button>
       </div>
 
       <div className="space-y-sm">
