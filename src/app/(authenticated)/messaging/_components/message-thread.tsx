@@ -19,6 +19,8 @@ interface MessageThreadProps {
   onSendReply: (conversationId: string, content: string) => void;
   onFlag: () => void;
   onConvertTicket: () => void;
+  replyError?: string | null;
+  onDismissReplyError?: () => void;
 }
 
 export function MessageThread({
@@ -27,6 +29,8 @@ export function MessageThread({
   onSendReply,
   onFlag,
   onConvertTicket,
+  replyError,
+  onDismissReplyError,
 }: MessageThreadProps) {
   const [compose, setCompose] = useState("");
 
@@ -76,9 +80,16 @@ export function MessageThread({
             >
               <p className="text-body font-medium opacity-70">{msg.senderName}</p>
               <p className="text-body">{msg.content}</p>
-              <p className="mt-xs text-body opacity-50">
-                {format(new Date(msg.sentAt), "d MMM, HH:mm")}
-              </p>
+              <div className="mt-xs gap-xs flex items-center">
+                <p className="text-body opacity-50">
+                  {format(new Date(msg.sentAt), "d MMM, HH:mm")}
+                </p>
+                {msg.deliveryStatus === "failed" && (
+                  <p className="text-body font-medium" style={{ color: "var(--status-danger)" }}>
+                    Failed to send
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -106,24 +117,34 @@ export function MessageThread({
       </div>
 
       {/* Compose */}
-      <div className="gap-base px-sm py-sm flex border-t" style={{ borderColor: "var(--border)" }}>
-        <textarea
-          value={compose}
-          onChange={(e) => setCompose(e.target.value)}
-          placeholder="Type a message..."
-          aria-label="Compose reply"
-          className="p-base text-body flex-1 resize-none rounded-lg border"
-          rows={2}
-        />
-        <button
-          type="button"
-          onClick={handleSend}
-          aria-label="Send reply"
-          className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
-          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-        >
-          <Send size={18} aria-hidden="true" />
-        </button>
+      <div className="px-sm py-sm border-t" style={{ borderColor: "var(--border)" }}>
+        {replyError && (
+          <p className="mb-xs text-body" style={{ color: "var(--status-danger)" }} role="alert">
+            {replyError}
+          </p>
+        )}
+        <div className="gap-base flex">
+          <textarea
+            value={compose}
+            onChange={(e) => {
+              setCompose(e.target.value);
+              onDismissReplyError?.();
+            }}
+            placeholder="Type a message..."
+            aria-label="Compose reply"
+            className="p-base text-body flex-1 resize-none rounded-lg border"
+            rows={2}
+          />
+          <button
+            type="button"
+            onClick={handleSend}
+            aria-label="Send reply"
+            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
+            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+          >
+            <Send size={18} aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
   );

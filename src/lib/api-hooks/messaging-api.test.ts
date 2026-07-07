@@ -22,10 +22,11 @@ import {
   useUpdateConversationStatusAPI,
 } from "./messaging-api";
 
-function withProvider(): (props: { children: ReactNode }) => ReactNode {
-  const client = new QueryClient({
+function withProvider(
+  client: QueryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
+  }),
+): (props: { children: ReactNode }) => ReactNode {
   const Wrapper = ({ children }: { children: ReactNode }) =>
     createElement(QueryClientProvider, { client }, children);
   Wrapper.displayName = "TestQueryProvider";
@@ -89,7 +90,7 @@ describe("messaging-api hooks", () => {
     expect(getMock).not.toHaveBeenCalled();
   });
 
-  it("useMessageThreadAPI maps senderType=guest to isGuest=true", async () => {
+  it("useMessageThreadAPI maps senderType=guest to isGuest=true and passes through deliveryStatus", async () => {
     getMock.mockResolvedValue({
       data: [
         {
@@ -99,6 +100,7 @@ describe("messaging-api hooks", () => {
           body: "Hi",
           sentAt: "2026-05-01T00:00:00Z",
           senderName: "Alice",
+          deliveryStatus: "sent",
         },
         {
           id: "msg-2",
@@ -107,6 +109,7 @@ describe("messaging-api hooks", () => {
           body: "Hey",
           sentAt: "2026-05-01T00:01:00Z",
           senderName: "Will",
+          deliveryStatus: "failed",
         },
       ],
     });
@@ -114,8 +117,8 @@ describe("messaging-api hooks", () => {
     const { result } = renderHook(() => useMessageThreadAPI("c-1"), { wrapper: withProvider() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual([
-      expect.objectContaining({ id: "msg-1", isGuest: true }),
-      expect.objectContaining({ id: "msg-2", isGuest: false }),
+      expect.objectContaining({ id: "msg-1", isGuest: true, deliveryStatus: "sent" }),
+      expect.objectContaining({ id: "msg-2", isGuest: false, deliveryStatus: "failed" }),
     ]);
   });
 
@@ -135,6 +138,23 @@ describe("messaging-api hooks", () => {
     await convert.result.current.mutateAsync({ conversationId: "c-1", description: "Broken AC" });
     expect(postMock).toHaveBeenCalledWith("/conversations/c-1/convert-to-ticket", {
       description: "Broken AC",
+    });
+  });
+
+  it("useSendMessageAPI invalidates the thread on failure too, since the backend persists a failed message before raising", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    const invalidateSpy = vi.spyOn(client, "invalidateQueries");
+    postMock.mockRejectedValue(new Error("No delivery address configured for this conversation"));
+
+    const { result } = renderHook(() => useSendMessageAPI(), { wrapper: withProvider(client) });
+    await expect(
+      result.current.mutateAsync({ conversationId: "c-1", content: "hi" }),
+    ).rejects.toThrow();
+
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: ["conversation-messages", "c-1"],
     });
   });
 });

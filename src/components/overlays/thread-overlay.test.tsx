@@ -63,4 +63,65 @@ describe("ThreadOverlay actions", () => {
 
     expect(onSendReply).not.toHaveBeenCalled();
   });
+
+  it("shows the reply error message when a send fails", () => {
+    renderOverlay({ replyError: "No delivery address configured for this conversation" });
+
+    expect(
+      screen.getByText("No delivery address configured for this conversation"),
+    ).toBeInTheDocument();
+  });
+
+  it("does not show a reply error when there is none", () => {
+    renderOverlay({ replyError: null });
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("dismisses the reply error as the host edits the compose box", () => {
+    const onDismissReplyError = vi.fn();
+    renderOverlay({
+      replyError: "Failed to send message via Channex: boom",
+      onDismissReplyError,
+    });
+
+    fireEvent.change(screen.getByLabelText("Compose reply"), { target: { value: "retry" } });
+
+    expect(onDismissReplyError).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders a failed-to-send label on a message with deliveryStatus=failed", () => {
+    renderOverlay({
+      messages: [
+        {
+          id: "m-1",
+          messageId: "c-1",
+          content: "Hi there",
+          sentAt: "2026-05-01T00:00:00Z",
+          isGuest: false,
+          senderName: "Will",
+          deliveryStatus: "failed",
+        },
+      ],
+    });
+
+    expect(screen.getByText("Failed to send")).toBeInTheDocument();
+  });
+
+  it("does not render a failed-to-send label on a normally sent message", () => {
+    renderOverlay({
+      messages: [
+        {
+          id: "m-1",
+          messageId: "c-1",
+          content: "Hi there",
+          sentAt: "2026-05-01T00:00:00Z",
+          isGuest: false,
+          senderName: "Will",
+          deliveryStatus: "sent",
+        },
+      ],
+    });
+
+    expect(screen.queryByText("Failed to send")).not.toBeInTheDocument();
+  });
 });

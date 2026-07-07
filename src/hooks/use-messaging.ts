@@ -2,12 +2,14 @@
 
 import { useCallback, useState } from "react";
 
+import { ApiError } from "@/lib/api-client";
 import {
   useMessagesAPI,
   useMessageThreadAPI,
   useSendMessageAPI,
   useUpdateConversationStatusAPI,
 } from "@/lib/api-hooks/messaging-api";
+import { useAppStore } from "@/stores/app-store";
 import type { Message, MessageStatus } from "@/types/message";
 
 export function useMessages(
@@ -36,8 +38,13 @@ export function useMessageThread(messageId: string | null) {
 
 export function useMessageActions() {
   const [localUpdates, setLocalUpdates] = useState<Record<string, Partial<Message>>>({});
+  // Keyed by conversationId: only one thread's compose box is visible at a
+  // time, but keying by id keeps a stale error from bleeding into a
+  // different conversation if the host switches threads mid-failure.
+  const [replyErrors, setReplyErrors] = useState<Record<string, string>>({});
   const sendMessageMutation = useSendMessageAPI();
   const updateStatusMutation = useUpdateConversationStatusAPI();
+  const addToast = useAppStore((s) => s.addToast);
 
   const markAsRead = useCallback(
     (id: string) => {
@@ -75,10 +82,39 @@ export function useMessageActions() {
 
   const sendReply = useCallback(
     (conversationId: string, content: string) => {
-      sendMessageMutation.mutate({ conversationId, content });
+      setReplyErrors((prev) => {
+        if (!(conversationId in prev)) return prev;
+        const next = { ...prev };
+        delete next[conversationId];
+        return next;
+      });
+      sendMessageMutation.mutate(
+        { conversationId, content },
+        {
+          onError: (err) => {
+            const message =
+              err instanceof ApiError
+                ? err.message
+                : err instanceof Error
+                  ? err.message
+                  : "Failed to send message";
+            setReplyErrors((prev) => ({ ...prev, [conversationId]: message }));
+            addToast({ type: "error", message });
+          },
+        },
+      );
     },
-    [sendMessageMutation],
+    [sendMessageMutation, addToast],
   );
+
+  const clearReplyError = useCallback((conversationId: string) => {
+    setReplyErrors((prev) => {
+      if (!(conversationId in prev)) return prev;
+      const next = { ...prev };
+      delete next[conversationId];
+      return next;
+    });
+  }, []);
 
   return {
     markAsRead,
@@ -86,5 +122,7 @@ export function useMessageActions() {
     archive,
     sendReply,
     localUpdates,
+    replyErrors,
+    clearReplyError,
   };
 }

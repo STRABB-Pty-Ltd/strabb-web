@@ -24,6 +24,8 @@ interface ThreadOverlayProps {
   onFlag: () => void;
   onArchive: () => void;
   onConvertTicket: () => void;
+  replyError?: string | null;
+  onDismissReplyError?: () => void;
 }
 
 const channelColors: Record<string, string> = {
@@ -48,6 +50,8 @@ export function ThreadOverlay({
   onFlag,
   onArchive,
   onConvertTicket,
+  replyError,
+  onDismissReplyError,
 }: ThreadOverlayProps) {
   const [compose, setCompose] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
@@ -165,9 +169,19 @@ export function ThreadOverlay({
               >
                 <p className="text-body font-medium opacity-70">{msg.senderName}</p>
                 <p className="text-body">{msg.content}</p>
-                <p className="mt-xs text-body opacity-50">
-                  {format(new Date(msg.sentAt), "d MMM, HH:mm")}
-                </p>
+                <div className="mt-xs gap-xs flex items-center">
+                  <p className="text-body opacity-50">
+                    {format(new Date(msg.sentAt), "d MMM, HH:mm")}
+                  </p>
+                  {msg.deliveryStatus === "failed" && (
+                    <p
+                      className="text-body font-medium"
+                      style={{ color: "var(--status-danger)" }}
+                    >
+                      Failed to send
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -205,28 +219,35 @@ export function ThreadOverlay({
         </div>
 
         {/* Compose area */}
-        <div
-          className="gap-base px-sm py-sm flex border-t"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <textarea
-            value={compose}
-            onChange={(e) => setCompose(e.target.value)}
-            placeholder="Type a message..."
-            aria-label="Compose reply"
-            className="p-base text-body flex-1 resize-none rounded-lg border"
-            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-            rows={2}
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            aria-label="Send reply"
-            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
-            <Send size={18} aria-hidden="true" />
-          </button>
+        <div className="px-sm py-sm border-t" style={{ borderColor: "var(--border)" }}>
+          {replyError && (
+            <p className="mb-xs text-body" style={{ color: "var(--status-danger)" }} role="alert">
+              {replyError}
+            </p>
+          )}
+          <div className="gap-base flex">
+            <textarea
+              value={compose}
+              onChange={(e) => {
+                setCompose(e.target.value);
+                onDismissReplyError?.();
+              }}
+              placeholder="Type a message..."
+              aria-label="Compose reply"
+              className="p-base text-body flex-1 resize-none rounded-lg border"
+              style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
+              rows={2}
+            />
+            <button
+              type="button"
+              onClick={handleSend}
+              aria-label="Send reply"
+              className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+            >
+              <Send size={18} aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </div>
     </>
