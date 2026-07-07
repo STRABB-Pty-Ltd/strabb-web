@@ -41,7 +41,6 @@ function setup(
   membersMock.mockReturnValue({ data: { data: cleaners }, isLoading: false });
   settingsFormMock.mockReturnValue({
     values: {
-      defaultDuration: "2",
       autoAssign: false,
       defaultCleanerId: "",
       defaultCleaner: "",
