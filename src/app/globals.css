@@ -29,6 +29,11 @@
   --channel-booking: #003580;
   --channel-vrbo: #3b5998;
   --channel-direct: #6b7280;
+  /* Generic OTA channel (bookings/messages from an aggregator that is not one
+     of the named brands). Neutral slate, deliberately distinct from
+     channel-direct's mid-grey. Dark enough for --text-on-color (off-white) to
+     clear AA on top. Placeholder hex pending Will's design pass (08-07-2026). */
+  --channel-ota: #475569;
 
   /* Tinted backgrounds for trial banners, connect pills, integration success
      notes; coloured panel bg without committing the whole surface to the

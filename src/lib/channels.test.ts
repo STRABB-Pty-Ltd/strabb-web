@@ -8,6 +8,7 @@ describe("formatChannel", () => {
     expect(formatChannel("booking_com")).toBe("Booking.com");
     expect(formatChannel("vrbo")).toBe("VRBO");
     expect(formatChannel("direct")).toBe("Direct");
+    expect(formatChannel("ota")).toBe("OTA");
   });
 
   it("falls back to the raw value for unknown channels", () => {
@@ -17,7 +18,13 @@ describe("formatChannel", () => {
 });
 
 describe("CHANNEL_LABELS", () => {
-  it("has the four canonical channel keys", () => {
-    expect(Object.keys(CHANNEL_LABELS).sort()).toEqual(["airbnb", "booking_com", "direct", "vrbo"]);
+  it("has the canonical channel keys including the generic ota fallback", () => {
+    expect(Object.keys(CHANNEL_LABELS).sort()).toEqual([
+      "airbnb",
+      "booking_com",
+      "direct",
+      "ota",
+      "vrbo",
+    ]);
   });
 });

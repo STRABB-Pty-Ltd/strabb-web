@@ -3,6 +3,7 @@ export const CHANNEL_LABELS: Record<string, string> = {
   booking_com: "Booking.com",
   vrbo: "VRBO",
   direct: "Direct",
+  ota: "OTA",
 };
 
 export function formatChannel(channel: string): string {
