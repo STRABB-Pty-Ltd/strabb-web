@@ -10,31 +10,10 @@ import type {
 } from "@/types/auth";
 
 import { REFRESH_FAILURE_GRACE_MS, REFRESH_TOKEN_ERROR } from "./auth-constants";
-import { decodeJwtPayload, isFatalRefreshStatus, isTokenExpiringSoon } from "./auth-utils";
+import { FatalRefreshError, refreshAccessToken } from "./auth-refresh";
+import { decodeJwtPayload, isTokenExpiringSoon } from "./auth-utils";
 
 const API_URL = process.env.INTERNAL_API_URL ?? "http://localhost:8000";
-
-// The refresh token itself was rejected (revoked, rotated away, or the dev
-// DB was re-seeded). Distinct from transient failures (backend down, 5xx)
-// so a one-off hiccup never logs anyone out.
-class FatalRefreshError extends Error {}
-
-async function refreshAccessToken(refreshToken: string) {
-  const response = await fetch(`${API_URL}/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: refreshToken }),
-  });
-
-  if (!response.ok) {
-    if (isFatalRefreshStatus(response.status)) {
-      throw new FatalRefreshError(`Refresh rejected (${response.status})`);
-    }
-    throw new Error(`Refresh failed (${response.status})`);
-  }
-
-  return (await response.json()) as TokenPair;
-}
 
 async function fetchCurrentUser(accessToken: string): Promise<CurrentUser> {
   const response = await fetch(`${API_URL}/auth/me`, {
