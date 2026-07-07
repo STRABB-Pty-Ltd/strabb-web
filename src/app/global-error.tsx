@@ -51,7 +51,9 @@ export default function GlobalError({
             Try again
           </button>
           {error.digest && (
-            <p style={{ marginTop: 16, fontSize: 13, color: "#6b7280" }}>Reference: {error.digest}</p>
+            <p style={{ marginTop: 16, fontSize: 13, color: "#6b7280" }}>
+              Reference: {error.digest}
+            </p>
           )}
         </div>
       </body>
