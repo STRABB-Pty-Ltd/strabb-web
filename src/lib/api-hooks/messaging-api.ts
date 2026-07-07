@@ -130,16 +130,12 @@ export function useSendMessageAPI() {
   return useMutation({
     mutationFn: ({ conversationId, content }: { conversationId: string; content: string }) =>
       apiClient.post(`/conversations/${conversationId}/messages`, { body: content }),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["conversation-messages", variables.conversationId],
-      });
-    },
-    // The backend persists the message row (delivery_status="failed") and commits
-    // before raising 422/502, so the failed send is already in the thread on the
-    // server - refetch here too or it stays invisible until some other action
-    // happens to invalidate the query.
-    onError: (_error, variables) => {
+    // Invalidate on both outcomes: the backend persists the message row
+    // (delivery_status="failed" on error) and commits before raising 422/502,
+    // so the failed send is already in the thread on the server either way -
+    // refetch here or it stays invisible until some other action happens to
+    // invalidate the query.
+    onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["conversation-messages", variables.conversationId],
       });
