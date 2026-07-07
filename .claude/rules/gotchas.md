@@ -45,3 +45,15 @@ being true. One bullet per trap, specific enough to act on.
 - `src/lib/mock-team.ts` is still live - team pages render mock data, not
   API data. Do not build on it as if it were real; the provisioning work
   replaces it.
+
+## Formatting (Windows checkouts)
+
+- On a Windows checkout with `core.autocrlf=true`, `prettier --check .`
+  false-positives on nearly every file (line endings, not content) - CI
+  runs on Linux and never sees this. If `prettier --check` on the whole
+  repo flags hundreds of files, that is the CRLF artifact, not real
+  formatting debt; do not use "main already fails this too" as proof a
+  flagged file in your diff is clean. To find the real difference, run
+  `prettier --write <file>` then `git diff` (git normalizes line endings,
+  so only genuine content changes show) - that is what CI's gate actually
+  sees. Do this before calling formatting verified, not after CI fails.
