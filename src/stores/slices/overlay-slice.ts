@@ -22,6 +22,12 @@ export interface OverlayState {
   threadOverlay: { open: boolean; messageId: string } | null;
   sharePopup: { open: boolean };
   shoppingListPopup: { open: boolean };
+  /** Create/edit drawer for availability blocks. blockId null = create mode. */
+  availabilityBlockDrawer: { open: boolean; blockId: string | null } | null;
+  /** Booking create drawer opened from page-level entry points (bookings
+   *  header, calendar sidebar). listingId null = drawer shows a listing
+   *  picker step. Edit mode stays local to booking-detail-drawer. */
+  bookingFormOverlay: { open: boolean; listingId: string | null } | null;
   toasts: Toast[];
 }
 
@@ -41,6 +47,10 @@ export interface OverlaySlice extends OverlayState {
   closeSharePopup: () => void;
   openShoppingListPopup: () => void;
   closeShoppingListPopup: () => void;
+  openAvailabilityBlockDrawer: (blockId?: string) => void;
+  closeAvailabilityBlockDrawer: () => void;
+  openBookingFormOverlay: (listingId?: string) => void;
+  closeBookingFormOverlay: () => void;
   addToast: (toast: Omit<Toast, "id">) => void;
   removeToast: (id: string) => void;
 }
@@ -56,6 +66,8 @@ export const createOverlaySlice: StateCreator<OverlaySlice, [], [], OverlaySlice
   threadOverlay: null,
   sharePopup: { open: false },
   shoppingListPopup: { open: false },
+  availabilityBlockDrawer: null,
+  bookingFormOverlay: null,
   toasts: [],
   openTimeframePopup: (opts = {}) =>
     set({
@@ -76,6 +88,12 @@ export const createOverlaySlice: StateCreator<OverlaySlice, [], [], OverlaySlice
   closeSharePopup: () => set({ sharePopup: { open: false } }),
   openShoppingListPopup: () => set({ shoppingListPopup: { open: true } }),
   closeShoppingListPopup: () => set({ shoppingListPopup: { open: false } }),
+  openAvailabilityBlockDrawer: (blockId) =>
+    set({ availabilityBlockDrawer: { open: true, blockId: blockId ?? null } }),
+  closeAvailabilityBlockDrawer: () => set({ availabilityBlockDrawer: null }),
+  openBookingFormOverlay: (listingId) =>
+    set({ bookingFormOverlay: { open: true, listingId: listingId ?? null } }),
+  closeBookingFormOverlay: () => set({ bookingFormOverlay: null }),
   addToast: (toast) => {
     const id = `toast-${++toastCounter}`;
     set({ toasts: [...get().toasts, { ...toast, id }] });

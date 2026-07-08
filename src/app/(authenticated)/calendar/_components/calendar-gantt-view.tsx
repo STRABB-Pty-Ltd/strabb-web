@@ -1,6 +1,6 @@
 "use client";
 
-import { BrushCleaning } from "lucide-react";
+import { BrushCleaning, CalendarOff } from "lucide-react";
 
 import { GanttView } from "@/components/views/gantt-view";
 import type { CalendarEvent } from "@/hooks/use-calendar";
@@ -14,6 +14,7 @@ const typeColors: Record<string, string> = {
   cleaning: "var(--status-success)",
   ticket: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
+  availability_block: "var(--status-warning-tint)",
 };
 
 // Cleaning chips read their status, mirroring calendar-month-view + cleaning list.
@@ -36,6 +37,7 @@ const cleaningStatusFgColors: Record<string, string> = {
 const typeTextColors: Record<string, string> = {
   booking: "var(--highlight-10)",
   vacancy: "var(--highlight-10)",
+  availability_block: "var(--status-warning)",
 };
 
 // Channel accent stripe colours for booking bars. Same palette and meaning
@@ -57,6 +59,7 @@ type GanttEvent = CalendarEvent & { isImplicitBlock?: boolean };
 
 export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
+  const openAvailabilityBlockDrawer = useAppStore((s) => s.openAvailabilityBlockDrawer);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const windowSize = useAppStore((s) => s.calendar.windowSize);
   const anchor = useAppStore((s) => s.calendar.anchor);
@@ -255,6 +258,8 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       }}
       getIcon={(item) => {
         if (item.isImplicitBlock) return undefined;
+        if (item.type === "availability_block")
+          return <CalendarOff size={13} aria-hidden="true" />;
         return item.type === "cleaning" ? (
           <BrushCleaning size={13} aria-hidden="true" />
         ) : undefined;
@@ -269,7 +274,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       // pattern (same 75/25 inset) so the implicit-block shading tracks
       // exactly when the related row is actually unavailable.
       getPartialDay={(item) => {
-        if (item.type === "booking" || item.isImplicitBlock)
+        if (item.type === "booking" || item.type === "availability_block" || item.isImplicitBlock)
           return { insetStart: 0.75, insetEnd: 0.25 };
         if (item.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.75 };
         if (item.type === "vacancy") return { insetStart: 0.25, insetEnd: 0.75 };
@@ -284,6 +289,10 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       dateRange={dateRange}
       onItemClick={(item) => {
         if (item.isImplicitBlock) return;
+        if (item.type === "availability_block") {
+          openAvailabilityBlockDrawer(item.id);
+          return;
+        }
         openDrillDownPanel(item.type, item.id);
       }}
     />

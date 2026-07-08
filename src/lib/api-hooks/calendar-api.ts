@@ -3,8 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
+import { blockReasonLabel } from "@/lib/schemas/availability-block";
 
-export type CalendarEventType = "booking" | "vacancy" | "ticket" | "cleaning";
+export type CalendarEventType =
+  | "booking"
+  | "vacancy"
+  | "ticket"
+  | "cleaning"
+  | "availability_block";
 
 export interface CalendarEvent {
   id: string;
@@ -44,12 +50,16 @@ interface RawCalendarEvent {
 }
 
 function mapCalendarEvent(raw: RawCalendarEvent): CalendarEvent {
+  // Availability blocks carry their reason enum as the title; show the
+  // human label ("Owner stay"), not the wire value ("owner_block").
+  const label =
+    raw.entityType === "availability_block" ? blockReasonLabel(raw.title) : raw.title;
   return {
     id: raw.id,
     type: raw.entityType as CalendarEvent["type"],
     listingId: raw.listingId,
     listingName: raw.listingName,
-    label: raw.title,
+    label,
     start: raw.start,
     end: raw.end,
     color: raw.color,
@@ -73,7 +83,9 @@ export function useCalendarEventsAPI(
   const isOverview = submenuFilters.length === 0 || submenuFilters.includes("overview");
   if (isOverview) {
     // Show everything except vacancy unless explicitly selected
-    ["booking", "cleaning", "ticket"].forEach((t) => params.append("types", t));
+    ["booking", "cleaning", "ticket", "availability_block"].forEach((t) =>
+      params.append("types", t),
+    );
   } else {
     // Map submenu chip IDs (plural) to API entity types (singular)
     const chipToType: Record<string, string> = {
@@ -90,6 +102,11 @@ export function useCalendarEventsAPI(
     // ticket in the context of the booking it relates to.
     if (submenuFilters.includes("ticket")) {
       params.append("types", "booking");
+    }
+    // Blocked dates belong wherever bookings show: both mean "this night
+    // is not sellable" to a host scanning the calendar.
+    if (submenuFilters.includes("bookings")) {
+      params.append("types", "availability_block");
     }
   }
   if (startDate) params.set("start_date", startDate);
