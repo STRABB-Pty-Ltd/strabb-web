@@ -130,6 +130,7 @@ export function useSendMessageAPI() {
   return useMutation({
     mutationFn: ({ conversationId, content }: { conversationId: string; content: string }) =>
       apiClient.post(`/conversations/${conversationId}/messages`, { body: content }),
+    meta: { suppressGlobalError: true },
     // Invalidate on both outcomes: the backend persists the message row
     // (delivery_status="failed" on error) and commits before raising 422/502,
     // so the failed send is already in the thread on the server either way -

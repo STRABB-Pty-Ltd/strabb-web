@@ -48,6 +48,7 @@ export function useRequestPhoneVerification() {
         phoneNumber,
       });
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PHONE_KEY });
     },
@@ -66,6 +67,7 @@ export function useConfirmPhoneVerification() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PHONE_KEY });
       queryClient.invalidateQueries({ queryKey: SMS_USAGE_KEY });
@@ -81,6 +83,7 @@ export function useClearPhone() {
     mutationFn: async () => {
       await apiClient.delete<{ data: { cleared: boolean } }>("/users/me/phone");
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PHONE_KEY });
       queryClient.invalidateQueries({ queryKey: SMS_USAGE_KEY });

@@ -150,6 +150,7 @@ export function useLinkTicketToClean() {
   return useMutation({
     mutationFn: ({ cleanId, ticketId }: { cleanId: string; ticketId: string }) =>
       apiClient.patch(`/cleaning-tasks/${cleanId}/link-ticket`, { ticket_id: ticketId }),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
@@ -163,6 +164,7 @@ export function useUnlinkTicketFromClean() {
 
   return useMutation({
     mutationFn: (cleanId: string) => apiClient.delete(`/cleaning-tasks/${cleanId}/link-ticket`),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["tickets"] });

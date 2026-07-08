@@ -78,6 +78,7 @@ export function useTransitionTask(id: string) {
 
   return useMutation<PortalTask, unknown, TransitionInput, TransitionContext>({
     mutationFn: (input) => apiClient.post<PortalTask>(`/portal/tasks/${id}/transition`, input),
+    meta: { suppressGlobalError: true },
     onMutate: async (input) => {
       // Optimistically advance the cached task so the button state and status
       // chip update instantly, before the round-trip completes.
@@ -129,6 +130,7 @@ export function useUpdateWeeklyAvailability() {
     // Replace-set: the full weekly list is sent; an empty array clears it.
     mutationFn: (weekly: WeeklyAvailability[]) =>
       apiClient.put("/portal/availability/weekly", { weekly }),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PORTAL_AVAILABILITY_KEY });
     },
@@ -141,6 +143,7 @@ export function useAddTimeOff() {
 
   return useMutation({
     mutationFn: (data: TimeOffInput) => apiClient.post("/portal/availability/time-off", data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PORTAL_AVAILABILITY_KEY });
     },
@@ -153,6 +156,7 @@ export function useDeleteTimeOff() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.delete(`/portal/availability/time-off/${id}`),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PORTAL_AVAILABILITY_KEY });
     },

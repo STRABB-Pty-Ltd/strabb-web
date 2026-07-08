@@ -82,6 +82,7 @@ export function useCreateTicketAPI() {
       }
       return { ticket: created, attemptedAutoLink, linkedCleanId };
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
@@ -114,6 +115,7 @@ export function useLinkCleanToTicket() {
           auto_link_to_next: autoLinkToNext,
         },
       ),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
@@ -127,6 +129,7 @@ export function useUnlinkCleanFromTicket() {
 
   return useMutation({
     mutationFn: (ticketId: string) => apiClient.delete(`/tickets/${ticketId}/link-clean`),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["cleaning-tasks"] });
@@ -141,6 +144,7 @@ export function useUpdateTicketAPI() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Ticket> }) =>
       apiClient.put(`/tickets/${id}`, data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
@@ -157,6 +161,7 @@ export function useDeleteTicketAPI() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.delete(`/tickets/${id}`),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });

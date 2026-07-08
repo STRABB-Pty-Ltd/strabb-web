@@ -92,4 +92,23 @@ describe("createQueryClient mutation error toast", () => {
     await observer.mutate();
     expect(useAppStore.getState().toasts).toHaveLength(0);
   });
+
+  it("settings-style opt-out with a local error toast yields exactly one toast", async () => {
+    // Regression: settings save owns its error UX (meta opt-out + bespoke
+    // toast). The global handler must stay silent so the user sees ONE
+    // message, not two.
+    const client = createQueryClient();
+    const observer = new MutationObserver(client, {
+      mutationFn: async () => {
+        throw new ApiError(500, "Save failed");
+      },
+      meta: { suppressGlobalError: true },
+    });
+    await observer.mutate().catch(() => {
+      useAppStore.getState().addToast({ type: "error", message: "Failed to save settings" });
+    });
+    const toasts = useAppStore.getState().toasts;
+    expect(toasts).toHaveLength(1);
+    expect(toasts[0].message).toBe("Failed to save settings");
+  });
 });

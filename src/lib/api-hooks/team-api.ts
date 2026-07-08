@@ -20,6 +20,7 @@ export function useCreateInvite() {
 
   return useMutation({
     mutationFn: (data: InviteFormData) => apiClient.post("/invites", data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_INVITES_KEY });
     },
@@ -32,6 +33,7 @@ export function useRevokeInvite() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.post(`/invites/${id}/revoke`, {}),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_INVITES_KEY });
     },
@@ -44,6 +46,7 @@ export function useResendInvite() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.post(`/invites/${id}/resend`, {}),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_INVITES_KEY });
     },
@@ -57,6 +60,7 @@ export function useUpdateUserRole() {
   return useMutation({
     mutationFn: ({ id, role }: { id: string; role: TeamRole }) =>
       apiClient.patch(`/users/${id}`, { role }),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_USERS_KEY });
     },
@@ -73,6 +77,7 @@ export function useUpdateUserHourlyRate() {
   return useMutation({
     mutationFn: ({ id, hourlyRate }: { id: string; hourlyRate: number }) =>
       apiClient.patch(`/users/${id}`, { hourlyRate }),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_USERS_KEY });
     },
@@ -85,6 +90,7 @@ export function useDeactivateUser() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.post(`/users/${id}/deactivate`, {}),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_USERS_KEY });
     },
@@ -97,6 +103,7 @@ export function useReactivateUser() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.post(`/users/${id}/reactivate`, {}),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_USERS_KEY });
     },

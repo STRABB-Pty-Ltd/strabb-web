@@ -296,6 +296,7 @@ export function useCreateSavedReportAPI() {
 
   return useMutation({
     mutationFn: (data: SavedReportPayload) => apiClient.post("/saved-reports", data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["saved-reports"] });
     },
@@ -321,6 +322,7 @@ export function useDeleteSavedReportAPI() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.delete(`/saved-reports/${id}`),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["saved-reports"] });
     },

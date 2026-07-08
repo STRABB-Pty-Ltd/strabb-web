@@ -62,6 +62,7 @@ export function useUpdateCleaningTask() {
       );
       return keysToCamel<CleaningTaskResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASKS_KEY });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
@@ -84,6 +85,7 @@ export function useCompleteCleaningTask() {
       );
       return keysToCamel<CleaningTaskResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASKS_KEY });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
@@ -106,6 +108,7 @@ export function useResendNotification() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASKS_KEY });
       queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
