@@ -37,4 +37,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
+# Bind to all interfaces. The Next standalone server binds to $HOSTNAME,
+# which Docker sets to the container id, so it would otherwise NOT listen on
+# localhost - breaking the in-container HEALTHCHECK below (and any localhost
+# uptime probe). 0.0.0.0 also covers the container IP the platform proxies to.
+ENV HOSTNAME=0.0.0.0
+# Liveness probe for Docker/Coolify (F.5). Hits the /api/health route via
+# node's fetch (no curl in the image); a non-ok status or connection error
+# exits non-zero and marks the container unhealthy. Azure Container Apps
+# ignores Docker HEALTHCHECK and uses its own probes, so this pays off on
+# the qa Docker host.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD node -e "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "server.js"]
