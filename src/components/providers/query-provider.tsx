@@ -38,13 +38,17 @@ export function getErrorMessage(error: unknown): string {
 }
 
 /**
- * Query retry predicate. Never retry an auth/authorization failure: a 401 is
- * fatal (session dead) and a 403 is deterministic (role-gated), so retrying just
- * burns API calls and delays the quiet empty state. Everything else keeps the
- * previous single-retry behaviour (one retry, i.e. two attempts total).
+ * Query retry predicate. Never retry an auth/authorization/billing failure: a
+ * 401 is fatal (session dead), a 403 is deterministic (role-gated), and a 402
+ * is deterministic (subscription lapsed, F.10) - retrying just burns API calls
+ * and delays the quiet empty state / the billing banner. Everything else keeps
+ * the previous single-retry behaviour (one retry, i.e. two attempts total).
  */
 export function shouldRetryQuery(failureCount: number, error: unknown): boolean {
-  if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
+  if (
+    error instanceof ApiError &&
+    (error.status === 401 || error.status === 402 || error.status === 403)
+  ) {
     return false;
   }
   return failureCount < 1;
