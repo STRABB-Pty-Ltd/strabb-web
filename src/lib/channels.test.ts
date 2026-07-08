@@ -10,6 +10,10 @@ describe("formatChannel", () => {
     expect(formatChannel("direct")).toBe("Direct");
   });
 
+  it("maps the Channex ingest fallback channel to OTA", () => {
+    expect(formatChannel("ota")).toBe("OTA");
+  });
+
   it("falls back to the raw value for unknown channels", () => {
     expect(formatChannel("unknown_channel")).toBe("unknown_channel");
     expect(formatChannel("")).toBe("");
@@ -17,7 +21,13 @@ describe("formatChannel", () => {
 });
 
 describe("CHANNEL_LABELS", () => {
-  it("has the four canonical channel keys", () => {
-    expect(Object.keys(CHANNEL_LABELS).sort()).toEqual(["airbnb", "booking_com", "direct", "vrbo"]);
+  it("has the five canonical channel keys", () => {
+    expect(Object.keys(CHANNEL_LABELS).sort()).toEqual([
+      "airbnb",
+      "booking_com",
+      "direct",
+      "ota",
+      "vrbo",
+    ]);
   });
 });

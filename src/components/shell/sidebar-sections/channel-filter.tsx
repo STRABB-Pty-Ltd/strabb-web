@@ -7,6 +7,7 @@ const channels = [
   { id: "booking_com", label: "Booking.com", color: "var(--channel-booking)" },
   { id: "vrbo", label: "VRBO", color: "var(--channel-vrbo)" },
   { id: "direct", label: "Direct", color: "var(--channel-direct)" },
+  { id: "ota", label: "OTA", color: "var(--channel-ota)" },
 ];
 
 export function ChannelFilter() {

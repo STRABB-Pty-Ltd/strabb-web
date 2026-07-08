@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
 
+import { formatChannel } from "@/lib/channels";
 import type { Message, ThreadMessage } from "@/types/message";
 
 const channelColors: Record<string, string> = {
@@ -11,6 +12,7 @@ const channelColors: Record<string, string> = {
   booking_com: "var(--channel-booking)",
   vrbo: "var(--channel-vrbo)",
   direct: "var(--channel-direct)",
+  ota: "var(--channel-ota)",
 };
 
 interface MessageThreadProps {
@@ -59,7 +61,7 @@ export function MessageThread({
               backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
             }}
           >
-            {message.channel.replace("_", ".")}
+            {formatChannel(message.channel)}
           </span>
         </div>
       </div>
