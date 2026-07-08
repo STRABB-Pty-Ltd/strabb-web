@@ -98,8 +98,7 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
           : undefined
       }
       getEventIcon={(ev) => {
-        if (ev.type === "availability_block")
-          return <CalendarOff size={11} aria-hidden="true" />;
+        if (ev.type === "availability_block") return <CalendarOff size={11} aria-hidden="true" />;
         return ev.type === "cleaning" ? <BrushCleaning size={11} aria-hidden="true" /> : undefined;
       }}
       getEventInset={(ev) => {

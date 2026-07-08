@@ -52,8 +52,7 @@ interface RawCalendarEvent {
 function mapCalendarEvent(raw: RawCalendarEvent): CalendarEvent {
   // Availability blocks carry their reason enum as the title; show the
   // human label ("Owner stay"), not the wire value ("owner_block").
-  const label =
-    raw.entityType === "availability_block" ? blockReasonLabel(raw.title) : raw.title;
+  const label = raw.entityType === "availability_block" ? blockReasonLabel(raw.title) : raw.title;
   return {
     id: raw.id,
     type: raw.entityType as CalendarEvent["type"],

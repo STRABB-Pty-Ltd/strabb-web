@@ -258,8 +258,7 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
       }}
       getIcon={(item) => {
         if (item.isImplicitBlock) return undefined;
-        if (item.type === "availability_block")
-          return <CalendarOff size={13} aria-hidden="true" />;
+        if (item.type === "availability_block") return <CalendarOff size={13} aria-hidden="true" />;
         return item.type === "cleaning" ? (
           <BrushCleaning size={13} aria-hidden="true" />
         ) : undefined;

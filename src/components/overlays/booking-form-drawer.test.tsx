@@ -141,7 +141,15 @@ describe("BookingFormDrawer", () => {
 
   it("shows the overlap advisory and still allows saving when the dates conflict with an existing booking", async () => {
     bookingsMock.mockReturnValue({
-      data: { data: [makeBooking({ id: "book-overlap", checkIn: "2026-08-10T00:00:00Z", checkOut: "2026-08-13T00:00:00Z" })] },
+      data: {
+        data: [
+          makeBooking({
+            id: "book-overlap",
+            checkIn: "2026-08-10T00:00:00Z",
+            checkOut: "2026-08-13T00:00:00Z",
+          }),
+        ],
+      },
       isLoading: false,
     });
     render(
@@ -163,7 +171,15 @@ describe("BookingFormDrawer", () => {
 
   it("does not show the overlap advisory when the dates do not conflict (false-pass guard)", () => {
     bookingsMock.mockReturnValue({
-      data: { data: [makeBooking({ id: "book-overlap", checkIn: "2026-08-10T00:00:00Z", checkOut: "2026-08-13T00:00:00Z" })] },
+      data: {
+        data: [
+          makeBooking({
+            id: "book-overlap",
+            checkIn: "2026-08-10T00:00:00Z",
+            checkOut: "2026-08-13T00:00:00Z",
+          }),
+        ],
+      },
       isLoading: false,
     });
     render(
@@ -185,7 +201,11 @@ describe("BookingFormDrawer", () => {
     const editingBooking = makeBooking({ id: "book-edit", status: "confirmed" });
 
     render(
-      <BookingFormDrawer open onClose={onCloseMock} mode={{ kind: "edit", booking: editingBooking }} />,
+      <BookingFormDrawer
+        open
+        onClose={onCloseMock}
+        mode={{ kind: "edit", booking: editingBooking }}
+      />,
     );
 
     await userEvent.click(screen.getByRole("button", { name: "Cancel booking" }));

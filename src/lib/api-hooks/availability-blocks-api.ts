@@ -20,7 +20,12 @@ export function useAvailabilityBlocks(filters: AvailabilityBlockFilters = {}) {
   const qs = params.toString();
 
   return useQuery<AvailabilityBlockResponse[]>({
-    queryKey: ["availability-blocks", filters.propertyId ?? "", filters.from ?? "", filters.to ?? ""],
+    queryKey: [
+      "availability-blocks",
+      filters.propertyId ?? "",
+      filters.from ?? "",
+      filters.to ?? "",
+    ],
     queryFn: async () => {
       const response = await apiClient.get<{ data: AvailabilityBlockResponse[] }>(
         `/availability-blocks${qs ? `?${qs}` : ""}`,
