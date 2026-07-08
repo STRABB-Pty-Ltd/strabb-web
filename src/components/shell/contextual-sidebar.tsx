@@ -8,6 +8,7 @@ import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
 import { ActionsSection } from "./sidebar-sections/actions-section";
+import { CalendarActionsSection } from "./sidebar-sections/calendar-actions-section";
 import { ChannelFilter } from "./sidebar-sections/channel-filter";
 import { ListingFilterTree } from "./sidebar-sections/listing-filter-tree";
 import { SettingsNavSection } from "./sidebar-sections/settings-nav-section";
@@ -15,6 +16,7 @@ import { TimeframeSelector } from "./sidebar-sections/timeframe-selector";
 import { ViewSwitcher } from "./sidebar-sections/view-switcher";
 
 const showViewSwitcher = (p: PageId) => p === "calendar";
+const showCalendarActions = (p: PageId) => p === "calendar";
 const showListingFilter = (p: PageId) => p !== "settings";
 const showTimeframe = (p: PageId) =>
   p === "dashboard" || p === "calendar" || p === "operations" || p === "reporting";
@@ -67,6 +69,7 @@ export function ContextualSidebar() {
       {showListingFilter(currentPage) && <ListingFilterTree />}
       {showTimeframe(currentPage) && <TimeframeSelector page={currentPage} />}
       {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
+      {showCalendarActions(currentPage) && <CalendarActionsSection />}
       {showChannelFilter(currentPage) && <ChannelFilter />}
 
       {showShoppingList(currentPage) && (

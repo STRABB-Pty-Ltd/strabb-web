@@ -26,6 +26,7 @@ const eventTypeLabels: Record<string, string> = {
   cleaning: "Clean",
   ticket: "Ticket",
   vacancy: "Vacancy",
+  availability_block: "Blocked",
 };
 
 // Same status palette as the cleaning/ticket list views and gantt cleaning bars.
@@ -159,6 +160,7 @@ export function CalendarListView({ events }: CalendarListViewProps) {
   const listSort = useAppStore((s) => s.calendar.listSort);
   const setCalendarListSort = useAppStore((s) => s.setCalendarListSort);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
+  const openAvailabilityBlockDrawer = useAppStore((s) => s.openAvailabilityBlockDrawer);
 
   const [sortKey, sortDir] = listSort.includes("_")
     ? [
@@ -181,8 +183,14 @@ export function CalendarListView({ events }: CalendarListViewProps) {
       sortKey={sortKey}
       sortDirection={sortDir}
       onSort={handleSort}
-      onRowClick={(ev) => openDrillDownPanel(ev.type, ev.id)}
-      getRowId={(ev) => ev.id}
+      onRowClick={(ev) => {
+        if (ev.type === "availability_block") {
+          openAvailabilityBlockDrawer(ev.id);
+          return;
+        }
+        openDrillDownPanel(ev.type, ev.id);
+      }}
+      getRowId={(ev) => `${ev.id}:${ev.listingId}`}
     />
   );
 }

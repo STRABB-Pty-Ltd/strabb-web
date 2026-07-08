@@ -35,6 +35,7 @@ export function useUpdateSubdomain() {
       });
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: (data) => {
       queryClient.setQueryData(["tenant-me"], data);
     },

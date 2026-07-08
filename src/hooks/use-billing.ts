@@ -32,6 +32,7 @@ export function useStartTrial() {
     mutationFn: async () => {
       await apiClient.post("/billing/start-trial", {});
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BILLING_KEY });
     },
@@ -48,6 +49,7 @@ export function useCreateCheckout() {
       }>("/billing/checkout", {});
       return response.data.checkout_url;
     },
+    meta: { suppressGlobalError: true },
   });
 }
 
@@ -61,5 +63,6 @@ export function useCreatePortal() {
       }>("/billing/portal", {});
       return response.data.portal_url;
     },
+    meta: { suppressGlobalError: true },
   });
 }
