@@ -24,11 +24,14 @@
      contrast. */
   --text-secondary: color-mix(in srgb, var(--highlight-10) 70%, var(--surface-60));
 
-  /* Channel colors - Airbnb/Booking/VRBO keep brand identity; Direct goes neutral (no amber) */
+  /* Channel colors - Airbnb/Booking/VRBO keep brand identity; Direct goes neutral (no amber).
+     OTA (Channex ingest fallback for an unmapped provider) gets its own violet so it never
+     resolves to Direct's grey - a colour, not just a label, is the whole point of this token. */
   --channel-airbnb: #ff5a5f;
   --channel-booking: #003580;
   --channel-vrbo: #3b5998;
   --channel-direct: #6b7280;
+  --channel-ota: #7c3aed;
 
   /* Tinted backgrounds for trial banners, connect pills, integration success
      notes; coloured panel bg without committing the whole surface to the
