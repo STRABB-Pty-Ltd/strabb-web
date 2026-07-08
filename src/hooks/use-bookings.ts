@@ -14,7 +14,12 @@ import type {
 
 const BOOKINGS_KEY = ["bookings"];
 
-export function useBookings(filters: BookingFilters = {}, page = 1, pageSize = 20) {
+export function useBookings(
+  filters: BookingFilters = {},
+  page = 1,
+  pageSize = 20,
+  options: { enabled?: boolean } = {},
+) {
   const params = new URLSearchParams({
     page: String(page),
     page_size: String(pageSize),
@@ -31,6 +36,7 @@ export function useBookings(filters: BookingFilters = {}, page = 1, pageSize = 2
 
   return useAuthenticatedQuery<BookingListResponse>(queryKey, `/bookings?${params.toString()}`, {
     select: (raw) => keysToCamel<BookingListResponse>(raw),
+    enabled: options.enabled,
   });
 }
 
@@ -70,6 +76,7 @@ export function useUpdateBookingNotes() {
       );
       return keysToCamel<BookingResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
     },
@@ -117,6 +124,7 @@ export function useCreateBooking() {
       const response = await apiClient.post<{ data: Record<string, unknown> }>("/bookings", data);
       return keysToCamel<BookingResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
     },
@@ -135,6 +143,7 @@ export function useUpdateBooking() {
       );
       return keysToCamel<BookingResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
     },
@@ -153,6 +162,7 @@ export function useDismissConflict() {
       );
       return keysToCamel<BookingResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
     },
