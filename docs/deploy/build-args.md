@@ -7,11 +7,11 @@ these cannot be set only at runtime: a runtime-only value falls back to
 (see `.claude/rules/gotchas.md`). Any change to these needs a rebuild, not a
 container restart.
 
-| Build arg | local (`.env.local`) | staging | production |
-| --- | --- | --- | --- |
-| `NEXTAUTH_URL` | `http://localhost:3100` | `https://staging.strabb.io` | `https://app.strabb.io` |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | `https://api.staging.strabb.io` | `https://api.strabb.io` |
-| `INTERNAL_API_URL` | `http://localhost:8000` | staging API Container Apps FQDN | production API Container Apps FQDN (`...wittyground-f9a24fce.australiaeast.azurecontainerapps.io`) |
+| Build arg             | local (`.env.local`)    | staging                         | production                                                                                         |
+| --------------------- | ----------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `NEXTAUTH_URL`        | `http://localhost:3100` | `https://staging.strabb.io`     | `https://app.strabb.io`                                                                            |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | `https://api.staging.strabb.io` | `https://api.strabb.io`                                                                            |
+| `INTERNAL_API_URL`    | `http://localhost:8000` | staging API Container Apps FQDN | production API Container Apps FQDN (`...wittyground-f9a24fce.australiaeast.azurecontainerapps.io`) |
 
 - `NEXTAUTH_SECRET` is **runtime-only** (passed as a Container App env var),
   never baked into the image.
