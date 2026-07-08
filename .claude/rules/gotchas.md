@@ -59,6 +59,7 @@ being true. One bullet per trap, specific enough to act on.
   sees. Do this before calling formatting verified, not after CI fails.
 
 ## Overlays / dialogs (added 08-07-2026, Phase E)
+
 - Anything portalled to document.body that is opened FROM inside a
   DrillDownPanel must (a) sit above Z.DRAWER=150 (the Dialog primitive
   now uses z-180/z-185, see src/lib/z-index.ts) and (b) be excluded from
