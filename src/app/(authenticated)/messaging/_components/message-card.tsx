@@ -11,6 +11,7 @@ const channelColors: Record<string, string> = {
   booking_com: "var(--channel-booking)",
   vrbo: "var(--channel-vrbo)",
   direct: "var(--channel-direct)",
+  ota: "var(--channel-ota)",
 };
 
 const priorityDot: Record<string, string> = {

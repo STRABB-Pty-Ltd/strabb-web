@@ -124,4 +124,13 @@ describe("ThreadOverlay actions", () => {
 
     expect(screen.queryByText("Failed to send")).not.toBeInTheDocument();
   });
+
+  it("renders the OTA label and colour for a Channex ingest-fallback conversation", () => {
+    renderOverlay({ channel: "ota" });
+
+    const chip = screen.getByText("OTA");
+    expect(chip).toBeInTheDocument();
+    expect(chip.style.backgroundColor).not.toBe("var(--channel-direct)");
+    expect(chip.style.backgroundColor).toBe("var(--channel-ota)");
+  });
 });
