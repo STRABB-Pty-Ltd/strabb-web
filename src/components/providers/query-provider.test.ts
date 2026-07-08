@@ -13,6 +13,11 @@ describe("shouldRetryQuery", () => {
     expect(shouldRetryQuery(0, new ApiError(401, "Unauthorized"))).toBe(false);
   });
 
+  it("never retries a 402 (subscription lapsed)", () => {
+    expect(shouldRetryQuery(0, new ApiError(402, "Subscription inactive"))).toBe(false);
+    expect(shouldRetryQuery(5, new ApiError(402, "Subscription inactive"))).toBe(false);
+  });
+
   it("retries a 500 exactly once (two attempts total)", () => {
     const error = new ApiError(500, "Server error");
     expect(shouldRetryQuery(0, error)).toBe(true);
