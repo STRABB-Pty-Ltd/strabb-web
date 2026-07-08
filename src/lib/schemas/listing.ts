@@ -56,3 +56,18 @@ export interface ListingListResponse {
     totalPages: number;
   };
 }
+
+export interface ChannelListingSummary {
+  id: string;
+  name: string;
+  syncStatus: string;
+}
+
+/** One row per OTA/channel from `GET /listings/channels` (backs A.9). */
+export interface ChannelSummaryResponse {
+  id: string;
+  name: string;
+  status: "connected" | "pending" | "error" | "not_connected";
+  listingCount: number;
+  mappedListings: ChannelListingSummary[];
+}

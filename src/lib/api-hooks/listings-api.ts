@@ -3,7 +3,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useApiClient, useAuthReady } from "@/hooks/use-api-client";
-import type { ListingListResponse, ListingResponse } from "@/lib/schemas/listing";
+import type {
+  ChannelSummaryResponse,
+  ListingListResponse,
+  ListingResponse,
+} from "@/lib/schemas/listing";
 
 export interface ListingHierarchy {
   properties: {
@@ -93,6 +97,24 @@ export function useListingsAPI(pageSize = 100) {
     queryKey: ["listings", { pageSize }],
     queryFn: async () =>
       apiClient.get<ListingListResponse>(`/listings?page=1&page_size=${pageSize}`),
+    enabled: isReady,
+  });
+}
+
+/** One row per OTA/channel, grouped and rolled up server-side. Backs the
+ * Channels settings section (A.9), replacing its old static mock list. */
+export function useListingsChannels() {
+  const apiClient = useApiClient();
+  const isReady = useAuthReady();
+
+  return useQuery<ChannelSummaryResponse[]>({
+    queryKey: ["listings-channels"],
+    queryFn: async () => {
+      const response = await apiClient.get<{ data: ChannelSummaryResponse[] }>(
+        "/listings/channels",
+      );
+      return response.data;
+    },
     enabled: isReady,
   });
 }

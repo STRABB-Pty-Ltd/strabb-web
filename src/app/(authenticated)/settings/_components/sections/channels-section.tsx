@@ -1,11 +1,20 @@
 "use client";
 
 import { format } from "date-fns";
-import { AlertCircle, CheckCircle, CircleDashed, Loader, type LucideIcon } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  CircleDashed,
+  CircleSlash,
+  Loader,
+  type LucideIcon,
+} from "lucide-react";
 
 import { useSyncLogs, useTriggerSync } from "@/hooks/use-sync";
 import { ApiError } from "@/lib/api-client";
+import { useListingsChannels } from "@/lib/api-hooks/listings-api";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
+import type { ChannelSummaryResponse } from "@/lib/schemas/listing";
 import { useAppStore } from "@/stores/app-store";
 
 // Same status set as the Sync Logs page (strabb-api PR #3 shared primitives):
@@ -31,44 +40,56 @@ const statusIcons: Record<string, LucideIcon> = {
   in_progress: Loader,
 };
 
-interface ChannelConfig {
-  id: string;
-  name: string;
-  color: string;
+// Rollup status for a channel (GET /listings/channels), distinct from the
+// per-listing sync-log status set above.
+const channelStatusColors: Record<ChannelSummaryResponse["status"], string> = {
+  connected: "var(--status-completed)",
+  pending: "var(--status-issues)",
+  error: "var(--status-danger)",
+  not_connected: "var(--neutral-30)",
+};
+
+const channelStatusFgColors: Record<ChannelSummaryResponse["status"], string> = {
+  connected: "var(--status-success-fg)",
+  pending: "var(--status-danger-fg)",
+  error: "var(--status-danger-fg)",
+  not_connected: "var(--text-secondary)",
+};
+
+const channelStatusIcons: Record<ChannelSummaryResponse["status"], LucideIcon> = {
+  connected: CheckCircle,
+  pending: CircleDashed,
+  error: AlertCircle,
+  not_connected: CircleSlash,
+};
+
+const channelStatusLabels: Record<ChannelSummaryResponse["status"], string> = {
+  connected: "Connected",
+  pending: "Pending",
+  error: "Error",
+  not_connected: "Not connected",
+};
+
+// Colour stripe per channel id - the API doesn't carry a colour, only
+// identity/status, so this stays a local display-only lookup.
+const channelColors: Record<string, string> = {
+  airbnb: "var(--channel-airbnb)",
+  booking_com: "var(--channel-booking)",
+  vrbo: "var(--channel-vrbo)",
+  direct: "var(--channel-direct)",
+};
+
+// GET /listings/channels also returns "email" and "internal_notes" (message
+// source channels reused from the same backend display map) - never real
+// OTAs, so they're excluded from sync-frequency/pricing-rule configuration.
+const BOOKABLE_CHANNEL_IDS = new Set(["airbnb", "booking_com", "vrbo", "direct"]);
+
+interface ChannelPrefs {
   syncFrequency: string;
   pricingRule: string;
 }
 
-const mockChannels: ChannelConfig[] = [
-  {
-    id: "airbnb",
-    name: "Airbnb",
-    color: "var(--channel-airbnb)",
-    syncFrequency: "15",
-    pricingRule: "base",
-  },
-  {
-    id: "booking_com",
-    name: "Booking.com",
-    color: "var(--channel-booking)",
-    syncFrequency: "15",
-    pricingRule: "base",
-  },
-  {
-    id: "vrbo",
-    name: "VRBO",
-    color: "var(--channel-vrbo)",
-    syncFrequency: "30",
-    pricingRule: "base_plus_10",
-  },
-  {
-    id: "direct",
-    name: "Direct",
-    color: "var(--channel-direct)",
-    syncFrequency: "60",
-    pricingRule: "discount_5",
-  },
-];
+const DEFAULT_CHANNEL_PREFS: ChannelPrefs = { syncFrequency: "15", pricingRule: "base" };
 
 const syncOptions = [
   { value: "5", label: "Every 5 minutes" },
@@ -86,13 +107,14 @@ const pricingOptions = [
 ];
 
 export function ChannelsSection() {
-  // Persisting the whole channel array (static id/name/colour included) means a
-  // saved user won't pick up channels later added to `mockChannels` - acceptable
-  // for v1; revisit with a merge-by-id if the channel set becomes dynamic.
-  const { values, patch, save, isSaving, dirty } = useSettingsForm<{ channels: ChannelConfig[] }>(
-    "channels",
-    { channels: mockChannels },
-  );
+  const { data: channels, isLoading: channelsLoading } = useListingsChannels();
+
+  // Keyed by channel id rather than a stored array: the channel set itself
+  // now comes live from GET /listings/channels, so only the per-channel
+  // prefs (not identity/colour/status) are persisted.
+  const { values, patch, save, isSaving, dirty } = useSettingsForm<{
+    channels: Record<string, ChannelPrefs>;
+  }>("channels", { channels: {} });
 
   // Real Channex sync status, sourced the same way as the Sync Logs page.
   // Channex does not expose a per-OTA (Airbnb/Booking.com/VRBO) sync
@@ -125,9 +147,14 @@ export function ChannelsSection() {
 
   const updateChannel = (id: string, field: "syncFrequency" | "pricingRule", value: string) => {
     patch((current) => ({
-      channels: current.channels.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
+      channels: {
+        ...current.channels,
+        [id]: { ...(current.channels[id] ?? DEFAULT_CHANNEL_PREFS), [field]: value },
+      },
     }));
   };
+
+  const bookableChannels = (channels ?? []).filter((c) => BOOKABLE_CHANNEL_IDS.has(c.id));
 
   return (
     <div className="space-y-md">
@@ -182,66 +209,103 @@ export function ChannelsSection() {
       </div>
 
       <div className="space-y-sm">
-        {values.channels.map((ch) => (
-          <div
-            key={ch.id}
-            className="px-sm py-sm rounded-lg border"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              borderColor: "var(--border)",
-              borderLeftWidth: "var(--stripe-width)",
-              borderLeftColor: ch.color,
-            }}
-          >
-            <div className="mb-sm gap-base flex items-center">
-              <h3 className="text-body text-highlight-10 font-semibold">{ch.name}</h3>
-            </div>
-            <div className="gap-sm grid grid-cols-2">
-              <div>
-                <label
-                  htmlFor={`channel-${ch.id}-sync`}
-                  className="mb-xs text-body text-highlight-10 block font-medium"
-                >
-                  Sync Frequency
-                </label>
-                <select
-                  id={`channel-${ch.id}-sync`}
-                  value={ch.syncFrequency}
-                  onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-sm border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-                >
-                  {syncOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+        {channelsLoading ? (
+          <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+            Loading channels...
+          </p>
+        ) : bookableChannels.length === 0 ? (
+          <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+            No channels found.
+          </p>
+        ) : (
+          bookableChannels.map((ch) => {
+            const prefs = values.channels[ch.id] ?? DEFAULT_CHANNEL_PREFS;
+            const StatusIcon = channelStatusIcons[ch.status];
+            return (
+              <div
+                key={ch.id}
+                className="px-sm py-sm rounded-lg border"
+                style={{
+                  backgroundColor: "var(--neutral-30)",
+                  borderColor: "var(--border)",
+                  borderLeftWidth: "var(--stripe-width)",
+                  borderLeftColor: channelColors[ch.id] ?? "var(--border)",
+                }}
+              >
+                <div className="mb-sm gap-base flex items-center justify-between">
+                  <div className="gap-base flex items-center">
+                    <h3 className="text-body text-highlight-10 font-semibold">{ch.name}</h3>
+                    <span
+                      className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
+                      style={{
+                        backgroundColor: channelStatusColors[ch.status],
+                        color: channelStatusFgColors[ch.status],
+                      }}
+                    >
+                      <StatusIcon size={12} aria-hidden="true" />
+                      {channelStatusLabels[ch.status]}
+                    </span>
+                  </div>
+                  <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+                    {ch.listingCount === 0
+                      ? "No listings mapped"
+                      : `${ch.listingCount} listing${ch.listingCount === 1 ? "" : "s"} mapped`}
+                  </p>
+                </div>
+                <div className="gap-sm grid grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor={`channel-${ch.id}-sync`}
+                      className="mb-xs text-body text-highlight-10 block font-medium"
+                    >
+                      Sync Frequency
+                    </label>
+                    <select
+                      id={`channel-${ch.id}-sync`}
+                      value={prefs.syncFrequency}
+                      onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
+                      className="px-sm py-base text-body w-full rounded-sm border"
+                      style={{
+                        backgroundColor: "var(--surface-60)",
+                        borderColor: "var(--border)",
+                      }}
+                    >
+                      {syncOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`channel-${ch.id}-pricing`}
+                      className="mb-xs text-body text-highlight-10 block font-medium"
+                    >
+                      Default Pricing Rule
+                    </label>
+                    <select
+                      id={`channel-${ch.id}-pricing`}
+                      value={prefs.pricingRule}
+                      onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
+                      className="px-sm py-base text-body w-full rounded-sm border"
+                      style={{
+                        backgroundColor: "var(--surface-60)",
+                        borderColor: "var(--border)",
+                      }}
+                    >
+                      {pricingOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label
-                  htmlFor={`channel-${ch.id}-pricing`}
-                  className="mb-xs text-body text-highlight-10 block font-medium"
-                >
-                  Default Pricing Rule
-                </label>
-                <select
-                  id={`channel-${ch.id}-pricing`}
-                  value={ch.pricingRule}
-                  onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
-                  className="px-sm py-base text-body w-full rounded-sm border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-                >
-                  {pricingOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        ))}
+            );
+          })
+        )}
       </div>
 
       <button
