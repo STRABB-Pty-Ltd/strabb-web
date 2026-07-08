@@ -190,7 +190,7 @@ export function CalendarListView({ events }: CalendarListViewProps) {
         }
         openDrillDownPanel(ev.type, ev.id);
       }}
-      getRowId={(ev) => ev.id}
+      getRowId={(ev) => `${ev.id}:${ev.listingId}`}
     />
   );
 }

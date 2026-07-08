@@ -24,9 +24,9 @@ export interface OverlayState {
   shoppingListPopup: { open: boolean };
   /** Create/edit drawer for availability blocks. blockId null = create mode. */
   availabilityBlockDrawer: { open: boolean; blockId: string | null } | null;
-  /** Booking create drawer opened from page-level entry points (bookings
-   *  header, calendar sidebar). listingId null = drawer shows a listing
-   *  picker step. Edit mode stays local to booking-detail-drawer. */
+  /** Booking create drawer opened from page-level entry points (the
+   *  calendar sidebar Create section). listingId null = drawer shows a
+   *  listing picker step. Edit mode stays local to booking-detail-drawer. */
   bookingFormOverlay: { open: boolean; listingId: string | null } | null;
   toasts: Toast[];
 }

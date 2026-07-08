@@ -10,7 +10,10 @@ import type {
   UpdateAvailabilityBlockRequest,
 } from "@/lib/schemas/availability-block";
 
-export function useAvailabilityBlocks(filters: AvailabilityBlockFilters = {}) {
+export function useAvailabilityBlocks(
+  filters: AvailabilityBlockFilters = {},
+  options: { enabled?: boolean } = {},
+) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
   const params = new URLSearchParams();
@@ -32,7 +35,7 @@ export function useAvailabilityBlocks(filters: AvailabilityBlockFilters = {}) {
       );
       return response.data;
     },
-    enabled: isReady,
+    enabled: isReady && (options.enabled ?? true),
   });
 }
 

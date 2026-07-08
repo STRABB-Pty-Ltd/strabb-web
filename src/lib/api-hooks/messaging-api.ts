@@ -151,6 +151,9 @@ export function useUpdateConversationStatusAPI() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       apiClient.patch(`/conversations/${id}/status`, { status }),
+    // Background action (mark-as-read fires on merely opening a thread):
+    // a transient failure must not toast at the user.
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },

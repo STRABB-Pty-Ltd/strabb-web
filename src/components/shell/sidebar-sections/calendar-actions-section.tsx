@@ -5,14 +5,12 @@ import { CalendarPlus, CalendarOff } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useAppStore } from "@/stores/app-store";
 
-/** Calendar-page-only creation actions. "Block dates" is owner/admin UX:
- *  a null role (session loading) hides it rather than flashing it at a
- *  cleaner - the API remains the real gate. */
+/** Calendar-page-only creation actions, owner/admin UX only. */
 export function CalendarActionsSection() {
   const openBookingFormOverlay = useAppStore((s) => s.openBookingFormOverlay);
   const openAvailabilityBlockDrawer = useAppStore((s) => s.openAvailabilityBlockDrawer);
   const { role } = useCurrentUser();
-  const canBlock = role === "owner" || role === "admin";
+  const canCreate = role === "owner" || role === "admin";
 
   const buttonClass =
     "gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors";
@@ -20,6 +18,14 @@ export function CalendarActionsSection() {
     backgroundColor: "var(--neutral-30)",
     color: "var(--highlight-10)",
   };
+
+  // Cleaners neither create bookings nor block dates; hide the whole
+  // section rather than showing a button that 403s on save. A null role
+  // (session loading) hides too - no owner-control flash. API stays the
+  // real gate.
+  if (!canCreate) {
+    return null;
+  }
 
   return (
     <div style={{ padding: "var(--space-sm)" }}>
@@ -39,17 +45,15 @@ export function CalendarActionsSection() {
           <CalendarPlus size={13} aria-hidden="true" />
           Add booking
         </button>
-        {canBlock && (
-          <button
-            type="button"
-            onClick={() => openAvailabilityBlockDrawer()}
-            className={buttonClass}
-            style={buttonStyle}
-          >
-            <CalendarOff size={13} aria-hidden="true" />
-            Block dates
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => openAvailabilityBlockDrawer()}
+          className={buttonClass}
+          style={buttonStyle}
+        >
+          <CalendarOff size={13} aria-hidden="true" />
+          Block dates
+        </button>
       </div>
     </div>
   );

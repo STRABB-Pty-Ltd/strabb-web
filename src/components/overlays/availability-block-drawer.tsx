@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -44,8 +45,10 @@ export function AvailabilityBlockDrawer() {
 
   const { data: propertiesData } = useProperties();
   // Edit mode needs the block's fields; the list endpoint is the read
-  // surface (no GET-by-id), and the cache is warm from the calendar page.
-  const { data: blocks } = useAvailabilityBlocks();
+  // surface (no GET-by-id). Gated on open so the shell-mounted drawer does
+  // not fetch every block on every page for every user.
+  const blocksQuery = useAvailabilityBlocks({}, { enabled: open });
+  const blocks = blocksQuery.data;
   const create = useCreateAvailabilityBlock();
   const update = useUpdateAvailabilityBlock();
   const remove = useDeleteAvailabilityBlock();
@@ -58,6 +61,21 @@ export function AvailabilityBlockDrawer() {
     () => (isEdit ? (blocks ?? []).find((b) => b.id === blockId) : undefined),
     [isEdit, blocks, blockId],
   );
+  // Never show an editable empty form against a real block id: a save from
+  // that state would PATCH-wipe the block's reason/notes.
+  const editUnresolved = isEdit && !editingBlock;
+
+  // A drawer left open while the user navigates pages is disorientating
+  // and can silently reset mid-typing (shell re-render). Close on route
+  // change.
+  const pathname = usePathname();
+  const lastPathname = useRef(pathname);
+  useEffect(() => {
+    if (pathname !== lastPathname.current) {
+      lastPathname.current = pathname;
+      if (open) closeDrawer();
+    }
+  }, [pathname, open, closeDrawer]);
 
   useEffect(() => {
     if (!open) return;
@@ -147,112 +165,132 @@ export function AvailabilityBlockDrawer() {
       onClose={closeDrawer}
       title={isEdit ? "Edit blocked dates" : "Block dates"}
     >
-      <div className="space-y-sm">
-        <div>
-          <label htmlFor="blk-property" className="text-body text-highlight-10 block font-medium">
-            Property
-          </label>
-          <select
-            id="blk-property"
-            value={form.propertyId}
-            onChange={(e) => patch({ propertyId: e.target.value })}
-            disabled={isEdit}
-            className="px-sm py-base text-body w-full rounded-lg border disabled:opacity-60"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <option value="">Choose a property</option>
-            {properties.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <DateField
-          id="blk-start"
-          label="Start date"
-          value={form.startDate}
-          onChange={(v) => patch({ startDate: v })}
-        />
-        <DateField
-          id="blk-end"
-          label="End date"
-          value={form.endDate}
-          onChange={(v) => patch({ endDate: v })}
-        />
-        <p className="text-caption text-neutral-60">
-          The end date itself stays open: blocking 10 Aug to 13 Aug keeps the nights of the 10th,
-          11th and 12th unavailable, like a check-out day.
-        </p>
-        <div>
-          <label htmlFor="blk-reason" className="text-body text-highlight-10 block font-medium">
-            Reason
-          </label>
-          <select
-            id="blk-reason"
-            value={form.reason}
-            onChange={(e) => patch({ reason: e.target.value })}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
-          >
-            {BLOCK_REASON_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="blk-notes" className="text-body text-highlight-10 block font-medium">
-            Notes
-          </label>
-          <textarea
-            id="blk-notes"
-            value={form.notes}
-            onChange={(e) => patch({ notes: e.target.value })}
-            rows={3}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
-          />
-        </div>
-
-        {error && (
-          <p className="text-body text-status-danger" role="alert">
-            {error}
+      {editUnresolved ? (
+        <div className="space-y-sm">
+          <p className="text-body" role={blocksQuery.isLoading ? "status" : "alert"}>
+            {blocksQuery.isLoading
+              ? "Loading block details…"
+              : "This block could not be loaded. It may have been removed; close and refresh the calendar."}
           </p>
-        )}
-
-        <div className="gap-sm pt-sm flex items-center justify-end">
-          {isEdit && (
+          <div className="gap-sm pt-sm flex items-center justify-end">
             <button
               type="button"
-              onClick={() => setConfirmingDelete(true)}
-              disabled={saving}
-              className="px-sm py-base text-body rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ borderColor: "var(--status-danger)", color: "var(--status-danger)" }}
+              onClick={closeDrawer}
+              className="px-sm py-base text-body rounded-lg border font-medium"
+              style={{ borderColor: "var(--border)" }}
             >
-              Remove block
+              Close
             </button>
-          )}
-          <button
-            type="button"
-            onClick={closeDrawer}
-            className="px-sm py-base text-body rounded-lg border font-medium"
-            style={{ borderColor: "var(--border)" }}
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
-            {saving ? "Saving…" : isEdit ? "Save changes" : "Block dates"}
-          </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-sm">
+          <div>
+            <label htmlFor="blk-property" className="text-body text-highlight-10 block font-medium">
+              Property
+            </label>
+            <select
+              id="blk-property"
+              value={form.propertyId}
+              onChange={(e) => patch({ propertyId: e.target.value })}
+              disabled={isEdit}
+              className="px-sm py-base text-body w-full rounded-lg border disabled:opacity-60"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <option value="">Choose a property</option>
+              {properties.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <DateField
+            id="blk-start"
+            label="Start date"
+            value={form.startDate}
+            onChange={(v) => patch({ startDate: v })}
+          />
+          <DateField
+            id="blk-end"
+            label="End date"
+            value={form.endDate}
+            onChange={(v) => patch({ endDate: v })}
+          />
+          <p className="text-caption text-neutral-60">
+            The end date itself stays open: blocking 10 Aug to 13 Aug keeps the nights of the 10th,
+            11th and 12th unavailable, like a check-out day.
+          </p>
+          <div>
+            <label htmlFor="blk-reason" className="text-body text-highlight-10 block font-medium">
+              Reason
+            </label>
+            <select
+              id="blk-reason"
+              value={form.reason}
+              onChange={(e) => patch({ reason: e.target.value })}
+              className="px-sm py-base text-body w-full rounded-lg border"
+              style={{ borderColor: "var(--border)" }}
+            >
+              {BLOCK_REASON_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="blk-notes" className="text-body text-highlight-10 block font-medium">
+              Notes
+            </label>
+            <textarea
+              id="blk-notes"
+              value={form.notes}
+              onChange={(e) => patch({ notes: e.target.value })}
+              rows={3}
+              className="px-sm py-base text-body w-full rounded-lg border"
+              style={{ borderColor: "var(--border)" }}
+            />
+          </div>
+
+          {error && (
+            <p className="text-body text-status-danger" role="alert">
+              {error}
+            </p>
+          )}
+
+          <div className="gap-sm pt-sm flex items-center justify-end">
+            {isEdit && (
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(true)}
+                disabled={saving}
+                className="px-sm py-base text-body rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
+                style={{ borderColor: "var(--status-danger)", color: "var(--status-danger)" }}
+              >
+                Remove block
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={closeDrawer}
+              className="px-sm py-base text-body rounded-lg border font-medium"
+              style={{ borderColor: "var(--border)" }}
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
+              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+            >
+              {saving ? "Saving…" : isEdit ? "Save changes" : "Block dates"}
+            </button>
+          </div>
+        </div>
+      )}
 
       <ConfirmDialog
         open={confirmingDelete}

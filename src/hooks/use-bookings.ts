@@ -127,6 +127,9 @@ export function useCreateBooking() {
     meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
+      // Bookings render on the calendar too (E.2 adds calendar-page entry
+      // points); match the cleaning/tickets invalidation pattern.
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
     },
   });
 }
@@ -146,6 +149,9 @@ export function useUpdateBooking() {
     meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
+      // Bookings render on the calendar too (E.2 adds calendar-page entry
+      // points); match the cleaning/tickets invalidation pattern.
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
     },
   });
 }
@@ -165,6 +171,9 @@ export function useDismissConflict() {
     meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BOOKINGS_KEY });
+      // Bookings render on the calendar too (E.2 adds calendar-page entry
+      // points); match the cleaning/tickets invalidation pattern.
+      queryClient.invalidateQueries({ queryKey: ["calendar-events"] });
     },
   });
 }
