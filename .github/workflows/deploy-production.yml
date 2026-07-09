@@ -70,7 +70,14 @@ jobs:
       # FQDN. The env DNS prefix `wittyground-f9a24fce` differs from
       # staging's `icywave-6a962c16` — capture this if production env is
       # ever rebuilt.
+      # App Insights connection string base64-encoded before `az acr build`
+      # (its ';' would otherwise split the remote docker build command); piped
+      # via env var to avoid shell-injection. See ci.yml for the full note.
       - name: Build and push web image
-        run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:production --image strabb-web:prod-${{ steps.sha.outputs.sha }} --build-arg NEXTAUTH_URL=https://app.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.strabb.io --build-arg INTERNAL_API_URL=https://strabb-api-production.wittyground-f9a24fce.australiaeast.azurecontainerapps.io --build-arg NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING="${{ secrets.APPINSIGHTS_WEB_CONNECTION_STRING_PROD }}" .
+        env:
+          APPINSIGHTS_CS: ${{ secrets.APPINSIGHTS_WEB_CONNECTION_STRING_PROD }}
+        run: |
+          B64=$(printf '%s' "$APPINSIGHTS_CS" | base64 -w0)
+          az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:production --image strabb-web:prod-${{ steps.sha.outputs.sha }} --build-arg NEXTAUTH_URL=https://app.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.strabb.io --build-arg INTERNAL_API_URL=https://strabb-api-production.wittyground-f9a24fce.australiaeast.azurecontainerapps.io --build-arg NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING_B64="$B64" .
       - name: Deploy web to production Container App
         run: az containerapp update --name strabb-web-production --resource-group strabb-production --image strabbregistry.azurecr.io/strabb-web:prod-${{ steps.sha.outputs.sha }}

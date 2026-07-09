@@ -19,18 +19,22 @@ ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 # into the image (`http://localhost:8000`) and all `/be/*` proxy calls
 # fail with ECONNREFUSED.
 ARG INTERNAL_API_URL=http://localhost:8000
-# App Insights browser SDK connection string (F.6a). NEXT_PUBLIC_ so it is
-# inlined into the client bundle at build; empty default = telemetry disabled
-# (local/CI builds are a no-op). It is an ingestion key, safe to expose client
-# side, same as the api's.
-ARG NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING=
+# App Insights browser SDK connection string (F.6a). Passed base64-encoded
+# because the raw connection string contains ';' separators, and `az acr build`
+# reconstructs the remote `docker build` command without quoting build-arg
+# values, so a ';' splits the command (breaking the build). base64 has no shell
+# metacharacters. Empty default = telemetry disabled (local/CI no-op). The
+# string is an ingestion key, safe to expose client side, same as the api's.
+ARG NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING_B64=
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV INTERNAL_API_URL=$INTERNAL_API_URL
-ENV NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING=$NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING
 # NEXTAUTH_SECRET is runtime-only — passed via Container App env vars, NOT baked into image
 
-RUN npm run build
+# Decode the connection string only for the build command (NEXT_PUBLIC_* is
+# inlined into the client bundle at build time, not needed at runtime). An
+# empty/unset arg decodes to empty, so the SDK stays a no-op.
+RUN NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING="$(printf '%s' "$NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING_B64" | base64 -d)" npm run build
 
 FROM base AS runner
 WORKDIR /app
