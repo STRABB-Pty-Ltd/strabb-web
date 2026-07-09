@@ -4,9 +4,17 @@ name: Deploy to Production
 # Optionally pass a specific SHA to deploy; defaults to the latest commit on
 # the branch the workflow was dispatched from (typically `main`).
 #
-# This workflow does NOT run lint/test/typecheck/build — those run on PR
-# merge into main via `ci.yml`. By the time you deploy to production, those
-# gates have already passed.
+# Two gates guard a production deploy (F.8):
+#   1. The `guard` job refuses to proceed unless CI (ci.yml) concluded
+#      success for the exact SHA being deployed. A SHA that never passed CI
+#      cannot be shipped, even by a manual dispatch.
+#   2. The `deploy` job runs in the GitHub `production` environment. Configure
+#      that environment in repo Settings -> Environments with a required
+#      reviewer (Chris); GitHub then pauses the job for manual approval before
+#      any Azure change. Without that config the environment gate is a no-op,
+#      so the reviewer MUST be set there - it cannot be enforced from this file.
+# Build-arg matrix (the values baked below) is documented in
+# docs/deploy/build-args.md.
 on:
   workflow_dispatch:
     inputs:
@@ -16,8 +24,32 @@ on:
         type: string
 
 jobs:
+  guard:
+    name: Require green CI on the deploy SHA
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify CI succeeded for the target SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TARGET_SHA: ${{ github.event.inputs.sha || github.sha }}
+        run: |
+          echo "Checking CI (ci.yml) conclusion for $TARGET_SHA"
+          conclusion=$(gh run list --repo "$REPO" --workflow ci.yml \
+            --commit "$TARGET_SHA" --json conclusion,headSha \
+            --jq 'map(select(.headSha=="'"$TARGET_SHA"'")) | .[0].conclusion // "none"')
+          echo "CI conclusion: $conclusion"
+          if [ "$conclusion" != "success" ]; then
+            echo "::error::CI has not passed for $TARGET_SHA (conclusion=$conclusion). Refusing to deploy."
+            exit 1
+          fi
+
   deploy:
     name: Deploy web to production
+    needs: [guard]
+    # Gated environment: repo Settings -> Environments -> production must have
+    # a required reviewer for the approval pause to take effect.
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +71,6 @@ jobs:
       # staging's `icywave-6a962c16` — capture this if production env is
       # ever rebuilt.
       - name: Build and push web image
-        run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:production --image strabb-web:prod-${{ steps.sha.outputs.sha }} --build-arg NEXTAUTH_URL=https://app.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.strabb.io --build-arg INTERNAL_API_URL=https://strabb-api-production.wittyground-f9a24fce.australiaeast.azurecontainerapps.io .
+        run: az acr build --registry strabbregistry --resource-group strabb-staging --image strabb-web:production --image strabb-web:prod-${{ steps.sha.outputs.sha }} --build-arg NEXTAUTH_URL=https://app.strabb.io --build-arg NEXT_PUBLIC_API_URL=https://api.strabb.io --build-arg INTERNAL_API_URL=https://strabb-api-production.wittyground-f9a24fce.australiaeast.azurecontainerapps.io --build-arg NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING="${{ secrets.APPINSIGHTS_WEB_CONNECTION_STRING_PROD }}" .
       - name: Deploy web to production Container App
         run: az containerapp update --name strabb-web-production --resource-group strabb-production --image strabbregistry.azurecr.io/strabb-web:prod-${{ steps.sha.outputs.sha }}

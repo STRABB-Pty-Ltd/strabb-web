@@ -1,11 +1,16 @@
 "use client";
 
+import { useEffect } from "react";
+
+import { trackError } from "@/lib/app-insights";
+
 // Last-resort boundary: catches errors thrown by the ROOT layout itself, where
 // error.tsx cannot reach. It replaces the whole document, so it must render its
 // own <html>/<body> and cannot rely on the app shell, providers, Tailwind, or
 // design tokens (any of which could be the thing that threw). Everything here
 // is intentionally self-contained inline styles. Brand navy #15206b matches
-// --highlight-10.
+// --highlight-10. Reports to App Insights (F.6a, gated on the connection
+// string, no-ops locally/CI).
 export default function GlobalError({
   error,
   reset,
@@ -13,6 +18,10 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    trackError(error);
+  }, [error]);
+
   return (
     <html lang="en">
       <body

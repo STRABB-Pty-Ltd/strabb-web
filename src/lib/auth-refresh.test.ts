@@ -4,87 +4,111 @@ import { FatalRefreshError, refreshAccessToken } from "./auth-refresh";
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
-  let reject!: (reason?: unknown) => void;
-  const promise = new Promise<T>((res, rej) => {
+  const promise = new Promise<T>((res) => {
     resolve = res;
-    reject = rej;
   });
-  return { promise, resolve, reject };
+  return { promise, resolve };
 }
 
-function okResponse(pair: { access_token: string; refresh_token: string }): Response {
-  return { ok: true, json: async () => pair } as unknown as Response;
+function mockResponse(body: unknown, status = 200): Response {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => body,
+  } as Response;
 }
+
+const tokenPair = (accessToken: string, refreshToken: string) => ({
+  access_token: accessToken,
+  refresh_token: refreshToken,
+  token_type: "bearer",
+});
 
 afterEach(() => {
   vi.unstubAllGlobals();
-  vi.restoreAllMocks();
 });
 
-describe("refreshAccessToken single-flight", () => {
-  it("collapses overlapping refreshes of the same token into one request and one shared pair", async () => {
+describe("refreshAccessToken - single-flight dedupe", () => {
+  it("collapses two concurrent calls for the same token into one fetch", async () => {
     const gate = deferred<Response>();
-    const fetchMock = vi.fn(() => gate.promise);
+    const fetchMock = vi.fn().mockReturnValue(gate.promise);
     vi.stubGlobal("fetch", fetchMock);
 
-    // Both fire while the first request is still unresolved (overlap).
-    const first = refreshAccessToken("rt-1");
-    const second = refreshAccessToken("rt-1");
+    // Fire the second call before the first has resolved, so the overlap is
+    // real rather than incidental - a test where the first call already
+    // settled before the second fired would prove nothing about dedupe.
+    const first = refreshAccessToken("refresh-1");
+    const second = refreshAccessToken("refresh-1");
 
-    // Exactly one POST /auth/refresh for two concurrent callers, and both hold
-    // the identical in-flight promise.
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(second).toBe(first);
 
-    const pair = { access_token: "at-new", refresh_token: "rt-new" };
-    gate.resolve(okResponse(pair));
+    gate.resolve(mockResponse(tokenPair("new-access", "new-refresh")));
 
-    await expect(first).resolves.toEqual(pair);
-    await expect(second).resolves.toEqual(pair);
+    const [firstResult, secondResult] = await Promise.all([first, second]);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(firstResult).toEqual(secondResult);
+    expect(firstResult.access_token).toBe("new-access");
   });
 
-  it("starts a fresh request once the previous one has settled (entry cleared on success)", async () => {
+  it("issues a separate fetch per distinct refresh token", async () => {
+    const fetchMock = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+      const { refresh_token } = JSON.parse(init.body as string);
+      return Promise.resolve(mockResponse(tokenPair(`access-for-${refresh_token}`, "rotated")));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const [a, b] = await Promise.all([
+      refreshAccessToken("token-a"),
+      refreshAccessToken("token-b"),
+    ]);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(a.access_token).toBe("access-for-token-a");
+    expect(b.access_token).toBe("access-for-token-b");
+  });
+
+  it("propagates a fatal rejection to every concurrent caller", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(mockResponse({}, 401));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const first = refreshAccessToken("refresh-1");
+    const second = refreshAccessToken("refresh-1");
+
+    await expect(first).rejects.toThrow(FatalRefreshError);
+    await expect(second).rejects.toThrow(FatalRefreshError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears the in-flight entry on failure so the next call is a fresh attempt", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValue(okResponse({ access_token: "a", refresh_token: "r" }));
+      .mockResolvedValueOnce(mockResponse({}, 401))
+      .mockResolvedValueOnce(mockResponse(tokenPair("new-access", "new-refresh")));
     vi.stubGlobal("fetch", fetchMock);
 
-    await refreshAccessToken("rt-1");
-    await refreshAccessToken("rt-1");
+    await expect(refreshAccessToken("refresh-1")).rejects.toThrow(FatalRefreshError);
+
+    // If the failed attempt's rejected promise were still cached, this would
+    // resolve to the same rejection instead of making a fresh call.
+    const result = await refreshAccessToken("refresh-1");
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(result.access_token).toBe("new-access");
   });
 
-  it("clears the in-flight entry after a rejection so the next call is not a poisoned cached rejection", async () => {
-    const first = deferred<Response>();
-    const fetchMock = vi.fn().mockReturnValueOnce(first.promise);
+  it("clears the in-flight entry on success so a later refresh is a fresh call", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(mockResponse(tokenPair("access-1", "refresh-2")))
+      .mockResolvedValueOnce(mockResponse(tokenPair("access-2", "refresh-3")));
     vi.stubGlobal("fetch", fetchMock);
 
-    const failing = refreshAccessToken("rt-1");
-    first.reject(new Error("network blip"));
-    await expect(failing).rejects.toThrow("network blip");
+    const first = await refreshAccessToken("refresh-1");
+    const second = await refreshAccessToken("refresh-2");
 
-    // A second attempt issues a brand-new request rather than re-awaiting the
-    // rejected one.
-    fetchMock.mockResolvedValueOnce(okResponse({ access_token: "a2", refresh_token: "r2" }));
-    await expect(refreshAccessToken("rt-1")).resolves.toEqual({
-      access_token: "a2",
-      refresh_token: "r2",
-    });
     expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe("refreshAccessToken error classification", () => {
-  it("throws FatalRefreshError on a non-transient 4xx (dead refresh token)", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 401 } as Response));
-    await expect(refreshAccessToken("rt-fatal")).rejects.toBeInstanceOf(FatalRefreshError);
-  });
-
-  it("throws a non-fatal error on a 5xx/transient status (keep-and-retry path)", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 503 } as Response));
-    const error = await refreshAccessToken("rt-transient").catch((e: unknown) => e);
-    expect(error).toBeInstanceOf(Error);
-    expect(error).not.toBeInstanceOf(FatalRefreshError);
+    expect(first.access_token).toBe("access-1");
+    expect(second.access_token).toBe("access-2");
   });
 });

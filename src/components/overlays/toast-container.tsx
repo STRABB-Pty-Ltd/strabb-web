@@ -23,7 +23,7 @@ export function ToastContainer() {
               : sonnerToast.info;
       // Errors stay long enough to read + recover (sticky-style); other toasts auto-dismiss.
       const duration = toast.type === "error" ? 10000 : 5000;
-      fn(toast.message, { id: toast.id, duration });
+      fn(toast.message, { id: toast.id, duration, action: toast.action });
       removeToast(toast.id);
     }
   }, [toasts, removeToast]);

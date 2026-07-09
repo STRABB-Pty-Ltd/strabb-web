@@ -26,6 +26,7 @@ export function useUpdateSettingsSectionAPI<T = Record<string, unknown>>(section
 
   return useMutation({
     mutationFn: (data: T) => apiClient.put<{ data: unknown }>(`/settings/${section}`, data),
+    meta: { suppressGlobalError: true },
     onSuccess: (result) => {
       // Seed the cache straight from the PUT response (the freshly-saved record)
       // so the section can't flicker back to stale data before a refetch lands,

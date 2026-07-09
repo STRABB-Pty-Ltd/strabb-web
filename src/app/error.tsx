@@ -5,12 +5,13 @@ import { useEffect } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { trackError } from "@/lib/app-insights";
 
 // App-level error boundary. Catches render/data errors thrown by any segment
-// below the root layout and offers a recovery path. Full error tracking
-// (Sentry) is Phase F; for now the error is logged to the console so it is at
-// least captured client-side. Styled to match the sign-in card shell since it
-// renders outside the app shell.
+// below the root layout and offers a recovery path. Reports to App Insights
+// (F.6a, gated on the connection string, no-ops locally/CI) so crashes are
+// visible without waiting on a bug report. Styled to match the sign-in card
+// shell since it renders outside the app shell.
 export default function Error({
   error,
   reset,
@@ -19,7 +20,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    trackError(error);
   }, [error]);
 
   return (

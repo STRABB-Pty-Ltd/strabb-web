@@ -33,6 +33,7 @@ export function useCreateTemplate() {
       );
       return keysToCamel<MessageTemplateResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEMPLATES_KEY });
     },
@@ -51,6 +52,7 @@ export function useUpdateTemplate() {
       );
       return keysToCamel<MessageTemplateResponse>(response.data);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEMPLATES_KEY });
     },
@@ -69,6 +71,7 @@ export function useSeedDefaults() {
       );
       return keysToCamel<MessageTemplateResponse[]>(response);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEMPLATES_KEY });
     },
@@ -86,6 +89,7 @@ export function useDeleteTemplate() {
     mutationFn: async (id: string) => {
       await apiClient.delete(`/messages/templates/${id}`);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEMPLATES_KEY });
     },
@@ -158,6 +162,7 @@ export function useResendMessage() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: MESSAGES_KEY });
     },

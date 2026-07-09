@@ -29,7 +29,9 @@ function DialogOverlay({ className, style, ...props }: DialogPrimitive.Backdrop.
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 isolate z-50 duration-150 supports-backdrop-filter:backdrop-blur-xs",
+        // z must beat the drill-down drawers (Z.DRAWER 150): MODAL_SCRIM layer,
+        // see src/lib/z-index.ts. Tailwind z-50 buried dialogs under drawers.
+        "data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 isolate z-[180] duration-150 supports-backdrop-filter:backdrop-blur-xs",
         className,
       )}
       style={{ ...canvasOverlayStyle, backgroundColor: "var(--scrim)", ...style }}
@@ -52,7 +54,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "bg-background ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 gap-sm p-sm text-body fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl ring-1 duration-150 outline-none sm:max-w-sm",
+          "bg-background ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 gap-sm p-sm text-body fixed top-1/2 left-1/2 z-[185] grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl ring-1 duration-150 outline-none sm:max-w-sm",
           className,
         )}
         {...props}

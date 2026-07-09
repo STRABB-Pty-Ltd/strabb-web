@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   ArrowRight,
   Calculator,
@@ -113,19 +112,12 @@ const statusStyle: Record<IntegrationCard["status"], { bg: string; text: string;
 
 export function IntegrationsSection() {
   const addToast = useAppStore((s) => s.addToast);
-  const [icalUrl, setIcalUrl] = useState("");
 
   const handleConnect = (name: string) => {
     addToast({
       type: "info",
       message: `${name} setup is coming soon`,
     });
-  };
-
-  const handleAddIcal = () => {
-    if (!icalUrl.trim()) return;
-    addToast({ type: "warning", message: "iCal feed save is coming soon, not wired up yet" });
-    setIcalUrl("");
   };
 
   return (
@@ -189,39 +181,6 @@ export function IntegrationsSection() {
             </div>
           );
         })}
-      </div>
-
-      <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <h3
-          id="integrations-ical-label"
-          className="mb-sm text-body text-highlight-10 font-semibold"
-        >
-          Add an iCal feed
-        </h3>
-        <p className="mb-base text-body" style={{ color: "var(--text-secondary)" }}>
-          For OTAs or external systems not yet covered by a direct integration. STRABB polls the URL
-          and pulls bookings as availability blocks.
-        </p>
-        <div className="gap-base flex">
-          <input
-            id="integrations-ical-url"
-            type="url"
-            value={icalUrl}
-            onChange={(e) => setIcalUrl(e.target.value)}
-            placeholder="https://example.com/calendar.ics"
-            aria-labelledby="integrations-ical-label"
-            className="px-sm py-base text-body flex-1 rounded-lg border"
-            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
-          />
-          <button
-            type="button"
-            onClick={handleAddIcal}
-            className="px-sm py-base text-body text-surface-60 rounded-lg font-medium"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
-            Add Feed
-          </button>
-        </div>
       </div>
     </div>
   );

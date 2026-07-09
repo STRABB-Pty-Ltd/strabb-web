@@ -57,3 +57,17 @@ being true. One bullet per trap, specific enough to act on.
   `prettier --write <file>` then `git diff` (git normalizes line endings,
   so only genuine content changes show) - that is what CI's gate actually
   sees. Do this before calling formatting verified, not after CI fails.
+
+## Overlays / dialogs (added 08-07-2026, Phase E)
+
+- Anything portalled to document.body that is opened FROM inside a
+  DrillDownPanel must (a) sit above Z.DRAWER=150 (the Dialog primitive
+  now uses z-180/z-185, see src/lib/z-index.ts) and (b) be excluded from
+  useClickOutside's outside test (dialog-slot portals are). Before those
+  two fixes every ConfirmDialog inside a drawer was unclickable or had
+  its confirm silently swallowed - and passed jsdom tests, because jsdom
+  does no hit-testing. Screenshot-verify any new drawer+overlay combo.
+- Browser-testing against QA: mutations that touch email (booking
+  create) take ~37s (SendGrid 401 retries in-request) and the /be proxy
+  resets at ~30s, so the UI shows failure while the api write lands.
+  Poll the api for the landed row instead of waiting on the toast.

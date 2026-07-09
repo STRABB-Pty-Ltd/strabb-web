@@ -8,6 +8,7 @@ import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
+import { formatChannel } from "@/lib/channels";
 import { Z } from "@/lib/z-index";
 import type { ThreadMessage } from "@/types/message";
 
@@ -139,7 +140,7 @@ export function ThreadOverlay({
                   backgroundColor: channelColors[data.channel] ?? "var(--channel-direct)",
                 }}
               >
-                {data.channel.replace("_", ".")}
+                {formatChannel(data.channel)}
               </span>
               <button
                 type="button"

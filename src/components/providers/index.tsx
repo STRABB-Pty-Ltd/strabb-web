@@ -1,5 +1,6 @@
 "use client";
 
+import { AppInsightsProvider } from "./app-insights-provider";
 import { QueryProvider } from "./query-provider";
 import { SessionGuard } from "./session-guard";
 import { SessionProvider } from "./session-provider";
@@ -9,6 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <SessionGuard />
+      <AppInsightsProvider />
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <QueryProvider>{children}</QueryProvider>
       </ThemeProvider>

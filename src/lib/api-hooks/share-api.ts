@@ -39,6 +39,7 @@ export function useCreateShare() {
       const response = await apiClient.post<{ data: ShareCreateData }>("/share/create", payload);
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shareable-links"] });
     },
@@ -71,6 +72,7 @@ export function useRevokeShareableLink() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shareable-links"] });
     },

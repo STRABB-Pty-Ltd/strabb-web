@@ -71,6 +71,7 @@ export function useCreateExpense() {
 
   return useMutation({
     mutationFn: (data: ExpenseFormData) => apiClient.post("/expenses", data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => invalidateDerived(queryClient),
   });
 }
@@ -86,6 +87,7 @@ export function useUpdateExpense() {
     // only what they mean to change, and unspecified fields are left untouched.
     mutationFn: ({ id, data }: { id: string; data: Partial<ExpenseFormData> }) =>
       apiClient.put(`/expenses/${id}`, data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => invalidateDerived(queryClient),
   });
 }
