@@ -16,6 +16,7 @@ import {
 import { ApiError } from "@/lib/api-client";
 import type { ListingResponse } from "@/lib/schemas/listing";
 import { useAppStore } from "@/stores/app-store";
+import { useProperties, useUpdateProperty } from "@/hooks/use-properties";
 
 const CHANNEX_MAX_LENGTH = 255;
 
@@ -39,6 +40,15 @@ export default function SettingsListingsPage() {
 
   const listings = useMemo(() => data?.data ?? [], [data?.data]);
 
+  // Cleaning duration lives on the Property, not the Listing (api:
+  // app/models/property.py cleaning_duration_minutes, used as the task
+  // scheduling fallback in app/services/cleaning_task.py). Several listings
+  // can share one property, so this is fetched + saved via the properties
+  // endpoint, keyed by propertyId rather than listingId.
+  const { data: propertiesData } = useProperties();
+  const updateProperty = useUpdateProperty();
+  const properties = useMemo(() => propertiesData?.data ?? [], [propertiesData?.data]);
+
   // Channex mapping inputs (kept at page level so values survive row
   // collapse/expand — closing a row doesn't blow away a user's in-flight
   // edit on the Channex tab). All three IDs are tracked per listing so
@@ -47,13 +57,18 @@ export default function SettingsListingsPage() {
   const [channexErrors, setChannexErrors] = useState<Record<string, string | null>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
 
-  // Per-listing General-tab inputs. `nightlyRate` is wired to a real
-  // save endpoint (PUT /listings/{id}). The former placeholder inputs
-  // (photos, cleaning fee, stay rules, amenities, description) were
-  // removed as dead affordances; they return as deliberate post-launch
-  // items once the backend ships listing metadata.
+  // Per-listing General-tab inputs. `nightlyRate` is wired to a real save
+  // endpoint (PUT /listings/{id}); cleaning duration below is wired to the
+  // properties endpoint. The former placeholder inputs (photos, cleaning
+  // fee, stay rules, amenities, description) were removed as dead
+  // affordances; they return as deliberate post-launch items once the
+  // backend ships listing metadata.
   const [nightlyRateInputs, setNightlyRateInputs] = useState<Record<string, string>>({});
   const [savingMetadataId, setSavingMetadataId] = useState<string | null>(null);
+
+  // Keyed by propertyId (not listingId), see the useProperties() comment above.
+  const [cleaningDurationInputs, setCleaningDurationInputs] = useState<Record<string, string>>({});
+  const [savingCleaningId, setSavingCleaningId] = useState<string | null>(null);
 
   // Manual-booking create flow. The Add Booking button per listing
   // opens the shared form drawer (also used in edit mode from the
@@ -84,6 +99,18 @@ export default function SettingsListingsPage() {
       return next;
     });
   }, [listings]);
+
+  useEffect(() => {
+    setCleaningDurationInputs((prev) => {
+      const next = { ...prev };
+      for (const p of properties) {
+        if (next[p.id] === undefined) {
+          next[p.id] = String(p.cleaningDurationMinutes);
+        }
+      }
+      return next;
+    });
+  }, [properties]);
 
   const handleChannexFieldChange = (id: string, field: keyof ChannexInputState, value: string) => {
     setChannexInputs((prev) => ({
@@ -200,6 +227,48 @@ export default function SettingsListingsPage() {
     setNightlyRateInputs((prev) => ({ ...prev, [id]: value }));
   };
 
+  const handleCleaningDurationChange = (propertyId: string, value: string) => {
+    setCleaningDurationInputs((prev) => ({ ...prev, [propertyId]: value }));
+  };
+
+  const handleCleaningDurationSave = (propertyId: string) => {
+    const raw = (cleaningDurationInputs[propertyId] ?? "").trim();
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || !Number.isInteger(parsed) || parsed < 0 || parsed > 1440) {
+      addToast({
+        type: "error",
+        message: "Cleaning duration must be a whole number of minutes from 0 to 1440",
+      });
+      return;
+    }
+
+    const property = properties.find((p) => p.id === propertyId);
+    if (property && parsed === property.cleaningDurationMinutes) {
+      addToast({ type: "info", message: "Nothing to save" });
+      return;
+    }
+
+    setSavingCleaningId(propertyId);
+    updateProperty.mutate(
+      { id: propertyId, data: { cleaningDurationMinutes: parsed } },
+      {
+        onSuccess: () => {
+          addToast({
+            type: "success",
+            message: `Cleaning duration saved for ${property?.name ?? "property"}`,
+          });
+        },
+        onError: (err: unknown) => {
+          const message = err instanceof Error ? err.message : "Failed to save cleaning duration";
+          addToast({ type: "error", message });
+        },
+        onSettled: () => {
+          setSavingCleaningId(null);
+        },
+      },
+    );
+  };
+
   return (
     <div className="p-md space-y-md">
       <PageHeader
@@ -234,6 +303,16 @@ export default function SettingsListingsPage() {
                   saving={savingMetadataId === listing.id}
                   onSave={() => handleMetadataSave(listing)}
                   onAddBooking={() => setAddBookingListingId(listing.id)}
+                  cleaningDurationInput={cleaningDurationInputs[listing.propertyId] ?? ""}
+                  storedCleaningDurationMinutes={
+                    properties.find((p) => p.id === listing.propertyId)?.cleaningDurationMinutes ??
+                    null
+                  }
+                  onCleaningDurationChange={(v) =>
+                    handleCleaningDurationChange(listing.propertyId, v)
+                  }
+                  savingCleaningDuration={savingCleaningId === listing.propertyId}
+                  onSaveCleaningDuration={() => handleCleaningDurationSave(listing.propertyId)}
                 />
               }
               channexTabContent={
@@ -268,10 +347,13 @@ export default function SettingsListingsPage() {
 // General tab.
 //
 // The Base nightly rate input is wired to a real save endpoint
-// (PUT /listings/{id}). The former placeholder sections (photos,
-// cleaning fee, stay rules, amenities, description) were removed as
-// dead affordances; they return as deliberate post-launch items once
-// the backend ships listing metadata.
+// (PUT /listings/{id}). Cleaning duration is wired to the properties
+// endpoint (PUT /properties/{id}): it is a per-Property field shared by
+// every listing on that property, not a per-listing one; see the
+// useProperties() comment on the page component. The former placeholder
+// sections (photos, cleaning fee, stay rules, amenities, description)
+// were removed as dead affordances; they return as deliberate
+// post-launch items once the backend ships listing metadata.
 // ---------------------------------------------------------------------
 
 interface GeneralTabProps {
@@ -281,6 +363,11 @@ interface GeneralTabProps {
   saving: boolean;
   onSave: () => void;
   onAddBooking: () => void;
+  cleaningDurationInput: string;
+  storedCleaningDurationMinutes: number | null;
+  onCleaningDurationChange: (value: string) => void;
+  savingCleaningDuration: boolean;
+  onSaveCleaningDuration: () => void;
 }
 
 function GeneralTab({
@@ -290,12 +377,25 @@ function GeneralTab({
   saving,
   onSave,
   onAddBooking,
+  cleaningDurationInput,
+  storedCleaningDurationMinutes,
+  onCleaningDurationChange,
+  savingCleaningDuration,
+  onSaveCleaningDuration,
 }: GeneralTabProps) {
   return (
     <div className="space-y-md">
       <PricingSection
         nightlyRateInput={nightlyRateInput}
         onNightlyRateChange={onNightlyRateChange}
+      />
+      <CleaningDurationSection
+        listingId={listingId}
+        value={cleaningDurationInput}
+        storedMinutes={storedCleaningDurationMinutes}
+        saving={savingCleaningDuration}
+        onChange={onCleaningDurationChange}
+        onSave={onSaveCleaningDuration}
       />
 
       <section
@@ -366,6 +466,70 @@ function PricingSection({ nightlyRateInput, onNightlyRateChange }: PricingSectio
             Falls back to this rate for any date with no per-date override.
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+interface CleaningDurationSectionProps {
+  listingId: string;
+  value: string;
+  storedMinutes: number | null;
+  saving: boolean;
+  onChange: (value: string) => void;
+  onSave: () => void;
+}
+
+// Real field: api's Property.cleaning_duration_minutes (default 120), the
+// task-scheduling fallback duration in cleaning_task.py. It lives on the
+// Property, so every listing sharing this row's property shows and saves
+// the same value, that is expected, not a bug.
+function CleaningDurationSection({
+  listingId,
+  value,
+  storedMinutes,
+  saving,
+  onChange,
+  onSave,
+}: CleaningDurationSectionProps) {
+  const dirty = value.trim() !== String(storedMinutes ?? "");
+  const inputId = `cleaning-duration-${listingId}`;
+
+  return (
+    <section className="space-y-xs">
+      <h3 className="text-body text-highlight-10 font-semibold">Cleaning</h3>
+      <div>
+        <label htmlFor={inputId} className="mb-xs text-body text-highlight-10 block font-medium">
+          Cleaning duration (minutes)
+        </label>
+        <input
+          id={inputId}
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={1440}
+          step={1}
+          placeholder="120"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="px-sm py-base text-body w-full rounded-lg border"
+          style={{ borderColor: "var(--border)" }}
+        />
+        <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
+          Time blocked for the cleaning task after checkout. Shared across every listing on this
+          property.
+        </p>
+      </div>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={!dirty || saving}
+          className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+        >
+          {saving ? "Saving…" : dirty ? "Save" : "Saved"}
+        </button>
       </div>
     </section>
   );
