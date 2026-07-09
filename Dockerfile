@@ -19,9 +19,15 @@ ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 # into the image (`http://localhost:8000`) and all `/be/*` proxy calls
 # fail with ECONNREFUSED.
 ARG INTERNAL_API_URL=http://localhost:8000
+# App Insights browser SDK connection string (F.6a). NEXT_PUBLIC_ so it is
+# inlined into the client bundle at build; empty default = telemetry disabled
+# (local/CI builds are a no-op). It is an ingestion key, safe to expose client
+# side, same as the api's.
+ARG NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING=
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV INTERNAL_API_URL=$INTERNAL_API_URL
+ENV NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING=$NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING
 # NEXTAUTH_SECRET is runtime-only — passed via Container App env vars, NOT baked into image
 
 RUN npm run build
