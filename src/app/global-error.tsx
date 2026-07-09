@@ -4,10 +4,13 @@ import { useEffect } from "react";
 
 import { trackError } from "@/lib/app-insights";
 
-// Root error boundary (F.6a): catches failures in the root layout itself, so
-// it must render its own <html>/<body> and cannot rely on the app's fonts,
-// CSS, or providers - hence inline styles. Reports to App Insights, offers a
-// reload.
+// Last-resort boundary: catches errors thrown by the ROOT layout itself, where
+// error.tsx cannot reach. It replaces the whole document, so it must render its
+// own <html>/<body> and cannot rely on the app shell, providers, Tailwind, or
+// design tokens (any of which could be the thing that threw). Everything here
+// is intentionally self-contained inline styles. Brand navy #15206b matches
+// --highlight-10. Reports to App Insights (F.6a, gated on the connection
+// string, no-ops locally/CI).
 export default function GlobalError({
   error,
   reset,
@@ -26,33 +29,42 @@ export default function GlobalError({
           margin: 0,
           minHeight: "100vh",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: "1rem",
-          padding: "1.5rem",
-          textAlign: "center",
-          fontFamily: "system-ui, sans-serif",
+          backgroundColor: "#fafafa",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          color: "#15206b",
         }}
       >
-        <h2 style={{ fontSize: "1.125rem", fontWeight: 600 }}>Something went wrong</h2>
-        <p style={{ maxWidth: "28rem", fontSize: "0.875rem", color: "#555" }}>
-          An unexpected error occurred. Please try again, or reload the page if it persists.
-        </p>
-        <button
-          type="button"
-          onClick={reset}
-          style={{
-            borderRadius: "0.5rem",
-            padding: "0.5rem 1rem",
-            fontSize: "0.875rem",
-            fontWeight: 500,
-            border: "1px solid #ccc",
-            cursor: "pointer",
-          }}
+        <div
+          data-testid="global-error-page"
+          style={{ maxWidth: 360, padding: 24, textAlign: "center" }}
         >
-          Try again
-        </button>
+          <h1 style={{ fontSize: 20, fontWeight: 700, margin: "0 0 8px" }}>Something went wrong</h1>
+          <p style={{ margin: "0 0 16px", lineHeight: 1.5 }}>
+            The app hit an unexpected error. Please try again.
+          </p>
+          <button
+            type="button"
+            onClick={reset}
+            style={{
+              padding: "8px 16px",
+              borderRadius: 8,
+              border: "none",
+              backgroundColor: "#15206b",
+              color: "#fafafa",
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
+          >
+            Try again
+          </button>
+          {error.digest && (
+            <p style={{ marginTop: 16, fontSize: 13, color: "#6b7280" }}>
+              Reference: {error.digest}
+            </p>
+          )}
+        </div>
       </body>
     </html>
   );
