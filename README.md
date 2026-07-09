@@ -1,22 +1,19 @@
 # STRABB Web
 
-Next.js frontend for STRABB — short-term rental booking aggregation and automation.
+Next.js frontend for STRABB, a short-term rental booking-aggregation and
+automation platform. Pairs with the `strabb-api` backend; OTA distribution
+runs through Channex (channel manager).
 
 ## Prerequisites
 
-- Node.js 20+
+- Node.js 22+
 - STRABB API running (http://localhost:8000)
 
 ## Setup
 
 ```bash
-# Clone and enter directory
 cd strabb-web
-
-# Install dependencies
 npm install
-
-# Copy environment file
 cp .env.example .env.local
 ```
 
@@ -35,8 +32,12 @@ Login with: `demo@strabb.io` / `demo1234` (after seeding the API database).
 ## Testing
 
 ```bash
-npm run test          # Run all tests
-npm run test:watch    # Watch mode
+npm run test          # Vitest, run once
+npm run test:watch    # Vitest, watch mode
+npm run test:coverage # Vitest with coverage
+npm run e2e           # Playwright end-to-end
+npm run e2e:ui        # Playwright UI mode
+npx tsc --noEmit      # Type-check (CI gate)
 ```
 
 ## Linting & Formatting
@@ -53,37 +54,51 @@ npm run format:fix    # Prettier autofix
 ```
 src/
   app/
-    (authenticated)/    — Protected pages (dashboard, properties, listings, bookings, etc.)
-    (public)/           — Public pages (privacy, terms)
-    login/              — Login page
-    api/auth/           — NextAuth API route
+    (authenticated)/  - Protected app: bookings, calendar, dashboard,
+                        messaging, operations, properties, reporting, settings
+    (auth)/           - Forgot/reset password, invite acceptance
+    (portal)/         - Cleaner portal
+    (public)/         - Privacy, terms
+    login/            - Login page
+    api/auth/         - Auth.js (NextAuth) route
+    api/health/       - Liveness endpoint
   components/
-    ui/                 — Reusable UI components (Button, DataTable, Dialog, etc.)
-    billing/            — Billing banner
-    bookings/           — Booking detail dialog
-    cleaning-tasks/     — Cleaning task dialog
-    listings/           — Listing form + delete dialogs
-    properties/         — Property form + delete dialogs
-    layout/             — Sidebar, account menu
-  hooks/                — React Query hooks for API calls
-  lib/
-    schemas/            — TypeScript types + Zod validation
-    auth.ts             — NextAuth configuration
-    api-client.ts       — Authenticated HTTP client
-    case-utils.ts       — camelCase/snake_case conversion
-    date-utils.ts       — Timezone-aware date formatting
-  test-utils/           — Shared test mocks
+    ui/               - Reusable primitives (Button, DataTable, Dialog, ...)
+    shell/            - App shell: sidebar, top nav, submenu, error boundary
+    overlays/         - Drawers/dialogs (booking, cleaning, ticket,
+                        availability block, share)
+    views/            - Calendar / gantt / kanban view primitives
+    charts/           - Reporting charts
+    listings/         - Listing settings UI
+    tickets/          - Ticket UI
+    billing/          - Billing banner
+    providers/        - App-wide providers (session, query, theme, app-insights)
+  hooks/              - React Query + client hooks
+  lib/                - auth, api-client, api-hooks, schemas, utils, app-insights
+  stores/             - Zustand client state (app-store + slices)
+  types/              - Shared TypeScript types
+  middleware.ts       - Role-based route guarding (owner/admin vs cleaner)
+  test-utils/         - Shared test helpers
 ```
 
 ## Pages
 
-| Page           | Path                  | Description                    |
-| -------------- | --------------------- | ------------------------------ |
-| Dashboard      | /dashboard            | Stats + recent bookings        |
-| Properties     | /properties           | Property CRUD                  |
-| Listings       | /listings             | Listing CRUD + sync button     |
-| Bookings       | /bookings             | Filtered booking list + detail |
-| Cleaning Tasks | /automations/cleaning | Auto-generated tasks           |
-| Guest Messages | /automations/messages | Email templates                |
-| Settings       | /settings             | Billing + system health        |
-| Onboarding     | /onboarding           | Setup wizard                   |
+| Area                            | Path                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| Dashboard                       | /dashboard                                                                    |
+| Calendar                        | /calendar                                                                     |
+| Properties                      | /properties                                                                   |
+| Bookings                        | /bookings                                                                     |
+| Operations (cleaning + tickets) | /operations                                                                   |
+| Messaging (inbox + OTA relay)   | /messaging, /messaging/templates, /messaging/scheduled                        |
+| Reporting                       | /reporting                                                                    |
+| Settings                        | /settings, /settings/listings, /settings/shareable-links, /settings/sync-logs |
+| Cleaner portal                  | /portal, /portal/availability, /portal/tasks/[id]                             |
+| Auth                            | /login, /forgot-password, /reset-password/[token], /invite/[token]            |
+
+## Deployment
+
+Staging deploys on merge to `main` (GitHub Actions to Azure Container Apps).
+Production is a manual, CI-gated, approval-protected workflow
+(`.github/workflows/deploy-production.yml`). Build-time config (baked URLs,
+App Insights key) is documented in `docs/deploy/build-args.md`.
