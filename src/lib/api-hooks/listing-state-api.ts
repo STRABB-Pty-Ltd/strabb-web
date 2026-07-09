@@ -74,6 +74,7 @@ export function useUpdateListingRates() {
       // affected date timed out large-range edits client-side — bug #4.)
       await apiClient.patch(`/listings/${listingId}/rates`, body);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["listing-state", variables.listingId],
@@ -107,6 +108,7 @@ export function useUpdateListingRestrictions() {
       // invalidation in onSuccess (bug #4).
       await apiClient.patch(`/listings/${listingId}/restrictions`, body);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["listing-state", variables.listingId],
@@ -142,6 +144,7 @@ export function useUpdateListingAvailability() {
       // invalidation in onSuccess (bug #4).
       await apiClient.patch(`/listings/${listingId}/availability`, body);
     },
+    meta: { suppressGlobalError: true },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["listing-state", variables.listingId],

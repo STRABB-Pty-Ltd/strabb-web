@@ -50,6 +50,7 @@ export function useTriggerSync() {
       const response = await apiClient.post<{ data: SyncTriggerResponse }>("/sync/trigger", {});
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["listings"] });
       queryClient.invalidateQueries({ queryKey: SYNC_KEY });

@@ -77,6 +77,7 @@ const channelColors: Record<string, string> = {
   booking_com: "var(--channel-booking)",
   vrbo: "var(--channel-vrbo)",
   direct: "var(--channel-direct)",
+  ota: "var(--channel-ota)",
 };
 
 export function enumerateMonths(start: string, end: string): string[] {
@@ -296,6 +297,7 @@ export function useCreateSavedReportAPI() {
 
   return useMutation({
     mutationFn: (data: SavedReportPayload) => apiClient.post("/saved-reports", data),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["saved-reports"] });
     },
@@ -321,6 +323,7 @@ export function useDeleteSavedReportAPI() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.delete(`/saved-reports/${id}`),
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["saved-reports"] });
     },

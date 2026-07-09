@@ -3,6 +3,7 @@ export type BookingChannel =
   | "booking_com"
   | "vrbo"
   | "direct"
+  | "ota"
   | "email"
   | "internal_notes";
 

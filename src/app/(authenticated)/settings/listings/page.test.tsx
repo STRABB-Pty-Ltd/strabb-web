@@ -27,7 +27,7 @@ vi.mock("@/lib/api-hooks/listings-api", () => ({
   useListingsAPI: () => listingsMock(),
   useUpdateListing: () => ({ mutate: updateListingMock, isPending: false }),
   useUpdateChannexMapping: () => ({ mutate: updateMappingMock, isPending: false }),
-  useChannexResyncListing: () => ({ mutate: resyncMock, isPending: false }),
+  useChannexResyncListing: () => ({ mutateAsync: resyncMock, isPending: false }),
 }));
 
 vi.mock("@/hooks/use-properties", () => ({
@@ -35,45 +35,53 @@ vi.mock("@/hooks/use-properties", () => ({
   useUpdateProperty: () => ({ mutate: updatePropertyMutateMock, isPending: false }),
 }));
 
-vi.mock("@/stores/app-store", () => ({
-  useAppStore: (selector: (s: unknown) => unknown) =>
-    selector({ addToast: addToastMock, selectedListings: [] }),
-}));
+// page.tsx's resync handler calls useAppStore.getState().addToast(...) directly
+// (imperative, outside a component render), alongside the normal hook-selector
+// usage elsewhere on the page - the mock needs to support both call shapes.
+vi.mock("@/stores/app-store", () => {
+  const useAppStore = Object.assign(
+    (selector: (s: { addToast: typeof addToastMock }) => unknown) =>
+      selector({ addToast: addToastMock }),
+    { getState: () => ({ addToast: addToastMock }) },
+  );
+  return { useAppStore };
+});
 
 vi.mock("@/components/overlays/booking-form-drawer", () => ({
-  BookingFormDrawer: () => null,
+  BookingFormDrawer: ({ open }: { open: boolean }) =>
+    open ? <div data-testid="booking-form-drawer" /> : null,
 }));
 
 import SettingsListingsPage from "./page";
 
 function listing(overrides: Partial<ListingResponse> = {}): ListingResponse {
   return {
-    id: "listing-1",
-    propertyId: "prop-1",
+    id: "l-1",
+    propertyId: "p-1",
     name: "Beach House",
     platform: "airbnb",
     externalListingId: null,
     icalFeedUrl: null,
-    syncStatus: "pending",
+    syncStatus: "synced",
     lastSyncedAt: null,
     lastSyncError: null,
     isActive: true,
     listingType: "standalone",
     parentId: null,
-    nightlyRate: null,
+    nightlyRate: 250,
     channexPropertyId: null,
     channexRoomTypeId: null,
     channexRatePlanId: null,
     children: [],
-    createdAt: "2026-01-01T00:00:00Z",
-    updatedAt: "2026-01-01T00:00:00Z",
+    createdAt: "2026-06-01T00:00:00Z",
+    updatedAt: "2026-06-01T00:00:00Z",
     ...overrides,
   };
 }
 
 function property(overrides: Partial<PropertyResponse> = {}): PropertyResponse {
   return {
-    id: "prop-1",
+    id: "p-1",
     name: "Beach House Property",
     address: null,
     timezone: "Australia/Sydney",
@@ -90,13 +98,23 @@ function property(overrides: Partial<PropertyResponse> = {}): PropertyResponse {
   };
 }
 
+function setup(listings: ListingResponse[]) {
+  listingsMock.mockReturnValue({
+    data: {
+      data: listings,
+      meta: { total: listings.length, page: 1, pageSize: 100, totalPages: 1 },
+    },
+    isLoading: false,
+  });
+}
+
 async function expandRow(name: string | RegExp) {
   const user = userEvent.setup();
   await user.click(screen.getByRole("button", { name }));
   return user;
 }
 
-describe("SettingsListingsPage - per-property cleaning duration", () => {
+describe("SettingsListingsPage", () => {
   beforeEach(() => {
     listingsMock.mockReset();
     propertiesMock.mockReset();
@@ -106,8 +124,63 @@ describe("SettingsListingsPage - per-property cleaning duration", () => {
     resyncMock.mockReset();
     addToastMock.mockReset();
 
-    listingsMock.mockReturnValue({ data: { data: [listing()] }, isLoading: false });
+    setup([listing()]);
     propertiesMock.mockReturnValue({ data: { data: [property()] } });
+  });
+
+  it("renders listing rows from the API", () => {
+    setup([listing(), listing({ id: "l-2", name: "City Loft" })]);
+    render(<SettingsListingsPage />);
+
+    expect(screen.getByText("Beach House")).toBeInTheDocument();
+    expect(screen.getByText("City Loft")).toBeInTheDocument();
+  });
+
+  it("saves the base nightly rate via the update-listing mutation with the parsed value", async () => {
+    setup([listing({ nightlyRate: 250 })]);
+    render(<SettingsListingsPage />);
+    await expandRow(/beach house/i);
+
+    const input = screen.getByLabelText("Base nightly rate");
+    expect(input).toHaveValue(250);
+    await userEvent.clear(input);
+    await userEvent.type(input, "300");
+    await userEvent.click(screen.getByRole("button", { name: /save metadata/i }));
+
+    expect(updateListingMock).toHaveBeenCalledTimes(1);
+    expect(updateListingMock.mock.calls[0][0]).toEqual({ listingId: "l-1", nightlyRate: 300 });
+  });
+
+  it("does not render the removed placeholder sections (photos, cleaning fee, stay rules, amenities, description)", async () => {
+    setup([listing()]);
+    render(<SettingsListingsPage />);
+    await expandRow(/beach house/i);
+
+    // Kept: the wired Pricing input and the manual-booking affordance.
+    expect(screen.getByText("Pricing")).toBeInTheDocument();
+    expect(screen.getByLabelText("Base nightly rate")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /add booking/i })).toBeInTheDocument();
+
+    // Removed: dead affordances must be gone from the DOM, not hidden.
+    expect(screen.queryByText("Photos")).not.toBeInTheDocument();
+    expect(screen.queryByText(/drag images here/i)).not.toBeInTheDocument();
+    expect(screen.queryByText("Cleaning fee")).not.toBeInTheDocument();
+    expect(screen.queryByText("Stay rules")).not.toBeInTheDocument();
+    expect(screen.queryByText("Min nights")).not.toBeInTheDocument();
+    expect(screen.queryByText("Amenities")).not.toBeInTheDocument();
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+    expect(screen.queryByText("Description")).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+  });
+
+  it("opens the booking drawer from the per-listing Add Booking button", async () => {
+    setup([listing()]);
+    render(<SettingsListingsPage />);
+    await expandRow(/beach house/i);
+
+    expect(screen.queryByTestId("booking-form-drawer")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /add booking/i }));
+    expect(screen.getByTestId("booking-form-drawer")).toBeInTheDocument();
   });
 
   it("renders the stored cleaning duration once the row is expanded", async () => {
@@ -118,15 +191,10 @@ describe("SettingsListingsPage - per-property cleaning duration", () => {
   });
 
   it("shares the same stored value across two listings on the same property", async () => {
-    listingsMock.mockReturnValue({
-      data: {
-        data: [
-          listing({ id: "listing-1", name: "Unit A", propertyId: "prop-1" }),
-          listing({ id: "listing-2", name: "Unit B", propertyId: "prop-1" }),
-        ],
-      },
-      isLoading: false,
-    });
+    setup([
+      listing({ id: "listing-1", name: "Unit A", propertyId: "p-1" }),
+      listing({ id: "listing-2", name: "Unit B", propertyId: "p-1" }),
+    ]);
 
     render(<SettingsListingsPage />);
     await expandRow(/Unit A/);
@@ -192,7 +260,7 @@ describe("SettingsListingsPage - per-property cleaning duration", () => {
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(updatePropertyMutateMock).toHaveBeenCalledWith(
-      { id: "prop-1", data: { cleaningDurationMinutes: 90 } },
+      { id: "p-1", data: { cleaningDurationMinutes: 90 } },
       expect.objectContaining({
         onSuccess: expect.any(Function),
         onError: expect.any(Function),

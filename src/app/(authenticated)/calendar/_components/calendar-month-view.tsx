@@ -1,7 +1,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import { BrushCleaning } from "lucide-react";
+import { BrushCleaning, CalendarOff } from "lucide-react";
 
 import { CalendarGrid } from "@/components/views/calendar-grid";
 import type { CalendarEvent } from "@/hooks/use-calendar";
@@ -19,11 +19,13 @@ const typeColors: Record<string, string> = {
   cleaning: "var(--status-success)",
   ticket: "var(--status-danger)",
   vacancy: "var(--neutral-30)",
+  availability_block: "var(--status-warning-tint)",
 };
 
 const typeTextColors: Record<string, string> = {
   booking: "var(--highlight-10)",
   vacancy: "var(--highlight-10)",
+  availability_block: "var(--status-warning)",
 };
 
 // Cleaning events on the calendar grid adopt the same status-driven palette
@@ -62,6 +64,7 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
   const windowSize = useAppStore((s) => s.calendar.windowSize);
   const anchor = useAppStore((s) => s.calendar.anchor);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
+  const openAvailabilityBlockDrawer = useAppStore((s) => s.openAvailabilityBlockDrawer);
 
   const mode = windowSizeToMode[windowSize] ?? "month";
   const currentDate = anchor ? parseISO(anchor) : new Date();
@@ -94,9 +97,10 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
           ? (channelColors[ev.channel ?? "direct"] ?? "var(--channel-direct)")
           : undefined
       }
-      getEventIcon={(ev) =>
-        ev.type === "cleaning" ? <BrushCleaning size={11} aria-hidden="true" /> : undefined
-      }
+      getEventIcon={(ev) => {
+        if (ev.type === "availability_block") return <CalendarOff size={11} aria-hidden="true" />;
+        return ev.type === "cleaning" ? <BrushCleaning size={11} aria-hidden="true" /> : undefined;
+      }}
       getEventInset={(ev) => {
         // Match the calendar gantt's getPartialDay so a booking sits at
         // 75–100 % of its check-in cell and 0–25 % of its check-out cell,
@@ -104,7 +108,8 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
         // Vacancy mirrors the booking handshake from the other side: starts
         // after a checkout (25 %) and ends before a checkin (75 %), so a
         // gap doesn't visually claim the partial-booking day.
-        if (ev.type === "booking") return { insetStart: 0.75, insetEnd: 0.75 };
+        if (ev.type === "booking" || ev.type === "availability_block")
+          return { insetStart: 0.75, insetEnd: 0.75 };
         if (ev.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.25 };
         if (ev.type === "vacancy") return { insetStart: 0.25, insetEnd: 0.25 };
         return { insetStart: 0, insetEnd: 0 };
@@ -119,7 +124,13 @@ export function CalendarMonthView({ events }: CalendarMonthViewProps) {
         }
         return ev.label;
       }}
-      onEventClick={(ev) => openDrillDownPanel(ev.type, ev.id)}
+      onEventClick={(ev) => {
+        if (ev.type === "availability_block") {
+          openAvailabilityBlockDrawer(ev.id);
+          return;
+        }
+        openDrillDownPanel(ev.type, ev.id);
+      }}
     />
   );
 }

@@ -30,6 +30,7 @@ vi.mock("@/hooks/use-bookings", () => ({
   // Stubbed here so the drawer renders without firing real fetches.
   useCreateBooking: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useUpdateBooking: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useBookings: () => ({ data: undefined, isLoading: false }),
 }));
 
 vi.mock("@/hooks/use-property-timezone", () => ({

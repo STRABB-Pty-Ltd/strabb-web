@@ -8,7 +8,9 @@ import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import type { PageId } from "@/stores/types";
 
 import { BillingBanner } from "@/components/billing/billing-banner";
+import { AvailabilityBlockDrawer } from "@/components/overlays/availability-block-drawer";
 import { BookingDetailDrawer } from "@/components/overlays/booking-detail-drawer";
+import { BookingFormOverlay } from "@/components/overlays/booking-form-overlay";
 import { CleaningDetailDrawer } from "@/components/overlays/cleaning-detail-drawer";
 import { SharePopup } from "@/components/overlays/share-popup";
 import { ShoppingListPopup } from "@/components/overlays/shopping-list-popup";
@@ -156,6 +158,8 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       </div>
       <KeyboardHelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
       <BookingDetailDrawer />
+      <BookingFormOverlay />
+      <AvailabilityBlockDrawer />
       <CleaningDetailDrawer />
       <TicketDetailDrawer />
       <TimeframePopup />

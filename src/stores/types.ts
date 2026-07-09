@@ -22,4 +22,6 @@ export interface Toast {
   id: string;
   type: "success" | "error" | "info" | "warning";
   message: string;
+  /** Optional single action rendered as a button on the toast (sonner action). */
+  action?: { label: string; onClick: () => void };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Image as ImageIcon, Inbox } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ListingRow } from "@/components/listings/listing-row";
@@ -32,26 +32,6 @@ const EMPTY_CHANNEX_INPUT: ChannexInputState = {
   ratePlanId: "",
 };
 
-// Mock amenity list. Real source will be a tenant-level amenity catalogue
-// once the backend ships listing metadata - for now the checkboxes are
-// here to anchor the layout and let Will eyeball the spec.
-const AMENITIES = [
-  "Wi-Fi",
-  "Air conditioning",
-  "Heating",
-  "Kitchen",
-  "Washer",
-  "Dryer",
-  "Pool",
-  "Hot tub",
-  "Parking",
-  "EV charger",
-  "Pet friendly",
-  "BBQ",
-  "Workspace",
-  "Smart TV",
-] as const;
-
 export default function SettingsListingsPage() {
   const { data, isLoading } = useListingsAPI();
   const updateMapping = useUpdateChannexMapping();
@@ -79,8 +59,10 @@ export default function SettingsListingsPage() {
 
   // Per-listing General-tab inputs. `nightlyRate` is wired to a real save
   // endpoint (PUT /listings/{id}); cleaning duration below is wired to the
-  // properties endpoint. The remaining inputs on that tab stay visual
-  // placeholders pending backend support, see docs/listings-settings-phase-2.md.
+  // properties endpoint. The former placeholder inputs (photos, cleaning
+  // fee, stay rules, amenities, description) were removed as dead
+  // affordances; they return as deliberate post-launch items once the
+  // backend ships listing metadata.
   const [nightlyRateInputs, setNightlyRateInputs] = useState<Record<string, string>>({});
   const [savingMetadataId, setSavingMetadataId] = useState<string | null>(null);
 
@@ -368,10 +350,10 @@ export default function SettingsListingsPage() {
 // (PUT /listings/{id}). Cleaning duration is wired to the properties
 // endpoint (PUT /properties/{id}): it is a per-Property field shared by
 // every listing on that property, not a per-listing one; see the
-// useProperties() comment on the page component. The remaining sections
-// (photos, cleaning fee, default stay rules, amenities, description)
-// stay visual placeholders pending backend support. See
-// docs/listings-settings-phase-2.md for the deferred list.
+// useProperties() comment on the page component. The former placeholder
+// sections (photos, cleaning fee, stay rules, amenities, description)
+// were removed as dead affordances; they return as deliberate
+// post-launch items once the backend ships listing metadata.
 // ---------------------------------------------------------------------
 
 interface GeneralTabProps {
@@ -403,12 +385,10 @@ function GeneralTab({
 }: GeneralTabProps) {
   return (
     <div className="space-y-md">
-      <PhotosSection />
       <PricingSection
         nightlyRateInput={nightlyRateInput}
         onNightlyRateChange={onNightlyRateChange}
       />
-      <StaySection />
       <CleaningDurationSection
         listingId={listingId}
         value={cleaningDurationInput}
@@ -417,8 +397,6 @@ function GeneralTab({
         onChange={onCleaningDurationChange}
         onSave={onSaveCleaningDuration}
       />
-      <AmenitiesSection listingId={listingId} />
-      <DescriptionSection listingId={listingId} />
 
       <section
         className="pt-sm border-t"
@@ -455,21 +433,6 @@ function GeneralTab({
   );
 }
 
-function PhotosSection() {
-  return (
-    <section className="space-y-xs">
-      <h3 className="text-body text-highlight-10 font-semibold">Photos</h3>
-      <div
-        className="p-md flex flex-col items-center justify-center rounded-lg border border-dashed"
-        style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
-      >
-        <ImageIcon size={24} aria-hidden="true" />
-        <p className="mt-xs text-body">Drag images here or click to upload (coming soon)</p>
-      </div>
-    </section>
-  );
-}
-
 interface PricingSectionProps {
   nightlyRateInput: string;
   onNightlyRateChange: (value: string) => void;
@@ -502,49 +465,6 @@ function PricingSection({ nightlyRateInput, onNightlyRateChange }: PricingSectio
           <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
             Falls back to this rate for any date with no per-date override.
           </p>
-        </div>
-        <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">
-            Cleaning fee
-          </label>
-          <input
-            type="number"
-            placeholder="120"
-            disabled
-            className="px-sm py-base text-body w-full rounded-lg border opacity-60"
-            style={{ borderColor: "var(--border)" }}
-          />
-          <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
-            Coming soon.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function StaySection() {
-  return (
-    <section className="space-y-xs">
-      <h3 className="text-body text-highlight-10 font-semibold">Stay rules</h3>
-      <div className="gap-sm grid grid-cols-2">
-        <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">Min nights</label>
-          <input
-            type="number"
-            placeholder="2"
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
-          />
-        </div>
-        <div>
-          <label className="mb-xs text-body text-highlight-10 block font-medium">Max nights</label>
-          <input
-            type="number"
-            placeholder="30"
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
-          />
         </div>
       </div>
     </section>
@@ -611,46 +531,6 @@ function CleaningDurationSection({
           {saving ? "Saving…" : dirty ? "Save" : "Saved"}
         </button>
       </div>
-    </section>
-  );
-}
-
-function AmenitiesSection({ listingId }: { listingId: string }) {
-  return (
-    <section className="space-y-xs">
-      <h3 className="text-body text-highlight-10 font-semibold">Amenities</h3>
-      <div className="gap-base grid grid-cols-2 sm:grid-cols-3">
-        {AMENITIES.map((a) => (
-          <label
-            key={a}
-            className="gap-base text-body text-highlight-10 flex items-center"
-            htmlFor={`amenity-${listingId}-${a}`}
-          >
-            <input id={`amenity-${listingId}-${a}`} type="checkbox" className="h-sm w-sm rounded" />
-            {a}
-          </label>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DescriptionSection({ listingId }: { listingId: string }) {
-  return (
-    <section className="space-y-xs">
-      <label
-        htmlFor={`desc-${listingId}`}
-        className="text-body text-highlight-10 block font-semibold"
-      >
-        Description
-      </label>
-      <textarea
-        id={`desc-${listingId}`}
-        rows={4}
-        placeholder="What makes this listing distinctive? Guests see this on the OTA detail page."
-        className="px-sm py-base text-body w-full rounded-lg border"
-        style={{ borderColor: "var(--border)" }}
-      />
     </section>
   );
 }

@@ -173,6 +173,7 @@ export function useUpdateListing() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["listings"] });
       queryClient.invalidateQueries({ queryKey: ["listings-hierarchy"] });
@@ -195,6 +196,7 @@ export function useUpdateChannexMapping() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["listings"] });
       queryClient.invalidateQueries({ queryKey: ["listings-hierarchy"] });
@@ -221,5 +223,6 @@ export function useChannexResyncListing() {
       );
       return response.data;
     },
+    meta: { suppressGlobalError: true },
   });
 }

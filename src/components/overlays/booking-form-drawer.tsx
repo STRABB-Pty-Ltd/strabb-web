@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
+  useBookings,
   useCreateBooking,
   useUpdateBooking,
   type CreateBookingRequest,
@@ -11,10 +13,13 @@ import {
 } from "@/hooks/use-bookings";
 import { useListings } from "@/hooks/use-listings";
 import { ApiError } from "@/lib/api-client";
+import { findOverlappingBooking } from "@/lib/booking-overlap";
 import type { BookingResponse } from "@/lib/schemas/booking";
 import { useAppStore } from "@/stores/app-store";
 
-type Mode = { kind: "create"; listingId: string } | { kind: "edit"; booking: BookingResponse };
+/** Create mode without a listingId shows a listing-picker step first
+ *  (page-level entry points open the drawer before a listing is known). */
+type Mode = { kind: "create"; listingId?: string } | { kind: "edit"; booking: BookingResponse };
 
 interface BookingFormDrawerProps {
   open: boolean;
@@ -23,6 +28,7 @@ interface BookingFormDrawerProps {
 }
 
 interface FormState {
+  listingId: string;
   checkIn: string;
   checkOut: string;
   guestName: string;
@@ -34,6 +40,7 @@ interface FormState {
 }
 
 const EMPTY_FORM: FormState = {
+  listingId: "",
   checkIn: "",
   checkOut: "",
   guestName: "",
@@ -60,6 +67,7 @@ function fromDatetimeLocal(value: string): string {
 
 function bookingToFormState(b: BookingResponse): FormState {
   return {
+    listingId: b.listingId,
     checkIn: toDatetimeLocal(b.checkIn),
     checkOut: toDatetimeLocal(b.checkOut),
     guestName: b.guestName ?? "",
@@ -76,28 +84,49 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
   const create = useCreateBooking();
   const update = useUpdateBooking();
   const addToast = useAppStore((s) => s.addToast);
+  const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
 
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [error, setError] = useState<string | null>(null);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     if (mode?.kind === "edit") {
       setForm(bookingToFormState(mode.booking));
     } else {
-      setForm(EMPTY_FORM);
+      setForm({ ...EMPTY_FORM, listingId: mode?.listingId ?? "" });
     }
     setError(null);
+    setConfirmingCancel(false);
   }, [open, mode]);
 
   const listings = listingsData?.data ?? [];
-  const targetListingId = mode?.kind === "edit" ? mode.booking.listingId : mode?.listingId;
-  const listingName =
-    listings.find((l) => l.id === targetListingId)?.name ?? targetListingId?.slice(0, 8) ?? "";
+  const needsListingPicker = mode?.kind === "create" && !mode.listingId;
+  const targetListingId = mode?.kind === "edit" ? mode.booking.listingId : form.listingId;
+  const listingName = listings.find((l) => l.id === targetListingId)?.name ?? "";
   const title =
-    mode?.kind === "edit" ? `Edit booking — ${listingName}` : `Add booking — ${listingName}`;
+    mode?.kind === "edit"
+      ? `Edit booking${listingName ? ` - ${listingName}` : ""}`
+      : `Add booking${listingName ? ` - ${listingName}` : ""}`;
   const isCancelled = mode?.kind === "edit" && mode.booking.status === "cancelled";
   const saving = create.isPending || update.isPending;
+
+  // Advisory overlap warning: one page of this listing's bookings from the
+  // shared cache. Never blocks submission - server-side conflict detection
+  // stays the source of truth.
+  const listingBookings = useBookings({ listingId: targetListingId || undefined }, 1, 100, {
+    enabled: open && !!targetListingId,
+  });
+  const overlappingBooking = useMemo(() => {
+    if (!form.checkIn || !form.checkOut) return null;
+    return findOverlappingBooking(
+      listingBookings.data?.data ?? [],
+      fromDatetimeLocal(form.checkIn),
+      fromDatetimeLocal(form.checkOut),
+      mode?.kind === "edit" ? mode.booking.id : undefined,
+    );
+  }, [listingBookings.data, form.checkIn, form.checkOut, mode]);
 
   const update_ = (patch: Partial<FormState>) => setForm((prev) => ({ ...prev, ...patch }));
 
@@ -110,8 +139,16 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
 
   const handleSave = async () => {
     setError(null);
+    if (mode?.kind === "create" && !targetListingId) {
+      setError("Choose a listing");
+      return;
+    }
     if (!form.checkIn || !form.checkOut) {
       setError("Check-in and check-out dates are required");
+      return;
+    }
+    if (form.checkOut <= form.checkIn) {
+      setError("Check-out must be after check-in");
       return;
     }
     const parseNumber = (s: string): number | null => {
@@ -133,7 +170,7 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
 
     if (mode?.kind === "create") {
       const payload: CreateBookingRequest = {
-        listingId: mode.listingId,
+        listingId: targetListingId,
         checkIn: fromDatetimeLocal(form.checkIn),
         checkOut: fromDatetimeLocal(form.checkOut),
         guestName: form.guestName.trim() || null,
@@ -144,8 +181,14 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
         notes: form.notes.trim() || null,
       };
       try {
-        await create.mutateAsync(payload);
-        addToast({ type: "success", message: "Booking created" });
+        const created = await create.mutateAsync(payload);
+        addToast({
+          type: "success",
+          message: "Booking created",
+          action: created?.id
+            ? { label: "View booking", onClick: () => openDrillDownPanel("booking", created.id) }
+            : undefined,
+        });
         onClose();
       } catch (err) {
         handleError(err);
@@ -171,9 +214,8 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
     }
   };
 
-  const handleCancel = async () => {
+  const handleCancelConfirmed = async () => {
     if (mode?.kind !== "edit") return;
-    if (!window.confirm("Cancel this booking? Channex availability will be restored.")) return;
     try {
       await update.mutateAsync({ id: mode.booking.id, status: "cancelled" });
       addToast({ type: "success", message: "Booking cancelled" });
@@ -186,6 +228,27 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
   return (
     <DrillDownPanel open={open} onClose={onClose} title={title}>
       <div className="space-y-sm">
+        {needsListingPicker && (
+          <div>
+            <label htmlFor="bk-listing" className="text-body text-highlight-10 block font-medium">
+              Listing
+            </label>
+            <select
+              id="bk-listing"
+              value={form.listingId}
+              onChange={(e) => update_({ listingId: e.target.value })}
+              className="px-sm py-base text-body w-full rounded-lg border"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <option value="">Choose a listing</option>
+              {listings.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <Field
           id="bk-checkin"
           label="Check-in"
@@ -200,6 +263,20 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
           value={form.checkOut}
           onChange={(v) => update_({ checkOut: v })}
         />
+        {overlappingBooking && (
+          <p
+            className="text-body px-sm py-base rounded-lg"
+            role="status"
+            style={{
+              backgroundColor: "var(--status-warning-tint)",
+              color: "var(--status-warning)",
+            }}
+          >
+            Heads up: these dates overlap {overlappingBooking.guestName ?? "another booking"} (
+            {overlappingBooking.checkIn.slice(0, 10)} to {overlappingBooking.checkOut.slice(0, 10)}
+            ). You can still save; the conflict will be flagged.
+          </p>
+        )}
         <Field
           id="bk-guest-name"
           label="Guest name"
@@ -257,7 +334,7 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
           {mode?.kind === "edit" && !isCancelled && (
             <button
               type="button"
-              onClick={handleCancel}
+              onClick={() => setConfirmingCancel(true)}
               disabled={saving}
               className="px-sm py-base text-body rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
               style={{ borderColor: "var(--status-danger)", color: "var(--status-danger)" }}
@@ -284,6 +361,17 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmingCancel}
+        onOpenChange={setConfirmingCancel}
+        title="Cancel this booking?"
+        description="Channex availability will be restored for the booked dates."
+        confirmLabel="Cancel booking"
+        cancelLabel="Keep booking"
+        destructive
+        onConfirm={handleCancelConfirmed}
+      />
     </DrillDownPanel>
   );
 }
