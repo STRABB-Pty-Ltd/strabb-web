@@ -20,9 +20,13 @@ container restart.
   are client-baked (public); `INTERNAL_API_URL` and `NEXTAUTH_URL` are
   server-side. The production values are the ones the `deploy-production.yml`
   `az acr build --build-arg ...` step passes.
-- The App Insights connection string (F.6a) is an ingestion key, safe to
-  expose client-side (it ships in the JS bundle). It is passed from GitHub
-  Actions secrets: `APPINSIGHTS_WEB_CONNECTION_STRING_STAGING` (ci.yml) and
+- The App Insights connection string (F.6a) is passed **base64-encoded** as
+  the `NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING_B64` build-arg and
+  decoded in the Dockerfile: the raw string contains `;`, and `az acr build`
+  rebuilds the remote `docker build` command unquoted, so a `;` splits it. The
+  string is an ingestion key, safe to expose client-side (it ships in the JS
+  bundle). Passed from GitHub Actions secrets:
+  `APPINSIGHTS_WEB_CONNECTION_STRING_STAGING` (ci.yml) and
   `APPINSIGHTS_WEB_CONNECTION_STRING_PROD` (deploy-production.yml) - **both
   must be added in repo Settings -> Secrets** or client telemetry stays off.
   Empty/unset = the browser SDK no-ops, so local + CI builds are unaffected.
