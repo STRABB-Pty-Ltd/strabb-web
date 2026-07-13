@@ -127,7 +127,12 @@
   /* Layout dimensions - all on Fibonacci ladder (5/8/13/21/34/55/89/144/233/377/610) */
   --topnav-height: 55px;
   --submenu-height: 55px;
-  --sidebar-width: 16vw;
+  /* Floored at 233px (Fibonacci ladder): pure 16vw shrinks below the
+     content width sidebar rows actually need (confirmed: the Listings
+     Select All + Clear pair needs ~183px) starting under ~1456px wide,
+     which used to overflow the sidebar's right edge into the canvas on
+     any narrower desktop window. Fluid again above that. */
+  --sidebar-width: max(233px, 16vw);
   --drilldown-width: 377px;
   --thread-width: 610px;
 

@@ -45,10 +45,21 @@ export function KPICard({ kpi, onClick }: KPICardProps) {
       style={{ backgroundColor: "var(--neutral-30)" }}
       data-no-elevate
     >
-      <div className="mb-sm gap-base flex items-center">
+      {/* items-start (not -center): once the label can wrap to 2 lines in a
+          narrower card, centering the trend badge against the label's full
+          height looked odd - top-aligned matches the label's first line
+          instead, like a headline + tag. */}
+      <div className="mb-sm gap-base flex items-start">
+        {/* Wraps instead of truncating - a fixed truncate + narrow card
+            combination silently cut "Total Revenue" down to "Tota..." at
+            some widths (found via kpi-grid.tsx's grid-cols tuning); nothing
+            constrains this card to single-line height, so wrapping loses no
+            information instead of an ellipsis losing characters. title stays
+            as a harmless hover reference even though the full text now
+            always renders. */}
         <p
           title={kpi.label}
-          className="text-subheading min-w-0 flex-1 truncate font-medium"
+          className="text-subheading min-w-0 flex-1 font-medium"
           style={{ color: "var(--highlight-10)" }}
         >
           {kpi.label}
