@@ -76,3 +76,15 @@ being true. One bullet per trap, specific enough to act on.
   create) take ~37s (SendGrid 401 retries in-request) and the /be proxy
   resets at ~30s, so the UI shows failure while the api write lands.
   Poll the api for the landed row instead of waiting on the toast.
+
+## Styling / tailwind-merge (added 13-07-2026, Phase I.3)
+
+- Any custom utility whose name collides with a twMerge class group must
+  be registered in `cn()` (src/lib/utils.ts, extendTailwindMerge) before
+  a cva primitive relies on it. Stock twMerge classified `text-body` as
+  a text COLOUR, so every variant colour class silently stripped the
+  font size and Chips/Buttons rendered at the browser's 16px - passing
+  tsc, tests, and casual review. The type ladder (text-body/subheading/
+  heading/display) is registered now; if you add a new ladder step or a
+  custom `font-*`/`shadow-*`-shaped utility, extend the config in the
+  same commit and verify with a computed-style measurement, not eyes.
