@@ -1,12 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { pageLabels, settingsNavItem } from "@/lib/navigation";
 import { useAppStore } from "@/stores/app-store";
 
 /**
- * Phone header (M.1): wordmark + current page title + a Settings shortcut,
+ * Phone header (M.1): logo + current page title + a Settings shortcut,
  * since Settings lives up top rather than in the bottom bar - decision
  * 10-07-2026 (team meeting). Hidden at lg+ (1024px) alongside
  * MobileBottomNav - see that component's comment for why md (768px)
@@ -27,9 +28,30 @@ export function MobileTopBar() {
       style={{ borderBottom: "var(--hairline) solid var(--border)" }}
     >
       <div className="gap-sm flex items-center">
-        <span className="text-subheading text-highlight-10 font-semibold tracking-tight">
-          STRABB
-        </span>
+        {/* Same two logo assets as the desktop shell's LogoSection - a text
+            wordmark here (copied from the portal's compact header without
+            reconsidering it for this shell) read as a different brandmark
+            from the desktop logo image. Height pinned to --text-subheading
+            (21px) so it matches the scale a same-sized text wordmark would
+            have had; width follows from the asset's fixed 2.5:1 aspect. */}
+        <Image
+          src="/logo-strabb.png"
+          alt="STRABB"
+          width={1500}
+          height={600}
+          priority
+          className="block dark:hidden"
+          style={{ height: "var(--text-subheading)", width: "auto" }}
+        />
+        <Image
+          src="/logo-strabb-dark.png"
+          alt="STRABB"
+          width={1500}
+          height={600}
+          priority
+          className="hidden dark:block"
+          style={{ height: "var(--text-subheading)", width: "auto" }}
+        />
         <span className="text-body" style={{ color: "var(--text-secondary)" }}>
           {pageLabels[currentPage]}
         </span>
