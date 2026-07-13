@@ -302,23 +302,25 @@ export function ListingCalendar({ listingId, baseNightlyRate }: ListingCalendarP
     <div className="space-y-sm">
       <div className="flex items-center justify-between">
         <div className="gap-base flex items-center">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-xs"
             onClick={() => setViewDate(subMonths(viewDate, 1))}
-            className="hover:bg-neutral-30 h-md inline-flex w-md items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             aria-label="Previous month"
           >
             <ChevronLeft size={16} aria-hidden="true" />
-          </button>
+          </Button>
           <span className="text-subheading font-semibold">{format(viewDate, "MMMM yyyy")}</span>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-xs"
             onClick={() => setViewDate(addMonths(viewDate, 1))}
-            className="hover:bg-neutral-30 h-md inline-flex w-md items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             aria-label="Next month"
           >
             <ChevronRight size={16} aria-hidden="true" />
-          </button>
+          </Button>
         </div>
         <Button
           type="button"

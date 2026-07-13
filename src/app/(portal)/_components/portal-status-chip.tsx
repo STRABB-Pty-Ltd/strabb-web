@@ -1,3 +1,4 @@
+import { Chip } from "@/components/ui/chip";
 import {
   PORTAL_STATUS_COLORS,
   PORTAL_STATUS_LABELS,
@@ -12,15 +13,8 @@ import {
 export function PortalStatusChip({ status }: { status: PortalTaskStatus }) {
   const color = PORTAL_STATUS_COLORS[status];
   return (
-    <span
-      className="px-sm text-body inline-flex items-center rounded-md font-medium"
-      style={{
-        color,
-        backgroundColor: `color-mix(in srgb, ${color} 14%, transparent)`,
-        minHeight: "var(--chip-height)",
-      }}
-    >
+    <Chip tone="tint" color={color} size="lg">
       {PORTAL_STATUS_LABELS[status]}
-    </span>
+    </Chip>
   );
 }
