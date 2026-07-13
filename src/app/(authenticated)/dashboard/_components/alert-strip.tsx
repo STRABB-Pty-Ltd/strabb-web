@@ -72,13 +72,15 @@ export function AlertStrip({ alerts }: AlertStripProps) {
   if (visible.length === 0) return null;
 
   return (
-    // 1 col mobile, 2 col tablet/midrange, 4 col wide desktop - a fixed
+    // 1 col mobile, 2 col tablet/midrange, 3 col at lg, 4 col at xl - a fixed
     // 12-col/col-span-3 grid (always 4-per-row) had no room to shrink into
     // below wide-desktop widths, so a card's icon+text+View+dismiss row
     // overflowed its own rectangle instead of wrapping (found testing M.1's
     // shell fix at 850px, present at every width below ~1024px including
-    // mobile).
-    <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    // mobile). The lg:3/xl:4 buffer tier (same pattern as kpi-grid.tsx and
+    // reporting-kpi-row.tsx) was added after cards still felt crowded jumping
+    // straight from 2 to 4 right at 1024px.
+    <div className="gap-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {visible.map((alert) => {
         const Icon = typeIcon[alert.type] ?? AlertTriangle;
         const bg = severityBg[alert.severity] ?? "var(--neutral-30)";
