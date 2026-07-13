@@ -52,9 +52,13 @@ interface DrawerProps {
   closeOnEscape?: boolean;
   /** Accent bar above the header (the drill-down treatment). Omit for none. */
   accentColor?: string;
+  /** One-line subtitle under the default header's title. */
+  description?: string;
   /** Replaces the default title + close-X header row entirely. The panel's
       accessible name stays `title` either way. */
   header?: React.ReactNode;
+  /** Pinned row below the scrolling body (action buttons etc). */
+  footer?: React.ReactNode;
   /** Merged onto the scrolling body - e.g. drop padding for a pinned-composer
       layout. */
   bodyClassName?: string;
@@ -77,7 +81,9 @@ function Drawer({
   rightOffset = "var(--space-md)",
   closeOnEscape = true,
   accentColor,
+  description,
   header,
+  footer,
   bodyClassName,
   isolate = false,
   closeLabel = "Close panel",
@@ -85,6 +91,23 @@ function Drawer({
   const panelRef = React.useRef<HTMLDivElement>(null);
   // Keep the panel mounted briefly after close so the exit keyframe can play.
   const { shouldRender } = useDelayedClose(open, DRAWER_EXIT_MS);
+
+  // isolate: stop mousedown at the panel NODE, natively. A React
+  // onMouseDown={stopPropagation} cannot do this job - App Router hydrates
+  // React at the document root, so the synthetic dispatch happens AT
+  // document, alongside (and after) useClickOutside's own document
+  // listeners; by then a sibling drawer's outside-click has already fired.
+  // A native listener on the panel stops the event mid-bubble, before any
+  // document listener sees it. (click/focus events are unaffected -
+  // only mousedown is stopped, and only while this drawer is rendered.)
+  React.useEffect(() => {
+    if (!isolate || !shouldRender) return;
+    const el = panelRef.current;
+    if (!el) return;
+    const stop = (e: MouseEvent) => e.stopPropagation();
+    el.addEventListener("mousedown", stop);
+    return () => el.removeEventListener("mousedown", stop);
+  }, [isolate, shouldRender]);
 
   useClickOutside(panelRef, onClose, open);
   // Side drawer: rails stay live, so no aria-modal and no Tab trap. The hook
@@ -108,6 +131,9 @@ function Drawer({
             ...canvasOverlayStyle,
             zIndex: scrimZIndex,
             backgroundColor: "var(--scrim)",
+            animation: !open
+              ? `fadeOut ${DRAWER_EXIT_MS}ms ease-in forwards`
+              : `fadeIn ${DRAWER_EXIT_MS}ms ease-out`,
           }}
           onClick={onClose}
         />
@@ -133,7 +159,6 @@ function Drawer({
             ? `${frames.out} ${DRAWER_EXIT_MS}ms ease-in forwards`
             : `${frames.in} ${DRAWER_EXIT_MS}ms ease-out`,
         }}
-        onMouseDown={isolate ? (e) => e.stopPropagation() : undefined}
       >
         {accentColor && (
           <div
@@ -148,25 +173,52 @@ function Drawer({
             className="px-sm py-sm flex items-center justify-between border-b"
             style={{ borderColor: "var(--border)" }}
           >
-            <h2 className="text-body text-highlight-10 font-semibold">{title}</h2>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label={closeLabel}
-              className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-              data-no-elevate
-            >
-              <X size={18} />
-            </button>
+            <div>
+              <h2 className="text-body text-highlight-10 font-semibold">{title}</h2>
+              {description && <p className="text-body text-highlight-10">{description}</p>}
+            </div>
+            <DrawerCloseButton onClick={onClose} label={closeLabel} />
           </div>
         )}
 
         <div data-slot="drawer-body" className={cn("p-sm flex-1 overflow-y-auto", bodyClassName)}>
           {children}
         </div>
+
+        {footer && (
+          <div
+            data-slot="drawer-footer"
+            className="gap-base px-sm py-sm flex shrink-0 justify-end border-t"
+            style={{ borderColor: "var(--border)" }}
+          >
+            {footer}
+          </div>
+        )}
       </div>
     </>
   );
 }
 
-export { Drawer };
+/** The drawer close-X. Exported for custom `header` slots so they never
+    re-roll the recipe. */
+function DrawerCloseButton({
+  onClick,
+  label = "Close panel",
+}: {
+  onClick: () => void;
+  label?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="p-xs text-highlight-10 hover:bg-neutral-30 hover:text-highlight-10 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+      data-no-elevate
+    >
+      <X size={18} />
+    </button>
+  );
+}
+
+export { Drawer, DrawerCloseButton };
