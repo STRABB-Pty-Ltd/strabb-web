@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
+import { AccountSection } from "./account-section";
 import { NotificationsSection } from "./notifications-section";
 import { SystemHealthCard } from "./system-health-card";
 import { TeamSection } from "./team-section";
@@ -53,13 +57,11 @@ export function GeneralSection() {
           >
             Company Name
           </label>
-          <input
+          <Input
             id="general-company-name"
             type="text"
             value={values.companyName}
             onChange={(e) => patch({ companyName: e.target.value })}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
           />
         </div>
 
@@ -70,19 +72,12 @@ export function GeneralSection() {
           >
             Default Timezone
           </label>
-          <select
+          <Select
             id="general-timezone"
             value={values.timezone}
             onChange={(e) => patch({ timezone: e.target.value })}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
-          >
-            {timezones.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz}
-              </option>
-            ))}
-          </select>
+            options={timezones.map((tz) => ({ value: tz, label: tz }))}
+          />
         </div>
 
         <div>
@@ -92,19 +87,12 @@ export function GeneralSection() {
           >
             Default Currency
           </label>
-          <select
+          <Select
             id="general-currency"
             value={values.currency}
             onChange={(e) => patch({ currency: e.target.value })}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
-          >
-            {currencies.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
+            options={currencies.map((c) => ({ value: c, label: c }))}
+          />
         </div>
 
         <div>
@@ -144,15 +132,9 @@ export function GeneralSection() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={save}
-        disabled={!dirty || isSaving}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-      >
+      <Button onClick={save} disabled={!dirty || isSaving}>
         {isSaving ? "Saving…" : "Save Changes"}
-      </button>
+      </Button>
 
       <hr className="my-md" style={{ borderColor: "var(--border)" }} />
       <TeamSection />
@@ -162,6 +144,9 @@ export function GeneralSection() {
 
       <hr className="my-md" style={{ borderColor: "var(--border)" }} />
       <SystemHealthCard />
+
+      <hr className="my-md" style={{ borderColor: "var(--border)" }} />
+      <AccountSection />
     </div>
   );
 }

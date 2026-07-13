@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 
 import { BillingNavPill } from "@/components/billing/billing-nav-pill";
@@ -80,22 +79,9 @@ export function TopNav() {
         </Link>
       )}
 
-      {/* Sign out - the owner/admin shell had no account control, so this is the
-          only route out of the app. Mirrors the portal account page's signOut
-          (next-auth/react) and lands back on /login. Auto-width so the longer
-          label is not clipped by the fixed pill width the nav links use. */}
-      <button
-        type="button"
-        onClick={() => void signOut({ callbackUrl: "/login" })}
-        className="mr-sm px-sm py-base text-body flex items-center justify-center font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-        style={{
-          borderRadius: "var(--radius-md)",
-          backgroundColor: "var(--neutral-30)",
-          color: "var(--status-danger)",
-        }}
-      >
-        Sign out
-      </button>
+      {/* Sign out lives in Settings > General > Account (I.3, 13-07-2026) -
+          the top-nav button it replaced was a stopgap from before the shell
+          had any account control. */}
     </nav>
   );
 }
