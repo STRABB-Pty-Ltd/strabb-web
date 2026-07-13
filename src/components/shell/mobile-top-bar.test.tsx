@@ -53,7 +53,9 @@ describe("MobileTopBar", () => {
 
   it("shows an unread badge when alerts are present", () => {
     alertsMock.mockReturnValue({
-      data: [{ id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 }],
+      data: [
+        { id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 },
+      ],
     });
     const { container } = render(<MobileTopBar />);
     expect(container.querySelector('[style*="status-issues"]')).toBeInTheDocument();
@@ -61,7 +63,9 @@ describe("MobileTopBar", () => {
 
   it("opens the notifications dropdown and lists alerts on click", async () => {
     alertsMock.mockReturnValue({
-      data: [{ id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 }],
+      data: [
+        { id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 },
+      ],
     });
     render(<MobileTopBar />);
     expect(screen.queryByText("1 unread message")).not.toBeInTheDocument();
@@ -71,7 +75,9 @@ describe("MobileTopBar", () => {
 
   it("clicking the trigger again while open closes it, not close-then-reopen", async () => {
     alertsMock.mockReturnValue({
-      data: [{ id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 }],
+      data: [
+        { id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 },
+      ],
     });
     render(<MobileTopBar />);
     const trigger = screen.getByRole("button", { name: /notifications/i });
@@ -90,7 +96,9 @@ describe("MobileTopBar", () => {
 
   it("clicking an alert's View button navigates and closes the dropdown", async () => {
     alertsMock.mockReturnValue({
-      data: [{ id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 }],
+      data: [
+        { id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 },
+      ],
     });
     render(<MobileTopBar />);
     await userEvent.click(screen.getByRole("button", { name: /notifications/i }));

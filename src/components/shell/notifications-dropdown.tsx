@@ -67,7 +67,7 @@ export function NotificationsDropdown({ alerts }: NotificationsDropdownProps) {
           role="dialog"
           aria-label="Notifications"
           tabIndex={-1}
-          className="bg-neutral-30 absolute top-full left-1/2 mt-sm max-h-[60vh] w-[min(320px,85vw)] -translate-x-1/2 overflow-y-auto overflow-x-hidden rounded-xl border shadow-xl"
+          className="bg-neutral-30 mt-sm absolute top-full left-1/2 max-h-[60vh] w-[min(320px,85vw)] -translate-x-1/2 overflow-x-hidden overflow-y-auto rounded-xl border shadow-xl"
           style={{
             zIndex: Z.DRAWER,
             borderColor: "var(--border)",
