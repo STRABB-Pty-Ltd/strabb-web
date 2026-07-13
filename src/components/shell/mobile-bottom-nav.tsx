@@ -10,8 +10,13 @@ import { useAppStore } from "@/stores/app-store";
  * Phone bottom tab bar (M.1). Adapts the cleaner portal's proven pattern
  * (src/app/(portal)/_components/portal-nav.tsx) to the 5 main app pages.
  * Settings lives in MobileTopBar instead of here - decision 10-07-2026
- * (team meeting), see CLAUDE.md's shell note. Hidden at md+, where TopNav
- * (in the desktop shell) takes over.
+ * (team meeting), see CLAUDE.md's shell note.
+ *
+ * Hidden at lg+ (1024px), not md (768px): the desktop TopNav's pill group
+ * is absolutely-positioned (outside flex flow) and genuinely collides with
+ * the flow-positioned Settings/Sign-out cluster below ~1024px - confirmed
+ * empirically (overlap at 850px, clean at 1024px). Below lg, this bar
+ * takes over instead of shipping a broken desktop nav.
  */
 export function MobileBottomNav() {
   const currentPage = useAppStore((s) => s.currentPage);
@@ -24,7 +29,7 @@ export function MobileBottomNav() {
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className="fixed right-0 bottom-0 left-0 z-10 md:hidden"
+      className="fixed right-0 bottom-0 left-0 z-10 lg:hidden"
       style={{
         borderTop: "var(--hairline) solid var(--border)",
         backgroundColor: "var(--surface-60)",

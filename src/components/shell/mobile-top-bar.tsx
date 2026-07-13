@@ -8,7 +8,9 @@ import { useAppStore } from "@/stores/app-store";
 /**
  * Phone header (M.1): wordmark + current page title + a Settings shortcut,
  * since Settings lives up top rather than in the bottom bar - decision
- * 10-07-2026 (team meeting). Hidden at md+, where TopNav takes over.
+ * 10-07-2026 (team meeting). Hidden at lg+ (1024px) alongside
+ * MobileBottomNav - see that component's comment for why md (768px)
+ * wasn't a safe cutover for the desktop shell.
  *
  * The desktop shell's ContextualSidebar (filters/actions) and SubmenuBar
  * (view chips) have no mobile home yet - that's the hamburger-drawer phase
@@ -21,7 +23,7 @@ export function MobileTopBar() {
 
   return (
     <header
-      className="px-md py-sm flex shrink-0 items-center justify-between md:hidden"
+      className="px-md py-sm flex shrink-0 items-center justify-between lg:hidden"
       style={{ borderBottom: "var(--hairline) solid var(--border)" }}
     >
       <div className="gap-sm flex items-center">

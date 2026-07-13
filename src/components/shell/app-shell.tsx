@@ -82,16 +82,17 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           pointer-events-none so the bottom of the logo (which overflows
           --logo-area-height into the listings header by design) doesn't
           intercept clicks meant for the sidebar's heading row underneath.
-          Hidden below md - MobileTopBar owns the wordmark there (M.1). */}
-      <div className="pointer-events-none absolute top-0 left-0 z-30 hidden md:block">
+          Hidden below lg (1024px) - MobileTopBar owns the wordmark there
+          (M.1); lg not md, see mobile-bottom-nav.tsx's comment. */}
+      <div className="pointer-events-none absolute top-0 left-0 z-30 hidden lg:block">
         <LogoSection />
       </div>
       <ContextualSidebar />
-      {/* Vertical sidebar separator - hidden below md alongside the sidebar
+      {/* Vertical sidebar separator - hidden below lg alongside the sidebar
           it borders (M.1: no sidebar on mobile until M.3's drawer). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute z-20 hidden md:block"
+        className="pointer-events-none absolute z-20 hidden lg:block"
         style={{
           left: "calc(var(--sidebar-width) + 4px)",
           top: "var(--canvas-top)",
@@ -103,11 +104,13 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <BillingBanner />
         <MobileTopBar />
-        {/* Desktop top nav + submenu rail - hidden below md, where
+        {/* Desktop top nav + submenu rail - hidden below lg (1024px), where
             MobileTopBar + MobileBottomNav (fixed, rendered after Canvas
-            below) own navigation instead (M.1). */}
+            below) own navigation instead (M.1). Confirmed empirically: the
+            pill group's absolute positioning collides with the flow-
+            positioned Settings/Sign-out cluster below ~1024px. */}
         <div
-          className="relative hidden shrink-0 flex-col md:flex"
+          className="relative hidden shrink-0 flex-col lg:flex"
           style={{
             paddingTop: "var(--space-sm)",
             paddingBottom: "var(--space-sm)",
@@ -143,10 +146,10 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             right). Pairs with the vertical sidebar separator (which now
             starts at --canvas-top) to form an L-frame around the canvas.
             relative + zIndex so it paints above adjacent debug outlines.
-            Hidden below md alongside the desktop rail above. */}
+            Hidden below lg alongside the desktop rail above. */}
         <div
           aria-hidden="true"
-          className="relative hidden shrink-0 md:block"
+          className="relative hidden shrink-0 lg:block"
           style={{ height: "var(--hairline)", backgroundColor: "var(--neutral-30)", zIndex: 25 }}
         />
         <ErrorBoundary>
