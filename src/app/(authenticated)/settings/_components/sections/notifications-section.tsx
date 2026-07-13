@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
 interface NotificationToggle {
@@ -91,15 +92,9 @@ export function NotificationsSection() {
         })}
       </div>
 
-      <button
-        type="button"
-        onClick={save}
-        disabled={!dirty || isSaving}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-      >
+      <Button type="button" onClick={save} disabled={!dirty || isSaving}>
         {isSaving ? "Saving…" : "Save Preferences"}
-      </button>
+      </Button>
     </div>
   );
 }

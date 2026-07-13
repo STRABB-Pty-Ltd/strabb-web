@@ -10,6 +10,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
+import { Select } from "@/components/ui/select";
 import { useSyncLogs, useTriggerSync } from "@/hooks/use-sync";
 import { ApiError } from "@/lib/api-client";
 import { useListingsChannels } from "@/lib/api-hooks/listings-api";
@@ -175,16 +178,16 @@ export function ChannelsSection() {
             ? (() => {
                 const StatusIcon = statusIcons[lastLog.status] ?? CircleDashed;
                 return (
-                  <span
-                    className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
-                    style={{
-                      backgroundColor: statusColors[lastLog.status] ?? "var(--neutral-30)",
-                      color: statusFgColors[lastLog.status] ?? "var(--text-secondary)",
-                    }}
+                  <Chip
+                    tone="solid"
+                    color={statusColors[lastLog.status] ?? "var(--neutral-30)"}
+                    textColor={statusFgColors[lastLog.status] ?? "var(--text-secondary)"}
+                    size="sm"
+                    radius="md"
                   >
                     <StatusIcon size={12} aria-hidden="true" />
                     {lastLog.status}
-                  </span>
+                  </Chip>
                 );
               })()
             : null}
@@ -196,16 +199,15 @@ export function ChannelsSection() {
                 : "No sync runs recorded yet"}
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={handleTriggerSync}
           disabled={trigger.isPending}
           title="Limited to 3 syncs per 5 minutes"
-          className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-          style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
         >
           {trigger.isPending ? "Syncing..." : "Sync Now"}
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-sm">
@@ -235,16 +237,16 @@ export function ChannelsSection() {
                 <div className="mb-sm gap-base flex items-center justify-between">
                   <div className="gap-base flex items-center">
                     <h3 className="text-body text-highlight-10 font-semibold">{ch.name}</h3>
-                    <span
-                      className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
-                      style={{
-                        backgroundColor: channelStatusColors[ch.status],
-                        color: channelStatusFgColors[ch.status],
-                      }}
+                    <Chip
+                      tone="solid"
+                      color={channelStatusColors[ch.status]}
+                      textColor={channelStatusFgColors[ch.status]}
+                      size="sm"
+                      radius="md"
                     >
                       <StatusIcon size={12} aria-hidden="true" />
                       {channelStatusLabels[ch.status]}
-                    </span>
+                    </Chip>
                   </div>
                   <p className="text-body" style={{ color: "var(--text-secondary)" }}>
                     {ch.listingCount === 0
@@ -260,22 +262,12 @@ export function ChannelsSection() {
                     >
                       Sync Frequency
                     </label>
-                    <select
+                    <Select
                       id={`channel-${ch.id}-sync`}
                       value={prefs.syncFrequency}
                       onChange={(e) => updateChannel(ch.id, "syncFrequency", e.target.value)}
-                      className="px-sm py-base text-body w-full rounded-sm border"
-                      style={{
-                        backgroundColor: "var(--surface-60)",
-                        borderColor: "var(--border)",
-                      }}
-                    >
-                      {syncOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
+                      options={syncOptions}
+                    />
                   </div>
                   <div>
                     <label
@@ -284,22 +276,12 @@ export function ChannelsSection() {
                     >
                       Default Pricing Rule
                     </label>
-                    <select
+                    <Select
                       id={`channel-${ch.id}-pricing`}
                       value={prefs.pricingRule}
                       onChange={(e) => updateChannel(ch.id, "pricingRule", e.target.value)}
-                      className="px-sm py-base text-body w-full rounded-sm border"
-                      style={{
-                        backgroundColor: "var(--surface-60)",
-                        borderColor: "var(--border)",
-                      }}
-                    >
-                      {pricingOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
+                      options={pricingOptions}
+                    />
                   </div>
                 </div>
               </div>
@@ -308,15 +290,9 @@ export function ChannelsSection() {
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={save}
-        disabled={!dirty || isSaving}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-      >
+      <Button type="button" onClick={save} disabled={!dirty || isSaving}>
         {isSaving ? "Saving…" : "Save Changes"}
-      </button>
+      </Button>
     </div>
   );
 }

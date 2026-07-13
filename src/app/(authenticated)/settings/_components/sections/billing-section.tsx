@@ -2,6 +2,8 @@
 
 import { differenceInCalendarDays, format } from "date-fns";
 
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
 import {
   useBillingStatus,
   useCreateCheckout,
@@ -129,17 +131,16 @@ export function BillingSection() {
             </p>
           </div>
           {status === "trial" && daysLeft !== null && daysLeft >= 0 && (
-            <span
-              className="px-sm py-xs text-body rounded-md font-medium"
-              style={{
-                backgroundColor: daysLeft <= 3 ? "var(--status-warning-tint)" : "var(--neutral-30)",
-                color: daysLeft <= 3 ? "var(--status-warning)" : "var(--highlight-10)",
-              }}
+            <Chip
+              tone={daysLeft <= 3 ? "tint" : "neutral"}
+              color={daysLeft <= 3 ? "var(--status-warning)" : undefined}
+              size="md"
+              radius="md"
             >
               {daysLeft === 0
                 ? "Ends today"
                 : `${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`}
-            </span>
+            </Chip>
           )}
         </div>
 
@@ -164,51 +165,27 @@ export function BillingSection() {
 
         <div className="gap-xs flex flex-wrap">
           {!sub && (
-            <button
-              type="button"
-              onClick={handleStartTrial}
-              disabled={startTrial.isPending}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            <Button type="button" onClick={handleStartTrial} disabled={startTrial.isPending}>
               {startTrial.isPending ? "Starting…" : "Start free trial"}
-            </button>
+            </Button>
           )}
 
           {sub && status === "trial" && (
-            <button
-              type="button"
-              onClick={handleCheckout}
-              disabled={createCheckout.isPending}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            <Button type="button" onClick={handleCheckout} disabled={createCheckout.isPending}>
               {createCheckout.isPending ? "Redirecting…" : "Add payment details"}
-            </button>
+            </Button>
           )}
 
           {sub && (status === "active" || status === "past_due") && (
-            <button
-              type="button"
-              onClick={handlePortal}
-              disabled={createPortal.isPending}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            <Button type="button" onClick={handlePortal} disabled={createPortal.isPending}>
               {createPortal.isPending ? "Redirecting…" : "Manage subscription"}
-            </button>
+            </Button>
           )}
 
           {sub && status === "cancelled" && (
-            <button
-              type="button"
-              onClick={handleCheckout}
-              disabled={createCheckout.isPending}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            <Button type="button" onClick={handleCheckout} disabled={createCheckout.isPending}>
               {createCheckout.isPending ? "Redirecting…" : "Reactivate subscription"}
-            </button>
+            </Button>
           )}
         </div>
       </div>

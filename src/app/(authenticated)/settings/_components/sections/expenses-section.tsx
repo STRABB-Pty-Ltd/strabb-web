@@ -3,6 +3,9 @@
 import { format, startOfMonth } from "date-fns";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {
   useCreateExpense,
   useExpenseBreakdown,
@@ -25,11 +28,6 @@ import { useAppStore } from "@/stores/app-store";
 
 const formatAUD = (value: number) =>
   new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" }).format(value);
-
-const inputStyle = {
-  backgroundColor: "var(--neutral-30)",
-  borderColor: "var(--border)",
-} as const;
 
 interface FormState {
   name: string;
@@ -168,14 +166,9 @@ export function ExpensesSection() {
       <div className="flex items-center justify-between">
         <h3 className="text-body text-highlight-10 font-semibold">Recurring expenses</h3>
         {!showForm && (
-          <button
-            type="button"
-            onClick={openNew}
-            className="px-sm py-base text-body rounded-lg font-medium"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
+          <Button type="button" onClick={openNew}>
             Add expense
-          </button>
+          </Button>
         )}
       </div>
 
@@ -183,91 +176,66 @@ export function ExpensesSection() {
         <div className="p-sm space-y-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
           <label className="space-y-xs block">
             <span className="text-body text-highlight-10 font-medium">Name</span>
-            <input
+            <Input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="px-sm py-base text-body text-highlight-10 w-full rounded-lg border"
-              style={inputStyle}
             />
           </label>
           <div className="gap-sm grid grid-cols-2">
             <label className="space-y-xs block">
               <span className="text-body text-highlight-10 font-medium">Category</span>
-              <select
+              <Select
                 value={form.category}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, category: e.target.value as ExpenseCategory }))
                 }
-                className="px-sm py-base text-body text-highlight-10 w-full rounded-lg border"
-                style={inputStyle}
-              >
-                {EXPENSE_CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {EXPENSE_CATEGORY_LABELS[c]}
-                  </option>
-                ))}
-              </select>
+                options={EXPENSE_CATEGORIES.map((c) => ({
+                  value: c,
+                  label: EXPENSE_CATEGORY_LABELS[c],
+                }))}
+              />
             </label>
             <label className="space-y-xs block">
               <span className="text-body text-highlight-10 font-medium">Frequency</span>
-              <select
+              <Select
                 value={form.frequency}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, frequency: e.target.value as ExpenseFrequency }))
                 }
-                className="px-sm py-base text-body text-highlight-10 w-full rounded-lg border"
-                style={inputStyle}
-              >
-                {EXPENSE_FREQUENCIES.map((fr) => (
-                  <option key={fr} value={fr}>
-                    {EXPENSE_FREQUENCY_LABELS[fr]}
-                  </option>
-                ))}
-              </select>
+                options={EXPENSE_FREQUENCIES.map((fr) => ({
+                  value: fr,
+                  label: EXPENSE_FREQUENCY_LABELS[fr],
+                }))}
+              />
             </label>
             <label className="space-y-xs block">
               <span className="text-body text-highlight-10 font-medium">Amount (AUD)</span>
-              <input
+              <Input
                 type="number"
                 inputMode="decimal"
                 min="0"
                 step="0.01"
                 value={form.amount}
                 onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-                className="px-sm py-base text-body text-highlight-10 w-full rounded-lg border"
-                style={inputStyle}
               />
             </label>
             <label className="space-y-xs block">
               <span className="text-body text-highlight-10 font-medium">Start date</span>
-              <input
+              <Input
                 type="date"
                 value={form.startDate}
                 onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
-                className="px-sm py-base text-body text-highlight-10 w-full rounded-lg border"
-                style={inputStyle}
               />
             </label>
           </div>
           <div className="gap-xs flex">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={saving}
-              className="px-sm py-base text-body rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            <Button type="button" onClick={handleSubmit} disabled={saving}>
               {saving ? "Saving..." : editingId ? "Save changes" : "Add expense"}
-            </button>
-            <button
-              type="button"
-              onClick={closeForm}
-              className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-              style={{ borderColor: "var(--border)" }}
-            >
+            </Button>
+            <Button type="button" variant="outline" onClick={closeForm}>
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -312,14 +280,9 @@ export function ExpensesSection() {
               <span className="font-data text-body text-highlight-10 font-semibold">
                 {formatAUD(expense.amount)}
               </span>
-              <button
-                type="button"
-                onClick={() => openEdit(expense)}
-                className="px-sm py-xs text-body text-highlight-10 rounded-md border font-medium"
-                style={{ borderColor: "var(--border)" }}
-              >
+              <Button type="button" variant="outline" size="xs" onClick={() => openEdit(expense)}>
                 Edit
-              </button>
+              </Button>
               <button
                 type="button"
                 onClick={() => toggleActive(expense)}
