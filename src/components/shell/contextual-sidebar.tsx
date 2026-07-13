@@ -47,7 +47,9 @@ export function ContextualSidebar() {
     <aside
       role="complementary"
       aria-label="Sidebar"
-      className="no-scrollbar relative z-10 flex h-full shrink-0 flex-col overflow-y-auto"
+      // Hidden below md (M.1): no mobile home yet for filters/actions - that's
+      // the hamburger-drawer phase (M.3), not this one.
+      className="no-scrollbar relative z-10 hidden h-full shrink-0 flex-col overflow-y-auto md:flex"
       style={{
         // 4px wider than the content track (--sidebar-width) so the right
         // edge of the aside sits flush with the grey separator at

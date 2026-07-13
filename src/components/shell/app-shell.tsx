@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { useAppStore } from "@/stores/app-store";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { pageLabels } from "@/lib/navigation";
 import type { PageId } from "@/stores/types";
 
 import { BillingBanner } from "@/components/billing/billing-banner";
@@ -22,6 +23,8 @@ import { Canvas } from "./canvas";
 import { ContextualSidebar } from "./contextual-sidebar";
 import { ErrorBoundary } from "./error-boundary";
 import { KeyboardHelpModal } from "./keyboard-help-modal";
+import { MobileBottomNav } from "./mobile-bottom-nav";
+import { MobileTopBar } from "./mobile-top-bar";
 import { PageLoading } from "./page-loading";
 import { LogoSection } from "./sidebar-sections/logo-section";
 import { SubmenuBar } from "./submenu-bar";
@@ -35,15 +38,6 @@ const validPages: PageId[] = [
   "reporting",
   "settings",
 ];
-
-const pageLabels: Record<PageId, string> = {
-  dashboard: "Dashboard",
-  calendar: "Calendar",
-  messaging: "Messaging",
-  operations: "Operations",
-  reporting: "Reporting",
-  settings: "Settings",
-};
 
 export function NewAppShell({ children }: { children: React.ReactNode }) {
   const currentPage = useAppStore((s) => s.currentPage);
@@ -87,14 +81,17 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       {/* Persistent logo overlay - pinned to top-left of the sidebar column.
           pointer-events-none so the bottom of the logo (which overflows
           --logo-area-height into the listings header by design) doesn't
-          intercept clicks meant for the sidebar's heading row underneath. */}
-      <div className="pointer-events-none absolute top-0 left-0 z-30">
+          intercept clicks meant for the sidebar's heading row underneath.
+          Hidden below md - MobileTopBar owns the wordmark there (M.1). */}
+      <div className="pointer-events-none absolute top-0 left-0 z-30 hidden md:block">
         <LogoSection />
       </div>
       <ContextualSidebar />
+      {/* Vertical sidebar separator - hidden below md alongside the sidebar
+          it borders (M.1: no sidebar on mobile until M.3's drawer). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute z-20"
+        className="pointer-events-none absolute z-20 hidden md:block"
         style={{
           left: "calc(var(--sidebar-width) + 4px)",
           top: "var(--canvas-top)",
@@ -105,8 +102,12 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       />
       <div className="flex flex-1 flex-col overflow-hidden">
         <BillingBanner />
+        <MobileTopBar />
+        {/* Desktop top nav + submenu rail - hidden below md, where
+            MobileTopBar + MobileBottomNav (fixed, rendered after Canvas
+            below) own navigation instead (M.1). */}
         <div
-          className="relative flex shrink-0 flex-col"
+          className="relative hidden shrink-0 flex-col md:flex"
           style={{
             paddingTop: "var(--space-sm)",
             paddingBottom: "var(--space-sm)",
@@ -141,10 +142,11 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
             flex column (i.e. from the sidebar's right edge across to the page
             right). Pairs with the vertical sidebar separator (which now
             starts at --canvas-top) to form an L-frame around the canvas.
-            relative + zIndex so it paints above adjacent debug outlines. */}
+            relative + zIndex so it paints above adjacent debug outlines.
+            Hidden below md alongside the desktop rail above. */}
         <div
           aria-hidden="true"
-          className="relative shrink-0"
+          className="relative hidden shrink-0 md:block"
           style={{ height: "var(--hairline)", backgroundColor: "var(--neutral-30)", zIndex: 25 }}
         />
         <ErrorBoundary>
@@ -156,6 +158,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
           </Suspense>
         </ErrorBoundary>
       </div>
+      <MobileBottomNav />
       <KeyboardHelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
       <BookingDetailDrawer />
       <BookingFormOverlay />

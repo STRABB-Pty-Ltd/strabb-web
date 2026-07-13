@@ -118,7 +118,12 @@ justification.
 
 ## Locked product decisions (not up for revision without approval)
 
-- Desktop-first shell; top-nav-first structure
+- Desktop-first shell, top-nav-first, at md+ (768px). Below md: bottom
+  tab bar (Instagram-style, the 5 main pages) + a minimal top bar
+  (wordmark, page title, Settings) - decision 10-07-2026, Chris/Will/
+  Chanel. Sidebar filters/actions and submenu chips have no mobile home
+  yet (hamburger-drawer phase, not yet built) - hidden below md until
+  then, not silently broken.
 - Contextual sidebar behaviour where applicable
 - Trusted current-user auth/session model
 

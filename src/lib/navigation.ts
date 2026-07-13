@@ -52,6 +52,12 @@ export const settingsNavItem: TopNavItem = {
   roles: ["owner", "admin"],
 };
 
+// Single source for the page title shown in AppShell's sr-only <h1> and
+// MobileTopBar - was previously a hardcoded duplicate map in app-shell.tsx.
+export const pageLabels: Record<PageId, string> = Object.fromEntries(
+  [...topNavItems, settingsNavItem].map((item) => [item.id, item.label]),
+) as Record<PageId, string>;
+
 /**
  * Filter a nav item by the current role. An item with no `roles` is visible to
  * everyone; an item with `roles` is visible only to those roles. A null role
