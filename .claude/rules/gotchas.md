@@ -26,6 +26,11 @@ being true. One bullet per trap, specific enough to act on.
   module map desyncs from disk and the page renders unstyled because a
   hashed CSS URL 404s. Stop the dev server, `rm -rf .next`, restart.
   Single edits should never need this.
+- NEVER run `npm run build` while the dev server is running: both write
+  to the same `.next/`, so the build clobbers the dev server's hashed
+  CSS/chunk files out from under it and every page renders unstyled
+  (13-07-2026, bit during Phase I.2 verification). Stop the dev server
+  first, or build after the session's browser QA is done.
 
 ## Working copies (Will's machine)
 
