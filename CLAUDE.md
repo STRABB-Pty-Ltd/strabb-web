@@ -15,16 +15,21 @@ backend contracts.
 
 - Next.js 15 (App Router), React 19, TypeScript
 - Auth.js (next-auth v5) for session management
-- TanStack Query for server state, Tailwind CSS v4, Zod
-- Vitest + Testing Library for tests
+- TanStack Query for server state, Zustand for client state, Tailwind CSS v4, Zod
+- Recharts for reporting charts; App Insights browser SDK for client telemetry
+- Vitest + Testing Library for unit tests, Playwright for e2e
 
 ## Architecture
 
-- `src/app/` - App Router pages and layouts
-- `src/components/` - UI and feature components
+- `src/app/` - App Router pages and layouts (route groups: (authenticated),
+  (auth), (portal), (public))
+- `src/components/` - UI and feature components (ui, shell, overlays, views,
+  charts, ...)
 - `src/hooks/` - React Query and client hooks
 - `src/lib/` - auth, API client, schemas, utilities
+- `src/stores/` - Zustand client state (app-store + slices)
 - `src/types/` - shared TypeScript types
+- `src/middleware.ts` - role-based route guarding (owner/admin vs cleaner)
 - `src/test-utils/` - shared test helpers
 
 Use existing folder conventions. Do not create parallel patterns without
@@ -134,16 +139,17 @@ justification.
 
 ## Deployment infrastructure - do not touch without Chris's sign-off
 
-- Anything under `.github/` (including `.github/workflows/ci.yml`)
+- Anything under `.github/` (including `ci.yml` and `deploy-production.yml`)
 - `Dockerfile`, `.dockerignore`, `next.config.ts` build/deploy seams
 
 ## Commands
 
 - `npm install` - install deps
-- `npm run dev` - dev server (port 3000)
+- `npm run dev` - dev server (port 3100)
 - `npm run build` - production build
 - `npm run lint` / `npm run format` - ESLint / Prettier check
-- `npm run test` / `npm run test:watch` - tests
+- `npm run test` / `npm run test:coverage` - unit tests; `npm run e2e` - Playwright
+- `npx tsc --noEmit` - type-check (CI gate)
 
 ## Environment
 
