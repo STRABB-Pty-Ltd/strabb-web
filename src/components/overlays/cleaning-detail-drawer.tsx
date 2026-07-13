@@ -8,7 +8,11 @@ import {
   type CleanerAssignment,
 } from "@/components/overlays/cleaner-picker-dialog";
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   useCleaningTask,
   useCompleteCleaningTask,
@@ -259,16 +263,16 @@ export function CleaningDetailDrawer() {
             {(() => {
               const Icon = statusIcons[status];
               return (
-                <span
-                  className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
-                  style={{
-                    backgroundColor: statusColors[status] ?? "var(--highlight-10)",
-                    color: statusFgColors[status] ?? "var(--surface-60)",
-                  }}
+                <Chip
+                  tone="solid"
+                  size="sm"
+                  radius="md"
+                  color={statusColors[status] ?? "var(--highlight-10)"}
+                  textColor={statusFgColors[status] ?? "var(--surface-60)"}
                 >
                   {Icon && <Icon size={11} aria-hidden="true" />}
                   {status.replace("_", " ")}
-                </span>
+                </Chip>
               );
             })()}
           </div>
@@ -282,13 +286,14 @@ export function CleaningDetailDrawer() {
                 Cleaner
               </p>
               {!isCompleted && (
-                <button
+                <Button
                   type="button"
+                  variant="quiet"
+                  size="sm"
                   onClick={() => setCleanerDialogOpen(true)}
-                  className="text-body text-highlight-10 hover:text-highlight-10 rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 >
                   {displayTask.cleanerName ? "Change" : "Assign"}
-                </button>
+                </Button>
               )}
             </div>
 
@@ -312,13 +317,14 @@ export function CleaningDetailDrawer() {
                 Notes
               </p>
               {!editingNotes && !isCompleted && (
-                <button
+                <Button
                   type="button"
+                  variant="quiet"
+                  size="sm"
                   onClick={() => setEditingNotes(true)}
-                  className="text-body text-highlight-10 hover:text-highlight-10 rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 >
                   Edit
-                </button>
+                </Button>
               )}
             </div>
             {!editingNotes ? (
@@ -327,40 +333,28 @@ export function CleaningDetailDrawer() {
               </p>
             ) : (
               <div className="space-y-xs">
-                <textarea
+                <Textarea
                   id="cleaning-drawer-notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special instructions for this cleaning…"
                   rows={4}
                   aria-labelledby="cleaning-drawer-notes-label"
-                  className="px-sm py-base text-body w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
                 />
                 <div className="gap-xs flex">
-                  <button
-                    type="button"
-                    onClick={handleSaveNotes}
-                    disabled={updateTask.isPending}
-                    className="px-sm py-base text-body rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
-                    style={{
-                      backgroundColor: "var(--highlight-10)",
-                      color: "var(--surface-60)",
-                    }}
-                  >
+                  <Button type="button" onClick={handleSaveNotes} disabled={updateTask.isPending}>
                     {updateTask.isPending ? "Saving…" : "Save notes"}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => {
                       setEditingNotes(false);
                       setNotes(displayTask.notes ?? "");
                     }}
-                    className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                    style={{ borderColor: "var(--border)" }}
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -379,71 +373,52 @@ export function CleaningDetailDrawer() {
                 <p className="text-body text-highlight-10">
                   Status: {formatEnumLabel(linkedTicket.status)}
                 </p>
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={handleUnlink}
                   disabled={unlinkTicket.isPending}
-                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium disabled:opacity-60"
-                  style={{ borderColor: "var(--border)" }}
                 >
                   {unlinkTicket.isPending ? "Removing…" : "Unlink"}
-                </button>
+                </Button>
               </div>
             ) : linkingMode ? (
               <div className="space-y-xs">
-                <select
+                <Select
                   id="cleaning-drawer-linked-ticket-select"
                   value={selectedTicketId}
                   onChange={(e) => setSelectedTicketId(e.target.value)}
                   aria-labelledby="cleaning-drawer-linked-ticket-label"
-                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  <option value="">Choose a ticket…</option>
-                  {candidateTickets.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.description}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Choose a ticket…"
+                  options={candidateTickets.map((t) => ({ value: t.id, label: t.description }))}
+                />
                 <div className="gap-xs flex">
-                  <button
+                  <Button
                     type="button"
                     onClick={handleLink}
                     disabled={!selectedTicketId || linkTicket.isPending}
-                    className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                    style={{
-                      backgroundColor: "var(--highlight-10)",
-                      color: "var(--surface-60)",
-                    }}
                   >
                     {linkTicket.isPending ? "Linking…" : "Confirm"}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => {
                       setLinkingMode(false);
                       setSelectedTicketId("");
                     }}
-                    className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                    style={{ borderColor: "var(--border)" }}
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
                 {candidateTickets.length === 0 && (
                   <p className="text-body text-highlight-10">No open tickets for this listing.</p>
                 )}
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={() => setLinkingMode(true)}
-                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                style={{ borderColor: "var(--border)" }}
-              >
+              <Button type="button" variant="outline" onClick={() => setLinkingMode(true)}>
                 Link to ticket
-              </button>
+              </Button>
             )}
           </div>
 
@@ -457,16 +432,15 @@ export function CleaningDetailDrawer() {
             >
               {completeTask.isPending ? "Completing…" : "Mark complete"}
             </button>
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={handleResend}
               disabled={!canResend || resendNotification.isPending}
-              className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
-              style={{ borderColor: "var(--border)" }}
               title={!canResend ? "Needs a cleaner email" : undefined}
             >
               {resendNotification.isPending ? "Sending…" : "Resend notification"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

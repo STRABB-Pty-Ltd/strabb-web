@@ -16,6 +16,8 @@ import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } f
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { MonthGrid, WEEK_OPTS } from "@/components/ui/month-grid";
 import { canvasOverlayStyle } from "@/lib/canvas-overlay-style";
 import { Z } from "@/lib/z-index";
@@ -170,15 +172,16 @@ export function TimeframePopup() {
           <span id={titleId} className="text-body font-semibold capitalize">
             {labelForWindow(windowSize)}
           </span>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-touch"
             onClick={closeTimeframePopup}
-            className="text-highlight-10 hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             aria-label="Close"
             data-no-elevate
           >
             <X size={16} />
-          </button>
+          </Button>
         </div>
 
         {progressActive && (
@@ -259,23 +262,25 @@ function MonthPicker({ anchor, onPick }: { anchor: string | null; onPick: (iso: 
   return (
     <div>
       <div className="mb-sm flex items-center justify-between">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-touch"
           onClick={() => setYear((y) => y - 1)}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} aria-hidden="true" />
-        </button>
+        </Button>
         <span className="text-body font-semibold">{year}</span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-touch"
           onClick={() => setYear((y) => y + 1)}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
           <ChevronRight size={16} aria-hidden="true" />
-        </button>
+        </Button>
       </div>
       <div className="gap-xs grid grid-cols-3">
         {months.map((m) => {
@@ -315,23 +320,25 @@ function QuarterPicker({
   return (
     <div>
       <div className="mb-sm flex items-center justify-between">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-touch"
           onClick={() => setYear((y) => y - 1)}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Previous year"
         >
           <ChevronLeft size={16} aria-hidden="true" />
-        </button>
+        </Button>
         <span className="text-body font-semibold">{year}</span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-touch"
           onClick={() => setYear((y) => y + 1)}
-          className="hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
           aria-label="Next year"
         >
           <ChevronRight size={16} aria-hidden="true" />
-        </button>
+        </Button>
       </div>
       <div className="gap-xs grid grid-cols-2">
         {[0, 1, 2, 3].map((q) => {
@@ -488,24 +495,12 @@ function CustomRangeForm({
       <div className="gap-base flex items-center">
         <label className="flex-1">
           <span className="sr-only">Start date</span>
-          <input
-            type="date"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-            className="px-base py-xs text-body w-full rounded border"
-            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-          />
+          <Input type="date" value={start} onChange={(e) => setStart(e.target.value)} />
         </label>
         <span className="text-body text-highlight-10">to</span>
         <label className="flex-1">
           <span className="sr-only">End date</span>
-          <input
-            type="date"
-            value={end}
-            onChange={(e) => setEnd(e.target.value)}
-            className="px-base py-xs text-body w-full rounded border"
-            style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
-          />
+          <Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
         </label>
       </div>
 
@@ -525,15 +520,14 @@ function CustomRangeForm({
           End date must be on or after start date.
         </p>
       )}
-      <button
+      <Button
         type="button"
         disabled={!valid}
         onClick={() => onApply(start, end)}
-        className="mt-base py-xs text-body text-surface-60 w-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+        className="mt-base w-full"
       >
         Apply
-      </button>
+      </Button>
     </div>
   );
 }

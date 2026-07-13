@@ -4,8 +4,12 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CalendarCheck, CheckCircle, Clock, Loader, XCircle, type LucideIcon } from "lucide-react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useCompleteCleaningTask } from "@/hooks/use-cleaning-tasks";
 import { useListings } from "@/hooks/use-listings";
 import { useProperties } from "@/hooks/use-properties";
@@ -67,14 +71,16 @@ function EditableChip({ onEdit, children }: { onEdit: () => void; children: Reac
       style={{ backgroundColor: "var(--neutral-30)" }}
     >
       {children}
-      <button
+      <Button
         type="button"
+        variant="quiet"
+        size="xs"
         onClick={onEdit}
-        className="text-body shrink-0 font-medium underline-offset-2 hover:underline"
+        className="shrink-0 underline-offset-2 hover:underline"
         style={{ color: "var(--text-secondary)" }}
       >
         edit
-      </button>
+      </Button>
     </div>
   );
 }
@@ -293,19 +299,13 @@ export function TicketDetailDrawer() {
                 Priority
               </label>
               {editFields.priority ? (
-                <select
+                <Select
                   id="ticket-drawer-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                  className="px-sm py-base text-body bg-neutral-30 mt-xs w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  {TICKET_PRIORITY_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
+                  className="mt-xs"
+                  options={TICKET_PRIORITY_OPTIONS}
+                />
               ) : (
                 <EditableChip onEdit={() => startEdit("priority")}>
                   <span className="text-body text-highlight-10 font-medium">
@@ -319,19 +319,13 @@ export function TicketDetailDrawer() {
                 Status
               </label>
               {editFields.status ? (
-                <select
+                <Select
                   id="ticket-drawer-status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TicketStatus)}
-                  className="px-sm py-base text-body bg-neutral-30 mt-xs w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  {TICKET_STATUS_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
+                  className="mt-xs"
+                  options={TICKET_STATUS_OPTIONS}
+                />
               ) : (
                 <EditableChip onEdit={() => startEdit("status")}>
                   {(() => {
@@ -389,13 +383,11 @@ export function TicketDetailDrawer() {
               Description
             </label>
             {editFields.description ? (
-              <textarea
+              <Textarea
                 id="ticket-drawer-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             ) : (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
@@ -410,14 +402,13 @@ export function TicketDetailDrawer() {
                 Cost
               </label>
               {editFields.cost ? (
-                <input
+                <Input
                   id="ticket-drawer-cost"
                   type="number"
                   step="0.01"
                   value={cost}
                   onChange={(e) => setCost(e.target.value)}
-                  className="px-sm py-base text-body mt-xs w-full rounded-lg border"
-                  style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
+                  className="mt-xs"
                 />
               ) : (
                 <EditableChip onEdit={() => startEdit("cost")}>
@@ -440,13 +431,11 @@ export function TicketDetailDrawer() {
               Notes
             </label>
             {editFields.notes ? (
-              <textarea
+              <Textarea
                 id="ticket-drawer-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="px-sm py-base text-body w-full rounded-lg border"
-                style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
               />
             ) : (
               <p className="text-body text-highlight-10 whitespace-pre-wrap">
@@ -470,72 +459,55 @@ export function TicketDetailDrawer() {
                 <p className="text-body text-highlight-10">
                   Status: {formatEnumLabel(linkedClean.status)}
                 </p>
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={handleUnlinkClean}
                   disabled={unlinkClean.isPending}
-                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium disabled:opacity-60"
-                  style={{ borderColor: "var(--border)" }}
                 >
                   {unlinkClean.isPending ? "Removing…" : "Unlink"}
-                </button>
+                </Button>
               </div>
             ) : linkingMode ? (
               <div className="space-y-xs">
-                <select
+                <Select
                   id="ticket-drawer-linked-clean-select"
                   value={selectedCleanId}
                   onChange={(e) => setSelectedCleanId(e.target.value)}
                   aria-labelledby="ticket-drawer-linked-clean-label"
-                  className="px-sm py-base text-body bg-surface-60 w-full rounded-lg border"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  <option value="">Choose a clean…</option>
-                  {candidateCleans.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {formatInPropertyTimezone(c.scheduledTime, tz, "d MMM yyyy, HH:mm")} -{" "}
-                      {c.cleanerName ?? "Unassigned"}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Choose a clean…"
+                  options={candidateCleans.map((c) => ({
+                    value: c.id,
+                    label: `${formatInPropertyTimezone(c.scheduledTime, tz, "d MMM yyyy, HH:mm")} - ${c.cleanerName ?? "Unassigned"}`,
+                  }))}
+                />
                 <div className="gap-xs flex">
-                  <button
+                  <Button
                     type="button"
                     onClick={handleLinkClean}
                     disabled={!selectedCleanId || linkClean.isPending}
-                    className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                    style={{
-                      backgroundColor: "var(--highlight-10)",
-                      color: "var(--surface-60)",
-                    }}
                   >
                     {linkClean.isPending ? "Linking…" : "Confirm"}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => {
                       setLinkingMode(false);
                       setSelectedCleanId("");
                     }}
-                    className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                    style={{ borderColor: "var(--border)" }}
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
                 {candidateCleans.length === 0 && (
                   <p className="text-body text-highlight-10">No open cleans for this listing.</p>
                 )}
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={() => setLinkingMode(true)}
-                className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                style={{ borderColor: "var(--border)" }}
-              >
+              <Button type="button" variant="outline" onClick={() => setLinkingMode(true)}>
                 Link to clean
-              </button>
+              </Button>
             )}
           </div>
 
@@ -545,64 +517,41 @@ export function TicketDetailDrawer() {
           >
             {!anyEditing ? (
               <>
-                <button
-                  type="button"
-                  onClick={editAll}
-                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                  style={{ borderColor: "var(--border)" }}
-                >
+                <Button type="button" variant="outline" onClick={editAll}>
                   Edit
-                </button>
+                </Button>
                 {!confirmDelete ? (
-                  <button
+                  <Button
                     type="button"
+                    variant="destructive-solid"
                     onClick={() => setConfirmDelete(true)}
-                    className="px-sm py-base text-body text-text-on-color rounded-lg font-medium"
-                    style={{ backgroundColor: "var(--status-danger)" }}
                   >
                     Delete
-                  </button>
+                  </Button>
                 ) : (
                   <>
-                    <button
+                    <Button
                       type="button"
+                      variant="destructive-solid"
                       onClick={handleDelete}
                       disabled={deleteTicket.isPending}
-                      className="px-sm py-base text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                      style={{ backgroundColor: "var(--status-danger)" }}
                     >
                       {deleteTicket.isPending ? "Deleting…" : "Yes, delete"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setConfirmDelete(false)}
-                      className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                      style={{ borderColor: "var(--border)" }}
-                    >
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => setConfirmDelete(false)}>
                       Cancel
-                    </button>
+                    </Button>
                   </>
                 )}
               </>
             ) : (
               <>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={updateTicket.isPending}
-                  className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                  style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-                >
+                <Button type="button" onClick={handleSave} disabled={updateTicket.isPending}>
                   {updateTicket.isPending ? "Saving…" : "Save"}
-                </button>
-                <button
-                  type="button"
-                  onClick={cancelEdit}
-                  className="px-sm py-base text-body text-highlight-10 rounded-lg border font-medium"
-                  style={{ borderColor: "var(--border)" }}
-                >
+                </Button>
+                <Button type="button" variant="outline" onClick={cancelEdit}>
                   Cancel
-                </button>
+                </Button>
               </>
             )}
           </div>

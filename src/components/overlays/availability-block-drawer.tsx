@@ -4,7 +4,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useProperties } from "@/hooks/use-properties";
 import {
   useAvailabilityBlocks,
@@ -173,14 +177,9 @@ export function AvailabilityBlockDrawer() {
               : "This block could not be loaded. It may have been removed; close and refresh the calendar."}
           </p>
           <div className="gap-sm pt-sm flex items-center justify-end">
-            <button
-              type="button"
-              onClick={closeDrawer}
-              className="px-sm py-base text-body rounded-lg border font-medium"
-              style={{ borderColor: "var(--border)" }}
-            >
+            <Button type="button" variant="outline" onClick={closeDrawer}>
               Close
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -189,21 +188,14 @@ export function AvailabilityBlockDrawer() {
             <label htmlFor="blk-property" className="text-body text-highlight-10 block font-medium">
               Property
             </label>
-            <select
+            <Select
               id="blk-property"
               value={form.propertyId}
               onChange={(e) => patch({ propertyId: e.target.value })}
               disabled={isEdit}
-              className="px-sm py-base text-body w-full rounded-lg border disabled:opacity-60"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <option value="">Choose a property</option>
-              {properties.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
+              placeholder="Choose a property"
+              options={properties.map((p) => ({ value: p.id, label: p.name }))}
+            />
           </div>
           <DateField
             id="blk-start"
@@ -225,31 +217,22 @@ export function AvailabilityBlockDrawer() {
             <label htmlFor="blk-reason" className="text-body text-highlight-10 block font-medium">
               Reason
             </label>
-            <select
+            <Select
               id="blk-reason"
               value={form.reason}
               onChange={(e) => patch({ reason: e.target.value })}
-              className="px-sm py-base text-body w-full rounded-lg border"
-              style={{ borderColor: "var(--border)" }}
-            >
-              {BLOCK_REASON_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+              options={[...BLOCK_REASON_OPTIONS]}
+            />
           </div>
           <div>
             <label htmlFor="blk-notes" className="text-body text-highlight-10 block font-medium">
               Notes
             </label>
-            <textarea
+            <Textarea
               id="blk-notes"
               value={form.notes}
               onChange={(e) => patch({ notes: e.target.value })}
               rows={3}
-              className="px-sm py-base text-body w-full rounded-lg border"
-              style={{ borderColor: "var(--border)" }}
             />
           </div>
 
@@ -261,33 +244,21 @@ export function AvailabilityBlockDrawer() {
 
           <div className="gap-sm pt-sm flex items-center justify-end">
             {isEdit && (
-              <button
+              <Button
                 type="button"
+                variant="destructive"
                 onClick={() => setConfirmingDelete(true)}
                 disabled={saving}
-                className="px-sm py-base text-body rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                style={{ borderColor: "var(--status-danger)", color: "var(--status-danger)" }}
               >
                 Remove block
-              </button>
+              </Button>
             )}
-            <button
-              type="button"
-              onClick={closeDrawer}
-              className="px-sm py-base text-body rounded-lg border font-medium"
-              style={{ borderColor: "var(--border)" }}
-            >
+            <Button type="button" variant="outline" onClick={closeDrawer}>
               Close
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={saving}>
               {saving ? "Saving…" : isEdit ? "Save changes" : "Block dates"}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -318,14 +289,7 @@ function DateField({ id, label, value, onChange }: DateFieldProps) {
       <label htmlFor={id} className="text-body text-highlight-10 block font-medium">
         {label}
       </label>
-      <input
-        id={id}
-        type="date"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="px-sm py-base text-body w-full rounded-lg border"
-        style={{ borderColor: "var(--border)" }}
-      />
+      <Input id={id} type="date" value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }

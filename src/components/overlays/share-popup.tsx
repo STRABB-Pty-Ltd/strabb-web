@@ -3,6 +3,8 @@
 import { useCallback, useId, useRef, useState } from "react";
 import { ExternalLink, X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { useCreateShare } from "@/lib/api-hooks/share-api";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
@@ -200,15 +202,16 @@ export function SharePopup() {
             <h2 id={titleId} className="text-body font-semibold">
               Share Report
             </h2>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={closeSharePopup}
               aria-label="Close share dialog"
-              className="p-xs text-highlight-10 hover:bg-neutral-30 rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               data-no-elevate
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
 
           <div className="space-y-sm p-sm">
@@ -229,19 +232,12 @@ export function SharePopup() {
               <label htmlFor="share-expiry" className="text-body text-highlight-10">
                 Link expires:
               </label>
-              <select
+              <Select
                 id="share-expiry"
                 value={expiry}
                 onChange={(e) => setExpiry(e.target.value as ExpiryOption)}
-                className="px-sm py-xs text-body border-neutral-30 rounded-lg border"
-                style={{ backgroundColor: "var(--surface-60)", color: "var(--highlight-10)" }}
-              >
-                {expiryOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                options={expiryOptions}
+              />
             </div>
           </div>
 
@@ -249,39 +245,19 @@ export function SharePopup() {
             className="gap-base px-sm py-sm flex flex-wrap justify-end border-t"
             style={{ borderColor: "var(--border)" }}
           >
-            <button
-              type="button"
-              onClick={closeSharePopup}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            >
+            <Button type="button" variant="ghost" onClick={closeSharePopup}>
               Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleOpenInTab}
-              disabled={disabled}
-              className="gap-xs px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            </Button>
+            <Button type="button" variant="outline" onClick={handleOpenInTab} disabled={disabled}>
               <ExternalLink size={14} aria-hidden="true" />
               Open
-            </button>
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={disabled}
-              className="px-sm py-base text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            </Button>
+            <Button type="button" variant="outline" onClick={handleDownload} disabled={disabled}>
               {downloading ? "Generating…" : "Download PDF"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              disabled={disabled}
-              className="px-sm py-base text-body rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            </Button>
+            <Button type="button" onClick={handleCopyLink} disabled={disabled}>
               Copy Link
-            </button>
+            </Button>
           </div>
         </div>
       </div>
