@@ -2,6 +2,8 @@
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 import { ColumnFilterDropdown, type ColumnFilterConfig } from "./column-filter-dropdown";
 
 export interface ColumnDef<T> {
@@ -53,10 +55,12 @@ export function SortableListHeader<T>({
             {col.filter ? (
               <ColumnFilterDropdown label={col.label} filter={col.filter} />
             ) : isSortable ? (
-              <button
+              <Button
                 type="button"
+                variant="quiet"
+                size="xs"
                 onClick={() => onSort(col.key)}
-                className="gap-xs hover:text-highlight-10 flex items-center"
+                className="px-0 font-semibold"
               >
                 {col.label}
                 {isActive ? (
@@ -68,7 +72,7 @@ export function SortableListHeader<T>({
                 ) : (
                   <ArrowUpDown size={12} className="opacity-30" />
                 )}
-              </button>
+              </Button>
             ) : (
               col.label
             )}
