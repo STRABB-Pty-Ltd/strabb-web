@@ -15,6 +15,15 @@ function isSubmenuPage(page: PageId): page is Exclude<PageId, "settings"> {
   return page !== "settings";
 }
 
+// Fixed at a chip's natural height (py-base × 2 + text-body line-height) so
+// the absolute-centred chips and the separator above stay aligned. A FIXED
+// (not min) height caps the row: the messaging "Scheduled messages" link
+// keeps its 44px WCAG hit-area by overflowing this row rather than inflating
+// it (the inflation previously skewed the separator above, only on
+// messaging). Also the height of the settings spacer below - --canvas-top
+// (globals.css) assumes this row exists on EVERY page.
+const ROW_HEIGHT = "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)";
+
 export function SubmenuBar() {
   const currentPage = useAppStore((s) => s.currentPage);
   const toggleSubmenuChip = useAppStore((s) => s.toggleSubmenuChip);
@@ -43,7 +52,14 @@ export function SubmenuBar() {
   // Dismiss the dropdown on an outside click, like every other popover.
   useClickOutside(moreRef, () => setMoreOpen(false), moreOpen);
 
-  if (!isSubmenuPage(currentPage)) return null;
+  // Settings has no chips, but the row still occupies its height so the rail
+  // is constant across pages: the sidebar's logo-area spacer and the vertical
+  // separator are both derived from --canvas-top, which assumes this row.
+  // Returning null here collapsed the rail 37px on settings and left a dead
+  // band above the settings nav (13-07-2026).
+  if (!isSubmenuPage(currentPage)) {
+    return <div aria-hidden="true" className="shrink-0" style={{ height: ROW_HEIGHT }} />;
+  }
 
   const chips = submenuConfigs[currentPage];
   const activeSubmenu: string[] = {
@@ -157,13 +173,7 @@ export function SubmenuBar() {
       style={{
         backgroundColor: "var(--surface-60)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
-        // Fixed at a chip's natural height (py-base × 2 + text-body line-height)
-        // so the absolute-centred chips and the separator above stay aligned.
-        // A FIXED (not min) height caps the row: the messaging "Scheduled
-        // messages" link keeps its 44px WCAG hit-area by overflowing this row
-        // rather than inflating it (the inflation previously skewed the
-        // separator above, only on messaging).
-        height: "calc(2 * var(--spacing-base) + var(--text-body) * 1.615)",
+        height: ROW_HEIGHT,
       }}
     >
       {/* Left: page-specific widget (timeframe stepper, or the messaging
