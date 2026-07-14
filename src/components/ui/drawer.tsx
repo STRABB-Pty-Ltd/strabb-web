@@ -165,7 +165,15 @@ function Drawer({
           instead). side="left" sits flush against --overlay-top with
           square top corners instead - it's anchored under the mobile
           topbar's hamburger trigger, so it should read as an extension of
-          the header rather than a floating card with a gap above it. */}
+          the header rather than a floating card with a gap above it.
+          side="left" also uses surface-60 instead of neutral-30: its body
+          is ContextualSidebarSections, the same shared buttons the desktop
+          sidebar renders on a surface-60 container so their own
+          neutral-30 fill reads as shading against it. Matching that
+          container colour here (instead of the neutral-30 every other
+          drawer uses) is what makes the shading show up at all - on
+          neutral-30 the buttons were the same colour as the panel and
+          vanished. */}
       <div
         ref={panelRef}
         data-slot="drawer"
@@ -173,8 +181,8 @@ function Drawer({
         aria-label={title}
         tabIndex={-1}
         className={cn(
-          "fixed flex flex-col overflow-hidden bg-[var(--neutral-30)] shadow-xl",
-          side === "left" ? "rounded-b-2xl" : "rounded-2xl",
+          "fixed flex flex-col overflow-hidden shadow-xl",
+          side === "left" ? "bg-[var(--surface-60)] rounded-b-2xl" : "bg-[var(--neutral-30)] rounded-2xl",
         )}
         style={{
           zIndex,

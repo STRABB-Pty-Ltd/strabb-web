@@ -109,6 +109,26 @@ describe("Drawer", () => {
     expect(panel.style.right).toBe("");
   });
 
+  it("uses surface-60 (matching the desktop sidebar) when side is left, neutral-30 otherwise", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onClose={vi.fn()} title="A">
+        <p>content</p>
+      </Drawer>,
+    );
+    let panel = getByRole("dialog", { name: "A" });
+    expect(panel.className).toContain("bg-[var(--neutral-30)]");
+    expect(panel.className).not.toContain("bg-[var(--surface-60)]");
+
+    rerender(
+      <Drawer open onClose={vi.fn()} title="A" side="left">
+        <p>content</p>
+      </Drawer>,
+    );
+    panel = getByRole("dialog", { name: "A" });
+    expect(panel.className).toContain("bg-[var(--surface-60)]");
+    expect(panel.className).not.toContain("bg-[var(--neutral-30)]");
+  });
+
   it("isolate stops mousedown bubbling out of the panel", async () => {
     const user = userEvent.setup();
     const outerMouseDown = vi.fn();
