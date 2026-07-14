@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { Drawer } from "@/components/ui/drawer";
 import { chipVariants } from "@/components/ui/chip";
+import { useIsMobile } from "@/hooks/use-responsive-view";
 import { useSubmenuChips } from "@/hooks/use-submenu-chips";
 import { pageLabels } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -23,6 +26,16 @@ export function MobileNavDrawer() {
   const closeMobileNavDrawer = useAppStore((s) => s.closeMobileNavDrawer);
   const currentPage = useAppStore((s) => s.currentPage);
   const { chips, isChipActive, handleChipClick } = useSubmenuChips();
+  const isMobile = useIsMobile(1024);
+
+  // Desktop (lg+) has its own always-visible ContextualSidebar/SubmenuBar -
+  // this drawer has no reason to exist there. CSS-hiding it wouldn't be
+  // enough: the store's mobileNavDrawer.open flag would stay true in the
+  // background, so shrinking back down to mobile would silently reopen it
+  // with no click. Actually close it on crossing the breakpoint instead.
+  useEffect(() => {
+    if (!isMobile && open) closeMobileNavDrawer();
+  }, [isMobile, open, closeMobileNavDrawer]);
 
   if (currentPage === "settings") return null;
 

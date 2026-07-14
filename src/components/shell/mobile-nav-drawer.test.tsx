@@ -3,13 +3,19 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { storeMock, closeMobileNavDrawerMock, useSubmenuChipsMock, handleChipClickMock } =
-  vi.hoisted(() => ({
-    storeMock: vi.fn(),
-    closeMobileNavDrawerMock: vi.fn(),
-    useSubmenuChipsMock: vi.fn(),
-    handleChipClickMock: vi.fn(),
-  }));
+const {
+  storeMock,
+  closeMobileNavDrawerMock,
+  useSubmenuChipsMock,
+  handleChipClickMock,
+  isMobileMock,
+} = vi.hoisted(() => ({
+  storeMock: vi.fn(),
+  closeMobileNavDrawerMock: vi.fn(),
+  useSubmenuChipsMock: vi.fn(),
+  handleChipClickMock: vi.fn(),
+  isMobileMock: vi.fn(),
+}));
 
 vi.mock("@/stores/app-store", () => ({
   useAppStore: (selector: (s: unknown) => unknown) => selector(storeMock()),
@@ -17,6 +23,10 @@ vi.mock("@/stores/app-store", () => ({
 
 vi.mock("@/hooks/use-submenu-chips", () => ({
   useSubmenuChips: () => useSubmenuChipsMock(),
+}));
+
+vi.mock("@/hooks/use-responsive-view", () => ({
+  useIsMobile: (...args: unknown[]) => isMobileMock(...args),
 }));
 
 vi.mock("./submenu-left-slot", () => ({
@@ -67,6 +77,8 @@ describe("MobileNavDrawer", () => {
     closeMobileNavDrawerMock.mockReset();
     useSubmenuChipsMock.mockReset();
     handleChipClickMock.mockReset();
+    isMobileMock.mockReset();
+    isMobileMock.mockReturnValue(true);
     setup();
   });
 
@@ -118,5 +130,26 @@ describe("MobileNavDrawer", () => {
     const sections = screen.getByText("sections collapsible=true");
     // DOCUMENT_POSITION_PRECEDING (2): sections comes after left-slot.
     expect(sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+  });
+
+  it("closes itself when the viewport crosses to desktop while open, not just hides", () => {
+    setup({ open: true });
+    isMobileMock.mockReturnValue(false);
+    render(<MobileNavDrawer />);
+    expect(closeMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not call close when open but still mobile-width", () => {
+    setup({ open: true });
+    isMobileMock.mockReturnValue(true);
+    render(<MobileNavDrawer />);
+    expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
+  });
+
+  it("does not call close when already closed at desktop width", () => {
+    setup({ open: false });
+    isMobileMock.mockReturnValue(false);
+    render(<MobileNavDrawer />);
+    expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
   });
 });
