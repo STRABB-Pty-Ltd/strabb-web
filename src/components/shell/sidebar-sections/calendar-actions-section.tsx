@@ -2,6 +2,7 @@
 
 import { CalendarPlus, CalendarOff } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useAppStore } from "@/stores/app-store";
 
@@ -12,12 +13,10 @@ export function CalendarActionsSection() {
   const { role } = useCurrentUser();
   const canCreate = role === "owner" || role === "admin";
 
-  const buttonClass =
-    "gap-base px-sm py-base text-body flex items-center rounded-lg font-medium transition-colors";
-  const buttonStyle = {
-    backgroundColor: "var(--neutral-30)",
-    color: "var(--highlight-10)",
-  };
+  /* Overrides that keep the pre-primitive sidebar row geometry: natural
+     height (py-base, not the fixed h-lg), left-aligned content, borderless
+     fill, and the original colour-only transition. */
+  const buttonClass = "h-auto justify-start gap-base border-0 px-sm py-base transition-colors";
 
   // Cleaners neither create bookings nor block dates; hide the whole
   // section rather than showing a button that 403s on save. A null role
@@ -28,7 +27,7 @@ export function CalendarActionsSection() {
   }
 
   return (
-    <div style={{ padding: "var(--space-sm)" }}>
+    <div className="p-sm">
       <h3
         className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--text-secondary)" }}
@@ -36,24 +35,24 @@ export function CalendarActionsSection() {
         Create
       </h3>
       <div className="gap-xs flex flex-col">
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => openBookingFormOverlay()}
           className={buttonClass}
-          style={buttonStyle}
         >
           <CalendarPlus size={13} aria-hidden="true" />
           Add booking
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => openAvailabilityBlockDrawer()}
           className={buttonClass}
-          style={buttonStyle}
         >
           <CalendarOff size={13} aria-hidden="true" />
           Block dates
-        </button>
+        </Button>
       </div>
     </div>
   );

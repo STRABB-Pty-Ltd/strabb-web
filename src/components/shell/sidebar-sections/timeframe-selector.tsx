@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
@@ -65,7 +66,7 @@ export function TimeframeSelector({ page }: { page: PageId }) {
     page === "operations" ? (windowSizeToChipId[currentWs] ?? currentWs) : currentWs;
 
   return (
-    <div style={{ padding: "var(--space-sm)" }}>
+    <div className="p-sm">
       <h3
         className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--text-secondary)" }}
@@ -101,11 +102,10 @@ export function TimeframeSelector({ page }: { page: PageId }) {
                   },
                 });
               }}
-              className="px-sm py-base text-body rounded-lg font-medium transition-colors"
-              style={{
-                backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
-                color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
-              }}
+              className={cn(
+                "px-sm py-base text-body rounded-lg font-medium transition-colors",
+                isActive ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",
+              )}
             >
               {opt.label}
             </button>
@@ -133,13 +133,13 @@ export function TimeframeSelector({ page }: { page: PageId }) {
               },
             });
           }}
-          className={`px-sm py-base text-body rounded-lg font-medium transition-colors ${
-            page === "dashboard" ? "" : "col-span-2"
-          }`}
-          style={{
-            backgroundColor: currentWs === "custom" ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: currentWs === "custom" ? "var(--surface-60)" : "var(--highlight-10)",
-          }}
+          className={cn(
+            "px-sm py-base text-body rounded-lg font-medium transition-colors",
+            page === "dashboard" ? "" : "col-span-2",
+            currentWs === "custom"
+              ? "bg-highlight-10 text-surface-60"
+              : "bg-neutral-30 text-highlight-10",
+          )}
         >
           Custom
         </button>
