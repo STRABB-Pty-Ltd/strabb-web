@@ -22,6 +22,8 @@ export interface OverlayState {
   threadOverlay: { open: boolean; messageId: string } | null;
   sharePopup: { open: boolean };
   shoppingListPopup: { open: boolean };
+  /** Mobile hamburger nav drawer (M.3) - view chips + filters/actions. */
+  mobileNavDrawer: { open: boolean };
   /** Create/edit drawer for availability blocks. blockId null = create mode. */
   availabilityBlockDrawer: { open: boolean; blockId: string | null } | null;
   /** Booking create drawer opened from page-level entry points (the
@@ -47,6 +49,8 @@ export interface OverlaySlice extends OverlayState {
   closeSharePopup: () => void;
   openShoppingListPopup: () => void;
   closeShoppingListPopup: () => void;
+  openMobileNavDrawer: () => void;
+  closeMobileNavDrawer: () => void;
   openAvailabilityBlockDrawer: (blockId?: string) => void;
   closeAvailabilityBlockDrawer: () => void;
   openBookingFormOverlay: (listingId?: string) => void;
@@ -66,6 +70,7 @@ export const createOverlaySlice: StateCreator<OverlaySlice, [], [], OverlaySlice
   threadOverlay: null,
   sharePopup: { open: false },
   shoppingListPopup: { open: false },
+  mobileNavDrawer: { open: false },
   availabilityBlockDrawer: null,
   bookingFormOverlay: null,
   toasts: [],
@@ -88,6 +93,8 @@ export const createOverlaySlice: StateCreator<OverlaySlice, [], [], OverlaySlice
   closeSharePopup: () => set({ sharePopup: { open: false } }),
   openShoppingListPopup: () => set({ shoppingListPopup: { open: true } }),
   closeShoppingListPopup: () => set({ shoppingListPopup: { open: false } }),
+  openMobileNavDrawer: () => set({ mobileNavDrawer: { open: true } }),
+  closeMobileNavDrawer: () => set({ mobileNavDrawer: { open: false } }),
   openAvailabilityBlockDrawer: (blockId) =>
     set({ availabilityBlockDrawer: { open: true, blockId: blockId ?? null } }),
   closeAvailabilityBlockDrawer: () => set({ availabilityBlockDrawer: null }),

@@ -191,6 +191,11 @@
   --drilldown-panel-width: min(var(--drilldown-width), calc(100vw - 2 * var(--space-md)));
   --thread-panel-width: min(var(--thread-width), calc(100vw - 2 * var(--space-md)));
 
+  /* Mobile nav drawer (M.3) - filters/actions + view chips, side="left".
+     Same viewport-clamp shape as the two tokens above; 320px is wide enough
+     for wrapped chip rows plus the filter sections' existing padding. */
+  --mobile-nav-drawer-width: min(320px, calc(100vw - 2 * var(--space-md)));
+
   /* Logo overlay box (and the matching sidebar spacer below it). Sized so the
      top of the first clickable sidebar button on every page aligns with the
      top of the first KPI card in the canvas. Equation:

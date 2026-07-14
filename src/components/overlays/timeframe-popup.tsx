@@ -122,12 +122,20 @@ export function TimeframePopup() {
   // canvas content area, even if the trigger sits right under the submenu.
   const POPUP_WIDTH = 377;
   const CANVAS_PAD = 21;
+  // Below lg (1024px) there's no sidebar to offset from - anchor comes from
+  // TimeframeStepper inside MobileNavDrawer instead - and the desktop
+  // POPUP_WIDTH is wider than a phone screen, so both need a mobile branch
+  // (M.3: this popup previously had no mobile trigger to reach it at all).
+  const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920;
+  const isMobileViewport = viewportWidth < 1024;
+  const popupWidth = isMobileViewport
+    ? Math.min(POPUP_WIDTH, viewportWidth - 2 * CANVAS_PAD)
+    : POPUP_WIDTH;
   const positionStyle: { top: number | string; left: number | string } = tfPopup.anchor
     ? (() => {
-        const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920;
-        const sidebarWidth = viewportWidth * 0.16;
+        const sidebarWidth = isMobileViewport ? 0 : viewportWidth * 0.16;
         const minLeft = sidebarWidth + CANVAS_PAD;
-        const maxLeft = viewportWidth - POPUP_WIDTH - CANVAS_PAD;
+        const maxLeft = viewportWidth - popupWidth - CANVAS_PAD;
         return {
           top: `max(calc(var(--canvas-top) + var(--space-md) - 2px), ${tfPopup.anchor.bottom + CANVAS_PAD}px)`,
           left: Math.max(minLeft, Math.min(tfPopup.anchor.left, maxLeft)),
@@ -145,21 +153,23 @@ export function TimeframePopup() {
   return (
     <>
       <div
-        style={{ ...canvasOverlayStyle, zIndex: Z.DRAWER_SCRIM }}
+        data-slot="timeframe-popup"
+        style={{ ...canvasOverlayStyle, zIndex: Z.THREAD_SCRIM }}
         onClick={closeTimeframePopup}
       />
       <div
         ref={popupRef}
+        data-slot="timeframe-popup"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
         className="bg-surface-60 fixed rounded-xl border shadow-xl"
         style={{
-          zIndex: Z.DRAWER,
+          zIndex: Z.THREAD,
           top: positionStyle.top,
           left: positionStyle.left,
-          width: POPUP_WIDTH,
+          width: popupWidth,
           borderColor: "var(--border)",
           animation: cardAnim,
         }}

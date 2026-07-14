@@ -89,6 +89,26 @@ describe("Drawer", () => {
     );
   });
 
+  it("anchors right by default, and left with no rightOffset when side is left", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onClose={vi.fn()} title="A" rightOffset="24px">
+        <p>content</p>
+      </Drawer>,
+    );
+    let panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.right).toBe("24px");
+    expect(panel.style.left).toBe("");
+
+    rerender(
+      <Drawer open onClose={vi.fn()} title="A" side="left" rightOffset="24px">
+        <p>content</p>
+      </Drawer>,
+    );
+    panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.left).toBe("var(--overlay-left)");
+    expect(panel.style.right).toBe("");
+  });
+
   it("isolate stops mousedown bubbling out of the panel", async () => {
     const user = userEvent.setup();
     const outerMouseDown = vi.fn();

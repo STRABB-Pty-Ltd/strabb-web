@@ -1,5 +1,6 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import Link from "next/link";
 
 import { useDashboardAlerts } from "@/hooks/use-dashboard";
@@ -29,13 +30,14 @@ import { StrabbHeroIcon } from "./strabb-marks";
  * too, feeding a dropdown that never renders there (review finding, PR #62).
  *
  * The desktop shell's ContextualSidebar (filters/actions) and SubmenuBar
- * (view chips) have no mobile home yet - that's the hamburger-drawer phase
- * (M.3), not this one. Deliberately not shipping a hamburger button that
- * would open nothing.
+ * (view chips) render together in MobileNavDrawer (M.3), opened from the
+ * hamburger button below. Settings is excluded - SettingsMobileNav already
+ * owns that page's mobile nav and the drawer renders nothing there.
  */
 export function MobileTopBar() {
   const currentPage = useAppStore((s) => s.currentPage);
   const selectedListings = useAppStore((s) => s.selectedListings);
+  const openMobileNavDrawer = useAppStore((s) => s.openMobileNavDrawer);
   const isMobile = useIsMobile(1024);
   const { data: alerts } = useDashboardAlerts(selectedListings, isMobile);
   const SettingsIcon = settingsNavItem.icon;
@@ -46,6 +48,16 @@ export function MobileTopBar() {
       style={{ borderBottom: "var(--hairline) solid var(--border)" }}
     >
       <div className="gap-sm flex min-w-0 items-center">
+        {currentPage !== "settings" && (
+          <button
+            type="button"
+            onClick={openMobileNavDrawer}
+            aria-label="Open menu"
+            className="bg-neutral-30 text-highlight-10 flex size-[var(--touch-target-min)] shrink-0 items-center justify-center rounded-lg"
+          >
+            <Menu size={20} aria-hidden="true" />
+          </button>
+        )}
         <StrabbHeroIcon className="text-highlight-10 h-6 w-6 shrink-0" />
         <span className="text-body truncate text-[var(--text-secondary)]">
           {pageLabels[currentPage]}

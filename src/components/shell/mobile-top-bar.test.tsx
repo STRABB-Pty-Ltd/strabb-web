@@ -2,12 +2,20 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { alertsMock, storeMock, setSubmenuMock, pushMock, isMobileMock } = vi.hoisted(() => ({
+const {
+  alertsMock,
+  storeMock,
+  setSubmenuMock,
+  pushMock,
+  isMobileMock,
+  openMobileNavDrawerMock,
+} = vi.hoisted(() => ({
   alertsMock: vi.fn(),
   storeMock: vi.fn(),
   setSubmenuMock: vi.fn(),
   pushMock: vi.fn(),
   isMobileMock: vi.fn(),
+  openMobileNavDrawerMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-dashboard", () => ({
@@ -32,6 +40,7 @@ const baseStore = {
   currentPage: "dashboard",
   selectedListings: [],
   setSubmenu: setSubmenuMock,
+  openMobileNavDrawer: openMobileNavDrawerMock,
 };
 
 describe("MobileTopBar", () => {
@@ -41,8 +50,23 @@ describe("MobileTopBar", () => {
     setSubmenuMock.mockReset();
     pushMock.mockReset();
     isMobileMock.mockReset();
+    openMobileNavDrawerMock.mockReset();
     storeMock.mockReturnValue(baseStore);
     isMobileMock.mockReturnValue(true);
+  });
+
+  it("clicking the hamburger opens the mobile nav drawer", async () => {
+    alertsMock.mockReturnValue({ data: [] });
+    render(<MobileTopBar />);
+    await userEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    expect(openMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the hamburger on settings, where SettingsMobileNav owns mobile nav", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, currentPage: "settings" });
+    render(<MobileTopBar />);
+    expect(screen.queryByRole("button", { name: /open menu/i })).not.toBeInTheDocument();
   });
 
   it("renders the page title and a Settings link", () => {
