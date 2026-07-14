@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 
+import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default function PortalAccountPage() {
@@ -26,18 +27,14 @@ export default function PortalAccountPage() {
         </div>
       </div>
 
-      <button
+      <Button
         type="button"
+        variant="destructive"
         onClick={() => void signOut({ callbackUrl: "/login" })}
-        className="px-sm text-body w-full rounded-lg font-semibold"
-        style={{
-          backgroundColor: "var(--neutral-30)",
-          color: "var(--status-danger)",
-          minHeight: "var(--touch-target-min)",
-        }}
+        className="min-h-[var(--touch-target-min)] w-full font-semibold"
       >
         Sign out
-      </button>
+      </Button>
     </div>
   );
 }

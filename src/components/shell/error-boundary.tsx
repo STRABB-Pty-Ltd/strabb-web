@@ -3,6 +3,8 @@
 import React from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
@@ -53,14 +55,22 @@ export class ErrorBoundary extends React.Component<
                 </pre>
               </details>
             )}
-            <button
+            {/* Button default variant = the same bg-primary/text-primary-foreground
+                recipe this button hand-rolled. size is null (padding supplied
+                directly): the custom spacing ladder isn't registered in cn()'s
+                twMerge config, so a size variant's h-lg/px-base could not be
+                reliably overridden back to this button's px-sm py-base natural
+                height. border-0 keeps the borderless geometry (the primitive's
+                1px transparent border would add 2px of height here). */}
+            <Button
               type="button"
+              size={null}
               onClick={this.handleReload}
-              className="gap-base px-sm py-base text-body bg-primary text-primary-foreground hover:bg-primary/80 inline-flex items-center rounded-lg font-medium"
+              className="gap-base px-sm py-base hover:bg-primary/80 border-0"
             >
               <RefreshCw size={13} aria-hidden="true" />
               Reload
-            </button>
+            </Button>
           </div>
         </div>
       );

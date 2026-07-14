@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { usePortalTask, useTransitionTask } from "@/lib/api-hooks/portal-api";
 import { ApiError } from "@/lib/api-client";
 import { nextActionForStatus, type TransitionAction } from "@/lib/schemas/portal";
@@ -161,18 +164,13 @@ export default function PortalTaskDetailPage() {
             <div className="space-y-sm">
               <label className="space-y-xs block">
                 <span className="text-body text-highlight-10 font-medium">Actual hours</span>
-                <input
+                <Input
                   type="number"
                   inputMode="decimal"
                   min="0"
                   step="0.25"
                   value={actualHours}
                   onChange={(e) => setActualHours(e.target.value)}
-                  className="px-sm py-base text-body text-highlight-10 w-full rounded-lg"
-                  style={{
-                    backgroundColor: "var(--neutral-30)",
-                    border: "var(--hairline) solid var(--border)",
-                  }}
                 />
               </label>
               {!hoursValid && (
@@ -182,34 +180,20 @@ export default function PortalTaskDetailPage() {
               )}
               <label className="space-y-xs block">
                 <span className="text-body text-highlight-10 font-medium">Note (optional)</span>
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  rows={3}
-                  className="px-sm py-base text-body text-highlight-10 w-full rounded-lg"
-                  style={{
-                    backgroundColor: "var(--neutral-30)",
-                    border: "var(--hairline) solid var(--border)",
-                  }}
-                />
+                <Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} />
               </label>
             </div>
           )}
 
           {action && (
-            <button
+            <Button
               type="button"
               onClick={() => handleAction(action)}
               disabled={transition.isPending || (action === "complete" && !hoursValid)}
-              className="px-sm text-body w-full rounded-lg font-semibold disabled:opacity-60"
-              style={{
-                backgroundColor: "var(--highlight-10)",
-                color: "var(--surface-60)",
-                minHeight: "var(--touch-target-min)",
-              }}
+              className="min-h-[var(--touch-target-min)] w-full font-semibold"
             >
               {transition.isPending ? "Saving..." : ACTION_LABELS[action]}
-            </button>
+            </Button>
           )}
 
           {!action && (task.status === "completed" || task.status === "cancelled") && (

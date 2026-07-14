@@ -3,6 +3,9 @@
 import { useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
+import { Input } from "@/components/ui/input";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -73,7 +76,7 @@ function ShoppingRow({
       ) : (
         <span className="gap-xs text-body text-highlight-10 flex items-center">
           $
-          <input
+          <Input
             ref={priceInputRef}
             type="number"
             inputMode="decimal"
@@ -84,16 +87,13 @@ function ShoppingRow({
             onChange={(e) => setPrice(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             aria-label={`Price for ${item.item}`}
-            className="font-data text-body border-neutral-30 px-base py-xs w-[64px] rounded border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            className="font-data w-[64px]"
           />
         </span>
       )}
-      <span
-        className="px-base py-xs text-body rounded-md"
-        style={{ backgroundColor: badge.bg, color: badge.text }}
-      >
+      <Chip size="sm" radius="md" style={{ backgroundColor: badge.bg, color: badge.text }}>
         {item.priority}
-      </span>
+      </Chip>
     </label>
   );
 }
@@ -181,22 +181,25 @@ export function ShoppingListPopup() {
               Shopping List
             </h2>
             <div className="gap-base flex items-center">
-              <button
+              <Button
                 type="button"
+                variant="quiet"
+                size="sm"
                 onClick={() => setShowAll(!showAll)}
-                className="text-body text-highlight-10 rounded outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                className="hover:underline"
               >
                 {showAll ? "Show needed only" : "Show all"}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-touch"
                 onClick={closeShoppingListPopup}
                 aria-label="Close shopping list"
-                className="text-highlight-10 hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 data-no-elevate
               >
                 <X size={18} />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -229,21 +232,12 @@ export function ShoppingListPopup() {
             className="gap-base px-sm py-sm flex justify-end border-t"
             style={{ borderColor: "var(--border)" }}
           >
-            <button
-              type="button"
-              onClick={closeShoppingListPopup}
-              className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            >
+            <Button type="button" variant="ghost" onClick={closeShoppingListPopup}>
               Close
-            </button>
-            <button
-              type="button"
-              onClick={handleCopyList}
-              className="px-sm py-base text-body text-surface-60 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-            >
+            </Button>
+            <Button type="button" onClick={handleCopyList}>
               Copy List
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
+import { Chip } from "@/components/ui/chip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ListingResponse } from "@/lib/schemas/listing";
 
@@ -64,15 +65,16 @@ export function ListingRow({
             {listing.platform}
           </span>
           {listing.channexPropertyId && (
-            <span
-              className="px-base text-body rounded py-1"
-              style={{
-                backgroundColor: "var(--status-success)",
-                color: "var(--status-success-fg)",
-              }}
+            <Chip
+              tone="solid"
+              color="var(--status-success)"
+              textColor="var(--status-success-fg)"
+              size="sm"
+              radius="sm"
+              className="font-normal"
             >
               Channex
-            </span>
+            </Chip>
           )}
         </div>
       </button>

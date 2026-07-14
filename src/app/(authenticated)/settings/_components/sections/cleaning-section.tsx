@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { useTeamMembers } from "@/hooks/use-team";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
@@ -74,21 +76,16 @@ export function CleaningSection() {
           >
             Default Cleaner
           </label>
-          <select
+          <Select
             id="cleaning-default-cleaner"
             value={values.defaultCleanerId}
             onChange={(e) => handleCleanerChange(e.target.value)}
             disabled={cleanersQuery.isLoading}
-            className="px-sm py-base text-body w-full rounded-lg border disabled:opacity-60"
-            style={{ backgroundColor: "var(--neutral-30)", borderColor: "var(--border)" }}
-          >
-            <option value="">None</option>
-            {cleaners.map((cleaner) => (
-              <option key={cleaner.id} value={cleaner.id}>
-                {cleaner.fullName}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: "", label: "None" },
+              ...cleaners.map((cleaner) => ({ value: cleaner.id, label: cleaner.fullName })),
+            ]}
+          />
           {values.defaultCleanerEmail && (
             <p className="mt-xs text-body" style={{ color: "var(--text-secondary)" }}>
               {values.defaultCleanerEmail}
@@ -120,15 +117,9 @@ export function CleaningSection() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={save}
-        disabled={!dirty || isSaving}
-        className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-      >
+      <Button type="button" onClick={save} disabled={!dirty || isSaving}>
         {isSaving ? "Saving…" : "Save Changes"}
-      </button>
+      </Button>
     </div>
   );
 }

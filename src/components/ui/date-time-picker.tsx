@@ -53,7 +53,7 @@ export function DateTimePicker({
   showTime = true,
   disabled = false,
   className,
-  background = "var(--surface-60)",
+  background = "var(--neutral-30)",
   ...ariaProps
 }: DateTimePickerProps) {
   // Memoise parsed so [parsed] dep lists don't loop on a fresh Date each render.
@@ -153,11 +153,11 @@ export function DateTimePicker({
         aria-labelledby={ariaProps["aria-labelledby"]}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "px-sm py-base text-body w-full rounded-lg border text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60",
+          "border-field-border hover:border-field-border-hover px-sm py-base text-body w-full rounded-lg border text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60",
           "gap-base flex items-center justify-between",
           className,
         )}
-        style={{ backgroundColor: background, borderColor: "var(--border)" }}
+        style={{ backgroundColor: background }}
       >
         <span
           className="truncate"
@@ -216,11 +216,8 @@ export function DateTimePicker({
                     if (Number.isFinite(n) && n >= 0 && n <= 23) handleTimeChange({ h: n });
                   }}
                   disabled={!parsed}
-                  className="font-data text-body px-base py-xs w-[55px] rounded border text-center disabled:opacity-60"
-                  style={{
-                    backgroundColor: "var(--surface-60)",
-                    borderColor: "var(--border)",
-                  }}
+                  className="font-data text-body px-base py-xs border-field-border w-[55px] rounded border text-center disabled:opacity-60"
+                  style={{ backgroundColor: "var(--neutral-30)" }}
                   aria-label="Hour"
                 />
                 <span className="text-body text-highlight-10">:</span>
@@ -234,11 +231,8 @@ export function DateTimePicker({
                     if (Number.isFinite(n) && n >= 0 && n <= 59) handleTimeChange({ m: n });
                   }}
                   disabled={!parsed}
-                  className="font-data text-body px-base py-xs w-[55px] rounded border text-center disabled:opacity-60"
-                  style={{
-                    backgroundColor: "var(--surface-60)",
-                    borderColor: "var(--border)",
-                  }}
+                  className="font-data text-body px-base py-xs border-field-border w-[55px] rounded border text-center disabled:opacity-60"
+                  style={{ backgroundColor: "var(--neutral-30)" }}
                   aria-label="Minute"
                 />
                 <button

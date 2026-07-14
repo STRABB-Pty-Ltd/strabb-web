@@ -3,6 +3,8 @@
 import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   useAddTimeOff,
   useAvailability,
@@ -17,11 +19,6 @@ import {
   type WeeklyAvailability,
 } from "@/lib/schemas/portal";
 import { useAppStore } from "@/stores/app-store";
-
-const inputStyle = {
-  backgroundColor: "var(--neutral-30)",
-  border: "var(--hairline) solid var(--border)",
-} as const;
 
 function toastError(err: unknown): string {
   if (err instanceof ApiError) return err.message;
@@ -138,14 +135,15 @@ export default function PortalAvailabilityPage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-body text-highlight-10 font-semibold">{label}</span>
-                  <button
+                  <Button
                     type="button"
+                    variant="quiet"
+                    size="sm"
                     onClick={() => addWindow(weekday)}
                     aria-label={`Add hours for ${label}`}
-                    className="gap-xs text-body text-highlight-10 inline-flex items-center font-medium"
                   >
                     <Plus size={14} aria-hidden="true" /> Add
-                  </button>
+                  </Button>
                 </div>
                 {entries.length === 0 && (
                   <p className="text-body" style={{ color: "var(--text-secondary)" }}>
@@ -154,52 +152,47 @@ export default function PortalAvailabilityPage() {
                 )}
                 {entries.map(({ w, i }) => (
                   <div key={i} className="gap-xs flex items-center">
-                    <input
+                    <Input
                       type="time"
                       aria-label={`${label} start`}
                       value={w.startTime}
                       onChange={(e) => editWindow(i, { startTime: e.target.value })}
-                      className="px-sm py-xs text-body text-highlight-10 rounded-md"
-                      style={inputStyle}
+                      className="w-auto"
                     />
                     <span className="text-body" style={{ color: "var(--text-secondary)" }}>
                       to
                     </span>
-                    <input
+                    <Input
                       type="time"
                       aria-label={`${label} end`}
                       value={w.endTime}
                       onChange={(e) => editWindow(i, { endTime: e.target.value })}
-                      className="px-sm py-xs text-body text-highlight-10 rounded-md"
-                      style={inputStyle}
+                      className="w-auto"
                     />
-                    <button
+                    <Button
                       type="button"
+                      variant="quiet"
+                      size="icon-sm"
                       onClick={() => removeWindow(i)}
                       aria-label={`Remove ${label} window`}
-                      className="p-xs text-highlight-10 ml-auto"
+                      className="ml-auto"
                     >
                       <X size={16} aria-hidden="true" />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
             );
           })}
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleSaveWeekly}
           disabled={updateWeekly.isPending}
-          className="px-sm text-body w-full rounded-lg font-semibold disabled:opacity-60"
-          style={{
-            backgroundColor: "var(--highlight-10)",
-            color: "var(--surface-60)",
-            minHeight: "var(--touch-target-min)",
-          }}
+          className="min-h-[var(--touch-target-min)] w-full font-semibold"
         >
           {updateWeekly.isPending ? "Saving..." : "Save weekly hours"}
-        </button>
+        </Button>
       </section>
 
       <section className="space-y-sm">
@@ -227,14 +220,15 @@ export default function PortalAvailabilityPage() {
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="quiet"
+                size="icon-sm"
                 onClick={() => handleDeleteTimeOff(block.id)}
                 aria-label="Remove time off"
-                className="p-xs text-highlight-10"
               >
                 <X size={16} aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -245,50 +239,39 @@ export default function PortalAvailabilityPage() {
         >
           <label className="space-y-xs block">
             <span className="text-body text-highlight-10 font-medium">From</span>
-            <input
+            <Input
               type="datetime-local"
               aria-label="Time off start"
               value={offStart}
               onChange={(e) => setOffStart(e.target.value)}
-              className="px-sm py-base text-body text-highlight-10 w-full rounded-md"
-              style={inputStyle}
             />
           </label>
           <label className="space-y-xs block">
             <span className="text-body text-highlight-10 font-medium">To</span>
-            <input
+            <Input
               type="datetime-local"
               aria-label="Time off end"
               value={offEnd}
               onChange={(e) => setOffEnd(e.target.value)}
-              className="px-sm py-base text-body text-highlight-10 w-full rounded-md"
-              style={inputStyle}
             />
           </label>
           <label className="space-y-xs block">
             <span className="text-body text-highlight-10 font-medium">Note (optional)</span>
-            <input
+            <Input
               type="text"
               aria-label="Time off note"
               value={offNote}
               onChange={(e) => setOffNote(e.target.value)}
-              className="px-sm py-base text-body text-highlight-10 w-full rounded-md"
-              style={inputStyle}
             />
           </label>
-          <button
+          <Button
             type="button"
             onClick={handleAddTimeOff}
             disabled={addTimeOff.isPending}
-            className="px-sm text-body w-full rounded-lg font-semibold disabled:opacity-60"
-            style={{
-              backgroundColor: "var(--highlight-10)",
-              color: "var(--surface-60)",
-              minHeight: "var(--touch-target-min)",
-            }}
+            className="min-h-[var(--touch-target-min)] w-full font-semibold"
           >
             {addTimeOff.isPending ? "Adding..." : "Add time off"}
-          </button>
+          </Button>
         </div>
       </section>
     </div>

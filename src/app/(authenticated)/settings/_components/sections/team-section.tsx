@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Plus, X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useInvites, useTeamMembers } from "@/hooks/use-team";
 import {
   useCreateInvite,
@@ -37,11 +40,6 @@ const statusColors: Record<string, string> = {
 
 const headerCellClass =
   "px-sm py-sm text-body text-highlight-10 text-left font-semibold tracking-wide uppercase whitespace-nowrap";
-
-const inputClass = "px-sm py-base text-body bg-surface-60 w-full rounded-sm border";
-const selectClass = "px-sm py-base text-body bg-surface-60 rounded-sm border";
-const rowActionClass =
-  "px-base py-xs text-body text-highlight-10 rounded-md border font-medium disabled:opacity-60";
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return "-";
@@ -97,7 +95,7 @@ function HourlyRateCell({
       <span className="text-highlight-10" aria-hidden="true">
         $
       </span>
-      <input
+      <Input
         type="number"
         inputMode="decimal"
         min="0"
@@ -115,8 +113,7 @@ function HourlyRateCell({
           }
         }}
         placeholder="0.00"
-        className="px-base py-xs text-body bg-surface-60 w-24 rounded-md border font-medium disabled:opacity-60"
-        style={{ borderColor: error ? "var(--status-danger)" : "var(--border)" }}
+        className="w-24"
       />
     </div>
   );
@@ -223,15 +220,10 @@ export function TeamSection() {
           <h2 className="text-subheading text-highlight-10 font-semibold">Team</h2>
           <p className="text-body text-highlight-10">Manage team members and roles.</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowInvite(true)}
-          className="gap-xs px-sm py-base text-body text-surface-60 flex items-center rounded-lg font-medium"
-          style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-        >
+        <Button type="button" onClick={() => setShowInvite(true)}>
           <Plus size={16} aria-hidden="true" />
           Invite Member
-        </button>
+        </Button>
       </div>
 
       {showInvite && (
@@ -246,14 +238,12 @@ export function TeamSection() {
             >
               Email
             </label>
-            <input
+            <Input
               id="team-invite-email"
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               autoComplete="email"
-              className={inputClass}
-              style={{ borderColor: "var(--border)" }}
               placeholder="email@example.com"
             />
             {inviteError && <p className="text-destructive text-body mt-xs">{inviteError}</p>}
@@ -265,40 +255,28 @@ export function TeamSection() {
             >
               Role
             </label>
-            <select
+            <Select
               id="team-invite-role"
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value as TeamRole)}
-              className={selectClass}
-              style={{ borderColor: "var(--border)" }}
-            >
-              {TEAM_ROLE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              options={TEAM_ROLE_OPTIONS}
+            />
           </div>
-          <button
-            type="button"
-            onClick={handleInvite}
-            disabled={createInvite.isPending}
-            className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
+          <Button type="button" onClick={handleInvite} disabled={createInvite.isPending}>
             {createInvite.isPending ? "Sending…" : "Send Invite"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="quiet"
+            size="icon"
             onClick={() => {
               setShowInvite(false);
               setInviteError(null);
             }}
             aria-label="Cancel invitation"
-            className="p-base text-highlight-10 hover:text-highlight-10 rounded-lg"
           >
             <X size={16} />
-          </button>
+          </Button>
         </div>
       )}
 
@@ -353,20 +331,15 @@ export function TeamSection() {
                       {member.fullName}
                     </td>
                     <td className="px-sm py-sm whitespace-nowrap">
-                      <select
+                      <Select
                         aria-label={`Role for ${member.fullName}`}
                         value={member.role}
                         onChange={(e) => handleRoleChange(member.id, e.target.value as TeamRole)}
                         disabled={updateRole.isPending}
-                        className="px-base py-xs text-body bg-surface-60 rounded-md border font-medium capitalize disabled:opacity-60"
+                        options={TEAM_ROLE_OPTIONS}
+                        // Badge colours are a per-role runtime lookup, kept inline.
                         style={{ backgroundColor: badge.bg, color: badge.text }}
-                      >
-                        {TEAM_ROLE_OPTIONS.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {TEAM_ROLE_LABELS[option.value]}
-                          </option>
-                        ))}
-                      </select>
+                      />
                     </td>
                     <td className="px-sm py-sm whitespace-nowrap">
                       {member.role === "cleaner" ? (
@@ -399,25 +372,25 @@ export function TeamSection() {
                     </td>
                     <td className="px-sm py-sm whitespace-nowrap">
                       {member.isActive ? (
-                        <button
+                        <Button
                           type="button"
+                          variant="outline"
+                          size="xs"
                           onClick={() => handleDeactivate(member.id)}
                           disabled={deactivate.isPending}
-                          className={rowActionClass}
-                          style={{ borderColor: "var(--border)" }}
                         >
                           Deactivate
-                        </button>
+                        </Button>
                       ) : (
-                        <button
+                        <Button
                           type="button"
+                          variant="outline"
+                          size="xs"
                           onClick={() => handleReactivate(member.id)}
                           disabled={reactivate.isPending}
-                          className={rowActionClass}
-                          style={{ borderColor: "var(--border)" }}
                         >
                           Reactivate
-                        </button>
+                        </Button>
                       )}
                     </td>
                   </tr>
@@ -469,24 +442,24 @@ export function TeamSection() {
                       {formatDate(invite.expiresAt)}
                     </td>
                     <td className="px-sm py-sm gap-base flex whitespace-nowrap">
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
+                        size="xs"
                         onClick={() => handleResend(invite.id, invite.email)}
                         disabled={resendInvite.isPending}
-                        className={rowActionClass}
-                        style={{ borderColor: "var(--border)" }}
                       >
                         Resend
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        variant="outline"
+                        size="xs"
                         onClick={() => handleRevoke(invite.id)}
                         disabled={revokeInvite.isPending}
-                        className={rowActionClass}
-                        style={{ borderColor: "var(--border)" }}
                       >
                         Revoke
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}

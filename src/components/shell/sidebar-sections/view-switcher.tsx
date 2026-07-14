@@ -2,6 +2,7 @@
 
 import { CalendarDays, GanttChart, List, type LucideIcon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
@@ -31,7 +32,7 @@ export function ViewSwitcher({ page }: { page: PageId }) {
   const currentView = page === "calendar" ? calendarView : "";
 
   return (
-    <div style={{ padding: "var(--space-sm)" }}>
+    <div className="p-sm">
       <h3
         className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--text-secondary)" }}
@@ -48,11 +49,12 @@ export function ViewSwitcher({ page }: { page: PageId }) {
               type="button"
               aria-pressed={isActive}
               onClick={() => setView(page as "calendar" | "messaging" | "operations", opt.id)}
-              className={`gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors ${isActive ? "font-semibold" : "font-medium"}`}
-              style={{
-                backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
-                color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
-              }}
+              className={cn(
+                "gap-base px-sm py-base text-body flex items-center rounded-lg transition-colors",
+                isActive
+                  ? "bg-highlight-10 text-surface-60 font-semibold"
+                  : "bg-neutral-30 text-highlight-10 font-medium",
+              )}
             >
               <Icon size={13} aria-hidden="true" />
               {opt.label}

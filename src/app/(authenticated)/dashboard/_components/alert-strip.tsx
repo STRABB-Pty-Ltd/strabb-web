@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAppStore } from "@/stores/app-store";
 
@@ -99,25 +100,28 @@ export function AlertStrip({ alerts }: AlertStripProps) {
             <span className="text-body min-w-0 flex-1" style={{ color: "var(--highlight-10)" }}>
               {alert.description}
             </span>
-            <button
+            <Button
               type="button"
+              variant="quiet"
+              size="xs"
               onClick={() => handleView(alert)}
-              className="text-body cursor-pointer rounded font-semibold whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              className="font-semibold"
               style={{ color: accent }}
               data-no-elevate
             >
               View
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="quiet"
+              size="icon-xs"
               onClick={() => setDismissed((d) => [...d, alert.id])}
               aria-label="Dismiss alert"
-              className="rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               style={{ color: "var(--text-secondary)" }}
               data-no-elevate
             >
               <X size={14} aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         );
       })}

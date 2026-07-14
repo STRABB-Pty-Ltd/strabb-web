@@ -69,10 +69,32 @@
   --canvas-bottom: 0;
   --canvas-right: 0;
 
-  /* Shadow scale. Hand-rolled rgba so dark mode can tune them stronger. */
-  --shadow-sm: 0 1px 2px var(--neutral-30);
-  --shadow-md: 0 6px 24px var(--neutral-30);
-  --shadow-lg: 0 10px 40px var(--neutral-30);
+  /* Shadow scale. Directional (light source top-left, offsets down-right)
+     and translucent so the shadow DARKENS whatever sits beneath it - never
+     an opaque same-colour blur, which is what the old neutral-30 values
+     were. Light mode tints with brand navy for warmth; .dark redeclares
+     black-based and stronger. Two layers each: key (offset, tighter) +
+     ambient (softer). Exposed to Tailwind shadow-* utilities via @theme
+     inline below - class and inline consumers resolve to the same tokens. */
+  --shadow-sm:
+    1px 2px 4px color-mix(in srgb, var(--brand) 10%, transparent),
+    0 1px 2px color-mix(in srgb, var(--brand) 7%, transparent);
+  --shadow-md:
+    3px 6px 16px color-mix(in srgb, var(--brand) 14%, transparent),
+    1px 2px 4px color-mix(in srgb, var(--brand) 8%, transparent);
+  --shadow-lg:
+    6px 12px 32px color-mix(in srgb, var(--brand) 18%, transparent),
+    2px 4px 8px color-mix(in srgb, var(--brand) 9%, transparent);
+  --shadow-xl:
+    10px 20px 48px color-mix(in srgb, var(--brand) 22%, transparent),
+    3px 6px 12px color-mix(in srgb, var(--brand) 10%, transparent);
+
+  /* Hover-elevate shadow (global button/anchor rule in @layer base + the
+     KPI card pattern). Sits between sm and md so the lift reads without
+     jumping a full step. */
+  --shadow-hover:
+    2px 3px 6px color-mix(in srgb, var(--brand) 12%, transparent),
+    1px 1px 3px color-mix(in srgb, var(--brand) 8%, transparent);
 
   /* Channel-accent stripe width. Used by booking bars, message cards,
      billing banner. Off-Fibonacci (4px) but design-locked. */
@@ -123,6 +145,12 @@
   /* Border tokens (no visible borders anywhere) */
   --border-default: transparent;
   --border-light: transparent;
+
+  /* Field affordance - the one deliberate exception to the borderless
+     system: inputs/textareas/selects need a visible hairline (plus the
+     off-page --input fill) to read as fillable rather than as body text. */
+  --field-border: color-mix(in srgb, var(--highlight-10) 15%, transparent);
+  --field-border-hover: color-mix(in srgb, var(--highlight-10) 30%, transparent);
 
   /* Layout dimensions - all on Fibonacci ladder (5/8/13/21/34/55/89/144/233/377/610) */
   --topnav-height: 55px;
@@ -222,10 +250,19 @@
   /* Always-light text - in dark mode highlight-10 IS the warm off-white. */
   --text-on-color: var(--highlight-10);
 
-  /* Shadows pop harder against the dark surface. */
-  --shadow-sm: 0 1px 2px var(--neutral-30);
-  --shadow-md: 0 6px 24px var(--neutral-30);
-  --shadow-lg: 0 10px 40px var(--neutral-30);
+  /* Shadows: black-based and stronger in dark mode - the light-mode navy
+     tint is invisible against a dark surface, and dark UIs need higher
+     alpha for the same perceived depth. Same geometry as light mode. */
+  --shadow-sm: 1px 2px 4px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 3px 6px 16px rgba(0, 0, 0, 0.5), 1px 2px 4px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 6px 12px 32px rgba(0, 0, 0, 0.55), 2px 4px 8px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 10px 20px 48px rgba(0, 0, 0, 0.6), 3px 6px 12px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 2px 3px 6px rgba(0, 0, 0, 0.5), 1px 1px 3px rgba(0, 0, 0, 0.35);
+
+  /* Field affordance hairlines - same mix recipe; highlight-10 flips to
+     the warm off-white here so the hairline stays visible on dark fills. */
+  --field-border: color-mix(in srgb, var(--highlight-10) 15%, transparent);
+  --field-border-hover: color-mix(in srgb, var(--highlight-10) 30%, transparent);
 
   /* === shadcn overrides === all chain through the dark palette */
   --background: var(--surface-60);
@@ -315,6 +352,20 @@
   --color-status-pending: var(--status-pending);
   --color-text-on-color: var(--text-on-color);
   --color-scrim: var(--scrim);
+  --color-field-border: var(--field-border);
+  --color-field-border-hover: var(--field-border-hover);
+
+  /* Shadow scale wired to Tailwind so shadow-sm/md/lg/xl utilities resolve
+     to the SAME tokens the inline var(--shadow-*) consumers use (they were
+     silently resolving to Tailwind's default scale before - two parallel
+     shadow systems). The namespace reset kills the remaining Tailwind
+     default sizes (2xs/xs/2xl) so the scale is exactly these four;
+     shadow-none and arbitrary shadow-[...] still work. */
+  --shadow-*: initial;
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
 
   /* Radius ladder - Fibonacci (3 → 5 → 8 → 13 → 21 → 34 → 55) */
   --radius-sm: 3px;
@@ -358,9 +409,7 @@
   }
   button:where(:not(:disabled):not([aria-disabled="true"]):not([data-no-elevate])):hover,
   a:where(:not([aria-disabled="true"]):not([data-no-elevate])):hover {
-    box-shadow:
-      0 4px 6px -1px var(--neutral-30),
-      0 2px 4px -2px var(--neutral-30);
+    box-shadow: var(--shadow-hover);
   }
 }
 

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { BookingFormDrawer } from "@/components/overlays/booking-form-drawer";
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { useBooking, useDismissConflict, useUpdateBookingNotes } from "@/hooks/use-bookings";
 import { useListings } from "@/hooks/use-listings";
 import { useTimezoneForListing } from "@/hooks/use-property-timezone";
@@ -120,18 +122,15 @@ export function BookingDetailDrawer() {
                 This booking overlaps with another booking on a different listing for the same
                 property. Resolve the conflict on the booking platform, then dismiss it here.
               </p>
-              <button
+              <Button
                 type="button"
+                variant="destructive"
                 onClick={handleDismissConflict}
                 disabled={dismissConflict.isPending}
-                className="mt-base px-sm py-base text-body text-status-danger rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                style={{
-                  borderColor: "var(--status-danger)",
-                  backgroundColor: "var(--surface-60)",
-                }}
+                className="mt-base"
               >
                 {dismissConflict.isPending ? "Dismissing…" : "Dismiss conflict"}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -198,25 +197,21 @@ export function BookingDetailDrawer() {
             <label htmlFor="booking-notes" className="text-body text-highlight-10 font-semibold">
               Notes
             </label>
-            <textarea
+            <Textarea
               id="booking-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add notes about this booking…"
               rows={3}
-              className="px-sm py-base text-body w-full rounded-lg border"
-              style={{ backgroundColor: "var(--surface-60)", borderColor: "var(--border)" }}
             />
             <div>
-              <button
+              <Button
                 type="button"
                 onClick={handleSaveNotes}
                 disabled={updateNotes.isPending || notes === (displayBooking.notes ?? "")}
-                className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-                style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
               >
                 {updateNotes.isPending ? "Saving…" : "Save notes"}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -227,14 +222,13 @@ export function BookingDetailDrawer() {
                 Edit dates / guest fields or cancel this booking. Channex availability updates
                 automatically.
               </p>
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => setEditingBookingId(displayBooking.id)}
-                className="px-sm py-base text-body rounded-lg border font-medium"
-                style={{ borderColor: "var(--border)", color: "var(--highlight-10)" }}
               >
                 Edit booking details
-              </button>
+              </Button>
             </div>
           )}
         </div>

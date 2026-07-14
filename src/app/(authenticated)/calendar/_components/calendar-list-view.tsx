@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 
+import { Chip } from "@/components/ui/chip";
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useCalendarListSort } from "@/hooks/use-calendar";
@@ -95,15 +96,9 @@ const columns: ColumnDef<CalendarEvent>[] = [
       const label = eventTypeLabels[ev.type];
       if (label) {
         return (
-          <span
-            className="px-base py-xs text-body rounded-sm font-medium"
-            style={{
-              backgroundColor: "var(--row-alt)",
-              color: "var(--highlight-10)",
-            }}
-          >
+          <Chip tone="solid" radius="sm" color="var(--row-alt)" textColor="var(--highlight-10)">
             {label}
-          </span>
+          </Chip>
         );
       }
       return <span className="text-highlight-10">-</span>;
@@ -134,12 +129,9 @@ const columns: ColumnDef<CalendarEvent>[] = [
       const bg = eventStatusColors[ev.status] ?? "var(--highlight-10)";
       const fg = eventStatusFgColors[ev.status] ?? "var(--surface-60)";
       return (
-        <span
-          className="px-base py-xs text-body rounded-md font-medium capitalize"
-          style={{ backgroundColor: bg, color: fg }}
-        >
+        <Chip tone="solid" color={bg} textColor={fg} className="capitalize">
           {ev.status.replace("_", " ")}
-        </span>
+        </Chip>
       );
     },
   },

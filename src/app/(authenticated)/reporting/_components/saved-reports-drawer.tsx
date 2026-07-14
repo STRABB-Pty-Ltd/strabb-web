@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Bookmark, Plus, Trash2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
 import { useSavedReports } from "@/hooks/use-reporting";
 
 export function SavedReportsDrawer() {
@@ -36,28 +38,25 @@ export function SavedReportsDrawer() {
       <div className="mb-sm flex items-center justify-between">
         <h3 className="text-body text-highlight-10 font-semibold">Saved Reports</h3>
         <div className="gap-xs flex items-center">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="xs"
             onClick={resetToDefaultView}
-            className="px-base py-xs text-body rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: "var(--highlight-10)",
-              opacity: activeSavedReport === null ? 0.5 : 1,
-            }}
             disabled={activeSavedReport === null}
           >
             Show default
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="quiet"
+            size="xs"
             onClick={() => setShowInput(true)}
-            className="gap-xs text-body flex items-center rounded font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            style={{ color: "var(--highlight-10)" }}
+            className="px-0"
           >
             <Plus size={12} aria-hidden="true" />
             Save Current
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -66,34 +65,29 @@ export function SavedReportsDrawer() {
           <label htmlFor="saved-report-name" className="sr-only">
             Report name
           </label>
-          <input
+          <Input
             id="saved-report-name"
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Report name..."
-            className="px-base py-xs text-body flex-1 rounded-sm border"
-            style={{ borderColor: "var(--border)" }}
+            className="flex-1"
             onKeyDown={(e) => e.key === "Enter" && handleSave()}
           />
-          <button
-            type="button"
-            onClick={handleSave}
-            className="px-sm py-xs text-body text-surface-60 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
+          <Button type="button" size="xs" onClick={handleSave}>
             Save
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={() => {
               setShowInput(false);
               setNewName("");
             }}
-            className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       )}
 
@@ -133,25 +127,29 @@ export function SavedReportsDrawer() {
                   </p>
                 </div>
                 <div className="gap-xs flex">
-                  <button
+                  <Button
                     type="button"
+                    variant="quiet"
+                    size="xs"
                     onClick={() => loadReport(report.id)}
-                    className="px-base py-xs text-body rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    // Row colour inverts on the active row - keep it inline.
                     style={{ color: rowColor }}
                     data-no-elevate
                   >
                     Load
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="quiet"
+                    size="icon-xs"
                     onClick={() => setPendingDeleteId(report.id)}
                     aria-label="Delete saved report"
-                    className="p-xs hover:text-status-danger rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    className="hover:text-status-danger"
                     style={{ color: rowColor }}
                     data-no-elevate
                   >
                     <Trash2 size={12} />
-                  </button>
+                  </Button>
                 </div>
               </div>
             );

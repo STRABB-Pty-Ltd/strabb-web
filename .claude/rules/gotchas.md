@@ -26,6 +26,11 @@ being true. One bullet per trap, specific enough to act on.
   module map desyncs from disk and the page renders unstyled because a
   hashed CSS URL 404s. Stop the dev server, `rm -rf .next`, restart.
   Single edits should never need this.
+- NEVER run `npm run build` while the dev server is running: both write
+  to the same `.next/`, so the build clobbers the dev server's hashed
+  CSS/chunk files out from under it and every page renders unstyled
+  (13-07-2026, bit during Phase I.2 verification). Stop the dev server
+  first, or build after the session's browser QA is done.
 
 ## Working copies (Will's machine)
 
@@ -71,3 +76,15 @@ being true. One bullet per trap, specific enough to act on.
   create) take ~37s (SendGrid 401 retries in-request) and the /be proxy
   resets at ~30s, so the UI shows failure while the api write lands.
   Poll the api for the landed row instead of waiting on the toast.
+
+## Styling / tailwind-merge (added 13-07-2026, Phase I.3)
+
+- Any custom utility whose name collides with a twMerge class group must
+  be registered in `cn()` (src/lib/utils.ts, extendTailwindMerge) before
+  a cva primitive relies on it. Stock twMerge classified `text-body` as
+  a text COLOUR, so every variant colour class silently stripped the
+  font size and Chips/Buttons rendered at the browser's 16px - passing
+  tsc, tests, and casual review. The type ladder (text-body/subheading/
+  heading/display) is registered now; if you add a new ladder step or a
+  custom `font-*`/`shadow-*`-shaped utility, extend the config in the
+  same commit and verify with a computed-style measurement, not eyes.

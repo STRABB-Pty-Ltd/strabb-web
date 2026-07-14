@@ -1,3 +1,5 @@
+import { Chip } from "@/components/ui/chip";
+
 interface KanbanColumnProps {
   id: string;
   label: string;
@@ -18,9 +20,9 @@ export function KanbanColumn({ label, count, children }: KanbanColumnProps) {
         style={{ borderColor: "var(--border)" }}
       >
         <span className="text-body text-highlight-10 font-semibold">{label}</span>
-        <span className="px-base py-xs text-body bg-neutral-30 text-highlight-10 rounded-full font-medium">
+        <Chip tone="neutral" size="sm" radius="pill">
           {count}
-        </span>
+        </Chip>
       </div>
 
       <div className="gap-base p-base flex flex-1 flex-col">{children}</div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { pageLabels, settingsNavItem } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 /**
@@ -34,21 +35,18 @@ export function MobileTopBar() {
         <span className="text-subheading text-highlight-10 font-semibold tracking-tight">
           STRABB
         </span>
-        <span className="text-body" style={{ color: "var(--text-secondary)" }}>
-          {pageLabels[currentPage]}
-        </span>
+        <span className="text-body text-[var(--text-secondary)]">{pageLabels[currentPage]}</span>
       </div>
       <Link
         href={settingsNavItem.href}
         aria-label="Settings"
         aria-current={currentPage === "settings" ? "page" : undefined}
-        className="flex items-center justify-center rounded-lg"
-        style={{
-          width: "var(--touch-target-min)",
-          height: "var(--touch-target-min)",
-          backgroundColor: currentPage === "settings" ? "var(--highlight-10)" : "var(--neutral-30)",
-          color: currentPage === "settings" ? "var(--surface-60)" : "var(--highlight-10)",
-        }}
+        className={cn(
+          "flex size-[var(--touch-target-min)] items-center justify-center rounded-lg",
+          currentPage === "settings"
+            ? "bg-highlight-10 text-surface-60"
+            : "bg-neutral-30 text-highlight-10",
+        )}
       >
         <SettingsIcon size={20} aria-hidden="true" />
       </Link>
