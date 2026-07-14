@@ -19,7 +19,10 @@ import { useAppStore } from "@/stores/app-store";
 // Most tabs switch an in-page section via store state. Listings is route-driven
 // (`href`): it lives at its own /settings/listings page, so its tab navigates
 // there and lights up on that route rather than toggling section state.
-const sections = [
+// Exported for SettingsMobileNav (this sidebar section is lg+ only, see
+// contextual-sidebar.tsx - below lg, settings-mobile-nav.tsx renders the
+// same list as a horizontal chip row instead).
+export const settingsSections = [
   { id: "general", label: "General", icon: Settings },
   { id: "listings", label: "Listings", icon: Building2, href: "/settings/listings" },
   { id: "billing", label: "Billing", icon: CreditCard },
@@ -49,7 +52,7 @@ export function SettingsNavSection() {
   return (
     <nav aria-label="Settings" className="p-sm">
       <div className="gap-xs flex flex-col">
-        {sections.map((s) => {
+        {settingsSections.map((s) => {
           const Icon = s.icon;
           const href = "href" in s ? s.href : undefined;
           const active = href ? pathname === href : !onSubRoute && section === s.id;

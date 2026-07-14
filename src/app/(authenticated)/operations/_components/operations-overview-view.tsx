@@ -59,7 +59,7 @@ export function OperationsOverviewView({ tasks }: OperationsOverviewViewProps) {
   );
 
   return (
-    <div className="gap-sm flex min-h-full">
+    <div className="gap-sm flex min-h-full flex-col lg:flex-row">
       <SectionPanel
         title="Tickets"
         columns={[

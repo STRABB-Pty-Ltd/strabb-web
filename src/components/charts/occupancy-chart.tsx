@@ -56,7 +56,12 @@ export function OccupancyChart({ data, loading }: OccupancyChartProps) {
       loading={loading}
       empty={data.length === 0}
     >
-      <BarChart data={data}>
+      {/* left margin: recharts doesn't auto-reserve space for the rotated
+          XAxis label below - the first bar's label (anchored at its end,
+          rotating counter-clockwise) swings its start past x=0 and gets
+          clipped by the SVG edge without it (found in the M.4 mobile
+          audit, at any width - narrower categories just make it worse). */}
+      <BarChart data={data} margin={{ left: 40 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
         <XAxis
           dataKey="listing"

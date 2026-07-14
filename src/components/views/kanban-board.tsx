@@ -20,7 +20,11 @@ export function KanbanBoard<T>({
       // 233 = next Fibonacci step beyond --space-xl, design-locked.
       style={{ maxHeight: "calc(100vh - 233px)" }}
     >
-      <div className="gap-sm pb-sm flex">
+      {/* Columns stack vertically below lg (M.1's mobile-shell breakpoint):
+          a fixed horizontal row of 3 columns squeezed message previews and
+          guest names down to 3-4 characters (found in the M.4 mobile
+          audit). Same fix shape as Operations' SectionPanel. */}
+      <div className="gap-sm pb-sm flex flex-col lg:flex-row">
         {columns.map((col) => (
           <KanbanColumn key={col.id} id={col.id} label={col.label} count={col.items.length}>
             {col.items.map((item) => (
