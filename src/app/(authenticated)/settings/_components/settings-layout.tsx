@@ -26,9 +26,8 @@ export function SettingsLayout() {
   const section = useAppStore((s) => s.settings.section);
   const ActiveSection = sectionComponents[section] ?? GeneralSection;
 
-  return (
-    <div className="p-md">
-      <ActiveSection />
-    </div>
-  );
+  // No own padding: the canvas already provides the page grid's px-md and
+  // top offset. Stacking p-md on top pushed settings 21px off the grid
+  // every other page sits on.
+  return <ActiveSection />;
 }

@@ -1,20 +1,46 @@
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+
+const cardVariants = cva(
+  "group/card text-card-foreground gap-sm text-body data-[size=sm]:gap-sm data-[size=sm]:py-sm flex flex-col overflow-hidden has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+  {
+    variants: {
+      variant: {
+        default: "bg-card ring-foreground/10 rounded-xl ring-1",
+        /* Fill-based separation, no ring - the settings/drawer panel. */
+        filled: "bg-secondary rounded-lg",
+        /* The dashboard tile: rounded-xl fill that lifts on hover. */
+        elevated: "bg-card rounded-xl transition-shadow hover:shadow-md",
+      },
+      /* Uniform padding for one-shot cards used without the compound
+         header/content/footer children (which carry their own px). */
+      padding: {
+        default: "py-sm",
+        sm: "p-sm",
+        md: "p-md",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      padding: "default",
+    },
+  },
+);
 
 function Card({
   className,
   size = "default",
+  variant = "default",
+  padding = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & VariantProps<typeof cardVariants> & { size?: "default" | "sm" }) {
   return (
     <div
       data-slot="card"
       data-size={size}
-      className={cn(
-        "group/card bg-card text-card-foreground ring-foreground/10 gap-sm py-sm text-body data-[size=sm]:gap-sm data-[size=sm]:py-sm flex flex-col overflow-hidden rounded-xl ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
-        className,
-      )}
+      className={cn(cardVariants({ variant, padding, className }))}
       {...props}
     />
   );
@@ -89,4 +115,13 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };
+export {
+  Card,
+  cardVariants,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+};

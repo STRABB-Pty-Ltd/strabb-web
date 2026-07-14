@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { formatPeriodLabel, stepAnchor } from "@/lib/timeframe-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
@@ -46,17 +47,20 @@ export function TimeframeStepper() {
   return (
     <div className="gap-base flex items-center" data-slot="timeframe-stepper">
       {canStep && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => handleStep(-1)}
-          className="min-h-lg hover:bg-neutral-30 inline-flex min-w-lg items-center justify-center rounded-sm"
           aria-label="Previous period"
         >
           <ChevronLeft size={18} aria-hidden="true" />
-        </button>
+        </Button>
       )}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
         onClick={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           openTimeframePopup({
@@ -68,19 +72,20 @@ export function TimeframeStepper() {
             },
           });
         }}
-        className="text-body px-base min-h-lg hover:bg-neutral-30 inline-flex items-center rounded-sm font-semibold"
+        className="font-semibold"
       >
         {label}
-      </button>
+      </Button>
       {canStep && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => handleStep(1)}
-          className="min-h-lg hover:bg-neutral-30 inline-flex min-w-lg items-center justify-center rounded-sm"
           aria-label="Next period"
         >
           <ChevronRight size={18} aria-hidden="true" />
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DrillDownPanel } from "@/components/overlays/drill-down-panel";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   useBookings,
   useCreateBooking,
@@ -233,20 +237,13 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
             <label htmlFor="bk-listing" className="text-body text-highlight-10 block font-medium">
               Listing
             </label>
-            <select
+            <Select
               id="bk-listing"
               value={form.listingId}
               onChange={(e) => update_({ listingId: e.target.value })}
-              className="px-sm py-base text-body w-full rounded-lg border"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <option value="">Choose a listing</option>
-              {listings.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.name}
-                </option>
-              ))}
-            </select>
+              placeholder="Choose a listing"
+              options={listings.map((l) => ({ value: l.id, label: l.name }))}
+            />
           </div>
         )}
         <Field
@@ -314,13 +311,11 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
           <label htmlFor="bk-notes" className="text-body text-highlight-10 block font-medium">
             Notes
           </label>
-          <textarea
+          <Textarea
             id="bk-notes"
             value={form.notes}
             onChange={(e) => update_({ notes: e.target.value })}
             rows={3}
-            className="px-sm py-base text-body w-full rounded-lg border"
-            style={{ borderColor: "var(--border)" }}
           />
         </div>
 
@@ -332,33 +327,21 @@ export function BookingFormDrawer({ open, onClose, mode }: BookingFormDrawerProp
 
         <div className="gap-sm pt-sm flex items-center justify-end">
           {mode?.kind === "edit" && !isCancelled && (
-            <button
+            <Button
               type="button"
+              variant="destructive"
               onClick={() => setConfirmingCancel(true)}
               disabled={saving}
-              className="px-sm py-base text-body rounded-lg border font-medium disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ borderColor: "var(--status-danger)", color: "var(--status-danger)" }}
             >
               Cancel booking
-            </button>
+            </Button>
           )}
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-sm py-base text-body rounded-lg border font-medium"
-            style={{ borderColor: "var(--border)" }}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             Close
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="px-sm py-base text-body rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
-          >
+          </Button>
+          <Button type="button" onClick={handleSave} disabled={saving}>
             {saving ? "Saving…" : mode?.kind === "edit" ? "Save changes" : "Create booking"}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -390,14 +373,7 @@ function Field({ id, label, value, onChange, type = "text" }: FieldProps) {
       <label htmlFor={id} className="text-body text-highlight-10 block font-medium">
         {label}
       </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="px-sm py-base text-body w-full rounded-lg border"
-        style={{ borderColor: "var(--border)" }}
-      />
+      <Input id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }

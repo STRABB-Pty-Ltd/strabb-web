@@ -2,6 +2,7 @@
 
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 
+import { Chip } from "@/components/ui/chip";
 import { formatCurrency } from "@/lib/format-currency";
 
 import type { KPIData } from "@/hooks/use-dashboard";
@@ -65,16 +66,18 @@ export function KPICard({ kpi, onClick }: KPICardProps) {
           {kpi.label}
         </p>
         {hasTrend && (
-          <div
-            className="gap-xs px-base py-xs text-body flex shrink-0 items-center rounded-full font-medium"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: trendFlat
+          <Chip
+            tone="ghost"
+            color={
+              trendFlat
                 ? "var(--highlight-10)"
                 : trendPositive
                   ? "var(--status-completed)"
-                  : "var(--status-issues)",
-            }}
+                  : "var(--status-issues)"
+            }
+            size="sm"
+            radius="pill"
+            className="bg-neutral-30"
           >
             {trendFlat ? (
               <ArrowRight size={13} aria-hidden="true" />
@@ -84,7 +87,7 @@ export function KPICard({ kpi, onClick }: KPICardProps) {
               <ArrowDownRight size={13} aria-hidden="true" />
             )}
             {Math.abs(kpi.trend ?? 0)}%
-          </div>
+          </Chip>
         )}
       </div>
 

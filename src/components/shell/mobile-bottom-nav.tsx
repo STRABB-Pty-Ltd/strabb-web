@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { isNavItemVisible, topNavItems } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 /**
@@ -29,11 +30,8 @@ export function MobileBottomNav() {
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className="fixed right-0 bottom-0 left-0 z-10 lg:hidden"
-      style={{
-        borderTop: "var(--hairline) solid var(--border)",
-        backgroundColor: "var(--surface-60)",
-      }}
+      className="bg-surface-60 fixed right-0 bottom-0 left-0 z-10 lg:hidden"
+      style={{ borderTop: "var(--hairline) solid var(--border)" }}
     >
       <div className="flex">
         {visibleNavItems.map((item) => {
@@ -45,11 +43,10 @@ export function MobileBottomNav() {
               href={item.href}
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="gap-xs py-base text-body flex flex-1 flex-col items-center justify-center font-medium"
-              style={{
-                minHeight: "var(--touch-target-min)",
-                color: isActive ? "var(--highlight-10)" : "var(--text-secondary)",
-              }}
+              className={cn(
+                "gap-xs py-base text-body flex min-h-[var(--touch-target-min)] flex-1 flex-col items-center justify-center font-medium",
+                isActive ? "text-highlight-10" : "text-[var(--text-secondary)]",
+              )}
             >
               <Icon size={20} aria-hidden="true" />
               {item.label}

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useTenantMe, useUpdateSubdomain } from "@/lib/api-hooks/tenant-api";
 import { ApiError } from "@/lib/api-client";
 import { useAppStore } from "@/stores/app-store";
@@ -109,7 +111,7 @@ export function InboxSection() {
               Subdomain
             </label>
             <div className="gap-base flex items-center">
-              <input
+              <Input
                 id="inbox-subdomain"
                 type="text"
                 value={input}
@@ -120,8 +122,7 @@ export function InboxSection() {
                 placeholder="mytenant"
                 aria-invalid={error != null}
                 aria-describedby={error ? "inbox-subdomain-error" : "inbox-subdomain-hint"}
-                className="px-sm py-base text-body border-neutral-30 flex-1 rounded-lg border"
-                style={{ backgroundColor: "var(--neutral-30)", color: "var(--highlight-10)" }}
+                className="flex-1"
               />
               <span className="text-body" style={{ color: "var(--text-secondary)" }}>
                 @inbox.strabb.io
@@ -151,26 +152,24 @@ export function InboxSection() {
           )}
 
           <div className="gap-base flex items-center">
-            <button
+            <Button
               type="button"
               onClick={handleSave}
               disabled={!dirty || updateSubdomain.isPending}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               {updateSubdomain.isPending ? "Saving…" : "Save"}
-            </button>
+            </Button>
             {dirty && tenant?.subdomain && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => {
                   setDraft(null);
                   setError(null);
                 }}
-                className="px-sm py-base text-body text-highlight-10 hover:bg-neutral-30 rounded-lg"
               >
                 Cancel
-              </button>
+              </Button>
             )}
           </div>
         </div>

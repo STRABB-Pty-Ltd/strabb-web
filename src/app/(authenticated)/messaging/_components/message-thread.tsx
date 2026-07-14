@@ -4,6 +4,9 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Chip, chipVariants } from "@/components/ui/chip";
+import { Textarea } from "@/components/ui/textarea";
 import { formatChannel } from "@/lib/channels";
 import type { Message, ThreadMessage } from "@/types/message";
 
@@ -14,6 +17,15 @@ const channelColors: Record<string, string> = {
   direct: "var(--channel-direct)",
   ota: "var(--channel-ota)",
 };
+
+/* Chip-shaped triage action - same outline-pill recipe as the thread
+   overlay's triage bar, at this pane's denser padding. */
+const triageChipClass = chipVariants({
+  tone: "outline",
+  radius: "pill",
+  size: "md",
+  interactive: true,
+});
 
 interface MessageThreadProps {
   message: Message;
@@ -55,14 +67,14 @@ export function MessageThread({
               {format(new Date(message.checkOut), "d MMM yyyy")}
             </p>
           </div>
-          <span
-            className="px-base py-xs text-body rounded-sm font-medium text-[var(--text-on-color)]"
-            style={{
-              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
-            }}
+          <Chip
+            tone="solid"
+            size="sm"
+            radius="sm"
+            color={channelColors[message.channel] ?? "var(--channel-direct)"}
           >
             {formatChannel(message.channel)}
-          </span>
+          </Chip>
         </div>
       </div>
 
@@ -102,18 +114,10 @@ export function MessageThread({
         className="gap-base px-sm py-base flex border-t"
         style={{ borderColor: "var(--border)" }}
       >
-        <button
-          type="button"
-          onClick={onFlag}
-          className="px-sm py-xs text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-full border"
-        >
+        <button type="button" onClick={onFlag} className={triageChipClass}>
           Flag
         </button>
-        <button
-          type="button"
-          onClick={onConvertTicket}
-          className="px-sm py-xs text-body border-neutral-30 text-highlight-10 hover:bg-neutral-30 rounded-full border"
-        >
+        <button type="button" onClick={onConvertTicket} className={triageChipClass}>
           Create Ticket
         </button>
       </div>
@@ -126,7 +130,7 @@ export function MessageThread({
           </p>
         )}
         <div className="gap-base flex">
-          <textarea
+          <Textarea
             value={compose}
             onChange={(e) => {
               setCompose(e.target.value);
@@ -134,18 +138,18 @@ export function MessageThread({
             }}
             placeholder="Type a message..."
             aria-label="Compose reply"
-            className="p-base text-body flex-1 resize-none rounded-lg border"
+            className="min-h-0 flex-1 resize-none"
             rows={2}
           />
-          <button
+          <Button
             type="button"
+            size="icon-touch"
             onClick={handleSend}
             aria-label="Send reply"
-            className="p-base text-text-on-color flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center self-end rounded-lg"
-            style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
+            className="self-end"
           >
             <Send size={18} aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

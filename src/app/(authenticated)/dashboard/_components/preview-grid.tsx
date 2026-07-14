@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { PreviewData } from "@/hooks/use-dashboard";
 import { useShoppingList } from "@/hooks/use-cleaning";
@@ -30,15 +32,9 @@ function PanelHeader({ title, onView }: { title: string; onView?: () => void }) 
         {title}
       </h3>
       {onView && (
-        <button
-          type="button"
-          onClick={onView}
-          className="gap-xs text-body flex items-center font-medium"
-          style={{ color: "var(--highlight-10)" }}
-          data-no-elevate
-        >
+        <Button type="button" variant="quiet" size="xs" onClick={onView} data-no-elevate>
           View All <ArrowRight size={12} aria-hidden="true" />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -71,15 +67,14 @@ function ShoppingListPanel() {
         <div className="space-y-xs">
           {top.map((item) => (
             <div key={item.id} className="gap-base flex items-center">
-              <span
-                className="px-base py-xs text-body shrink-0 rounded-md font-medium"
-                style={{
-                  backgroundColor: "var(--neutral-30)",
-                  color: item.priority === "high" ? "var(--status-danger)" : "var(--highlight-10)",
-                }}
+              <Chip
+                tone="neutral"
+                size="sm"
+                radius="md"
+                style={item.priority === "high" ? { color: "var(--status-danger)" } : undefined}
               >
                 {item.priority}
-              </span>
+              </Chip>
               <span className="text-body text-highlight-10 flex-1 truncate">{item.item}</span>
               <span className="font-data text-body text-highlight-10 shrink-0">
                 x{item.quantity}
@@ -87,15 +82,17 @@ function ShoppingListPanel() {
             </div>
           ))}
           {needed.length > top.length && (
-            <button
+            <Button
               type="button"
+              variant="quiet"
+              size="xs"
               onClick={openShoppingListPopup}
-              className="text-body pt-xs rounded text-left outline-none hover:underline focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              className="hover:underline"
               style={{ color: "var(--text-secondary)" }}
               data-no-elevate
             >
               {needed.length - top.length} more
-            </button>
+            </Button>
           )}
         </div>
       )}

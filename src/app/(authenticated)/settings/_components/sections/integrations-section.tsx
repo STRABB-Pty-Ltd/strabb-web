@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 
+import { Chip } from "@/components/ui/chip";
 import { useAppStore } from "@/stores/app-store";
 
 interface IntegrationCard {
@@ -149,12 +150,9 @@ export function IntegrationsSection() {
               <div className="space-y-xs min-w-0 flex-1">
                 <div className="gap-base flex items-center">
                   <p className="text-body text-highlight-10 font-medium">{it.name}</p>
-                  <span
-                    className="px-base py-xs text-body rounded-md font-medium"
-                    style={{ backgroundColor: style.bg, color: style.text }}
-                  >
+                  <Chip tone="solid" color={style.bg} textColor={style.text} size="sm" radius="md">
                     {style.label}
-                  </span>
+                  </Chip>
                 </div>
                 <p className="text-body" style={{ color: "var(--text-secondary)" }}>
                   {it.description}

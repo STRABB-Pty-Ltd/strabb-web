@@ -210,10 +210,18 @@ describe("Submenu chip integration", () => {
   });
 
   describe("SubmenuBar hides on settings page", () => {
-    it("renders nothing when currentPage is settings", () => {
+    it("renders no chips on settings, only the height-preserving spacer", () => {
       useAppStore.getState().setCurrentPage("settings");
       const { container } = render(<SubmenuBar />);
-      expect(container.innerHTML).toBe("");
+      // No interactive content - settings has no submenu.
+      expect(container.querySelectorAll("button, a")).toHaveLength(0);
+      // But the row's height survives as a spacer: --canvas-top assumes the
+      // submenu row exists on every page; returning null collapsed the rail
+      // 37px and misaligned the settings sidebar (13-07-2026).
+      const spacer = container.firstElementChild as HTMLElement;
+      expect(spacer).not.toBeNull();
+      expect(spacer.getAttribute("aria-hidden")).toBe("true");
+      expect(spacer.style.height).not.toBe("");
     });
   });
 });

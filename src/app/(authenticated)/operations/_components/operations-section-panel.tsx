@@ -1,5 +1,7 @@
 "use client";
 
+import { Chip } from "@/components/ui/chip";
+
 export interface SectionColumn {
   id: string;
   label: string;
@@ -43,9 +45,9 @@ function SubColumnHeader({ label, count }: { label: string; count: number }) {
       style={{ borderColor: "var(--border)" }}
     >
       <span className="text-body text-highlight-10 font-semibold">{label}</span>
-      <span className="px-base py-xs text-body bg-surface-60 text-highlight-10 rounded-full font-medium">
+      <Chip tone="surface" radius="pill">
         {count}
-      </span>
+      </Chip>
     </div>
   );
 }

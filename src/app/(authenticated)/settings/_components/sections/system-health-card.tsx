@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
 import { type Column, DataTable } from "@/components/ui/data-table";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useFailedMessages, useSyncErrors, useSystemHealth } from "@/hooks/use-admin";
@@ -262,16 +263,16 @@ function FailedMessagesSection() {
       key: "id",
       header: "Actions",
       render: (_v, row) => (
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="xs"
           onClick={() => handleResend(row.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium disabled:opacity-60"
-          style={{ borderColor: "var(--border)" }}
         >
           <RefreshCw size={12} aria-hidden="true" />
           Resend
-        </button>
+        </Button>
       ),
     },
   ];

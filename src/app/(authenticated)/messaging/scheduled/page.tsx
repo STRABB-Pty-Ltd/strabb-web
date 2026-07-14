@@ -15,6 +15,8 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
 import { type Column, DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -172,16 +174,14 @@ function ScheduledTab({
       render: (_v, m) => {
         const Icon = statusIcons[m.status];
         return (
-          <span
-            className="gap-xs px-base py-xs text-body inline-flex items-center rounded-md font-medium"
-            style={{
-              backgroundColor: statusColors[m.status] ?? "var(--highlight-10)",
-              color: statusFgColors[m.status] ?? "var(--surface-60)",
-            }}
+          <Chip
+            tone="solid"
+            color={statusColors[m.status] ?? "var(--highlight-10)"}
+            textColor={statusFgColors[m.status] ?? "var(--surface-60)"}
           >
             {Icon && <Icon size={11} aria-hidden="true" />}
             {m.status}
-          </span>
+          </Chip>
         );
       },
     },
@@ -201,16 +201,16 @@ function ScheduledTab({
       key: "id",
       header: "Actions",
       render: (_v, m) => (
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="xs"
           onClick={() => handleResend(m.id)}
           disabled={resendMessage.isPending}
-          className="gap-xs px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 inline-flex items-center rounded-lg border font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
-          style={{ borderColor: "var(--border)" }}
         >
           <RefreshCw size={12} aria-hidden="true" />
           Resend
-        </button>
+        </Button>
       ),
     },
   ];
@@ -372,27 +372,27 @@ function Pagination({ meta, page, onChange }: PaginationProps) {
       aria-label="Pagination"
       className="gap-base text-body text-highlight-10 flex items-center justify-end"
     >
-      <button
+      <Button
         type="button"
+        variant="outline"
+        size="xs"
         onClick={() => onChange(Math.max(1, page - 1))}
         disabled={page <= 1}
-        className="px-sm py-xs rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-40"
-        style={{ borderColor: "var(--border)" }}
       >
         Prev
-      </button>
+      </Button>
       <span>
         Page {page} of {meta.totalPages} · {meta.total} total
       </span>
-      <button
+      <Button
         type="button"
+        variant="outline"
+        size="xs"
         onClick={() => onChange(Math.min(meta.totalPages, page + 1))}
         disabled={page >= meta.totalPages}
-        className="px-sm py-xs rounded-lg border outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-40"
-        style={{ borderColor: "var(--border)" }}
       >
         Next
-      </button>
+      </Button>
     </nav>
   );
 }

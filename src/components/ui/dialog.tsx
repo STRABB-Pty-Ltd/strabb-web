@@ -54,7 +54,9 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "bg-background ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 gap-sm p-sm text-body fixed top-1/2 left-1/2 z-[185] grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl ring-1 duration-150 outline-none sm:max-w-sm",
+          // max-h + internal scroll: a dialog taller than the viewport must
+          // scroll, not clip both ends past the centred transform (I.4).
+          "bg-background ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 gap-sm p-sm text-body fixed top-1/2 left-1/2 z-[185] grid max-h-[calc(100dvh-var(--space-lg)*2)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-xl ring-1 duration-150 outline-none sm:max-w-sm",
           className,
         )}
         {...props}

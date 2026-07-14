@@ -4,6 +4,7 @@ import { BookOpen, Plus, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 
 import { useSavedReports } from "@/hooks/use-reporting";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
@@ -51,7 +52,7 @@ export function ContextualSidebar() {
       // - that's the hamburger-drawer phase (M.3), not this one. Not md
       // (768px) - the desktop shell isn't safe below lg, see
       // mobile-bottom-nav.tsx's comment.
-      className="no-scrollbar relative z-10 hidden h-full shrink-0 flex-col overflow-y-auto lg:flex"
+      className="no-scrollbar bg-surface-60 relative z-10 hidden h-full shrink-0 flex-col overflow-y-auto lg:flex"
       style={{
         // 4px wider than the content track (--sidebar-width) so the right
         // edge of the aside sits flush with the grey separator at
@@ -61,7 +62,6 @@ export function ContextualSidebar() {
         // the separator. Contents' left positions are unaffected.
         width: "calc(var(--sidebar-width) + 4px)",
         paddingRight: "6px",
-        backgroundColor: "var(--surface-60)",
       }}
     >
       {/* Spacer reserves room for the absolute logo overlay in app-shell.
@@ -77,16 +77,12 @@ export function ContextualSidebar() {
       {showChannelFilter(currentPage) && <ChannelFilter />}
 
       {showShoppingList(currentPage) && (
-        <div style={{ padding: "var(--space-sm)" }}>
+        <div className="p-sm">
           <button
             type="button"
             onClick={openShoppingListPopup}
             aria-haspopup="dialog"
-            className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: "var(--highlight-10)",
-            }}
+            className="gap-base px-sm py-base text-body bg-neutral-30 text-highlight-10 flex w-full items-center rounded-lg font-medium transition-colors"
           >
             <ShoppingCart size={13} aria-hidden="true" />
             Shopping List
@@ -95,16 +91,12 @@ export function ContextualSidebar() {
       )}
 
       {showSavedReports(currentPage) && (
-        <div style={{ padding: "var(--space-sm)" }}>
+        <div className="p-sm">
           <button
             type="button"
             onClick={toggleSavedReports}
             aria-expanded={savedReportsOpen}
-            className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: "var(--highlight-10)",
-            }}
+            className="gap-base px-sm py-base text-body bg-neutral-30 text-highlight-10 flex w-full items-center rounded-lg font-medium transition-colors"
           >
             <BookOpen size={13} aria-hidden="true" />
             Saved Reports
@@ -130,22 +122,14 @@ export function ContextualSidebar() {
                         setNewReportName("");
                       }
                     }}
-                    className="px-base py-xs text-body w-full rounded-sm border"
-                    style={{
-                      backgroundColor: "var(--surface-60)",
-                      borderColor: "var(--border)",
-                    }}
+                    className="px-base py-xs text-body bg-surface-60 border-border w-full rounded-sm border"
                   />
                   <div className="gap-xs flex">
                     <button
                       type="button"
                       onClick={handleSaveCurrent}
                       disabled={!newReportName.trim()}
-                      className="px-sm py-xs text-body flex-1 rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50"
-                      style={{
-                        backgroundColor: "var(--highlight-10)",
-                        color: "var(--surface-60)",
-                      }}
+                      className="px-sm py-xs text-body bg-highlight-10 text-surface-60 flex-1 rounded-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50"
                     >
                       Save
                     </button>
@@ -165,8 +149,7 @@ export function ContextualSidebar() {
                 <button
                   type="button"
                   onClick={() => setShowSaveInput(true)}
-                  className="gap-xs px-sm py-base text-body flex w-full items-center rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                  style={{ color: "var(--highlight-10)" }}
+                  className="gap-xs px-sm py-base text-body text-highlight-10 flex w-full items-center rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                 >
                   <Plus size={13} aria-hidden="true" />
                   Save current
@@ -176,19 +159,12 @@ export function ContextualSidebar() {
                 type="button"
                 onClick={resetToDefaultView}
                 disabled={activeSavedReport === null}
-                className="px-sm py-base text-body w-full rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                style={{
-                  backgroundColor: "var(--neutral-30)",
-                  color: "var(--highlight-10)",
-                  opacity: activeSavedReport === null ? 0.5 : 1,
-                }}
+                className="px-sm py-base text-body bg-neutral-30 text-highlight-10 w-full rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50"
               >
                 Show default
               </button>
               {savedReports.length === 0 ? (
-                <p className="px-base text-body" style={{ color: "var(--text-secondary)" }}>
-                  No saved reports
-                </p>
+                <p className="px-base text-body text-[var(--text-secondary)]">No saved reports</p>
               ) : (
                 savedReports.map((r) => {
                   const isActive = r.id === activeSavedReport;
@@ -198,11 +174,12 @@ export function ContextualSidebar() {
                       type="button"
                       onClick={() => loadReport(r.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className="px-sm py-base text-body block w-full truncate rounded-lg text-left font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-                      style={{
-                        backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
-                        color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
-                      }}
+                      className={cn(
+                        "px-sm py-base text-body block w-full truncate rounded-lg text-left font-medium outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
+                        isActive
+                          ? "bg-highlight-10 text-surface-60"
+                          : "bg-neutral-30 text-highlight-10",
+                      )}
                     >
                       {r.name}
                     </button>

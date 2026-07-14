@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 const channels = [
@@ -15,7 +16,7 @@ export function ChannelFilter() {
   const toggleChannel = useAppStore((s) => s.toggleChannel);
 
   return (
-    <div style={{ padding: "var(--space-sm)" }}>
+    <div className="p-sm">
       <h3
         className="mb-base text-body font-semibold tracking-wide uppercase"
         style={{ color: "var(--text-secondary)" }}
@@ -31,11 +32,10 @@ export function ChannelFilter() {
               type="button"
               onClick={() => toggleChannel(ch.id)}
               aria-pressed={isActive}
-              className="gap-base px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
-              style={{
-                backgroundColor: isActive ? "var(--highlight-10)" : "var(--neutral-30)",
-                color: isActive ? "var(--surface-60)" : "var(--highlight-10)",
-              }}
+              className={cn(
+                "gap-base px-sm py-base flex cursor-pointer items-center rounded-lg text-left",
+                isActive ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",
+              )}
             >
               <span
                 className="h-sm w-sm shrink-0 rounded-sm"

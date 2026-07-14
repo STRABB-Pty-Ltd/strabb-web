@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 // Most tabs switch an in-page section via store state. Listings is route-driven
@@ -46,7 +47,7 @@ export function SettingsNavSection() {
   };
 
   return (
-    <nav aria-label="Settings" style={{ padding: "var(--space-sm)" }}>
+    <nav aria-label="Settings" className="p-sm">
       <div className="gap-xs flex flex-col">
         {sections.map((s) => {
           const Icon = s.icon;
@@ -58,11 +59,10 @@ export function SettingsNavSection() {
               type="button"
               onClick={() => (href ? router.push(href) : handleSectionClick(s.id))}
               aria-current={active ? "page" : undefined}
-              className="gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors"
-              style={{
-                backgroundColor: active ? "var(--highlight-10)" : "var(--neutral-30)",
-                color: active ? "var(--surface-60)" : "var(--highlight-10)",
-              }}
+              className={cn(
+                "gap-base px-sm py-base text-body flex w-full items-center rounded-lg font-medium transition-colors",
+                active ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",
+              )}
             >
               <Icon size={14} aria-hidden="true" />
               {s.label}

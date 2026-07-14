@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 
+import { Chip } from "@/components/ui/chip";
 import { formatChannel } from "@/lib/channels";
 import type { Message } from "@/types/message";
 
@@ -58,14 +59,14 @@ export function MessageCard({ message, onClick }: MessageCardProps) {
         </div>
 
         <div className="gap-base flex items-center">
-          <span
-            className="px-xs py-xs text-body text-text-on-color shrink-0 rounded-sm font-medium"
-            style={{
-              backgroundColor: channelColors[message.channel] ?? "var(--channel-direct)",
-            }}
+          <Chip
+            tone="solid"
+            size="xs"
+            radius="sm"
+            color={channelColors[message.channel] ?? "var(--channel-direct)"}
           >
             {formatChannel(message.channel)}
-          </span>
+          </Chip>
           <span className="text-body text-highlight-10 truncate">{message.subject}</span>
         </div>
 

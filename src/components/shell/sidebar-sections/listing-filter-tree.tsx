@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useListings } from "@/hooks/use-listings";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
@@ -52,12 +54,11 @@ export function ListingFilterTree() {
         type="button"
         onClick={() => toggleListing(listing.id)}
         aria-pressed={isChecked}
-        className="px-sm py-base flex cursor-pointer items-center rounded-lg text-left"
-        style={{
-          backgroundColor: isChecked ? "var(--highlight-10)" : "var(--neutral-30)",
-          color: isChecked ? "var(--surface-60)" : "var(--highlight-10)",
-          marginLeft: indent ? "var(--space-md)" : undefined,
-        }}
+        className={cn(
+          "px-sm py-base flex cursor-pointer items-center rounded-lg text-left",
+          isChecked ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",
+          indent && "ml-md",
+        )}
       >
         <span className="text-body truncate font-medium">{listing.name}</span>
       </button>
@@ -65,7 +66,7 @@ export function ListingFilterTree() {
   };
 
   return (
-    <div style={{ padding: "var(--space-sm)" }}>
+    <div className="p-sm">
       <div className="mb-base flex items-center justify-between">
         <h3
           className="text-body font-semibold tracking-wide uppercase"
@@ -74,32 +75,24 @@ export function ListingFilterTree() {
           Listings
         </h3>
         <div className="gap-xs flex">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={handleSelectAll}
-            className="px-base py-xs text-body rounded-lg"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: "var(--highlight-10)",
-              opacity: allSelected ? 0.5 : 1,
-            }}
+            className="py-xs h-auto border-0 font-normal"
             disabled={allSelected}
           >
             Select All
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="secondary"
             onClick={handleClear}
-            className="px-base py-xs text-body rounded-lg"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: "var(--highlight-10)",
-              opacity: selectedListings.length === 0 ? 0.5 : 1,
-            }}
+            className="py-xs h-auto border-0 font-normal"
             disabled={selectedListings.length === 0}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -125,13 +118,7 @@ export function ListingFilterTree() {
           const groupListings = allListings.filter((l) => group.listingIds.includes(l.id));
           return (
             <div key={group.id} className="gap-xs flex flex-col">
-              <div
-                className="gap-xs px-sm py-base flex items-center rounded-lg"
-                style={{
-                  backgroundColor: "var(--neutral-30)",
-                  color: "var(--highlight-10)",
-                }}
-              >
+              <div className="gap-xs px-sm py-base bg-neutral-30 text-highlight-10 flex items-center rounded-lg">
                 <button
                   type="button"
                   onClick={() => toggleGroup(group.id)}
@@ -180,51 +167,37 @@ export function ListingFilterTree() {
               if (e.key === "Escape") setShowCreateGroup(false);
             }}
             placeholder="Group name"
-            className="px-sm py-base text-body rounded-lg"
-            style={{
-              backgroundColor: "var(--neutral-30)",
-              color: "var(--highlight-10)",
-            }}
+            className="px-sm py-base text-body bg-neutral-30 text-highlight-10 rounded-lg"
             autoFocus
           />
           <div className="gap-xs flex">
-            <button
+            <Button
               type="button"
               onClick={handleCreateGroup}
-              className="px-sm py-base text-body flex-1 rounded-lg"
-              style={{
-                backgroundColor: "var(--highlight-10)",
-                color: "var(--surface-60)",
-              }}
+              className="px-sm py-base h-auto flex-1 border-0 font-normal"
             >
               Add
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => setShowCreateGroup(false)}
-              className="px-sm py-base text-body flex-1 rounded-lg"
-              style={{
-                backgroundColor: "var(--neutral-30)",
-                color: "var(--highlight-10)",
-              }}
+              className="px-sm py-base h-auto flex-1 border-0 font-normal"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => setShowCreateGroup(true)}
-          className="mt-base gap-xs px-sm py-base text-body flex items-center rounded-lg"
-          style={{
-            backgroundColor: "var(--neutral-30)",
-            color: "var(--highlight-10)",
-          }}
+          className="mt-base px-sm py-base h-auto border-0 font-normal"
         >
           <Plus size={13} aria-hidden="true" />
           Create Group
-        </button>
+        </Button>
       )}
 
       <ConfirmDialog

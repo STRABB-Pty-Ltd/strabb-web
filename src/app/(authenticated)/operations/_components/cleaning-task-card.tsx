@@ -2,6 +2,7 @@
 
 import { Clock, User } from "lucide-react";
 
+import { Chip } from "@/components/ui/chip";
 import { useTimezoneForListing } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { formatEnumLabel } from "@/lib/utils";
@@ -39,15 +40,12 @@ export function CleaningTaskCard({ task, onClick }: CleaningTaskCardProps) {
         </div>
 
         <div className="gap-base flex items-center">
-          <span
-            className="px-xs py-xs text-body rounded-sm font-medium"
-            style={{ backgroundColor: priority.bg, color: priority.text }}
-          >
+          <Chip tone="solid" size="xs" radius="sm" color={priority.bg} textColor={priority.text}>
             {formatEnumLabel(task.priority)}
-          </span>
-          <span className="px-xs py-xs text-body bg-neutral-30 text-highlight-10 rounded-sm font-medium">
+          </Chip>
+          <Chip size="xs" radius="sm">
             {typeLabels[task.type] ?? task.type}
-          </span>
+          </Chip>
         </div>
 
         <div className="gap-xs text-body text-highlight-10 flex items-center">

@@ -3,6 +3,8 @@
 import { CheckCircle2, Phone, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   useClearPhone,
   useConfirmPhoneVerification,
@@ -158,33 +160,22 @@ export function PhoneSection() {
               </div>
             </div>
             {!confirmRemove ? (
-              <button
-                type="button"
-                onClick={() => setConfirmRemove(true)}
-                className="px-sm py-xs text-body text-highlight-10 hover:bg-neutral-30 rounded-lg border font-medium"
-                style={{ borderColor: "var(--border)" }}
-              >
+              <Button type="button" variant="outline" onClick={() => setConfirmRemove(true)}>
                 Remove phone
-              </button>
+              </Button>
             ) : (
               <div className="gap-xs flex">
-                <button
+                <Button
                   type="button"
+                  variant="destructive-solid"
                   onClick={handleClear}
                   disabled={clearPhone.isPending}
-                  className="px-sm py-xs text-body text-text-on-color rounded-lg font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                  style={{ backgroundColor: "var(--status-danger)" }}
                 >
                   {clearPhone.isPending ? "Removing…" : "Yes, remove"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirmRemove(false)}
-                  className="px-sm py-xs text-body text-highlight-10 rounded-lg border font-medium"
-                  style={{ borderColor: "var(--border)" }}
-                >
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setConfirmRemove(false)}>
                   Cancel
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -200,7 +191,7 @@ export function PhoneSection() {
             <label className="text-body text-highlight-10 block font-medium" htmlFor="otp-input">
               Verification code
             </label>
-            <input
+            <Input
               id="otp-input"
               type="text"
               inputMode="numeric"
@@ -211,13 +202,10 @@ export function PhoneSection() {
                 setOtpError(null);
               }}
               placeholder="123456"
+              aria-invalid={otpError != null}
               // tracking-widest: known design exception - no project letter-spacing token,
               // OTP inputs need wide tracking for readability.
-              className="px-sm py-base text-body font-data w-full rounded-lg border tracking-widest"
-              style={{
-                backgroundColor: "var(--neutral-30)",
-                borderColor: otpError ? "var(--status-danger)" : "var(--border)",
-              }}
+              className="font-data tracking-widest"
             />
             {otpError && (
               <p className="text-body" style={{ color: "var(--status-danger)" }}>
@@ -226,23 +214,21 @@ export function PhoneSection() {
             )}
           </div>
           <div className="mt-sm gap-xs flex items-center">
-            <button
+            <Button
               type="button"
               onClick={handleConfirm}
               disabled={confirmVerification.isPending || otpInput.length === 0}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               {confirmVerification.isPending ? "Verifying…" : "Verify"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="quiet"
               onClick={handleClear}
               disabled={clearPhone.isPending}
-              className="px-sm py-base text-body text-highlight-10 hover:text-highlight-10 font-medium"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -260,7 +246,7 @@ export function PhoneSection() {
               >
                 Mobile number
               </label>
-              <input
+              <Input
                 id="phone-input"
                 type="tel"
                 autoComplete="tel"
@@ -270,11 +256,7 @@ export function PhoneSection() {
                   setPhoneError(null);
                 }}
                 placeholder="+61 400 000 000"
-                className="px-sm py-base text-body w-full rounded-lg border"
-                style={{
-                  backgroundColor: "var(--neutral-30)",
-                  borderColor: phoneError ? "var(--status-danger)" : "var(--border)",
-                }}
+                aria-invalid={phoneError != null}
               />
               {phoneError && (
                 <p className="text-body" style={{ color: "var(--status-danger)" }}>
@@ -287,19 +269,17 @@ export function PhoneSection() {
             </div>
           </div>
           <div className="mt-sm">
-            <button
+            <Button
               type="button"
               onClick={handleRequest}
               disabled={requestVerification.isPending || cooldown > 0}
-              className="px-sm py-base text-body text-surface-60 rounded-lg font-medium disabled:opacity-60"
-              style={{ backgroundColor: "var(--highlight-10)", color: "var(--surface-60)" }}
             >
               {requestVerification.isPending
                 ? "Sending…"
                 : cooldown > 0
                   ? `Resend in ${cooldown}s`
                   : "Send code"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

@@ -3,6 +3,8 @@
 import { format, isToday } from "date-fns";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { Button } from "@/components/ui/button";
+
 import { CalendarEventChip } from "./calendar-event-chip";
 
 interface DayCellEvent {
@@ -147,17 +149,18 @@ export function CalendarDayCell({
         ))}
         {overflowEvents.length > 0 && (
           <div ref={overflowRef} style={{ position: "relative", marginTop: "var(--hairline)" }}>
-            <button
+            <Button
               type="button"
+              variant="quiet"
+              size="xs"
               onClick={(e) => {
                 e.stopPropagation();
                 setOverflowOpen((v) => !v);
               }}
-              className="text-body text-highlight-10 hover:text-highlight-10 text-left"
-              style={{ background: "none", border: "none", padding: 0 }}
+              className="px-0"
             >
               +{overflowEvents.length} more
-            </button>
+            </Button>
             {overflowOpen && (
               <div
                 className="p-sm gap-xs flex flex-col rounded-lg"

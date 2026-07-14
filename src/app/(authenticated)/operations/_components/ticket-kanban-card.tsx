@@ -1,5 +1,6 @@
 "use client";
 
+import { Chip } from "@/components/ui/chip";
 import { usePropertyTimezone } from "@/hooks/use-property-timezone";
 import { formatInPropertyTimezone } from "@/lib/date-utils";
 import { formatEnumLabel } from "@/lib/utils";
@@ -34,12 +35,9 @@ export function TicketKanbanCard({ ticket, propertyName, onClick }: TicketKanban
         <p className="text-body text-highlight-10 line-clamp-2">{ticket.description}</p>
 
         <div className="gap-base flex items-center">
-          <span
-            className="px-xs py-xs text-body rounded-sm font-medium"
-            style={{ backgroundColor: priority.bg, color: priority.text }}
-          >
+          <Chip tone="solid" size="xs" radius="sm" color={priority.bg} textColor={priority.text}>
             {formatEnumLabel(ticket.priority)}
-          </span>
+          </Chip>
         </div>
 
         <div className="text-body text-highlight-10">
