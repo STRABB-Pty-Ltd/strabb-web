@@ -1,37 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import {
-  AlertTriangle,
-  CalendarClock,
-  Clock,
-  MessageSquare,
-  RefreshCw,
-  Wrench,
-  X,
-} from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 
 import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAlertNavigation } from "@/hooks/use-alert-navigation";
+import { severityAccent, typeIcon } from "@/lib/alert-display";
 
 const severityBg: Record<string, string> = {
   red: "var(--neutral-30)",
   amber: "var(--neutral-30)",
   blue: "var(--neutral-30)",
-};
-
-export const severityAccent: Record<string, string> = {
-  red: "var(--status-issues)",
-  amber: "var(--status-issues)",
-  blue: "var(--highlight-10)",
-};
-
-export const typeIcon: Record<string, React.ElementType> = {
-  message: MessageSquare,
-  unscheduled: CalendarClock,
-  "past-due-clean": Clock,
-  ticket: Wrench,
-  sync: RefreshCw,
 };
 
 interface AlertStripProps {

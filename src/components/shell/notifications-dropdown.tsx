@@ -3,12 +3,12 @@
 import { useRef, useState } from "react";
 import { AlertTriangle, ChevronDown } from "lucide-react";
 
-import { severityAccent, typeIcon } from "@/app/(authenticated)/dashboard/_components/alert-strip";
 import type { AlertItem } from "@/hooks/use-dashboard";
 import { useAlertNavigation } from "@/hooks/use-alert-navigation";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { severityAccent, typeIcon } from "@/lib/alert-display";
 import { Z } from "@/lib/z-index";
 
 import { StrabbWordmark } from "./strabb-marks";
@@ -47,7 +47,7 @@ export function NotificationsDropdown({ alerts }: NotificationsDropdownProps) {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="dialog"
-        aria-label="Notifications"
+        aria-label={alerts.length > 0 ? `Notifications, ${alerts.length} unread` : "Notifications"}
         className="gap-xs relative flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
         data-no-elevate
       >

@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { useDashboardAlerts } from "@/hooks/use-dashboard";
+import { useIsMobile } from "@/hooks/use-responsive-view";
 import { pageLabels, settingsNavItem } from "@/lib/navigation";
 import { useAppStore } from "@/stores/app-store";
 
@@ -21,7 +22,10 @@ import { StrabbHeroIcon } from "./strabb-marks";
  * (shell level, every page) rather than only on the dashboard page -
  * useDashboardAlertsAPI is a bare hook keyed on selectedListings, so this
  * shares the same TanStack Query cache entry as the dashboard page's own
- * call instead of double-fetching.
+ * call instead of double-fetching. Gated on useIsMobile(1024): this header
+ * is only CSS-hidden (`lg:hidden`) at lg+, not unmounted, so without the
+ * enabled flag the query would fire on every page for every desktop user
+ * too, feeding a dropdown that never renders there (review finding, PR #62).
  *
  * The desktop shell's ContextualSidebar (filters/actions) and SubmenuBar
  * (view chips) have no mobile home yet - that's the hamburger-drawer phase
@@ -31,7 +35,8 @@ import { StrabbHeroIcon } from "./strabb-marks";
 export function MobileTopBar() {
   const currentPage = useAppStore((s) => s.currentPage);
   const selectedListings = useAppStore((s) => s.selectedListings);
-  const { data: alerts } = useDashboardAlerts(selectedListings);
+  const isMobile = useIsMobile(1024);
+  const { data: alerts } = useDashboardAlerts(selectedListings, isMobile);
   const SettingsIcon = settingsNavItem.icon;
 
   return (

@@ -23,8 +23,8 @@ export function useDashboardKPIs(
   };
 }
 
-export function useDashboardAlerts(selectedListings: string[]) {
-  const apiResult = useDashboardAlertsAPI(selectedListings);
+export function useDashboardAlerts(selectedListings: string[], enabled: boolean = true) {
+  const apiResult = useDashboardAlertsAPI(selectedListings, enabled);
 
   return {
     data: apiResult.data,

@@ -2,15 +2,20 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { alertsMock, storeMock, setSubmenuMock, pushMock } = vi.hoisted(() => ({
+const { alertsMock, storeMock, setSubmenuMock, pushMock, isMobileMock } = vi.hoisted(() => ({
   alertsMock: vi.fn(),
   storeMock: vi.fn(),
   setSubmenuMock: vi.fn(),
   pushMock: vi.fn(),
+  isMobileMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-dashboard", () => ({
   useDashboardAlerts: (...args: unknown[]) => alertsMock(...args),
+}));
+
+vi.mock("@/hooks/use-responsive-view", () => ({
+  useIsMobile: (...args: unknown[]) => isMobileMock(...args),
 }));
 
 vi.mock("@/stores/app-store", () => ({
@@ -35,7 +40,9 @@ describe("MobileTopBar", () => {
     storeMock.mockReset();
     setSubmenuMock.mockReset();
     pushMock.mockReset();
+    isMobileMock.mockReset();
     storeMock.mockReturnValue(baseStore);
+    isMobileMock.mockReturnValue(true);
   });
 
   it("renders the page title and a Settings link", () => {
@@ -43,6 +50,28 @@ describe("MobileTopBar", () => {
     render(<MobileTopBar />);
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute("href", "/settings");
+  });
+
+  it("only enables the alerts query below lg, since this header is CSS-hidden (not unmounted) at lg+", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    render(<MobileTopBar />);
+    expect(alertsMock).toHaveBeenCalledWith([], true);
+
+    isMobileMock.mockReturnValue(false);
+    alertsMock.mockClear();
+    render(<MobileTopBar />);
+    expect(alertsMock).toHaveBeenCalledWith([], false);
+  });
+
+  it("folds the unread count into the notifications button's aria-label", () => {
+    alertsMock.mockReturnValue({
+      data: [
+        { id: "a1", type: "message", severity: "blue", description: "1 unread message", count: 1 },
+        { id: "a2", type: "ticket", severity: "red", description: "1 urgent ticket", count: 1 },
+      ],
+    });
+    render(<MobileTopBar />);
+    expect(screen.getByRole("button", { name: "Notifications, 2 unread" })).toBeInTheDocument();
   });
 
   it("shows no unread badge when there are no alerts", () => {
