@@ -162,17 +162,23 @@ function Drawer({
           panel never protrudes into the topnav/submenu. Right (or left, for
           side="left") + bottom inset match canvas content padding from the
           screen edges (below lg, --overlay-bottom clears MobileBottomNav
-          instead). */}
+          instead). side="left" sits flush against --overlay-top with
+          square top corners instead - it's anchored under the mobile
+          topbar's hamburger trigger, so it should read as an extension of
+          the header rather than a floating card with a gap above it. */}
       <div
         ref={panelRef}
         data-slot="drawer"
         role="dialog"
         aria-label={title}
         tabIndex={-1}
-        className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
+        className={cn(
+          "fixed flex flex-col overflow-hidden bg-[var(--neutral-30)] shadow-xl",
+          side === "left" ? "rounded-b-2xl" : "rounded-2xl",
+        )}
         style={{
           zIndex,
-          top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
+          top: side === "left" ? "var(--overlay-top)" : "calc(var(--overlay-top) + var(--space-md) - 2px)",
           ...insetStyle,
           bottom: "var(--overlay-bottom)",
           width: WIDTHS[width],

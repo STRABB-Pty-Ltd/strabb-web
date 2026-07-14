@@ -35,7 +35,7 @@ export function MobileNavDrawer() {
       width="mobile-nav"
       animation="slide-left"
     >
-      <div className="gap-xs flex flex-wrap">
+      <div className="gap-xs flex flex-wrap justify-center">
         {chips.map((chip) => {
           const active = isChipActive(chip);
           return (
