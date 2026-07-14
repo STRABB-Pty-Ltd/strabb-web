@@ -127,7 +127,7 @@ export function useDashboardKPIsAPI(
   });
 }
 
-export function useDashboardAlertsAPI(selectedListings: string[]) {
+export function useDashboardAlertsAPI(selectedListings: string[], enabled: boolean = true) {
   const apiClient = useApiClient();
   const isReady = useAuthReady();
 
@@ -137,7 +137,7 @@ export function useDashboardAlertsAPI(selectedListings: string[]) {
       const response = await apiClient.get<{ data: RawAlertResponse }>("/dashboard/alerts");
       return rawAlertsToAlertItems(response.data);
     },
-    enabled: isReady,
+    enabled: isReady && enabled,
   });
 }
 

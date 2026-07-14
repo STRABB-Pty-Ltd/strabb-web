@@ -1,39 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  AlertTriangle,
-  CalendarClock,
-  Clock,
-  MessageSquare,
-  RefreshCw,
-  Wrench,
-  X,
-} from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { AlertItem } from "@/hooks/use-dashboard";
-import { useAppStore } from "@/stores/app-store";
+import { useAlertNavigation } from "@/hooks/use-alert-navigation";
+import { severityAccent, typeIcon } from "@/lib/alert-display";
 
 const severityBg: Record<string, string> = {
   red: "var(--neutral-30)",
   amber: "var(--neutral-30)",
   blue: "var(--neutral-30)",
-};
-
-const severityAccent: Record<string, string> = {
-  red: "var(--status-issues)",
-  amber: "var(--status-issues)",
-  blue: "var(--highlight-10)",
-};
-
-const typeIcon: Record<string, React.ElementType> = {
-  message: MessageSquare,
-  unscheduled: CalendarClock,
-  "past-due-clean": Clock,
-  ticket: Wrench,
-  sync: RefreshCw,
 };
 
 interface AlertStripProps {
@@ -42,32 +20,7 @@ interface AlertStripProps {
 
 export function AlertStrip({ alerts }: AlertStripProps) {
   const [dismissed, setDismissed] = useState<string[]>([]);
-  const setSubmenu = useAppStore((s) => s.setSubmenu);
-  const router = useRouter();
-
-  const handleView = (alert: AlertItem) => {
-    switch (alert.type) {
-      case "message":
-        setSubmenu("messaging", ["unread"]);
-        router.push("/messaging");
-        return;
-      case "unscheduled":
-        setSubmenu("operations", ["cleaning"]);
-        router.push("/operations");
-        return;
-      case "past-due-clean":
-        setSubmenu("operations", ["cleaning"]);
-        router.push("/operations");
-        return;
-      case "ticket":
-        setSubmenu("operations", ["tickets"]);
-        router.push("/operations");
-        return;
-      case "sync":
-        router.push("/settings");
-        return;
-    }
-  };
+  const handleView = useAlertNavigation();
 
   const visible = alerts.filter((a) => !dismissed.includes(a.id));
   if (visible.length === 0) return null;

@@ -72,10 +72,17 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-sm">
-      {alerts && alerts.length > 0 && <AlertStrip alerts={alerts} />}
+      {/* Hidden below lg: the mobile top bar's notifications dropdown
+          (M.1.1) owns alerts there, so showing this grid too would
+          duplicate the same data on the same screen. */}
+      {alerts && alerts.length > 0 && (
+        <div className="hidden lg:block">
+          <AlertStrip alerts={alerts} />
+        </div>
+      )}
 
       {alerts && alerts.length > 0 && (
-        <div className="flex items-center">
+        <div className="hidden items-center lg:flex">
           <div className="w-full" style={{ height: "2px", backgroundColor: "var(--neutral-30)" }} />
         </div>
       )}
