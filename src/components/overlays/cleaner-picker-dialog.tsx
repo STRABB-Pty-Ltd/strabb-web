@@ -119,12 +119,14 @@ export function CleanerPickerDialog({
       className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
       style={{
         zIndex: Z.DRAWER,
-        top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
+        top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
         // Sit immediately to the left of the drill-down panel with the same
-        // gap the drawer uses from the viewport edge.
-        right: "calc(var(--drilldown-width) + var(--space-md) * 2)",
-        bottom: "var(--space-md)",
-        width: "var(--drilldown-width)",
+        // gap the drawer uses from the viewport edge. --drilldown-panel-width
+        // (not the raw --drilldown-width) so this stays flush against the
+        // drill-down panel's actual clamped width below lg.
+        right: "calc(var(--drilldown-panel-width) + var(--space-md) * 2)",
+        bottom: "var(--overlay-bottom)",
+        width: "var(--drilldown-panel-width)",
         animation: !open ? `fadeOut ${EXIT_MS}ms ease-in forwards` : `fadeIn ${EXIT_MS}ms ease-out`,
       }}
     >

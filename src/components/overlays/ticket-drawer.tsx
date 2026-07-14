@@ -34,11 +34,14 @@ export function TicketDrawer({ open, onClose, initialPropertyId }: TicketDrawerP
 
   return (
     // Panel - anchored just LEFT of the thread overlay (same width and
-    // top/bottom insets, offset right by one thread-width plus two space-md
-    // gutters). It sits at the thread's layer, ABOVE the thread scrim, so it
-    // renders bright beside the thread rather than dimmed beneath the scrim.
-    // mousedown is stopped so the thread overlay's document-level click-outside
-    // does not fire and close the thread while the form is being filled. Close
+    // top/bottom insets, offset right by one thread-panel-width plus two
+    // space-md gutters - --thread-panel-width, not the raw --thread-width,
+    // so this stays flush against the thread panel's actual clamped width
+    // below lg instead of assuming its old fixed desktop width). It sits
+    // at the thread's layer, ABOVE the thread scrim, so it renders bright
+    // beside the thread rather than dimmed beneath the scrim. mousedown is
+    // stopped so the thread overlay's document-level click-outside does
+    // not fire and close the thread while the form is being filled. Close
     // via the X (or on successful create) so form input is never lost by an
     // accidental outside click.
     <div
@@ -50,10 +53,10 @@ export function TicketDrawer({ open, onClose, initialPropertyId }: TicketDrawerP
       className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
       style={{
         zIndex: Z.THREAD,
-        top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
-        right: "calc(var(--space-md) + var(--thread-width) + var(--space-md))",
-        bottom: "var(--space-md)",
-        width: "var(--thread-width)",
+        top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
+        right: "calc(var(--space-md) + var(--thread-panel-width) + var(--space-md))",
+        bottom: "var(--overlay-bottom)",
+        width: "var(--thread-panel-width)",
         animation: !open
           ? `slideOutLeft ${EXIT_MS}ms ease-in forwards`
           : `slideInLeft ${EXIT_MS}ms ease-out`,

@@ -102,7 +102,11 @@ export function ThreadOverlay({
 
       {/* Panel - canvas-bounded: top aligns with canvas content top so the
           panel never protrudes into the topnav/submenu. Right + bottom
-          inset by --space-md to match canvas content padding from screen edges. */}
+          inset by --space-md to match canvas content padding from screen
+          edges (below lg, --overlay-bottom clears MobileBottomNav instead).
+          Width clamped to the viewport - --thread-width (610px) is far
+          wider than a phone screen, which used to push the panel's left
+          edge off-screen with no left inset to catch it. */}
       <div
         ref={panelRef}
         role="dialog"
@@ -111,10 +115,10 @@ export function ThreadOverlay({
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.THREAD,
-          top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
+          top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
           right: "var(--space-md)",
-          bottom: "var(--space-md)",
-          width: "var(--thread-width)",
+          bottom: "var(--overlay-bottom)",
+          width: "var(--thread-panel-width)",
           animation: !open
             ? `slideOutRight ${EXIT_MS}ms ease-in forwards`
             : `slideInRight ${EXIT_MS}ms ease-out`,

@@ -53,7 +53,11 @@ export function DrillDownPanel({
 
       {/* Panel - canvas-bounded: top aligns with canvas content top so the
           panel never protrudes into the topnav/submenu. Right + bottom
-          inset by --space-md to match canvas content padding from screen edges. */}
+          inset by --space-md to match canvas content padding from screen
+          edges (below lg, --overlay-bottom clears MobileBottomNav instead).
+          Width clamped to the viewport - --drilldown-width (377px) is
+          wider than a phone screen, which used to push the panel's left
+          edge off-screen with no left inset to catch it. */}
       <div
         ref={panelRef}
         role="dialog"
@@ -62,10 +66,10 @@ export function DrillDownPanel({
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex: Z.DRAWER,
-          top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
+          top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
           right: "var(--space-md)",
-          bottom: "var(--space-md)",
-          width: "var(--drilldown-width)",
+          bottom: "var(--overlay-bottom)",
+          width: "var(--drilldown-panel-width)",
           animation: !open
             ? `slideOutRight ${EXIT_MS}ms ease-in forwards`
             : `slideInRight ${EXIT_MS}ms ease-out`,
