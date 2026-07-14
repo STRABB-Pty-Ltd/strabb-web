@@ -25,9 +25,13 @@ const ANIMATIONS = {
   fade: { in: "fadeIn", out: "fadeOut" },
 } as const;
 
+/* Clamped to the viewport (--drilldown-panel-width/--thread-panel-width in
+   globals.css), not the raw --drilldown-width/--thread-width: those are
+   wider than a phone screen, which used to push the panel's left edge
+   off-screen with no left inset to catch it. */
 const WIDTHS = {
-  drilldown: "var(--drilldown-width)",
-  thread: "var(--thread-width)",
+  drilldown: "var(--drilldown-panel-width)",
+  thread: "var(--thread-panel-width)",
 } as const;
 
 interface DrawerProps {
@@ -141,7 +145,8 @@ function Drawer({
 
       {/* Panel - canvas-bounded: top aligns with canvas content top so the
           panel never protrudes into the topnav/submenu. Right + bottom inset
-          match canvas content padding from the screen edges. */}
+          match canvas content padding from the screen edges (below lg,
+          --overlay-bottom clears MobileBottomNav instead). */}
       <div
         ref={panelRef}
         data-slot="drawer"
@@ -151,9 +156,9 @@ function Drawer({
         className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
         style={{
           zIndex,
-          top: "calc(var(--canvas-top) + var(--space-md) - 2px)",
+          top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
           right: rightOffset,
-          bottom: "var(--space-md)",
+          bottom: "var(--overlay-bottom)",
           width: WIDTHS[width],
           animation: !open
             ? `${frames.out} ${DRAWER_EXIT_MS}ms ease-in forwards`

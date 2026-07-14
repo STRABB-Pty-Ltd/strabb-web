@@ -164,6 +164,33 @@
   --drilldown-width: 377px;
   --thread-width: 610px;
 
+  /* Rendered heights of the mobile shell's own rails (MobileTopBar,
+     MobileBottomNav) - measured, not calc'd, same as --canvas-top below.
+     Update if those components' padding/touch-target sizing changes. */
+  --mobile-topbar-height: 72px;
+  --mobile-bottomnav-height: 64px;
+
+  /* Positioning tokens for the shared Drawer primitive (src/components/
+     ui/drawer.tsx) and canvasOverlayStyle. Default to the desktop shell's
+     rails; redeclared below lg (M.1's mobile-shell breakpoint) since
+     Drawer otherwise assumes a sidebar + top-nav/submenu rail that
+     doesn't exist there - panels render wider than the viewport with no
+     left inset, clipped off the left edge, and the scrim never covers
+     the sidebar-width strip. */
+  --overlay-left: var(--sidebar-width);
+  --overlay-top: var(--canvas-top);
+  --overlay-bottom: var(--space-md);
+
+  /* Rendered width of the drilldown/thread Drawer variants, clamped to
+     the viewport. --drilldown-width/--thread-width are wider than a
+     phone screen; computed once here (rather than repeating the
+     min()/calc() in every Drawer consumer) so drawers stacked beside
+     another one (CleanerPickerDialog, TicketDrawer) can offset off the
+     SAME clamped width their sibling actually renders at, not the old
+     fixed value. */
+  --drilldown-panel-width: min(var(--drilldown-width), calc(100vw - 2 * var(--space-md)));
+  --thread-panel-width: min(var(--thread-width), calc(100vw - 2 * var(--space-md)));
+
   /* Logo overlay box (and the matching sidebar spacer below it). Sized so the
      top of the first clickable sidebar button on every page aligns with the
      top of the first KPI card in the canvas. Equation:
@@ -214,6 +241,17 @@
   --input: var(--neutral-30);
   --ring: var(--highlight-10);
   --radius: 5px;
+}
+
+/* Below lg (1024px): MobileTopBar/MobileBottomNav replace the desktop
+   sidebar + top-nav/submenu rail (M.1) - overlay positioning tokens follow
+   suit. See the --overlay-* comment above. */
+@media (max-width: 1023.98px) {
+  :root {
+    --overlay-left: 0px;
+    --overlay-top: var(--mobile-topbar-height);
+    --overlay-bottom: calc(var(--mobile-bottomnav-height) + var(--space-md));
+  }
 }
 
 .dark {
