@@ -109,6 +109,26 @@ describe("Drawer", () => {
     expect(panel.style.right).toBe("");
   });
 
+  it("side=left shrinks to content (no bottom pin, capped by maxHeight); side=right still pins both edges", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onClose={vi.fn()} title="A">
+        <p>content</p>
+      </Drawer>,
+    );
+    let panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.bottom).toBe("var(--overlay-bottom)");
+    expect(panel.style.maxHeight).toBe("");
+
+    rerender(
+      <Drawer open onClose={vi.fn()} title="A" side="left">
+        <p>content</p>
+      </Drawer>,
+    );
+    panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.bottom).toBe("");
+    expect(panel.style.maxHeight).toBe("calc(100vh - var(--overlay-top) - var(--overlay-bottom))");
+  });
+
   it("uses surface-60 (matching the desktop sidebar) when side is left, neutral-30 otherwise", () => {
     const { getByRole, rerender } = render(
       <Drawer open onClose={vi.fn()} title="A">

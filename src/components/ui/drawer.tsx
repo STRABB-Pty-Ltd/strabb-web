@@ -173,7 +173,15 @@ function Drawer({
           container colour here (instead of the neutral-30 every other
           drawer uses) is what makes the shading show up at all - on
           neutral-30 the buttons were the same colour as the panel and
-          vanished. */}
+          vanished. side="left" also leaves `bottom` unset in favour of a
+          matching `maxHeight`: MobileNavDrawer's content length varies a
+          lot by page (Messaging's two chips vs. Calendar's five sections),
+          so pinning both edges like every other drawer left a slab of
+          empty surface-60 below short content on tall screens. Unset
+          bottom lets a non-replaced fixed element with only `top` set
+          shrink-to-fit its content per the CSS spec; maxHeight keeps the
+          previous cap (and the body's own overflow-y-auto) for pages
+          whose content still exceeds it. */}
       <div
         ref={panelRef}
         data-slot="drawer"
@@ -188,7 +196,9 @@ function Drawer({
           zIndex,
           top: side === "left" ? "var(--overlay-top)" : "calc(var(--overlay-top) + var(--space-md) - 2px)",
           ...insetStyle,
-          bottom: "var(--overlay-bottom)",
+          bottom: side === "left" ? undefined : "var(--overlay-bottom)",
+          maxHeight:
+            side === "left" ? "calc(100vh - var(--overlay-top) - var(--overlay-bottom))" : undefined,
           width: WIDTHS[width],
           animation: !open
             ? `${frames.out} ${DRAWER_EXIT_MS}ms ease-in forwards`
