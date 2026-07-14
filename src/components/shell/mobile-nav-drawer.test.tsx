@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { storeMock, closeMobileNavDrawerMock, useSubmenuChipsMock, handleChipClickMock } =
@@ -22,9 +23,21 @@ vi.mock("./submenu-left-slot", () => ({
   SubmenuLeftSlot: () => <div>left-slot</div>,
 }));
 
+const timeframePages = ["dashboard", "calendar", "operations", "reporting"];
+
 vi.mock("./contextual-sidebar", () => ({
-  ContextualSidebarSections: ({ collapsibleListingFilter }: { collapsibleListingFilter?: boolean }) => (
-    <div>sections collapsible={String(!!collapsibleListingFilter)}</div>
+  showTimeframe: (page: string) => timeframePages.includes(page),
+  ContextualSidebarSections: ({
+    collapsibleListingFilter,
+    renderAfterTimeframe,
+  }: {
+    collapsibleListingFilter?: boolean;
+    renderAfterTimeframe?: ReactNode;
+  }) => (
+    <div>
+      <span>sections collapsible={String(!!collapsibleListingFilter)}</span>
+      {renderAfterTimeframe}
+    </div>
   ),
 }));
 
@@ -79,5 +92,31 @@ describe("MobileNavDrawer", () => {
       expect.objectContaining({ id: "bookings" }),
     );
     expect(closeMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("on a timeframe page, threads the left slot through the sections (below the timeframe picker), not up near the chips", () => {
+    setup({ currentPage: "calendar" });
+    render(<MobileNavDrawer />);
+
+    // Exactly one instance - not duplicated between the top slot and the
+    // sections-injected slot.
+    expect(screen.getAllByText("left-slot")).toHaveLength(1);
+
+    const leftSlot = screen.getByText("left-slot");
+    const sections = screen.getByText("sections collapsible=true");
+    // DOCUMENT_POSITION_FOLLOWING (4): sections comes before left-slot.
+    expect(sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("on a non-timeframe page (messaging), renders the left slot up near the chips instead", () => {
+    setup({ currentPage: "messaging" });
+    render(<MobileNavDrawer />);
+
+    expect(screen.getAllByText("left-slot")).toHaveLength(1);
+
+    const leftSlot = screen.getByText("left-slot");
+    const sections = screen.getByText("sections collapsible=true");
+    // DOCUMENT_POSITION_PRECEDING (2): sections comes after left-slot.
+    expect(sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
   });
 });

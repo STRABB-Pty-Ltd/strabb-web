@@ -136,3 +136,17 @@ describe("ContextualSidebarSections - collapsibleListingFilter (M.3)", () => {
     expect(screen.queryByText("listing-filter-tree")).not.toBeInTheDocument();
   });
 });
+
+describe("ContextualSidebarSections - renderAfterTimeframe (M.3)", () => {
+  it("renders the slot right after the timeframe section, on a page that has one", () => {
+    sidebarStore.currentPage = "dashboard";
+    render(<ContextualSidebarSections renderAfterTimeframe={<div>after-timeframe</div>} />);
+    expect(screen.getByText("after-timeframe")).toBeInTheDocument();
+  });
+
+  it("omits the slot on a page with no timeframe section, even when passed", () => {
+    sidebarStore.currentPage = "messaging";
+    render(<ContextualSidebarSections renderAfterTimeframe={<div>after-timeframe</div>} />);
+    expect(screen.queryByText("after-timeframe")).not.toBeInTheDocument();
+  });
+});

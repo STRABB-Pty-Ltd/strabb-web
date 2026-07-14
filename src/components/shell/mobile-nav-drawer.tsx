@@ -7,7 +7,7 @@ import { pageLabels } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
-import { ContextualSidebarSections } from "./contextual-sidebar";
+import { ContextualSidebarSections, showTimeframe } from "./contextual-sidebar";
 import { SubmenuLeftSlot } from "./submenu-left-slot";
 
 /** Mobile hamburger nav drawer (M.3): view chips first, then the same
@@ -25,6 +25,14 @@ export function MobileNavDrawer() {
   const { chips, isChipActive, handleChipClick } = useSubmenuChips();
 
   if (currentPage === "settings") return null;
+
+  // On timeframe pages the left slot IS the timeframe stepper - it reads
+  // better grouped under the Day/Week/Fortnight/etc. picker than up near
+  // the view chips, so it's threaded into ContextualSidebarSections right
+  // after TimeframeSelector instead. Messaging's left slot (Templates/
+  // Scheduled links) has no timeframe picker to sit under, so it stays up
+  // top near the chips like before.
+  const stepperBelongsToTimeframe = showTimeframe(currentPage);
 
   return (
     <Drawer
@@ -69,16 +77,27 @@ export function MobileNavDrawer() {
         })}
       </div>
 
-      <div className="mt-base gap-xs flex flex-wrap items-center">
-        <SubmenuLeftSlot />
-      </div>
+      {!stepperBelongsToTimeframe && (
+        <div className="mt-base gap-xs flex flex-wrap items-center">
+          <SubmenuLeftSlot />
+        </div>
+      )}
 
       <div
         className="my-sm shrink-0"
         style={{ height: "var(--hairline)", backgroundColor: "var(--neutral-30)" }}
       />
 
-      <ContextualSidebarSections collapsibleListingFilter />
+      <ContextualSidebarSections
+        collapsibleListingFilter
+        renderAfterTimeframe={
+          stepperBelongsToTimeframe ? (
+            <div className="p-sm gap-xs flex flex-wrap items-center">
+              <SubmenuLeftSlot />
+            </div>
+          ) : undefined
+        }
+      />
     </Drawer>
   );
 }

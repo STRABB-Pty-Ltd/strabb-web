@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen, ChevronDown, ChevronRight, Plus, ShoppingCart } from "lucide-react";
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 
 import { useSavedReports } from "@/hooks/use-reporting";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ import { ViewSwitcher } from "./sidebar-sections/view-switcher";
 const showViewSwitcher = (p: PageId) => p === "calendar";
 const showCalendarActions = (p: PageId) => p === "calendar";
 const showListingFilter = (p: PageId) => p !== "settings";
-const showTimeframe = (p: PageId) =>
+export const showTimeframe = (p: PageId) =>
   p === "dashboard" || p === "calendar" || p === "operations" || p === "reporting";
 const showChannelFilter = (p: PageId) => p === "messaging";
 const showShoppingList = (p: PageId) => p === "operations";
@@ -73,6 +73,14 @@ interface ContextualSidebarSectionsProps {
    *  of rendering it directly. Only MobileNavDrawer opts in - desktop
    *  keeps the tree always-expanded, unchanged. */
   collapsibleListingFilter?: boolean;
+  /** Rendered immediately after TimeframeSelector, only on pages where it
+   *  actually renders. MobileNavDrawer uses this to slot its timeframe
+   *  stepper directly under the Day/Week/Fortnight/etc. picker instead of
+   *  up near the view chips - the stepper only makes sense once a window
+   *  size is chosen, so it reads better grouped with that control than
+   *  separated from it. Desktop doesn't pass this; its own stepper lives
+   *  in SubmenuBar's left slot, not in this shared section list. */
+  renderAfterTimeframe?: ReactNode;
 }
 
 /** The desktop sidebar's per-page section composition, extracted (M.3) so
@@ -80,6 +88,7 @@ interface ContextualSidebarSectionsProps {
  *  hand-maintained per-page list that can drift from this one. */
 export function ContextualSidebarSections({
   collapsibleListingFilter = false,
+  renderAfterTimeframe,
 }: ContextualSidebarSectionsProps) {
   const currentPage = useAppStore((s) => s.currentPage);
   const openShoppingListPopup = useAppStore((s) => s.openShoppingListPopup);
@@ -102,7 +111,12 @@ export function ContextualSidebarSections({
       {showSettingsNav(currentPage) && <SettingsNavSection />}
       {showListingFilter(currentPage) &&
         (collapsibleListingFilter ? <CollapsibleListingFilter /> : <ListingFilterTree />)}
-      {showTimeframe(currentPage) && <TimeframeSelector page={currentPage} />}
+      {showTimeframe(currentPage) && (
+        <>
+          <TimeframeSelector page={currentPage} />
+          {renderAfterTimeframe}
+        </>
+      )}
       {showViewSwitcher(currentPage) && <ViewSwitcher page={currentPage} />}
       {showCalendarActions(currentPage) && <CalendarActionsSection />}
       {showChannelFilter(currentPage) && <ChannelFilter />}
