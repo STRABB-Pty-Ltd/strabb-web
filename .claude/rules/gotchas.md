@@ -21,6 +21,15 @@ being true. One bullet per trap, specific enough to act on.
 
 ## Dev server
 
+- After the machine sleeps/wakes overnight, `strabb-api`'s login hangs
+  forever (no error, no timeout - `POST /auth/login` just never
+  resolves) even though `GET /health` returns fine: Docker Desktop comes
+  back from sleep "manually paused", so `strabb-api-db-1` (Postgres) is
+  frozen, not just slow. `docker ps` alone is enough to detect and clear
+  it - once it prints, Postgres is responsive again (no explicit
+  `docker desktop start/resume` needed, that subcommand doesn't exist
+  anyway). If login/signing-in spins forever at session start, run
+  `docker ps` before suspecting the frontend or the auth code.
 - Stale `.next/` after rapid edit bursts (uninstall/install cycles, large
   refactors, many sequential edits to imported modules): the in-memory
   module map desyncs from disk and the page renders unstyled because a
