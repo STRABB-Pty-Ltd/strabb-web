@@ -30,14 +30,18 @@ import { StrabbHeroIcon } from "./strabb-marks";
  * too, feeding a dropdown that never renders there (review finding, PR #62).
  *
  * The desktop shell's ContextualSidebar (filters/actions) and SubmenuBar
- * (view chips) render together in MobileNavDrawer (M.3), opened from the
- * hamburger button below. Settings is excluded - SettingsMobileNav already
- * owns that page's mobile nav and the drawer renders nothing there.
+ * (view chips) render together in MobileNavDrawer (M.3), toggled by the
+ * hamburger button below (open when closed, close when already open -
+ * matches Drawer's own scrim/Escape/click-outside close paths rather than
+ * fighting them). Settings is excluded - SettingsMobileNav already owns
+ * that page's mobile nav and the drawer renders nothing there.
  */
 export function MobileTopBar() {
   const currentPage = useAppStore((s) => s.currentPage);
   const selectedListings = useAppStore((s) => s.selectedListings);
+  const mobileNavDrawerOpen = useAppStore((s) => s.mobileNavDrawer.open);
   const openMobileNavDrawer = useAppStore((s) => s.openMobileNavDrawer);
+  const closeMobileNavDrawer = useAppStore((s) => s.closeMobileNavDrawer);
   const isMobile = useIsMobile(1024);
   const { data: alerts } = useDashboardAlerts(selectedListings, isMobile);
   const SettingsIcon = settingsNavItem.icon;
@@ -51,8 +55,11 @@ export function MobileTopBar() {
         {currentPage !== "settings" && (
           <button
             type="button"
-            onClick={openMobileNavDrawer}
+            data-slot="mobile-nav-trigger"
+            onClick={mobileNavDrawerOpen ? closeMobileNavDrawer : openMobileNavDrawer}
             aria-label="Open menu"
+            aria-expanded={mobileNavDrawerOpen}
+            aria-haspopup="dialog"
             className="bg-neutral-30 text-highlight-10 flex size-[var(--touch-target-min)] shrink-0 items-center justify-center rounded-lg"
           >
             <Menu size={20} aria-hidden="true" />

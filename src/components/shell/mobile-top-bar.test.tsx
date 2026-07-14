@@ -9,6 +9,7 @@ const {
   pushMock,
   isMobileMock,
   openMobileNavDrawerMock,
+  closeMobileNavDrawerMock,
 } = vi.hoisted(() => ({
   alertsMock: vi.fn(),
   storeMock: vi.fn(),
@@ -16,6 +17,7 @@ const {
   pushMock: vi.fn(),
   isMobileMock: vi.fn(),
   openMobileNavDrawerMock: vi.fn(),
+  closeMobileNavDrawerMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-dashboard", () => ({
@@ -40,7 +42,9 @@ const baseStore = {
   currentPage: "dashboard",
   selectedListings: [],
   setSubmenu: setSubmenuMock,
+  mobileNavDrawer: { open: false },
   openMobileNavDrawer: openMobileNavDrawerMock,
+  closeMobileNavDrawer: closeMobileNavDrawerMock,
 };
 
 describe("MobileTopBar", () => {
@@ -51,15 +55,30 @@ describe("MobileTopBar", () => {
     pushMock.mockReset();
     isMobileMock.mockReset();
     openMobileNavDrawerMock.mockReset();
+    closeMobileNavDrawerMock.mockReset();
     storeMock.mockReturnValue(baseStore);
     isMobileMock.mockReturnValue(true);
   });
 
-  it("clicking the hamburger opens the mobile nav drawer", async () => {
+  it("clicking the hamburger opens the mobile nav drawer when closed", async () => {
     alertsMock.mockReturnValue({ data: [] });
     render(<MobileTopBar />);
-    await userEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    const trigger = screen.getByRole("button", { name: /open menu/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(trigger);
     expect(openMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+    expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
+  });
+
+  it("clicking the hamburger closes the drawer when already open", async () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, mobileNavDrawer: { open: true } });
+    render(<MobileTopBar />);
+    const trigger = screen.getByRole("button", { name: /open menu/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(trigger);
+    expect(closeMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+    expect(openMobileNavDrawerMock).not.toHaveBeenCalled();
   });
 
   it("hides the hamburger on settings, where SettingsMobileNav owns mobile nav", () => {
