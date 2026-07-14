@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 
+import { Button } from "@/components/ui/button";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 
@@ -40,8 +41,8 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: "var(--scrim)", animation: scrimAnim }}
+      className="bg-scrim fixed inset-0 z-50 flex items-center justify-center"
+      style={{ animation: scrimAnim }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -55,16 +56,24 @@ export function KeyboardHelpModal({ open, onClose }: { open: boolean; onClose: (
       >
         <div className="mb-md flex items-center justify-between">
           <h2 className="text-subheading font-semibold">Keyboard Shortcuts</h2>
-          <button
+          {/* Button ghost hover:bg-muted resolves to the same --neutral-30 this
+              button hand-rolled; icon-touch is the same 44px hit area the
+              min-h/min-w pair produced. "rounded" preserves the pre-existing
+              corner radius over the primitive's rounded-lg, and size-md on the
+              icon (21px, matching size={21}) opts it out of the primitive's
+              13px svg default. */}
+          <Button
             ref={closeRef}
             type="button"
+            variant="ghost"
+            size="icon-touch"
             onClick={onClose}
-            className="hover:bg-neutral-30 flex min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)] items-center justify-center rounded"
+            className="rounded"
             aria-label="Close shortcuts help"
             data-no-elevate
           >
-            <X size={21} />
-          </button>
+            <X size={21} className="size-md" />
+          </Button>
         </div>
         <div className="space-y-base">
           {shortcuts.map((s) => (

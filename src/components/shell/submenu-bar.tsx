@@ -5,9 +5,11 @@ import { CalendarClock, ChevronDown, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
+import { chipVariants } from "@/components/ui/chip";
 import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { submenuConfigs, type SubmenuChip } from "@/lib/submenu-config";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import type { PageId } from "@/stores/types";
 
@@ -169,9 +171,8 @@ export function SubmenuBar() {
 
   return (
     <div
-      className="relative flex shrink-0 items-center"
+      className="bg-surface-60 relative flex shrink-0 items-center"
       style={{
-        backgroundColor: "var(--surface-60)",
         paddingRight: "calc(var(--sidebar-width) / 2)",
         height: ROW_HEIGHT,
       }}
@@ -190,11 +191,10 @@ export function SubmenuBar() {
                 key={href}
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className="gap-xs px-base py-base text-body hover:bg-neutral-30 inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold"
-                style={{
-                  backgroundColor: active ? "var(--neutral-30)" : undefined,
-                  color: "var(--highlight-10)",
-                }}
+                className={cn(
+                  "gap-xs px-base py-base text-body hover:bg-neutral-30 text-highlight-10 inline-flex min-h-[var(--touch-target-min)] items-center rounded-sm font-semibold",
+                  active && "bg-neutral-30",
+                )}
               >
                 <Icon size={16} aria-hidden="true" />
                 {label}
@@ -219,14 +219,24 @@ export function SubmenuBar() {
           const isMore = chip.behavior === "more-dropdown";
           const isNav = chip.behavior === "nav";
 
-          const chipClass =
-            "gap-xs px-sm py-base text-body inline-flex shrink-0 cursor-pointer items-center justify-center border-0 font-medium whitespace-nowrap outline-none transition-all hover:opacity-80 active:scale-95 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
-          const chipStyle = {
-            width: "var(--btn-pill-width)",
-            borderRadius: "var(--radius-md)",
-            backgroundColor: active ? "var(--highlight-10)" : "var(--neutral-30)",
-            color: active ? "var(--surface-60)" : "var(--highlight-10)",
-          };
+          // chipVariants composed onto the raw <button> (the chip.tsx-documented
+          // pattern). size is null: the pill's px-sm py-base padding is
+          // supplied as extras because the custom spacing ladder isn't
+          // registered in cn()'s twMerge config, so a size variant's py-xs
+          // could not be reliably overridden (see gotchas.md, tailwind-merge).
+          // The active flip maps to tones: accent = highlight-10/surface-60,
+          // neutral = neutral-30/highlight-10 - same tokens as before. The
+          // focus-visible ring overrides preserve the pre-existing ring look
+          // (solid --ring, 2px, offset) over the primitive's ring-3/50%.
+          const chipClass = cn(
+            chipVariants({
+              tone: active ? "accent" : "neutral",
+              size: null,
+              radius: "md",
+              interactive: true,
+            }),
+            "px-sm py-base w-[var(--btn-pill-width)] border-0 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
+          );
 
           if (isNav && chip.href) {
             return (
@@ -236,7 +246,6 @@ export function SubmenuBar() {
                 onClick={() => handleChipClick(chip)}
                 aria-pressed={active}
                 className={chipClass}
-                style={chipStyle}
               >
                 {chip.label}
               </button>
@@ -255,7 +264,6 @@ export function SubmenuBar() {
                   aria-haspopup="menu"
                   aria-expanded={moreOpen}
                   className={chipClass}
-                  style={chipStyle}
                 >
                   {chip.label}
                   <ChevronDown size={13} aria-hidden="true" />
@@ -285,7 +293,6 @@ export function SubmenuBar() {
                   : undefined
               }
               className={chipClass}
-              style={chipStyle}
             >
               {chip.label}
             </button>

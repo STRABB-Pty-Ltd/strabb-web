@@ -3,7 +3,9 @@
 import { differenceInCalendarDays } from "date-fns";
 import Link from "next/link";
 
+import { chipVariants } from "@/components/ui/chip";
 import { useBillingStatus } from "@/hooks/use-billing";
+import { cn } from "@/lib/utils";
 
 const TRIAL_WARNING_THRESHOLD_DAYS = 3;
 
@@ -85,7 +87,14 @@ export function BillingNavPill() {
     <Link
       href="/settings"
       aria-label={`Billing status: ${state.label}`}
-      className="px-sm py-xs text-body mr-sm rounded-full border font-medium transition-opacity hover:opacity-90"
+      // chipVariants composed onto the Link (the chip.tsx-documented pattern).
+      // tone is null because the pill's colours are the runtime toneStyles
+      // lookup above (kept inline); interactive is off so the pill keeps its
+      // own quieter transition-opacity/hover:opacity-90 affordance.
+      className={cn(
+        chipVariants({ tone: null, size: "md", radius: "pill" }),
+        "mr-sm border transition-opacity hover:opacity-90",
+      )}
       style={{
         backgroundColor: styles.bg,
         color: styles.text,
