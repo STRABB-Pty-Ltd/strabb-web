@@ -92,7 +92,7 @@ export function MobileNavDrawer() {
         collapsibleListingFilter
         renderAfterTimeframe={
           stepperBelongsToTimeframe ? (
-            <div className="p-sm gap-xs flex flex-wrap items-center">
+            <div className="p-sm gap-xs flex flex-wrap items-center justify-center">
               <SubmenuLeftSlot />
             </div>
           ) : undefined
