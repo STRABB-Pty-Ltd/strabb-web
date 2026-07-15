@@ -202,7 +202,10 @@
   /* Y-coord of the canvas top edge, measured from the rail composition:
      paddingTop (sm 13) + TopNav chip-height (37) + separator track (12)
      + SubmenuBar chip-height (37) + paddingBottom (sm 13)
-     + horizontal rail/canvas separator (2px) = 114px.
+     + horizontal rail/canvas separator (2px) ~= 114px (113.99px measured -
+     text-body * 1.615 doesn't land on a whole pixel, see review finding,
+     PR #64: any "pixel-identical" claim resting on this token is off by
+     that sub-pixel amount, imperceptible but not literally exact).
      Tracks token changes via calc so it stays accurate. Used by the
      vertical sidebar separator to start exactly at the canvas top. */
   --canvas-top: calc(
