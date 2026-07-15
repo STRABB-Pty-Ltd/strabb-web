@@ -125,15 +125,21 @@ justification.
 
 - Desktop-first shell, top-nav-first, at lg+ (1024px). Below lg: bottom
   tab bar (Instagram-style, the 5 main pages) + a minimal top bar
-  (wordmark, page title, Settings) - decision 10-07-2026, Chris/Will/
-  Chanel. The cutover is lg (1024px), not the more usual md (768px):
-  the desktop TopNav's pill group is absolutely-positioned outside the
-  flex flow and collides with the flow-positioned Settings/Sign-out
-  cluster below ~1024px, confirmed empirically (M.1 follow-up,
-  10-07-2026) - not a redesign candidate for a v1 fix, so the shell
-  cutover moved instead. Sidebar filters/actions and submenu chips have
-  no mobile home yet (hamburger-drawer phase, not yet built) - hidden
-  below lg until then, not silently broken.
+  (wordmark, Settings) - decision 10-07-2026, Chris/Will/Chanel. The
+  cutover is lg (1024px), not the more usual md (768px): the desktop
+  TopNav's pill group is absolutely-positioned outside the flex flow
+  and collides with the flow-positioned Settings/Sign-out cluster
+  below ~1024px, confirmed empirically (M.1 follow-up, 10-07-2026) -
+  not a redesign candidate for a v1 fix, so the shell cutover moved
+  instead. Sidebar filters/actions and submenu chips get a mobile home
+  via the M.3 hamburger drawer.
+  **Revised during M.3 (14-07-2026, Will + Chanel):** the top bar's
+  page-title text was dropped - the bottom tab bar's now-shaded active
+  tab (matching TopNav's own selected-pill styling) identifies the page
+  instead, and the title text was truncating on narrow phones anyway.
+  Chris hasn't explicitly signed off on this specific sub-change yet -
+  flagging here so it's visible in review rather than landing as a
+  silent rules violation.
 - Contextual sidebar behaviour where applicable
 - Trusted current-user auth/session model
 

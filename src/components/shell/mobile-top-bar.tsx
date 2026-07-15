@@ -52,7 +52,11 @@ import { StrabbHeroIcon } from "./strabb-marks";
  * set by every setCurrentPage call - stable across /settings/* sub-routes
  * since those don't change the top-level segment). Deliberately a quiet
  * secondary affordance, not the primary way out - same icon, same
- * highlighted styling, just a different destination.
+ * highlighted styling, just a different destination. No aria-current on
+ * this link: once onSettings repoints href to backTarget, the link no
+ * longer targets the page you're on, so it can't correctly claim to
+ * represent it - the highlighted styling alone carries "you're in
+ * Settings" for sighted users.
  */
 export function MobileTopBar() {
   const currentPage = useAppStore((s) => s.currentPage);
@@ -92,7 +96,6 @@ export function MobileTopBar() {
       <Link
         href={onSettings ? backTarget.href : settingsNavItem.href}
         aria-label={onSettings ? `Back to ${backTarget.label}` : "Settings"}
-        aria-current={onSettings ? "page" : undefined}
         className={cn(
           "ml-auto flex size-[var(--touch-target-min)] items-center justify-center rounded-lg",
           onSettings ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",

@@ -58,16 +58,30 @@ const baseChips = [
   { id: "bookings", label: "Bookings", behavior: "exclusive" as const },
 ];
 
-function setup(overrides: { currentPage?: string; open?: boolean } = {}) {
+const chipsWithMore = [
+  ...baseChips,
+  { id: "compare", label: "Compare", behavior: "more-dropdown" as const },
+];
+
+function setup(
+  overrides: {
+    currentPage?: string;
+    open?: boolean;
+    chips?: typeof chipsWithMore;
+    moreOpen?: boolean;
+  } = {},
+) {
   storeMock.mockReturnValue({
     mobileNavDrawer: { open: overrides.open ?? true },
     closeMobileNavDrawer: closeMobileNavDrawerMock,
     currentPage: overrides.currentPage ?? "calendar",
   });
   useSubmenuChipsMock.mockReturnValue({
-    chips: baseChips,
+    chips: overrides.chips ?? baseChips,
     isChipActive: (chip: { id: string }) => chip.id === "overview",
     handleChipClick: handleChipClickMock,
+    moreOpen: overrides.moreOpen ?? false,
+    moreRef: { current: null },
   });
 }
 
@@ -150,6 +164,41 @@ describe("MobileNavDrawer", () => {
     setup({ open: false });
     isMobileMock.mockReturnValue(false);
     render(<MobileNavDrawer />);
+    expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
+  });
+
+  it("a more-dropdown chip does not close the drawer, unlike every other chip", async () => {
+    setup({ chips: chipsWithMore });
+    render(<MobileNavDrawer />);
+    await userEvent.click(screen.getByText("Compare"));
+
+    expect(handleChipClickMock).toHaveBeenCalledWith(expect.objectContaining({ id: "compare" }));
+    expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
+  });
+
+  it("shows a Coming soon note when the more-dropdown chip is open, matching desktop's affordance", () => {
+    setup({ chips: chipsWithMore, moreOpen: true });
+    render(<MobileNavDrawer />);
+
+    expect(screen.getByText("Coming soon")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Compare" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+  });
+
+  it("hides the Coming soon note when the more-dropdown chip is closed", () => {
+    setup({ chips: chipsWithMore, moreOpen: false });
+    render(<MobileNavDrawer />);
+    expect(screen.queryByText("Coming soon")).not.toBeInTheDocument();
+  });
+
+  it("does not self-close on Escape - useKeyboardShortcuts owns Escape for this drawer instead", async () => {
+    render(<MobileNavDrawer />);
+    await userEvent.keyboard("{Escape}");
+    // If this were still true (Drawer's own default), a TimeframePopup/
+    // SharePopup/ShoppingListPopup opened from inside the drawer would
+    // close both itself and the drawer on a single Escape press.
     expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
   });
 });

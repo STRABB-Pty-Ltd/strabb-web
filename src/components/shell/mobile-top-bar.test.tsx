@@ -103,7 +103,10 @@ describe("MobileTopBar", () => {
     render(<MobileTopBar />);
     const link = screen.getByRole("link", { name: /back to calendar/i });
     expect(link).toHaveAttribute("href", "/calendar");
-    expect(link).toHaveAttribute("aria-current", "page");
+    // No aria-current: the link no longer targets the page you're on, so
+    // it can't correctly claim to represent it (only the highlighted
+    // styling communicates "you're in Settings" now).
+    expect(link).not.toHaveAttribute("aria-current");
   });
 
   it("falls back to the first main page when there's no previousPage to go back to", () => {

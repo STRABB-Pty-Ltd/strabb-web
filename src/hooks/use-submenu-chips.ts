@@ -150,13 +150,13 @@ export function useSubmenuChips() {
     }
   };
 
+  // pathname/activeSubmenu/pageRoute/onNavSubRoute stay internal - they feed
+  // isChipActive/handleChipClick above, but neither consumer (SubmenuBar,
+  // MobileNavDrawer) nor the test suite reads them off the hook's result,
+  // so they're not part of the public surface.
   return {
     currentPage,
-    pathname,
     chips,
-    activeSubmenu,
-    pageRoute,
-    onNavSubRoute,
     isChipActive,
     handleChipClick,
     moreOpen,

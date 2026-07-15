@@ -153,7 +153,13 @@ export function SharePopup() {
   };
 
   useClickOutside(popupRef, closeSharePopup, open);
-  useFocusTrap(popupRef, { active: open, onEscape: closeSharePopup });
+  // No onEscape here - useKeyboardShortcuts' centralized chain owns Escape
+  // for this popup (checked before MobileNavDrawer, which it can open from
+  // inside of on mobile). Wiring both here and there raced: this trap's
+  // document-level listener fired first, closing the popup itself, so by
+  // the time the chain's window-level handler ran, sharePopup.open already
+  // read false and it fell through to close the drawer underneath too.
+  useFocusTrap(popupRef, { active: open });
 
   if (!shouldRender) return null;
 

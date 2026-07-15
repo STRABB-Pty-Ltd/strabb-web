@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { ChevronDown } from "lucide-react";
+
 import { Drawer } from "@/components/ui/drawer";
 import { chipVariants } from "@/components/ui/chip";
 import { useIsMobile } from "@/hooks/use-responsive-view";
@@ -25,7 +27,7 @@ export function MobileNavDrawer() {
   const open = useAppStore((s) => s.mobileNavDrawer.open);
   const closeMobileNavDrawer = useAppStore((s) => s.closeMobileNavDrawer);
   const currentPage = useAppStore((s) => s.currentPage);
-  const { chips, isChipActive, handleChipClick } = useSubmenuChips();
+  const { chips, isChipActive, handleChipClick, moreOpen, moreRef } = useSubmenuChips();
   const isMobile = useIsMobile(1024);
 
   // Desktop (lg+) has its own always-visible ContextualSidebar/SubmenuBar -
@@ -55,17 +57,30 @@ export function MobileNavDrawer() {
       side="left"
       width="mobile-nav"
       animation="slide-left"
+      // TimeframePopup/SharePopup/ShoppingListPopup can all open from
+      // inside this drawer (via ContextualSidebarSections' filters/
+      // actions) and each has its own Escape handler. Deferring to
+      // useKeyboardShortcuts' centralized "close topmost overlay" chain
+      // (which checks those first, this drawer last) instead of handling
+      // Escape here too avoids a single Escape closing the popup AND the
+      // drawer underneath it in one keypress.
+      closeOnEscape={false}
     >
-      <div className="gap-xs flex flex-wrap justify-center">
+      <div ref={moreRef} className="gap-xs flex flex-wrap justify-center">
         {chips.map((chip) => {
           const active = isChipActive(chip);
+          const isMore = chip.behavior === "more-dropdown";
           return (
             <button
               key={chip.id}
               type="button"
               onClick={() => {
                 handleChipClick(chip);
-                closeMobileNavDrawer();
+                // "More" toggles an inline "Coming soon" note below the row
+                // instead of navigating anywhere - closing the drawer on
+                // that tap would hide the very feedback it just revealed,
+                // and give the impression the tap did nothing at all.
+                if (!isMore) closeMobileNavDrawer();
               }}
               aria-pressed={
                 chip.behavior === "toggle" ||
@@ -74,6 +89,8 @@ export function MobileNavDrawer() {
                   ? active
                   : undefined
               }
+              aria-haspopup={isMore ? "menu" : undefined}
+              aria-expanded={isMore ? moreOpen : undefined}
               className={cn(
                 chipVariants({
                   tone: active ? "accent" : "neutral",
@@ -85,9 +102,15 @@ export function MobileNavDrawer() {
               )}
             >
               {chip.label}
+              {isMore && <ChevronDown size={13} aria-hidden="true" />}
             </button>
           );
         })}
+        {moreOpen && (
+          <div className="px-sm py-base text-body text-highlight-10 w-full text-center">
+            Coming soon
+          </div>
+        )}
       </div>
 
       {!stepperBelongsToTimeframe && (

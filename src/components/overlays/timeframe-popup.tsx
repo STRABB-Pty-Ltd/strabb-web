@@ -16,6 +16,7 @@ import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } f
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useDelayedClose } from "@/hooks/use-delayed-close";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useIsMobile } from "@/hooks/use-responsive-view";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MonthGrid, WEEK_OPTS } from "@/components/ui/month-grid";
@@ -35,6 +36,10 @@ const isTimeframePage = (p: PageId): p is TimeframePage =>
 export function TimeframePopup() {
   const popupRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
+  // Same breakpoint (and same hook) mobile-top-bar.tsx/mobile-nav-drawer.tsx
+  // already use, instead of a second inline `< 1024` comparison - called up
+  // here, before any early return, per rules of hooks.
+  const isMobileViewport = useIsMobile(1024);
   const tfPopup = useAppStore((s) => s.tfPopup);
   const closeTimeframePopup = useAppStore((s) => s.closeTimeframePopup);
   const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
@@ -93,7 +98,13 @@ export function TimeframePopup() {
   }, []);
 
   useClickOutside(popupRef, closeTimeframePopup, tfPopup.open);
-  useFocusTrap(popupRef, { active: tfPopup.open, onEscape: closeTimeframePopup });
+  // No onEscape here - useKeyboardShortcuts' centralized chain owns Escape
+  // for this popup (checked before MobileNavDrawer, which it can open from
+  // inside of on mobile). Wiring both here and there raced: this trap's
+  // document-level listener fired first, closing the popup itself, so by
+  // the time the chain's window-level handler ran, tfPopup.open already
+  // read false and it fell through to close the drawer underneath too.
+  useFocusTrap(popupRef, { active: tfPopup.open });
 
   // Anchor rect is captured at click time; if the user resizes the window the
   // saved coords go stale, so close rather than render in the wrong place.
@@ -127,7 +138,6 @@ export function TimeframePopup() {
   // POPUP_WIDTH is wider than a phone screen, so both need a mobile branch
   // (M.3: this popup previously had no mobile trigger to reach it at all).
   const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1920;
-  const isMobileViewport = viewportWidth < 1024;
   const popupWidth = isMobileViewport
     ? Math.min(POPUP_WIDTH, viewportWidth - 2 * CANVAS_PAD)
     : POPUP_WIDTH;
