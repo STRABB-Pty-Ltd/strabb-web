@@ -28,8 +28,9 @@ interface CleanerPickerDialogProps {
 }
 
 /* Cleaner picker - sits immediately LEFT of the drill-down panel (same gap
-   the drawer keeps from the viewport edge), bright beside it with no scrim
-   of its own. */
+   the drawer keeps from the viewport edge, off the panel-width's clamped
+   value below lg, not the raw --drilldown-width), bright beside it with no
+   scrim of its own. */
 export function CleanerPickerDialog({
   open,
   onOpenChange,
@@ -100,7 +101,7 @@ export function CleanerPickerDialog({
       closeLabel="Close cleaner picker"
       animation="fade"
       scrim={false}
-      rightOffset="calc(var(--drilldown-width) + var(--space-md) * 2)"
+      rightOffset="calc(var(--drilldown-panel-width) + var(--space-md) * 2)"
       bodyClassName="gap-sm flex flex-col"
       footer={
         mode !== "choose" ? (

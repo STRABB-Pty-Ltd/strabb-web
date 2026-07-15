@@ -77,17 +77,31 @@ export function ExpenseChart({ data, loading }: ExpenseChartProps) {
           innerRadius={55}
           outerRadius={89}
           paddingAngle={2}
-          label={({ name, value }) => `${name}: ${formatAUD(Number(value))}`}
         >
           {data.map((_, i) => (
             <Cell key={i} fill={expenseSliceColor(i)} />
           ))}
         </Pie>
         <ChartTooltip formatter={(value) => formatAUD(Number(value))} />
+        {/* Amount moved from the pie's own leader-line labels into the
+            legend text below: recharts positions those labels outside the
+            pie at a radius that doesn't account for container width, so
+            at narrow widths (or just a longer category name) they clipped
+            against the SVG edge with no leader line visible to explain
+            the orphaned text (found in the M.4 mobile audit). The legend
+            already sits safely in normal HTML flow and wraps instead. */}
         <Legend
           verticalAlign="bottom"
           iconType="circle"
-          formatter={(v) => <span className="text-body">{v}</span>}
+          formatter={(value, entry) => {
+            const amount = (entry.payload as unknown as ExpenseData | undefined)?.amount;
+            return (
+              <span className="text-body">
+                {value}
+                {amount !== undefined ? `: ${formatAUD(amount)}` : ""}
+              </span>
+            );
+          }}
         />
       </PieChart>
     </ChartContainer>

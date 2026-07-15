@@ -28,6 +28,8 @@ export function SettingsLayout() {
 
   // No own padding: the canvas already provides the page grid's px-md and
   // top offset. Stacking p-md on top pushed settings 21px off the grid
-  // every other page sits on.
+  // every other page sits on. SettingsMobileNav renders once in the route
+  // layout (settings/layout.tsx), not here, so /settings/listings and the
+  // other sub-routes get it too.
   return <ActiveSection />;
 }
