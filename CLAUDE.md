@@ -137,9 +137,7 @@ justification.
   page-title text was dropped - the bottom tab bar's now-shaded active
   tab (matching TopNav's own selected-pill styling) identifies the page
   instead, and the title text was truncating on narrow phones anyway.
-  Chris hasn't explicitly signed off on this specific sub-change yet -
-  flagging here so it's visible in review rather than landing as a
-  silent rules violation.
+  Chris confirmed this sub-change 15-07-2026.
 - Contextual sidebar behaviour where applicable
 - Trusted current-user auth/session model
 
