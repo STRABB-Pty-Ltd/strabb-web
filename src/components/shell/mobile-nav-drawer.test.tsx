@@ -114,9 +114,7 @@ describe("MobileNavDrawer", () => {
     render(<MobileNavDrawer />);
     await userEvent.click(screen.getByText("Bookings"));
 
-    expect(handleChipClickMock).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "bookings" }),
-    );
+    expect(handleChipClickMock).toHaveBeenCalledWith(expect.objectContaining({ id: "bookings" }));
     expect(closeMobileNavDrawerMock).toHaveBeenCalledTimes(1);
   });
 
@@ -131,7 +129,9 @@ describe("MobileNavDrawer", () => {
     const leftSlot = screen.getByText("left-slot");
     const sections = screen.getByText("sections collapsible=true");
     // DOCUMENT_POSITION_FOLLOWING (4): sections comes before left-slot.
-    expect(sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(
+      sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("on a non-timeframe page (messaging), renders the left slot up near the chips instead", () => {
@@ -143,7 +143,9 @@ describe("MobileNavDrawer", () => {
     const leftSlot = screen.getByText("left-slot");
     const sections = screen.getByText("sections collapsible=true");
     // DOCUMENT_POSITION_PRECEDING (2): sections comes after left-slot.
-    expect(sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+    expect(
+      sections.compareDocumentPosition(leftSlot) & Node.DOCUMENT_POSITION_PRECEDING,
+    ).toBeTruthy();
   });
 
   it("closes itself when the viewport crosses to desktop while open, not just hides", () => {

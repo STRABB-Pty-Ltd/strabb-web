@@ -190,15 +190,22 @@ function Drawer({
         tabIndex={-1}
         className={cn(
           "fixed flex flex-col overflow-hidden shadow-xl",
-          side === "left" ? "bg-[var(--surface-60)] rounded-b-2xl" : "bg-[var(--neutral-30)] rounded-2xl",
+          side === "left"
+            ? "rounded-b-2xl bg-[var(--surface-60)]"
+            : "rounded-2xl bg-[var(--neutral-30)]",
         )}
         style={{
           zIndex,
-          top: side === "left" ? "var(--overlay-top)" : "calc(var(--overlay-top) + var(--space-md) - 2px)",
+          top:
+            side === "left"
+              ? "var(--overlay-top)"
+              : "calc(var(--overlay-top) + var(--space-md) - 2px)",
           ...insetStyle,
           bottom: side === "left" ? undefined : "var(--overlay-bottom)",
           maxHeight:
-            side === "left" ? "calc(100vh - var(--overlay-top) - var(--overlay-bottom))" : undefined,
+            side === "left"
+              ? "calc(100vh - var(--overlay-top) - var(--overlay-bottom))"
+              : undefined,
           width: WIDTHS[width],
           animation: !open
             ? `${frames.out} ${DRAWER_EXIT_MS}ms ease-in forwards`
