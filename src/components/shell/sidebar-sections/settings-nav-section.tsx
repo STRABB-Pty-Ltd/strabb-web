@@ -1,38 +1,10 @@
 "use client";
 
-import {
-  Building2,
-  CreditCard,
-  Globe,
-  Inbox,
-  Phone,
-  Radio,
-  Receipt,
-  Settings,
-  Sparkles,
-} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
+import { settingsSections } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
-
-// Most tabs switch an in-page section via store state. Listings is route-driven
-// (`href`): it lives at its own /settings/listings page, so its tab navigates
-// there and lights up on that route rather than toggling section state.
-// Exported for SettingsMobileNav (this sidebar section is lg+ only, see
-// contextual-sidebar.tsx - below lg, settings-mobile-nav.tsx renders the
-// same list as a horizontal chip row instead).
-export const settingsSections = [
-  { id: "general", label: "General", icon: Settings },
-  { id: "listings", label: "Listings", icon: Building2, href: "/settings/listings" },
-  { id: "billing", label: "Billing", icon: CreditCard },
-  { id: "phone", label: "Phone", icon: Phone },
-  { id: "inbox", label: "Inbox", icon: Inbox },
-  { id: "integrations", label: "Integrations", icon: Globe },
-  { id: "cleaning", label: "Cleaning", icon: Sparkles },
-  { id: "expenses", label: "Expenses", icon: Receipt },
-  { id: "channels", label: "Channels", icon: Radio },
-] as const;
 
 export function SettingsNavSection() {
   const section = useAppStore((s) => s.settings.section);

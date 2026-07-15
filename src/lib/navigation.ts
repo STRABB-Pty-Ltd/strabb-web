@@ -1,8 +1,15 @@
 import {
   BarChart3,
+  Building2,
   CalendarDays,
+  CreditCard,
+  Globe,
+  Inbox,
   LayoutDashboard,
   MessageSquare,
+  Phone,
+  Radio,
+  Receipt,
   Settings,
   Sparkles,
   type LucideIcon,
@@ -57,6 +64,27 @@ export const settingsNavItem: TopNavItem = {
 export const pageLabels: Record<PageId, string> = Object.fromEntries(
   [...topNavItems, settingsNavItem].map((item) => [item.id, item.label]),
 ) as Record<PageId, string>;
+
+// Settings' section tabs - shared by the desktop sidebar's vertical list
+// (SettingsNavSection, lg+ only) and the mobile horizontal chip row
+// (SettingsMobileNav, below lg): same sections, same click/active logic,
+// different layout. Lives here rather than in either component's module
+// so neither reaches into the other's internals (review finding, PR #64).
+// Most tabs switch an in-page section via store state. Listings is
+// route-driven (`href`): it lives at its own /settings/listings page, so
+// its tab navigates there and lights up on that route rather than
+// toggling section state.
+export const settingsSections = [
+  { id: "general", label: "General", icon: Settings },
+  { id: "listings", label: "Listings", icon: Building2, href: "/settings/listings" },
+  { id: "billing", label: "Billing", icon: CreditCard },
+  { id: "phone", label: "Phone", icon: Phone },
+  { id: "inbox", label: "Inbox", icon: Inbox },
+  { id: "integrations", label: "Integrations", icon: Globe },
+  { id: "cleaning", label: "Cleaning", icon: Sparkles },
+  { id: "expenses", label: "Expenses", icon: Receipt },
+  { id: "channels", label: "Channels", icon: Radio },
+] as const;
 
 /**
  * Filter a nav item by the current role. An item with no `roles` is visible to

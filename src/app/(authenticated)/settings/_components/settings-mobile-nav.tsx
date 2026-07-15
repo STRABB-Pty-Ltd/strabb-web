@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 
 import { chipVariants } from "@/components/ui/chip";
-import { settingsSections } from "@/components/shell/sidebar-sections/settings-nav-section";
+import { settingsSections } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
