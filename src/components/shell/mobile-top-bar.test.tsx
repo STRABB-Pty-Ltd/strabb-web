@@ -88,11 +88,11 @@ describe("MobileTopBar", () => {
     expect(screen.queryByRole("button", { name: /open menu/i })).not.toBeInTheDocument();
   });
 
-  it("renders the page title and a Settings link", () => {
+  it("renders a Settings link, with no page title text (that's the bottom nav's job now)", () => {
     alertsMock.mockReturnValue({ data: [] });
     render(<MobileTopBar />);
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute("href", "/settings");
+    expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
   });
 
   it("only enables the alerts query below lg, since this header is CSS-hidden (not unmounted) at lg+", () => {

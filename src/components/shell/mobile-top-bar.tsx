@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { useDashboardAlerts } from "@/hooks/use-dashboard";
 import { useIsMobile } from "@/hooks/use-responsive-view";
-import { pageLabels, settingsNavItem } from "@/lib/navigation";
+import { settingsNavItem } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
@@ -13,11 +13,18 @@ import { NotificationsDropdown } from "./notifications-dropdown";
 import { StrabbHeroIcon } from "./strabb-marks";
 
 /**
- * Phone header: hero icon + page title (left), wordmark + notifications
- * chevron (center), Settings shortcut (right) - since Settings lives up
- * top rather than in the bottom bar, decision 10-07-2026 (team meeting).
+ * Phone header: hero icon (left), wordmark + notifications chevron
+ * (center), Settings shortcut (right) - since Settings lives up top
+ * rather than in the bottom bar, decision 10-07-2026 (team meeting).
  * Hidden at lg+ (1024px) alongside MobileBottomNav - see that component's
  * comment for why md (768px) wasn't a safe cutover for the desktop shell.
+ *
+ * No page title text (Will's M.3 feedback): MobileBottomNav's active tab
+ * is now its own inverted-colour chip (bg-highlight-10), same methodology
+ * as desktop TopNav's selected pill - so the page is already identified
+ * there (and, on /settings, by this bar's own Settings icon going
+ * highlight-10). The label was redundant with that and was truncating to
+ * "D…"/"C…"/etc. on narrow phones; removing it frees the space instead.
  *
  * M.1.1 follow-up to M.1: swapped the text "STRABB" wordmark for Will's
  * SVGs and added the notifications dropdown. Alerts are fetched here
@@ -51,7 +58,7 @@ export function MobileTopBar() {
       className="px-md py-sm grid shrink-0 grid-cols-[1fr_auto_1fr] items-center lg:hidden"
       style={{ borderBottom: "var(--hairline) solid var(--border)" }}
     >
-      <div className="gap-sm flex min-w-0 items-center">
+      <div className="gap-sm flex items-center">
         {currentPage !== "settings" && (
           <button
             type="button"
@@ -66,9 +73,6 @@ export function MobileTopBar() {
           </button>
         )}
         <StrabbHeroIcon className="text-highlight-10 h-6 w-6 shrink-0" />
-        <span className="text-body truncate text-[var(--text-secondary)]">
-          {pageLabels[currentPage]}
-        </span>
       </div>
       <NotificationsDropdown alerts={alerts ?? []} />
       <Link
