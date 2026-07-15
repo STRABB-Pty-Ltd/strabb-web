@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { useDashboardAlerts } from "@/hooks/use-dashboard";
 import { useIsMobile } from "@/hooks/use-responsive-view";
-import { settingsNavItem } from "@/lib/navigation";
+import { settingsNavItem, topNavItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
@@ -42,9 +42,21 @@ import { StrabbHeroIcon } from "./strabb-marks";
  * matches Drawer's own scrim/Escape/click-outside close paths rather than
  * fighting them). Settings is excluded - SettingsMobileNav already owns
  * that page's mobile nav and the drawer renders nothing there.
+ *
+ * Settings toggle-back (design feedback): on desktop, TopNav's other page
+ * pills are always visible, so leaving Settings is obvious. On mobile
+ * there's no equivalent while the Settings icon here is already
+ * highlighted (you're on it) - tapping it again used to be a no-op
+ * (same href). Now, while on /settings, it navigates back to whichever
+ * main page you were on before entering Settings (store's previousPage,
+ * set by every setCurrentPage call - stable across /settings/* sub-routes
+ * since those don't change the top-level segment). Deliberately a quiet
+ * secondary affordance, not the primary way out - same icon, same
+ * highlighted styling, just a different destination.
  */
 export function MobileTopBar() {
   const currentPage = useAppStore((s) => s.currentPage);
+  const previousPage = useAppStore((s) => s.previousPage);
   const selectedListings = useAppStore((s) => s.selectedListings);
   const mobileNavDrawerOpen = useAppStore((s) => s.mobileNavDrawer.open);
   const openMobileNavDrawer = useAppStore((s) => s.openMobileNavDrawer);
@@ -52,6 +64,8 @@ export function MobileTopBar() {
   const isMobile = useIsMobile(1024);
   const { data: alerts } = useDashboardAlerts(selectedListings, isMobile);
   const SettingsIcon = settingsNavItem.icon;
+  const onSettings = currentPage === "settings";
+  const backTarget = topNavItems.find((item) => item.id === previousPage) ?? topNavItems[0];
 
   return (
     <header
@@ -76,14 +90,12 @@ export function MobileTopBar() {
       </div>
       <NotificationsDropdown alerts={alerts ?? []} />
       <Link
-        href={settingsNavItem.href}
-        aria-label="Settings"
-        aria-current={currentPage === "settings" ? "page" : undefined}
+        href={onSettings ? backTarget.href : settingsNavItem.href}
+        aria-label={onSettings ? `Back to ${backTarget.label}` : "Settings"}
+        aria-current={onSettings ? "page" : undefined}
         className={cn(
           "ml-auto flex size-[var(--touch-target-min)] items-center justify-center rounded-lg",
-          currentPage === "settings"
-            ? "bg-highlight-10 text-surface-60"
-            : "bg-neutral-30 text-highlight-10",
+          onSettings ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",
         )}
       >
         <SettingsIcon size={20} aria-hidden="true" />

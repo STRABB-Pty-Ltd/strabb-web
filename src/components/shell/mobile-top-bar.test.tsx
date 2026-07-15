@@ -91,8 +91,29 @@ describe("MobileTopBar", () => {
   it("renders a Settings link, with no page title text (that's the bottom nav's job now)", () => {
     alertsMock.mockReturnValue({ data: [] });
     render(<MobileTopBar />);
-    expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute("href", "/settings");
+    const link = screen.getByRole("link", { name: /settings/i });
+    expect(link).toHaveAttribute("href", "/settings");
+    expect(link).not.toHaveAttribute("aria-current");
     expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
+  });
+
+  it("on settings, the Settings link becomes a way back to the page you came from", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, currentPage: "settings", previousPage: "calendar" });
+    render(<MobileTopBar />);
+    const link = screen.getByRole("link", { name: /back to calendar/i });
+    expect(link).toHaveAttribute("href", "/calendar");
+    expect(link).toHaveAttribute("aria-current", "page");
+  });
+
+  it("falls back to the first main page when there's no previousPage to go back to", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, currentPage: "settings", previousPage: null });
+    render(<MobileTopBar />);
+    expect(screen.getByRole("link", { name: /back to dashboard/i })).toHaveAttribute(
+      "href",
+      "/dashboard",
+    );
   });
 
   it("only enables the alerts query below lg, since this header is CSS-hidden (not unmounted) at lg+", () => {
