@@ -2,10 +2,11 @@ import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { closeMock, setAnchorMock, setCustomRangeMock } = vi.hoisted(() => ({
+const { closeMock, setAnchorMock, setCustomRangeMock, isMobileMock } = vi.hoisted(() => ({
   closeMock: vi.fn(),
   setAnchorMock: vi.fn(),
   setCustomRangeMock: vi.fn(),
+  isMobileMock: vi.fn(),
 }));
 
 const storeState = {
@@ -35,6 +36,12 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: (selector: (s: typeof storeState) => unknown) => selector(storeState),
 }));
 
+// Desktop by default - these tests assert the desktop POPUP_WIDTH (377)
+// positioning math; mobile-viewport behaviour has its own coverage below.
+vi.mock("@/hooks/use-responsive-view", () => ({
+  useIsMobile: (...args: unknown[]) => isMobileMock(...args),
+}));
+
 import { TimeframePopup } from "./timeframe-popup";
 
 describe("TimeframePopup", () => {
@@ -46,6 +53,8 @@ describe("TimeframePopup", () => {
     closeMock.mockReset();
     setAnchorMock.mockReset();
     setCustomRangeMock.mockReset();
+    isMobileMock.mockReset();
+    isMobileMock.mockReturnValue(false);
     storeState.tfPopup = { open: true, anchor: null, autoSelect: false };
     storeState.currentPage = "dashboard";
     storeState.dashboard = { windowSize: "month", anchor: null };
@@ -127,5 +136,23 @@ describe("TimeframePopup", () => {
       end: "2026-02-15",
     });
     expect(closeMock).toHaveBeenCalled();
+  });
+
+  it("clamps to the viewport width on mobile instead of the fixed 377px desktop width", () => {
+    isMobileMock.mockReturnValue(true);
+    vi.stubGlobal("innerWidth", 375);
+    render(<TimeframePopup />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveStyle({ width: "333px" }); // 375 - 2 * CANVAS_PAD (21)
+    vi.unstubAllGlobals();
+  });
+
+  it("uses the fixed 377px width on desktop", () => {
+    isMobileMock.mockReturnValue(false);
+    vi.stubGlobal("innerWidth", 1280);
+    render(<TimeframePopup />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveStyle({ width: "377px" });
+    vi.unstubAllGlobals();
   });
 });

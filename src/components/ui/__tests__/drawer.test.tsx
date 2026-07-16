@@ -89,6 +89,66 @@ describe("Drawer", () => {
     );
   });
 
+  it("anchors right by default, and left with no rightOffset when side is left", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onClose={vi.fn()} title="A" rightOffset="24px">
+        <p>content</p>
+      </Drawer>,
+    );
+    let panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.right).toBe("24px");
+    expect(panel.style.left).toBe("");
+
+    rerender(
+      <Drawer open onClose={vi.fn()} title="A" side="left" rightOffset="24px">
+        <p>content</p>
+      </Drawer>,
+    );
+    panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.left).toBe("var(--overlay-left)");
+    expect(panel.style.right).toBe("");
+  });
+
+  it("side=left shrinks to content (no bottom pin, capped by maxHeight); side=right still pins both edges", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onClose={vi.fn()} title="A">
+        <p>content</p>
+      </Drawer>,
+    );
+    let panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.bottom).toBe("var(--overlay-bottom)");
+    expect(panel.style.maxHeight).toBe("");
+
+    rerender(
+      <Drawer open onClose={vi.fn()} title="A" side="left">
+        <p>content</p>
+      </Drawer>,
+    );
+    panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.bottom).toBe("");
+    expect(panel.style.maxHeight).toBe("calc(100vh - var(--overlay-top) - var(--overlay-bottom))");
+  });
+
+  it("uses surface-60 (matching the desktop sidebar) when side is left, neutral-30 otherwise", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onClose={vi.fn()} title="A">
+        <p>content</p>
+      </Drawer>,
+    );
+    let panel = getByRole("dialog", { name: "A" });
+    expect(panel.className).toContain("bg-[var(--neutral-30)]");
+    expect(panel.className).not.toContain("bg-[var(--surface-60)]");
+
+    rerender(
+      <Drawer open onClose={vi.fn()} title="A" side="left">
+        <p>content</p>
+      </Drawer>,
+    );
+    panel = getByRole("dialog", { name: "A" });
+    expect(panel.className).toContain("bg-[var(--surface-60)]");
+    expect(panel.className).not.toContain("bg-[var(--neutral-30)]");
+  });
+
   it("isolate stops mousedown bubbling out of the panel", async () => {
     const user = userEvent.setup();
     const outerMouseDown = vi.fn();

@@ -35,12 +35,14 @@ export function useKeyboardShortcuts() {
   const closeSharePopup = useAppStore((s) => s.closeSharePopup);
   const closeShoppingListPopup = useAppStore((s) => s.closeShoppingListPopup);
   const closeTimeframePopup = useAppStore((s) => s.closeTimeframePopup);
+  const closeMobileNavDrawer = useAppStore((s) => s.closeMobileNavDrawer);
 
   const drillDownPanel = useAppStore((s) => s.drillDownPanel);
   const threadOverlay = useAppStore((s) => s.threadOverlay);
   const sharePopup = useAppStore((s) => s.sharePopup);
   const shoppingListPopup = useAppStore((s) => s.shoppingListPopup);
   const tfPopup = useAppStore((s) => s.tfPopup);
+  const mobileNavDrawer = useAppStore((s) => s.mobileNavDrawer);
 
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -74,6 +76,17 @@ export function useKeyboardShortcuts() {
           closeTimeframePopup();
           return;
         }
+        // Lowest priority: MobileNavDrawer is the outermost overlay on
+        // mobile (TimeframePopup, ShoppingListPopup, SharePopup can all
+        // open from inside it) - checked last so a popup nested inside an
+        // open drawer closes on its own first, and only a second Escape
+        // (once nothing more nested is open) closes the drawer itself.
+        // The drawer's own Drawer instance passes closeOnEscape={false}
+        // so it defers to this chain instead of racing it.
+        if (mobileNavDrawer.open) {
+          closeMobileNavDrawer();
+          return;
+        }
         return;
       }
 
@@ -102,11 +115,13 @@ export function useKeyboardShortcuts() {
     sharePopup,
     shoppingListPopup,
     tfPopup,
+    mobileNavDrawer,
     closeDrillDownPanel,
     closeThreadOverlay,
     closeSharePopup,
     closeShoppingListPopup,
     closeTimeframePopup,
+    closeMobileNavDrawer,
   ]);
 
   return { helpOpen, setHelpOpen };

@@ -27,31 +27,37 @@ type SidebarStore = {
   toggleSavedReports: () => void;
 };
 
+const { sidebarStore } = vi.hoisted(() => ({
+  sidebarStore: {
+    currentPage: "reporting",
+    openShoppingListPopup: vi.fn(),
+    reporting: { savedReportsOpen: true },
+    toggleSavedReports: vi.fn(),
+  } as SidebarStore,
+}));
+
 vi.mock("@/stores/app-store", () => ({
-  useAppStore: (selector: (s: SidebarStore) => unknown) =>
-    selector({
-      currentPage: "reporting",
-      openShoppingListPopup: vi.fn(),
-      reporting: { savedReportsOpen: true },
-      toggleSavedReports: vi.fn(),
-    }),
+  useAppStore: (selector: (s: SidebarStore) => unknown) => selector(sidebarStore),
 }));
 
 // Stub the other sidebar sections so only the saved-reports block renders.
 vi.mock("./sidebar-sections/actions-section", () => ({ ActionsSection: () => null }));
 vi.mock("./sidebar-sections/channel-filter", () => ({ ChannelFilter: () => null }));
-vi.mock("./sidebar-sections/listing-filter-tree", () => ({ ListingFilterTree: () => null }));
+vi.mock("./sidebar-sections/listing-filter-tree", () => ({
+  ListingFilterTree: () => <div>listing-filter-tree</div>,
+}));
 vi.mock("./sidebar-sections/settings-nav-section", () => ({ SettingsNavSection: () => null }));
 vi.mock("./sidebar-sections/timeframe-selector", () => ({ TimeframeSelector: () => null }));
 vi.mock("./sidebar-sections/view-switcher", () => ({ ViewSwitcher: () => null }));
 
-import { ContextualSidebar } from "./contextual-sidebar";
+import { ContextualSidebar, ContextualSidebarSections } from "./contextual-sidebar";
 
 describe("ContextualSidebar - saved reports (#6a/#6b)", () => {
   beforeEach(() => {
     resetToDefaultViewMock.mockReset();
     loadReportMock.mockReset();
     savedReportsState.activeSavedReport = null;
+    sidebarStore.currentPage = "reporting";
   });
 
   it("#6b highlights only the active saved report row", () => {
@@ -90,5 +96,57 @@ describe("ContextualSidebar - saved reports (#6a/#6b)", () => {
     render(<ContextualSidebar />);
     await userEvent.click(screen.getByRole("button", { name: "Show default" }));
     expect(resetToDefaultViewMock).toHaveBeenCalledOnce();
+  });
+});
+
+describe("ContextualSidebarSections - collapsibleListingFilter (M.3)", () => {
+  beforeEach(() => {
+    sidebarStore.currentPage = "dashboard";
+  });
+
+  it("renders ListingFilterTree directly (uncollapsed) by default, matching desktop", () => {
+    render(<ContextualSidebarSections />);
+    expect(screen.getByText("listing-filter-tree")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Listings" })).not.toBeInTheDocument();
+  });
+
+  it("wraps it in a disclosure, collapsed by default, when opted in", () => {
+    render(<ContextualSidebarSections collapsibleListingFilter />);
+    const toggle = screen.getByRole("button", { name: "Listings" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    // Lazy-mounted: not just hidden, absent from the tree until expanded.
+    expect(screen.queryByText("listing-filter-tree")).not.toBeInTheDocument();
+  });
+
+  it("expands the disclosure and mounts the tree on click", async () => {
+    render(<ContextualSidebarSections collapsibleListingFilter />);
+    await userEvent.click(screen.getByRole("button", { name: "Listings" }));
+
+    expect(screen.getByRole("button", { name: "Listings" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(screen.getByText("listing-filter-tree")).toBeInTheDocument();
+  });
+
+  it("renders no listing filter section on settings, collapsible or not", () => {
+    sidebarStore.currentPage = "settings";
+    render(<ContextualSidebarSections collapsibleListingFilter />);
+    expect(screen.queryByRole("button", { name: "Listings" })).not.toBeInTheDocument();
+    expect(screen.queryByText("listing-filter-tree")).not.toBeInTheDocument();
+  });
+});
+
+describe("ContextualSidebarSections - renderAfterTimeframe (M.3)", () => {
+  it("renders the slot right after the timeframe section, on a page that has one", () => {
+    sidebarStore.currentPage = "dashboard";
+    render(<ContextualSidebarSections renderAfterTimeframe={<div>after-timeframe</div>} />);
+    expect(screen.getByText("after-timeframe")).toBeInTheDocument();
+  });
+
+  it("omits the slot on a page with no timeframe section, even when passed", () => {
+    sidebarStore.currentPage = "messaging";
+    render(<ContextualSidebarSections renderAfterTimeframe={<div>after-timeframe</div>} />);
+    expect(screen.queryByText("after-timeframe")).not.toBeInTheDocument();
   });
 });

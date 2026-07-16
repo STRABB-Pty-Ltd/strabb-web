@@ -2,12 +2,22 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { alertsMock, storeMock, setSubmenuMock, pushMock, isMobileMock } = vi.hoisted(() => ({
+const {
+  alertsMock,
+  storeMock,
+  setSubmenuMock,
+  pushMock,
+  isMobileMock,
+  openMobileNavDrawerMock,
+  closeMobileNavDrawerMock,
+} = vi.hoisted(() => ({
   alertsMock: vi.fn(),
   storeMock: vi.fn(),
   setSubmenuMock: vi.fn(),
   pushMock: vi.fn(),
   isMobileMock: vi.fn(),
+  openMobileNavDrawerMock: vi.fn(),
+  closeMobileNavDrawerMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-dashboard", () => ({
@@ -32,6 +42,9 @@ const baseStore = {
   currentPage: "dashboard",
   selectedListings: [],
   setSubmenu: setSubmenuMock,
+  mobileNavDrawer: { open: false },
+  openMobileNavDrawer: openMobileNavDrawerMock,
+  closeMobileNavDrawer: closeMobileNavDrawerMock,
 };
 
 describe("MobileTopBar", () => {
@@ -41,15 +54,69 @@ describe("MobileTopBar", () => {
     setSubmenuMock.mockReset();
     pushMock.mockReset();
     isMobileMock.mockReset();
+    openMobileNavDrawerMock.mockReset();
+    closeMobileNavDrawerMock.mockReset();
     storeMock.mockReturnValue(baseStore);
     isMobileMock.mockReturnValue(true);
   });
 
-  it("renders the page title and a Settings link", () => {
+  it("clicking the hamburger opens the mobile nav drawer when closed", async () => {
     alertsMock.mockReturnValue({ data: [] });
     render(<MobileTopBar />);
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /settings/i })).toHaveAttribute("href", "/settings");
+    const trigger = screen.getByRole("button", { name: /open menu/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(trigger);
+    expect(openMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+    expect(closeMobileNavDrawerMock).not.toHaveBeenCalled();
+  });
+
+  it("clicking the hamburger closes the drawer when already open", async () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, mobileNavDrawer: { open: true } });
+    render(<MobileTopBar />);
+    const trigger = screen.getByRole("button", { name: /open menu/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(trigger);
+    expect(closeMobileNavDrawerMock).toHaveBeenCalledTimes(1);
+    expect(openMobileNavDrawerMock).not.toHaveBeenCalled();
+  });
+
+  it("hides the hamburger on settings, where SettingsMobileNav owns mobile nav", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, currentPage: "settings" });
+    render(<MobileTopBar />);
+    expect(screen.queryByRole("button", { name: /open menu/i })).not.toBeInTheDocument();
+  });
+
+  it("renders a Settings link, with no page title text (that's the bottom nav's job now)", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    render(<MobileTopBar />);
+    const link = screen.getByRole("link", { name: /settings/i });
+    expect(link).toHaveAttribute("href", "/settings");
+    expect(link).not.toHaveAttribute("aria-current");
+    expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
+  });
+
+  it("on settings, the Settings link becomes a way back to the page you came from", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, currentPage: "settings", previousPage: "calendar" });
+    render(<MobileTopBar />);
+    const link = screen.getByRole("link", { name: /back to calendar/i });
+    expect(link).toHaveAttribute("href", "/calendar");
+    // No aria-current: the link no longer targets the page you're on, so
+    // it can't correctly claim to represent it (only the highlighted
+    // styling communicates "you're in Settings" now).
+    expect(link).not.toHaveAttribute("aria-current");
+  });
+
+  it("falls back to the first main page when there's no previousPage to go back to", () => {
+    alertsMock.mockReturnValue({ data: [] });
+    storeMock.mockReturnValue({ ...baseStore, currentPage: "settings", previousPage: null });
+    render(<MobileTopBar />);
+    expect(screen.getByRole("link", { name: /back to dashboard/i })).toHaveAttribute(
+      "href",
+      "/dashboard",
+    );
   });
 
   it("only enables the alerts query below lg, since this header is CSS-hidden (not unmounted) at lg+", () => {

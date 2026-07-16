@@ -25,13 +25,14 @@ const ANIMATIONS = {
   fade: { in: "fadeIn", out: "fadeOut" },
 } as const;
 
-/* Clamped to the viewport (--drilldown-panel-width/--thread-panel-width in
-   globals.css), not the raw --drilldown-width/--thread-width: those are
-   wider than a phone screen, which used to push the panel's left edge
+/* Clamped to the viewport (--drilldown-panel-width/--thread-panel-width/
+   --mobile-nav-drawer-width in globals.css), not raw fixed widths: those
+   are wider than a phone screen, which used to push the panel's left edge
    off-screen with no left inset to catch it. */
 const WIDTHS = {
   drilldown: "var(--drilldown-panel-width)",
   thread: "var(--thread-panel-width)",
+  "mobile-nav": "var(--mobile-nav-drawer-width)",
 } as const;
 
 interface DrawerProps {
@@ -40,7 +41,8 @@ interface DrawerProps {
   /** Accessible name of the dialog; also the default header's heading. */
   title: string;
   children: React.ReactNode;
-  /** Width token - 377px detail/form drawers vs the 610px thread. */
+  /** Width token - 377px detail/form drawers, 610px thread, or the mobile
+      nav drawer's own width. */
   width?: keyof typeof WIDTHS;
   animation?: keyof typeof ANIMATIONS;
   /** Canvas-bounded scrim behind the panel. Drawers stacked beside an
@@ -49,7 +51,13 @@ interface DrawerProps {
   /** z pair - the thread family raises these above the drawer layer. */
   zIndex?: number;
   scrimZIndex?: number;
-  /** Right inset - stacked drawers offset past their parent's width. */
+  /** Which edge the panel is anchored to and slides from. "right" (default)
+      for detail/form/thread panels; "left" for the mobile nav drawer, which
+      shares the edge the desktop sidebar occupies. */
+  side?: "left" | "right";
+  /** Right inset - stacked drawers offset past their parent's width.
+      Ignored when side="left" (there's nothing to stack a left drawer
+      against today). */
   rightOffset?: string;
   /** Escape closes (default). The thread family opts out - app-shell owns
       Escape for that stack. */
@@ -82,6 +90,7 @@ function Drawer({
   scrim = true,
   zIndex = Z.DRAWER,
   scrimZIndex = Z.DRAWER_SCRIM,
+  side = "right",
   rightOffset = "var(--space-md)",
   closeOnEscape = true,
   accentColor,
@@ -125,6 +134,12 @@ function Drawer({
   if (!shouldRender) return null;
 
   const frames = ANIMATIONS[animation];
+  // side="left": anchor off --overlay-left (the mobile shell's own left
+  // inset, already 0 below lg) instead of rightOffset - there's no
+  // leftOffset counterpart since nothing stacks a second drawer beside a
+  // left one today, unlike the right side's TicketDrawer/CleanerPickerDialog.
+  const insetStyle: React.CSSProperties =
+    side === "left" ? { left: "var(--overlay-left)" } : { right: rightOffset };
 
   return (
     <>
@@ -144,21 +159,53 @@ function Drawer({
       )}
 
       {/* Panel - canvas-bounded: top aligns with canvas content top so the
-          panel never protrudes into the topnav/submenu. Right + bottom inset
-          match canvas content padding from the screen edges (below lg,
-          --overlay-bottom clears MobileBottomNav instead). */}
+          panel never protrudes into the topnav/submenu. Right (or left, for
+          side="left") + bottom inset match canvas content padding from the
+          screen edges (below lg, --overlay-bottom clears MobileBottomNav
+          instead). side="left" sits flush against --overlay-top with
+          square top corners instead - it's anchored under the mobile
+          topbar's hamburger trigger, so it should read as an extension of
+          the header rather than a floating card with a gap above it.
+          side="left" also uses surface-60 instead of neutral-30: its body
+          is ContextualSidebarSections, the same shared buttons the desktop
+          sidebar renders on a surface-60 container so their own
+          neutral-30 fill reads as shading against it. Matching that
+          container colour here (instead of the neutral-30 every other
+          drawer uses) is what makes the shading show up at all - on
+          neutral-30 the buttons were the same colour as the panel and
+          vanished. side="left" also leaves `bottom` unset in favour of a
+          matching `maxHeight`: MobileNavDrawer's content length varies a
+          lot by page (Messaging's two chips vs. Calendar's five sections),
+          so pinning both edges like every other drawer left a slab of
+          empty surface-60 below short content on tall screens. Unset
+          bottom lets a non-replaced fixed element with only `top` set
+          shrink-to-fit its content per the CSS spec; maxHeight keeps the
+          previous cap (and the body's own overflow-y-auto) for pages
+          whose content still exceeds it. */}
       <div
         ref={panelRef}
         data-slot="drawer"
         role="dialog"
         aria-label={title}
         tabIndex={-1}
-        className="fixed flex flex-col overflow-hidden rounded-2xl bg-[var(--neutral-30)] shadow-xl"
+        className={cn(
+          "fixed flex flex-col overflow-hidden shadow-xl",
+          side === "left"
+            ? "rounded-b-2xl bg-[var(--surface-60)]"
+            : "rounded-2xl bg-[var(--neutral-30)]",
+        )}
         style={{
           zIndex,
-          top: "calc(var(--overlay-top) + var(--space-md) - 2px)",
-          right: rightOffset,
-          bottom: "var(--overlay-bottom)",
+          top:
+            side === "left"
+              ? "var(--overlay-top)"
+              : "calc(var(--overlay-top) + var(--space-md) - 2px)",
+          ...insetStyle,
+          bottom: side === "left" ? undefined : "var(--overlay-bottom)",
+          maxHeight:
+            side === "left"
+              ? "calc(100vh - var(--overlay-top) - var(--overlay-bottom))"
+              : undefined,
           width: WIDTHS[width],
           animation: !open
             ? `${frames.out} ${DRAWER_EXIT_MS}ms ease-in forwards`

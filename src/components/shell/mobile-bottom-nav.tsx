@@ -8,10 +8,17 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 
 /**
- * Phone bottom tab bar (M.1). Adapts the cleaner portal's proven pattern
- * (src/app/(portal)/_components/portal-nav.tsx) to the 5 main app pages.
- * Settings lives in MobileTopBar instead of here - decision 10-07-2026
- * (team meeting), see CLAUDE.md's shell note.
+ * Phone bottom tab bar (M.1). Settings lives in MobileTopBar instead of
+ * here - decision 10-07-2026 (team meeting), see CLAUDE.md's shell note.
+ *
+ * Shading follows the same 60/30/10 pattern as desktop TopNav's pill
+ * group (Will's M.3 feedback) rather than the cleaner portal's plain
+ * text-colour-only tabs: bar bg = surface-60 (60), each unselected tab
+ * = its own neutral-30 pill (30), the active tab = highlight-10 (10).
+ * Labels are 11px/font-normal, not the 13px/font-medium text-body ladder
+ * step used everywhere else - at text-body's size, 5 solid pills packed
+ * into a phone-width bar (worst case "Dashboard"/"Operations") crowded
+ * edge-to-edge with barely any breathing room.
  *
  * Hidden at lg+ (1024px), not md (768px): the desktop TopNav's pill group
  * is absolutely-positioned (outside flex flow) and genuinely collides with
@@ -33,7 +40,7 @@ export function MobileBottomNav() {
       className="bg-surface-60 fixed right-0 bottom-0 left-0 z-10 lg:hidden"
       style={{ borderTop: "var(--hairline) solid var(--border)" }}
     >
-      <div className="flex">
+      <div className="gap-xs p-xs flex">
         {visibleNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPage === item.id;
@@ -44,11 +51,11 @@ export function MobileBottomNav() {
               onClick={() => setCurrentPage(item.id)}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "gap-xs py-base text-body flex min-h-[var(--touch-target-min)] flex-1 flex-col items-center justify-center font-medium",
-                isActive ? "text-highlight-10" : "text-[var(--text-secondary)]",
+                "gap-xs py-base flex min-h-[var(--touch-target-min)] flex-1 flex-col items-center justify-center rounded-lg text-[11px] font-normal transition-colors",
+                isActive ? "bg-highlight-10 text-surface-60" : "bg-neutral-30 text-highlight-10",
               )}
             >
-              <Icon size={20} aria-hidden="true" />
+              <Icon size={18} aria-hidden="true" />
               {item.label}
             </Link>
           );

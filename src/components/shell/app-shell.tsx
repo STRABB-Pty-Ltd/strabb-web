@@ -24,6 +24,7 @@ import { ContextualSidebar } from "./contextual-sidebar";
 import { ErrorBoundary } from "./error-boundary";
 import { KeyboardHelpModal } from "./keyboard-help-modal";
 import { MobileBottomNav } from "./mobile-bottom-nav";
+import { MobileNavDrawer } from "./mobile-nav-drawer";
 import { MobileTopBar } from "./mobile-top-bar";
 import { PageLoading } from "./page-loading";
 import { LogoSection } from "./sidebar-sections/logo-section";
@@ -171,6 +172,7 @@ export function NewAppShell({ children }: { children: React.ReactNode }) {
       <TimeframePopup />
       <SharePopup />
       <ShoppingListPopup />
+      <MobileNavDrawer />
       <ToastContainer />
     </div>
   );

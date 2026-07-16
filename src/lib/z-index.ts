@@ -3,8 +3,10 @@
  * to the viewer.
  *
  * Stack, low to high:
- * - DRAWER (drill-down panels, side popups like timeframe-popup)
- * - THREAD (conversation overlay; sits above drawers)
+ * - DRAWER (drill-down panels, side drawers incl. MobileNavDrawer)
+ * - THREAD (conversation overlay; timeframe-popup - both sit above drawers,
+ *   timeframe-popup needs to since M.3's MobileNavDrawer can open it as a
+ *   nested popup from inside an already-open drawer)
  * - MODAL (centre-screen popups: share, shopping-list)
  * - SKIP_LINK (keyboard a11y; always on top)
  *
