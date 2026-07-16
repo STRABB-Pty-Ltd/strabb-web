@@ -211,6 +211,18 @@ export function CalendarListView({ events }: CalendarListViewProps) {
     [sorted],
   );
 
+  // Land on today by default (instant, no animation) instead of leaving
+  // the list at the top of the fetched range - same as the gantt/agenda
+  // views. Runs once; CalendarPage only mounts this component after its
+  // own isLoading check clears, so the first `sorted` here is already the
+  // real data, not an interim empty array.
+  const hasAutoScrolled = useRef(false);
+  useEffect(() => {
+    if (hasAutoScrolled.current) return;
+    hasAutoScrolled.current = true;
+    scrollToTodayRow(false);
+  }, [sorted, scrollToTodayRow]);
+
   const pendingTodayScroll = useRef(false);
 
   // Resetting the anchor (if the stepper had paged away from it) refetches

@@ -66,13 +66,24 @@ export function SortableList<T>({
       {/* marginTop/top cancel Canvas's own padding-top the same way the
           calendar gantt/agenda/list control bars do - see calendar-agenda-
           view's comment for why both are needed (top alone only closes the
-          gap once scrolling has actually engaged the sticky behaviour). */}
+          gap once scrolling has actually engaged the sticky behaviour).
+          marginBottom: -2px makes the sticky block's flow-reserved space
+          end 2px above its own (unchanged) painted bottom edge, so it
+          always overlaps the scrolling body by a couple of px instead of
+          trying to land the two flush at exactly 0 - this viewport renders
+          at a fractional pixel ratio (getBoundingClientRect values come
+          back as e.g. 172.333...), and the sticky header (its own
+          positioning system) and the body (normal scroll) rounded to
+          different sub-pixels, leaving a hairline of the page background
+          visible right at the seam on some scroll positions. Deliberate
+          overlap is robust to that; trying to align exactly isn't. */}
       <div
         data-slot="sortable-list-sticky-header"
         className="pt-xs sticky"
         style={{
           top: "calc(-1 * (var(--space-md) - 2px))",
           marginTop: "calc(-1 * (var(--space-md) - 2px))",
+          marginBottom: "-2px",
           zIndex: 10,
           backgroundColor: "var(--surface-60)",
         }}
