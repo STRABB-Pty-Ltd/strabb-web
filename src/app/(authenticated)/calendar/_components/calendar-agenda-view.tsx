@@ -248,13 +248,18 @@ export function CalendarAgendaView({ events }: CalendarAgendaViewProps) {
           own padding-top (--space-md - 2px) was otherwise always showing as
           a gap above the stuck bar. A negative top of that same amount
           moves the stick-threshold (and the stuck position) up to Canvas's
-          border edge instead, closing the gap; pt-xs restores a little
-          internal breathing room since padding is unaffected by this. */}
+          border edge instead. marginTop matches it too: sticky only clamps
+          to that threshold once you'd scroll past it, so without the
+          margin the bar still rendered with the gap in its resting
+          (unscrolled) position - only closing once actually scrolled.
+          pt-xs restores a little internal breathing room since padding is
+          unaffected by either offset. */}
       <div
         ref={stickyRef}
         className="pt-xs pb-sm sticky"
         style={{
           top: "calc(-1 * (var(--space-md) - 2px))",
+          marginTop: "calc(-1 * (var(--space-md) - 2px))",
           zIndex: 10,
           backgroundColor: "var(--surface-60)",
         }}

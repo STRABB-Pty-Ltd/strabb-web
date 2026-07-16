@@ -9,9 +9,13 @@ interface SortableListRowProps<T> {
   columns: ColumnDef<T>[];
   index: number;
   onClick: () => void;
+  /** Same id as getRowId(item) - lets a caller find and scroll to this
+   *  specific row (e.g. a "Today" shortcut) without threading refs through
+   *  the generic list. */
+  id?: string;
 }
 
-export function SortableListRow<T>({ item, columns, index, onClick }: SortableListRowProps<T>) {
+export function SortableListRow<T>({ item, columns, index, onClick, id }: SortableListRowProps<T>) {
   const isEven = index % 2 === 0;
   const rowBg = isEven ? "var(--surface-60)" : "var(--neutral-30)";
   const rowAlt = isEven ? "var(--neutral-30)" : "var(--surface-60)";
@@ -19,6 +23,7 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
   return (
     <button
       type="button"
+      data-row-id={id}
       onClick={onClick}
       // w-full alone caps at the scroll container's visible width (its
       // containing block), not the summed column width - the fixed-width
