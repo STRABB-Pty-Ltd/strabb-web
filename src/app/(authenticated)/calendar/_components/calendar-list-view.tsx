@@ -1,9 +1,12 @@
 "use client";
 
 import { format } from "date-fns";
+import { LocateFixed } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useCalendarListSort } from "@/hooks/use-calendar";
 import { formatChannel } from "@/lib/channels";
@@ -154,6 +157,8 @@ export function CalendarListView({ events }: CalendarListViewProps) {
   const setCalendarListSort = useAppStore((s) => s.setCalendarListSort);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const openAvailabilityBlockDrawer = useAppStore((s) => s.openAvailabilityBlockDrawer);
+  const anchor = useAppStore((s) => s.calendar.anchor);
+  const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
 
   const [sortKey, sortDir] = listSort.includes("_")
     ? [
@@ -170,20 +175,55 @@ export function CalendarListView({ events }: CalendarListViewProps) {
   };
 
   return (
-    <SortableList<CalendarEvent>
-      columns={columns}
-      data={sorted}
-      sortKey={sortKey}
-      sortDirection={sortDir}
-      onSort={handleSort}
-      onRowClick={(ev) => {
-        if (ev.type === "availability_block") {
-          openAvailabilityBlockDrawer(ev.id);
-          return;
-        }
-        openDrillDownPanel(ev.type, ev.id);
-      }}
-      getRowId={(ev) => `${ev.id}:${ev.listingId}`}
-    />
+    <div>
+      {/* Mobile-only (below lg): lg+ already has the stepper via SubmenuBar's
+          left slot, right above the canvas. Below lg the submenu rail is
+          hidden (M.1), so paging through dates otherwise means opening the
+          hamburger drawer - put both controls inline instead, same pattern
+          as the gantt/agenda views. Sticky + the negative top offset trick
+          (see calendar-agenda-view) keeps it reachable while scrolling and
+          flush under the top bar, no gap. There's no natural "scroll to
+          today" row target here (the list can be sorted by any column), so
+          Today just makes sure today's data is in the fetched range. */}
+      <div
+        className="pt-xs pb-sm sticky lg:hidden"
+        style={{
+          top: "calc(-1 * (var(--space-md) - 2px))",
+          zIndex: 10,
+          backgroundColor: "var(--surface-60)",
+        }}
+      >
+        <div className="gap-xs flex items-center justify-center">
+          <TimeframeStepper />
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              if (anchor !== null) setTimeframeAnchor("calendar", null);
+            }}
+            className="ml-auto"
+          >
+            <LocateFixed size={14} aria-hidden="true" />
+            Today
+          </Button>
+        </div>
+      </div>
+      <SortableList<CalendarEvent>
+        columns={columns}
+        data={sorted}
+        sortKey={sortKey}
+        sortDirection={sortDir}
+        onSort={handleSort}
+        onRowClick={(ev) => {
+          if (ev.type === "availability_block") {
+            openAvailabilityBlockDrawer(ev.id);
+            return;
+          }
+          openDrillDownPanel(ev.type, ev.id);
+        }}
+        getRowId={(ev) => `${ev.id}:${ev.listingId}`}
+      />
+    </div>
   );
 }

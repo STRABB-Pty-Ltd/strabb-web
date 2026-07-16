@@ -31,7 +31,10 @@ export function SortableListHeader<T>({
 }: SortableListHeaderProps<T>) {
   return (
     <div
-      className="bg-neutral-30 flex border-b"
+      // min-w-max: same fix as SortableListRow - without it this row's own
+      // box (and hence its bg-neutral-30) stops at the scroll container's
+      // visible width instead of growing to fit the fixed-width columns.
+      className="bg-neutral-30 flex w-full min-w-max border-b"
       style={{ borderColor: "var(--border)", minHeight: "var(--space-lg)" }}
     >
       {columns.map((col) => {

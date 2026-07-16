@@ -129,6 +129,17 @@ describe("Drawer", () => {
     expect(panel.style.maxHeight).toBe("calc(100vh - var(--overlay-top) - var(--overlay-bottom))");
   });
 
+  it("shrinkToFit gets the same treatment as side=left on a side=right drawer", () => {
+    const { getByRole } = render(
+      <Drawer open onClose={vi.fn()} title="A" shrinkToFit>
+        <p>content</p>
+      </Drawer>,
+    );
+    const panel = getByRole("dialog", { name: "A" });
+    expect(panel.style.bottom).toBe("");
+    expect(panel.style.maxHeight).toBe("calc(100vh - var(--overlay-top) - var(--overlay-bottom))");
+  });
+
   it("uses surface-60 (matching the desktop sidebar) when side is left, neutral-30 otherwise", () => {
     const { getByRole, rerender } = render(
       <Drawer open onClose={vi.fn()} title="A">

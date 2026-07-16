@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect, type ReactNode } from "react";
+import { useRef, useState, useEffect, useLayoutEffect, type ReactNode } from "react";
 import { differenceInDays, eachDayOfInterval, isToday, startOfDay } from "date-fns";
+
+import { useIsMobile } from "@/hooks/use-responsive-view";
 
 import { GanttBar } from "./gantt-bar";
 import { GanttHeader } from "./gantt-header";
@@ -43,6 +45,12 @@ export interface GanttViewProps<T> {
   dateRange: { start: Date; end: Date };
   onItemClick: (item: T) => void;
   todayLineColor?: string;
+  /** Called (whenever its closure goes stale, i.e. cellWidth/todayIndex
+   *  change) with an imperative "scroll to today" function. Lets a parent
+   *  page render its own "Today" button without GanttView needing to expose
+   *  a ref (this component is generic over T, which doesn't mix cleanly
+   *  with forwardRef). */
+  onRegisterScrollToToday?: (fn: () => void) => void;
 }
 
 // = --space-lg (34px). Numeric form because it flows into pixel-math for
@@ -57,6 +65,26 @@ const ROW_HEIGHT = 68;
 // covers the gap as well as the row strips.
 // = --space-xs (5px).
 const ROW_GAP = 5;
+
+// Pinch-zoom bounds - deliberately wider than MIN_CELL_WIDTH in both
+// directions: zooming out below the auto-fit width shows more of the date
+// range at once, zooming in above it makes bars/labels easier to read.
+const ZOOM_MIN_CELL_WIDTH = 18;
+const ZOOM_MAX_CELL_WIDTH = 140;
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function touchDistance(touches: React.TouchList) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy);
+}
+
+function touchMidpointX(touches: React.TouchList) {
+  return (touches[0].clientX + touches[1].clientX) / 2;
+}
 
 export function GanttView<T>({
   rows,
@@ -74,9 +102,19 @@ export function GanttView<T>({
   dateRange,
   onItemClick,
   todayLineColor = "var(--status-danger)",
+  onRegisterScrollToToday,
 }: GanttViewProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [cellWidth, setCellWidth] = useState(34);
+  // Pinch-zoom and the Today button are mobile-only (below lg, the same
+  // cutover the desktop-first shell uses everywhere else) - desktop already
+  // has a working fit-to-width gantt and its own stepper in SubmenuBar.
+  const isMobile = useIsMobile(1024);
+  const [autoCellWidth, setAutoCellWidth] = useState(34);
+  // Set once the user pinch-zooms; overrides the auto-fit width until the
+  // component unmounts (persists across date paging on purpose - see the
+  // pinch handler comment below).
+  const [manualCellWidth, setManualCellWidth] = useState<number | null>(null);
+  const cellWidth = manualCellWidth ?? autoCellWidth;
 
   const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
   const totalDays = days.length;
@@ -89,17 +127,79 @@ export function GanttView<T>({
 
     const observer = new ResizeObserver(([entry]) => {
       const computed = Math.max(MIN_CELL_WIDTH, Math.floor(entry.contentRect.width / totalDays));
-      setCellWidth(computed);
+      setAutoCellWidth(computed);
     });
     observer.observe(el);
     return () => observer.disconnect();
   }, [totalDays]);
 
+  useEffect(() => {
+    onRegisterScrollToToday?.(() => {
+      const el = containerRef.current;
+      if (!el || todayIndex < 0) return;
+      const target = todayIndex * cellWidth + cellWidth / 2 - el.clientWidth / 2;
+      el.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+    });
+  }, [onRegisterScrollToToday, todayIndex, cellWidth]);
+
+  // Pinch-to-zoom (mobile): two fingers scale cellWidth between the ZOOM_*
+  // bounds. Anchored on the pinch midpoint via pendingScrollAnchorRef +
+  // the layout effect below, so the date under the fingers stays under the
+  // fingers instead of the view drifting sideways as cells resize.
+  const pinchRef = useRef<{ startDistance: number; startCellWidth: number } | null>(null);
+  const pendingScrollAnchorRef = useRef<{ dayAtMidpoint: number; midpointX: number } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+    if (e.touches.length === 2) {
+      pinchRef.current = { startDistance: touchDistance(e.touches), startCellWidth: cellWidth };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length !== 2 || !pinchRef.current) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    const distance = touchDistance(e.touches);
+    const ratio = distance / pinchRef.current.startDistance;
+    const nextCellWidth = clamp(
+      pinchRef.current.startCellWidth * ratio,
+      ZOOM_MIN_CELL_WIDTH,
+      ZOOM_MAX_CELL_WIDTH,
+    );
+
+    const midpointX = touchMidpointX(e.touches) - el.getBoundingClientRect().left;
+    pendingScrollAnchorRef.current = {
+      dayAtMidpoint: (el.scrollLeft + midpointX) / cellWidth,
+      midpointX,
+    };
+    setManualCellWidth(nextCellWidth);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (e.touches.length < 2) pinchRef.current = null;
+  };
+
+  // Runs synchronously after cellWidth commits (before paint) so the
+  // re-anchored scroll position lands in the same frame as the resize -
+  // a regular effect would paint one frame at the old scroll position first.
+  useLayoutEffect(() => {
+    const pending = pendingScrollAnchorRef.current;
+    const el = containerRef.current;
+    if (!pending || !el) return;
+    pendingScrollAnchorRef.current = null;
+    el.scrollLeft = Math.max(0, pending.dayAtMidpoint * cellWidth - pending.midpointX);
+  }, [cellWidth]);
+
   return (
     <div
       ref={containerRef}
       className="overflow-x-auto rounded-lg border"
-      style={{ borderColor: "var(--border)" }}
+      style={{ borderColor: "var(--border)", touchAction: isMobile ? "pan-x" : undefined }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <GanttHeader dateRange={dateRange} cellWidth={cellWidth} />
 

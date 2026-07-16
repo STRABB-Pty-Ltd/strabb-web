@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { eventsMock, mobileMock, storeMock } = vi.hoisted(() => ({
+const { eventsMock, isMobileMock, storeMock } = vi.hoisted(() => ({
   eventsMock: vi.fn(),
-  mobileMock: vi.fn(),
+  isMobileMock: vi.fn(),
   storeMock: vi.fn(),
 }));
 
@@ -12,7 +12,7 @@ vi.mock("@/hooks/use-calendar", () => ({
 }));
 
 vi.mock("@/hooks/use-responsive-view", () => ({
-  useMobileViewOverride: (view: string) => mobileMock(view),
+  useIsMobile: (...args: unknown[]) => isMobileMock(...args),
 }));
 
 vi.mock("@/stores/app-store", () => ({
@@ -28,6 +28,9 @@ vi.mock("./_components/calendar-list-view", () => ({
 vi.mock("./_components/calendar-month-view", () => ({
   CalendarMonthView: () => <div data-testid="month-view" />,
 }));
+vi.mock("./_components/calendar-agenda-view", () => ({
+  CalendarAgendaView: () => <div data-testid="agenda-view" />,
+}));
 
 import CalendarPage from "./page";
 
@@ -39,43 +42,51 @@ const storeFor = (view: string) => ({
 describe("CalendarPage", () => {
   beforeEach(() => {
     eventsMock.mockReset();
-    mobileMock.mockReset();
+    isMobileMock.mockReset();
+    isMobileMock.mockReturnValue(false);
     storeMock.mockReset();
   });
 
   it("renders the loading skeleton when events query is loading", () => {
     storeMock.mockReturnValue(storeFor("gantt"));
     eventsMock.mockReturnValue({ data: undefined, isLoading: true });
-    mobileMock.mockReturnValue({ effectiveView: "gantt", showMobileBanner: false });
     render(<CalendarPage />);
     expect(screen.getByText(/loading calendar/i)).toBeInTheDocument();
     expect(screen.queryByTestId("gantt-view")).not.toBeInTheDocument();
   });
 
-  it("renders the Gantt view when effective view is gantt", () => {
+  it("renders the Gantt view when view is gantt", () => {
     storeMock.mockReturnValue(storeFor("gantt"));
     eventsMock.mockReturnValue({ data: [], isLoading: false });
-    mobileMock.mockReturnValue({ effectiveView: "gantt", showMobileBanner: false });
     render(<CalendarPage />);
     expect(screen.getByTestId("gantt-view")).toBeInTheDocument();
     expect(screen.queryByTestId("month-view")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("agenda-view")).not.toBeInTheDocument();
     expect(screen.queryByTestId("list-view")).not.toBeInTheDocument();
   });
 
-  it("dispatches to the list view when effective view is list", () => {
+  it("renders the list view when view is list", () => {
     storeMock.mockReturnValue(storeFor("list"));
     eventsMock.mockReturnValue({ data: [], isLoading: false });
-    mobileMock.mockReturnValue({ effectiveView: "list", showMobileBanner: false });
     render(<CalendarPage />);
     expect(screen.getByTestId("list-view")).toBeInTheDocument();
   });
 
-  it("shows the mobile banner when the responsive override forces a different view", () => {
-    storeMock.mockReturnValue(storeFor("gantt"));
+  it("renders the month grid for calendar view on desktop", () => {
+    storeMock.mockReturnValue(storeFor("calendar"));
     eventsMock.mockReturnValue({ data: [], isLoading: false });
-    mobileMock.mockReturnValue({ effectiveView: "list", showMobileBanner: true });
+    isMobileMock.mockReturnValue(false);
     render(<CalendarPage />);
-    expect(screen.getByText(/switch to desktop/i)).toBeInTheDocument();
-    expect(screen.getByTestId("list-view")).toBeInTheDocument();
+    expect(screen.getByTestId("month-view")).toBeInTheDocument();
+    expect(screen.queryByTestId("agenda-view")).not.toBeInTheDocument();
+  });
+
+  it("renders the agenda list for calendar view on mobile", () => {
+    storeMock.mockReturnValue(storeFor("calendar"));
+    eventsMock.mockReturnValue({ data: [], isLoading: false });
+    isMobileMock.mockReturnValue(true);
+    render(<CalendarPage />);
+    expect(screen.getByTestId("agenda-view")).toBeInTheDocument();
+    expect(screen.queryByTestId("month-view")).not.toBeInTheDocument();
   });
 });

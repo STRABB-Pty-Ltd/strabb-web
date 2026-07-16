@@ -1,8 +1,12 @@
 "use client";
 
-import { BrushCleaning, CalendarOff } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
+import { BrushCleaning, CalendarOff, LocateFixed } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { GanttView } from "@/components/views/gantt-view";
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useListings } from "@/hooks/use-listings";
 import { ganttDateRange } from "@/lib/timeframe-utils";
@@ -65,8 +69,27 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   const anchor = useAppStore((s) => s.calendar.anchor);
   const customRange = useAppStore((s) => s.customRange);
   const submenu = useAppStore((s) => s.calendar.submenu);
+  const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
   const { data: listingsData } = useListings();
   const allListings = (listingsData?.data ?? []) as unknown as Listing[];
+
+  // "Today" button: resetting the anchor (if the stepper had paged away from
+  // it) changes dateRange/todayIndex, which GanttView re-registers via
+  // onRegisterScrollToToday - so the actual scroll has to wait for that
+  // re-render rather than firing with the stale closure in this handler.
+  const scrollToTodayRef = useRef<(() => void) | null>(null);
+  const [pendingRecenter, setPendingRecenter] = useState(false);
+
+  useEffect(() => {
+    if (!pendingRecenter) return;
+    scrollToTodayRef.current?.();
+    setPendingRecenter(false);
+  }, [pendingRecenter]);
+
+  const handleTodayClick = () => {
+    if (anchor !== null) setTimeframeAnchor("calendar", null);
+    setPendingRecenter(true);
+  };
 
   // Tickets are visible only when the operator explicitly clicks the Tickets
   // submenu chip - on Overview they crowd the gantt with operator workload
@@ -224,76 +247,101 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
   });
 
   return (
-    <GanttView<GanttEvent>
-      rows={rows}
-      items={orderedEvents}
-      getRowId={(item) => item.listingId}
-      getRowSpan={() => 1}
-      getIsBlocked={(item) => item.isImplicitBlock === true}
-      getDateRange={(item) => ({
-        start: new Date(item.start),
-        end: new Date(item.end),
-      })}
-      getColor={(item) => {
-        if (item.isImplicitBlock) return "var(--neutral-30)";
-        if (item.type === "cleaning") {
-          return cleaningStatusColors[item.status ?? ""] ?? "var(--status-success)";
-        }
-        return typeColors[item.type] ?? item.color;
-      }}
-      getTextColor={(item) => {
-        if (typeTextColors[item.type]) return typeTextColors[item.type];
-        if (item.type === "cleaning") {
-          return cleaningStatusFgColors[item.status ?? ""] ?? "var(--status-success-fg)";
-        }
-        if (item.type === "ticket") return "var(--status-danger-fg)";
-        return "var(--surface-60)";
-      }}
-      // Cleaning bars: replace the word "Turnover" with the broom icon below.
-      // Strip the "Turnover" / "Turnover - " prefix so only the assignee
-      // name (or nothing) remains as text alongside the icon.
-      getLabel={(item) => {
-        if (item.isImplicitBlock) return "";
-        return item.type === "cleaning" ? item.label.replace(/^Turnover\s*-?\s*/i, "") : item.label;
-      }}
-      getIcon={(item) => {
-        if (item.isImplicitBlock) return undefined;
-        if (item.type === "availability_block") return <CalendarOff size={13} aria-hidden="true" />;
-        return item.type === "cleaning" ? (
-          <BrushCleaning size={13} aria-hidden="true" />
-        ) : undefined;
-      }}
-      // Bookings: 75–100 % of check-in day → middle days → 0–25 % of checkout
-      // day, leaving the middle 50 % of any turnover day open.
-      // Cleaning turnovers fill that gap (25–75 % of their day).
-      // Vacancy spans use the same handshake: start after a checkout
-      // (25 %) and end before a checkin (75 %) so the bar doesn't claim
-      // the partial-booking day.
-      // Ticket events stay full-day. Shadows mirror their source booking's
-      // pattern (same 75/25 inset) so the implicit-block shading tracks
-      // exactly when the related row is actually unavailable.
-      getPartialDay={(item) => {
-        if (item.type === "booking" || item.type === "availability_block" || item.isImplicitBlock)
-          return { insetStart: 0.75, insetEnd: 0.25 };
-        if (item.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.75 };
-        if (item.type === "vacancy") return { insetStart: 0.25, insetEnd: 0.75 };
-        return {};
-      }}
-      getAccentColor={(item) => {
-        if (item.isImplicitBlock) return undefined;
-        return item.type === "booking"
-          ? (channelColors[item.channel ?? "direct"] ?? "var(--channel-direct)")
-          : undefined;
-      }}
-      dateRange={dateRange}
-      onItemClick={(item) => {
-        if (item.isImplicitBlock) return;
-        if (item.type === "availability_block") {
-          openAvailabilityBlockDrawer(item.id);
-          return;
-        }
-        openDrillDownPanel(item.type, item.id);
-      }}
-    />
+    <>
+      {/* Mobile-only (below lg): lg+ already has the stepper via SubmenuBar's
+          left slot, right above the canvas, and its own fit-to-width gantt
+          doesn't need a scroll-to-today shortcut. Below lg the submenu rail
+          is hidden (M.1), so paging through dates otherwise means opening
+          the hamburger drawer on every step while scanning a horizontally-
+          scrolling chart - put both controls inline instead. */}
+      <div className="mb-sm gap-xs flex items-center justify-center lg:hidden">
+        <TimeframeStepper />
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={handleTodayClick}
+          className="ml-auto"
+        >
+          <LocateFixed size={14} aria-hidden="true" />
+          Today
+        </Button>
+      </div>
+      <GanttView<GanttEvent>
+        rows={rows}
+        onRegisterScrollToToday={(fn) => (scrollToTodayRef.current = fn)}
+        items={orderedEvents}
+        getRowId={(item) => item.listingId}
+        getRowSpan={() => 1}
+        getIsBlocked={(item) => item.isImplicitBlock === true}
+        getDateRange={(item) => ({
+          start: new Date(item.start),
+          end: new Date(item.end),
+        })}
+        getColor={(item) => {
+          if (item.isImplicitBlock) return "var(--neutral-30)";
+          if (item.type === "cleaning") {
+            return cleaningStatusColors[item.status ?? ""] ?? "var(--status-success)";
+          }
+          return typeColors[item.type] ?? item.color;
+        }}
+        getTextColor={(item) => {
+          if (typeTextColors[item.type]) return typeTextColors[item.type];
+          if (item.type === "cleaning") {
+            return cleaningStatusFgColors[item.status ?? ""] ?? "var(--status-success-fg)";
+          }
+          if (item.type === "ticket") return "var(--status-danger-fg)";
+          return "var(--surface-60)";
+        }}
+        // Cleaning bars: replace the word "Turnover" with the broom icon below.
+        // Strip the "Turnover" / "Turnover - " prefix so only the assignee
+        // name (or nothing) remains as text alongside the icon.
+        getLabel={(item) => {
+          if (item.isImplicitBlock) return "";
+          return item.type === "cleaning"
+            ? item.label.replace(/^Turnover\s*-?\s*/i, "")
+            : item.label;
+        }}
+        getIcon={(item) => {
+          if (item.isImplicitBlock) return undefined;
+          if (item.type === "availability_block")
+            return <CalendarOff size={13} aria-hidden="true" />;
+          return item.type === "cleaning" ? (
+            <BrushCleaning size={13} aria-hidden="true" />
+          ) : undefined;
+        }}
+        // Bookings: 75–100 % of check-in day → middle days → 0–25 % of checkout
+        // day, leaving the middle 50 % of any turnover day open.
+        // Cleaning turnovers fill that gap (25–75 % of their day).
+        // Vacancy spans use the same handshake: start after a checkout
+        // (25 %) and end before a checkin (75 %) so the bar doesn't claim
+        // the partial-booking day.
+        // Ticket events stay full-day. Shadows mirror their source booking's
+        // pattern (same 75/25 inset) so the implicit-block shading tracks
+        // exactly when the related row is actually unavailable.
+        getPartialDay={(item) => {
+          if (item.type === "booking" || item.type === "availability_block" || item.isImplicitBlock)
+            return { insetStart: 0.75, insetEnd: 0.25 };
+          if (item.type === "cleaning") return { insetStart: 0.25, insetEnd: 0.75 };
+          if (item.type === "vacancy") return { insetStart: 0.25, insetEnd: 0.75 };
+          return {};
+        }}
+        getAccentColor={(item) => {
+          if (item.isImplicitBlock) return undefined;
+          return item.type === "booking"
+            ? (channelColors[item.channel ?? "direct"] ?? "var(--channel-direct)")
+            : undefined;
+        }}
+        dateRange={dateRange}
+        onItemClick={(item) => {
+          if (item.isImplicitBlock) return;
+          if (item.type === "availability_block") {
+            openAvailabilityBlockDrawer(item.id);
+            return;
+          }
+          openDrillDownPanel(item.type, item.id);
+        }}
+      />
+    </>
   );
 }
