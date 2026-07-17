@@ -252,14 +252,24 @@ export function CalendarAgendaView({ events }: CalendarAgendaViewProps) {
           to that threshold once you'd scroll past it, so without the
           margin the bar still rendered with the gap in its resting
           (unscrolled) position - only closing once actually scrolled.
-          pt-xs restores a little internal breathing room since padding is
-          unaffected by either offset. */}
+          Both go 2px past the exact cancel-out point (-space-md instead of
+          -(space-md - 2px)): exact-matching two independently-rounded
+          calc() results still left a hairline gap on at least one real
+          device (sub-pixel snapping isn't guaranteed consistent across
+          renderers/DPRs), even though it measured as a clean 0 here. The
+          extra 2px eats into pt-xs's own 5px of padding - Canvas clips AT
+          its own edge, so overshooting is only safe because it's
+          invisible padding being clipped, not the stepper button itself.
+          marginBottom: -2px applies the same deliberate-overlap fix to
+          the seam with the first day group below, same reasoning as
+          sortable-list.tsx. */}
       <div
         ref={stickyRef}
         className="pt-xs pb-sm sticky"
         style={{
-          top: "calc(-1 * (var(--space-md) - 2px))",
-          marginTop: "calc(-1 * (var(--space-md) - 2px))",
+          top: "calc(-1 * var(--space-md))",
+          marginTop: "calc(-1 * var(--space-md))",
+          marginBottom: "-2px",
           zIndex: 10,
           backgroundColor: "var(--surface-60)",
         }}

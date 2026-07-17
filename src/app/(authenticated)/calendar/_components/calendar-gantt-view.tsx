@@ -9,7 +9,7 @@ import { GanttView } from "@/components/views/gantt-view";
 import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useListings } from "@/hooks/use-listings";
-import { ganttDateRange } from "@/lib/timeframe-utils";
+import { timeframeToDateRange } from "@/lib/timeframe-utils";
 import { useAppStore } from "@/stores/app-store";
 import type { Listing } from "@/types/listing";
 
@@ -90,6 +90,18 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
     if (anchor !== null) setTimeframeAnchor("calendar", null);
     setPendingRecenter(true);
   };
+
+  // Land on today by default (same as the agenda/list views) instead of
+  // wherever the fetched range happens to start (the 1st of the month,
+  // for windowSize=month) - GanttView registers scrollToTodayRef via its
+  // own effect, which runs before this one on the same commit (child
+  // effects fire before parent effects), so it's already populated here.
+  const hasAutoScrolledGantt = useRef(false);
+  useEffect(() => {
+    if (hasAutoScrolledGantt.current) return;
+    hasAutoScrolledGantt.current = true;
+    scrollToTodayRef.current?.();
+  }, []);
 
   // Tickets are visible only when the operator explicitly clicks the Tickets
   // submenu chip - on Overview they crowd the gantt with operator workload
@@ -230,7 +242,15 @@ export function CalendarGanttView({ events }: CalendarGanttViewProps) {
     flush();
   }
 
-  const range = ganttDateRange(windowSize, anchor, customRange);
+  // Same range useCalendarEvents fetched with (page.tsx) - a bespoke
+  // rolling "today-2, +N days" window used to live here instead, which
+  // rendered a grid extending past whatever date range the events fetch
+  // actually covered. For windowSize=month that meant the back half of
+  // the grid (whatever ran past the calendar month boundary) always
+  // showed empty columns with no data, even though the grid implied
+  // there could be bookings there. Matching the fetch exactly means the
+  // grid never promises data it doesn't have.
+  const range = timeframeToDateRange(windowSize, anchor, customRange);
   const dateRange = {
     start: new Date(range.startDate),
     end: new Date(range.endDate),
