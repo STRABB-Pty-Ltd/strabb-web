@@ -39,6 +39,23 @@ if (typeof globalThis.ResizeObserver === "undefined") {
   }));
 }
 
+// jsdom does not implement matchMedia — useIsMobile (and anything that
+// renders it without mocking the hook, e.g. GanttView's pinch-zoom gate)
+// needs a stub. Defaults to non-matching (desktop) so isMobile is false
+// unless a test deliberately mocks useIsMobile for mobile-specific behaviour.
+if (typeof window !== "undefined" && !window.matchMedia) {
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+}
+
 afterEach(() => {
   cleanup();
 });

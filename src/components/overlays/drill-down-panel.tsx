@@ -21,7 +21,7 @@ export function DrillDownPanel({
   children,
 }: DrillDownPanelProps) {
   return (
-    <Drawer open={open} onClose={onClose} title={title} accentColor={accentColor}>
+    <Drawer open={open} onClose={onClose} title={title} accentColor={accentColor} shrinkToFit>
       {children}
     </Drawer>
   );

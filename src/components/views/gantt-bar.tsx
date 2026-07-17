@@ -29,6 +29,14 @@ interface GanttBarProps {
   onClick: () => void;
 }
 
+// Mirrors the text-body class (--text-body, globals.css) and baseStyle's own
+// lineHeight below - kept as constants (not read from the DOM) so the
+// max-lines math stays in lockstep with whatever actually renders.
+const LABEL_FONT_SIZE = 13;
+const LABEL_LINE_HEIGHT = 1.25;
+// = baseStyle.padding's top+bottom ("2px 5px").
+const VERTICAL_PADDING = 4;
+
 export function GanttBar({
   label,
   color,
@@ -58,6 +66,16 @@ export function GanttBar({
     zIndex: spans > 1 ? 6 : isBlocked ? 0 : undefined,
   };
 
+  // Clamp the label to however many lines actually fit this bar's height
+  // (taller for rowSpan'd parent-listing bars) instead of hard-wrapping with
+  // overflow:hidden - long free text (ticket descriptions especially) was
+  // wrapping to 6+ lines and getting silently cut off mid-word with nothing
+  // visible past the row's edge. Ellipsis on the last visible line instead.
+  const maxLines = Math.max(
+    1,
+    Math.floor((rowHeight - VERTICAL_PADDING) / (LABEL_FONT_SIZE * LABEL_LINE_HEIGHT)),
+  );
+
   if (isBlocked) {
     return (
       <div
@@ -80,12 +98,24 @@ export function GanttBar({
     <button
       type="button"
       onClick={onClick}
-      className="text-body gap-xs absolute flex items-center justify-center overflow-hidden rounded-lg text-center break-words outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+      className="text-body gap-xs absolute flex items-center justify-center overflow-hidden rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
       title={label}
       style={baseStyle}
     >
       {icon && <span className="shrink-0 leading-none">{icon}</span>}
-      {label && <span>{label}</span>}
+      {label && (
+        <span
+          className="text-center break-words"
+          style={{
+            display: "-webkit-box",
+            WebkitLineClamp: maxLines,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {label}
+        </span>
+      )}
     </button>
   );
 }

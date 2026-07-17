@@ -192,53 +192,6 @@ export function formatPeriodLabel(
 }
 
 /**
- * Date range for a Gantt view. When `anchor` is null the leftmost date is
- * today − 2 days (so today + the next stretch sit in view), with the duration
- * derived from `windowSize`. When `anchor` is set this falls back to the
- * standard period-aligned range.
- */
-export function ganttDateRange(
-  windowSize: string,
-  anchor?: string | null,
-  customRange?: { start: string; end: string } | null,
-): DateRange {
-  if (anchor) return timeframeToDateRange(windowSize, anchor, customRange);
-  if (windowSize === "custom" && customRange?.start && customRange?.end) {
-    return { startDate: customRange.start, endDate: customRange.end };
-  }
-
-  const start = addDays(startOfDay(new Date()), -2);
-  let end: Date;
-  switch (windowSize as WindowSize) {
-    case "day":
-      end = start;
-      break;
-    case "week":
-      end = addDays(start, 6);
-      break;
-    case "fortnight":
-      end = addDays(start, 13);
-      break;
-    case "month":
-      end = addDays(start, 29);
-      break;
-    case "quarter":
-      end = addDays(start, 89);
-      break;
-    case "year":
-      end = addDays(start, 364);
-      break;
-    case "ytd":
-      // YTD has no clean gantt interpretation - fall back to fortnight.
-      end = addDays(start, 13);
-      break;
-    default:
-      end = addDays(start, 13);
-  }
-  return { startDate: fmt(start), endDate: fmt(end) };
-}
-
-/**
  * Date range for the reporting Revenue Trend chart. Always covers at least
  * 12 months so the chart never collapses to a single point when the stepper
  * is on a narrow window. End is the selected window's end; start is the

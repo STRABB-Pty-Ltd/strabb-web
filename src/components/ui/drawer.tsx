@@ -78,6 +78,14 @@ interface DrawerProps {
       never sees clicks inside this stacked child. */
   isolate?: boolean;
   closeLabel?: string;
+  /** Shrink-to-fit content instead of always stretching to fill the canvas
+      height. Same technique side="left" (MobileNavDrawer) already uses:
+      leave `bottom` unset (a fixed element with only `top` set sizes to its
+      content per the CSS spec) and cap with `maxHeight` for content that's
+      still taller than the canvas. Off by default - most right-side
+      drawers (forms, threads) want a stable height that doesn't jump
+      around as content loads. */
+  shrinkToFit?: boolean;
 }
 
 function Drawer({
@@ -100,6 +108,7 @@ function Drawer({
   bodyClassName,
   isolate = false,
   closeLabel = "Close panel",
+  shrinkToFit = false,
 }: DrawerProps) {
   const panelRef = React.useRef<HTMLDivElement>(null);
   // Keep the panel mounted briefly after close so the exit keyframe can play.
@@ -201,9 +210,9 @@ function Drawer({
               ? "var(--overlay-top)"
               : "calc(var(--overlay-top) + var(--space-md) - 2px)",
           ...insetStyle,
-          bottom: side === "left" ? undefined : "var(--overlay-bottom)",
+          bottom: side === "left" || shrinkToFit ? undefined : "var(--overlay-bottom)",
           maxHeight:
-            side === "left"
+            side === "left" || shrinkToFit
               ? "calc(100vh - var(--overlay-top) - var(--overlay-bottom))"
               : undefined,
           width: WIDTHS[width],

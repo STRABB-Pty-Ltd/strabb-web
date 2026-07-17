@@ -15,13 +15,3 @@ export function useIsMobile(breakpoint = 768) {
 
   return isMobile;
 }
-
-export function useMobileViewOverride(currentView: string) {
-  const isMobile = useIsMobile();
-  const needsOverride = isMobile && (currentView === "gantt" || currentView === "calendar");
-  return {
-    effectiveView: needsOverride ? "list" : currentView,
-    showMobileBanner: needsOverride,
-    isMobile,
-  };
-}

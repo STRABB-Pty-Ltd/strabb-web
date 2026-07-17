@@ -9,9 +9,13 @@ interface SortableListRowProps<T> {
   columns: ColumnDef<T>[];
   index: number;
   onClick: () => void;
+  /** Same id as getRowId(item) - lets a caller find and scroll to this
+   *  specific row (e.g. a "Today" shortcut) without threading refs through
+   *  the generic list. */
+  id?: string;
 }
 
-export function SortableListRow<T>({ item, columns, index, onClick }: SortableListRowProps<T>) {
+export function SortableListRow<T>({ item, columns, index, onClick, id }: SortableListRowProps<T>) {
   const isEven = index % 2 === 0;
   const rowBg = isEven ? "var(--surface-60)" : "var(--neutral-30)";
   const rowAlt = isEven ? "var(--neutral-30)" : "var(--surface-60)";
@@ -19,8 +23,16 @@ export function SortableListRow<T>({ item, columns, index, onClick }: SortableLi
   return (
     <button
       type="button"
+      data-row-id={id}
       onClick={onClick}
-      className="hover:bg-neutral-30/50 flex w-full text-left transition-colors"
+      // w-full alone caps at the scroll container's visible width (its
+      // containing block), not the summed column width - the fixed-width
+      // columns below then overflow it silently, so the row's own
+      // background stopped a few hundred px short of where the horizontal
+      // scroll actually ends. min-w-max forces the row at least as wide as
+      // its content requires, so the background always reaches exactly as
+      // far as the scrollable columns do.
+      className="hover:bg-neutral-30/50 flex w-full min-w-max text-left transition-colors"
       style={
         {
           height: "var(--space-xl)",

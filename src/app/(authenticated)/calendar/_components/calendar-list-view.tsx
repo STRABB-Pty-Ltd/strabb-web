@@ -1,9 +1,14 @@
 "use client";
 
-import { format } from "date-fns";
+import { useCallback, useEffect, useRef } from "react";
 
+import { format, startOfDay } from "date-fns";
+import { LocateFixed } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { SortableList, type ColumnDef } from "@/components/views/sortable-list";
+import { TimeframeStepper } from "@/components/views/timeframe-stepper";
 import type { CalendarEvent } from "@/hooks/use-calendar";
 import { useCalendarListSort } from "@/hooks/use-calendar";
 import { formatChannel } from "@/lib/channels";
@@ -149,11 +154,15 @@ interface CalendarListViewProps {
   events: CalendarEvent[];
 }
 
+const getRowId = (ev: CalendarEvent) => `${ev.id}:${ev.listingId}`;
+
 export function CalendarListView({ events }: CalendarListViewProps) {
   const listSort = useAppStore((s) => s.calendar.listSort);
   const setCalendarListSort = useAppStore((s) => s.setCalendarListSort);
   const openDrillDownPanel = useAppStore((s) => s.openDrillDownPanel);
   const openAvailabilityBlockDrawer = useAppStore((s) => s.openAvailabilityBlockDrawer);
+  const anchor = useAppStore((s) => s.calendar.anchor);
+  const setTimeframeAnchor = useAppStore((s) => s.setTimeframeAnchor);
 
   const [sortKey, sortDir] = listSort.includes("_")
     ? [
@@ -167,6 +176,72 @@ export function CalendarListView({ events }: CalendarListViewProps) {
   const handleSort = (key: string) => {
     const newDir = sortKey === key && sortDir === "asc" ? "desc" : "asc";
     setCalendarListSort(`${key}_${newDir}`);
+  };
+
+  // The list can be sorted by any column, so "today" has no fixed position
+  // the way a chronological agenda does - scroll to whichever row is
+  // first, IN THE CURRENT SORT ORDER, with a check-in on or after today.
+  // Sorted by check-in (the natural default) that's exactly today's row;
+  // any other sort still lands somewhere reasonable rather than nowhere.
+  const scrollToTodayRow = useCallback(
+    (smooth: boolean) => {
+      const today = startOfDay(new Date());
+      const target = sorted.find((ev) => new Date(ev.start) >= today);
+      if (!target) return;
+      const rowEl = document.querySelector(`[data-row-id="${CSS.escape(getRowId(target))}"]`);
+      const stickyEl = document.querySelector('[data-slot="sortable-list-sticky-header"]');
+      const scrollParent = rowEl?.closest("main");
+      if (!rowEl || !scrollParent) return;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const stickyHeight = stickyEl?.getBoundingClientRect().height ?? 0;
+          const targetTop =
+            rowEl.getBoundingClientRect().top -
+            scrollParent.getBoundingClientRect().top +
+            scrollParent.scrollTop -
+            stickyHeight -
+            8;
+          scrollParent.scrollTo({
+            top: Math.max(0, targetTop),
+            behavior: smooth ? "smooth" : "auto",
+          });
+        });
+      });
+    },
+    [sorted],
+  );
+
+  // Land on today by default (instant, no animation) instead of leaving
+  // the list at the top of the fetched range - same as the gantt/agenda
+  // views. Runs once; CalendarPage only mounts this component after its
+  // own isLoading check clears, so the first `sorted` here is already the
+  // real data, not an interim empty array.
+  const hasAutoScrolled = useRef(false);
+  useEffect(() => {
+    if (hasAutoScrolled.current) return;
+    hasAutoScrolled.current = true;
+    scrollToTodayRow(false);
+  }, [sorted, scrollToTodayRow]);
+
+  const pendingTodayScroll = useRef(false);
+
+  // Resetting the anchor (if the stepper had paged away from it) refetches
+  // events, which changes `sorted` once the new data lands - only then is
+  // it safe to look for today's row. If the anchor was already null
+  // there's nothing to refetch, so scroll straight away.
+  useEffect(() => {
+    if (!pendingTodayScroll.current) return;
+    pendingTodayScroll.current = false;
+    scrollToTodayRow(true);
+  }, [sorted, scrollToTodayRow]);
+
+  const handleTodayClick = () => {
+    if (anchor !== null) {
+      pendingTodayScroll.current = true;
+      setTimeframeAnchor("calendar", null);
+    } else {
+      scrollToTodayRow(true);
+    }
   };
 
   return (
@@ -183,7 +258,29 @@ export function CalendarListView({ events }: CalendarListViewProps) {
         }
         openDrillDownPanel(ev.type, ev.id);
       }}
-      getRowId={(ev) => `${ev.id}:${ev.listingId}`}
+      getRowId={getRowId}
+      stickyHeaderExtra={
+        // Mobile-only (below lg): lg+ already has the stepper via
+        // SubmenuBar's left slot, right above the canvas. Below lg the
+        // submenu rail is hidden (M.1), so paging through dates otherwise
+        // means opening the hamburger drawer - put both controls inline
+        // instead, same pattern as the gantt/agenda views.
+        <div className="pb-sm lg:hidden">
+          <div className="gap-xs flex items-center justify-center">
+            <TimeframeStepper />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={handleTodayClick}
+              className="ml-auto"
+            >
+              <LocateFixed size={14} aria-hidden="true" />
+              Today
+            </Button>
+          </div>
+        </div>
+      }
     />
   );
 }
