@@ -59,6 +59,13 @@ being true. One bullet per trap, specific enough to act on.
 - `src/lib/mock-team.ts` is still live - team pages render mock data, not
   API data. Do not build on it as if it were real; the provisioning work
   replaces it.
+- The React Query client lives for the whole tab and several query keys are
+  parameterless (`tenant-me`, `listings-hierarchy`, `saved-reports`, ...), so
+  they collide exactly across tenants. `CacheResetOnIdentityChange` (rendered
+  in `query-provider.tsx`) calls `queryClient.clear()` when `tenantId:userId`
+  changes, covering the soft user-switch + 24h-expiry paths (explicit logout
+  already hard-navigates). Any NEW parameterless-ish query key must not assume
+  the cache is per-user beyond that reset - key it on the id when in doubt.
 
 ## Formatting (Windows checkouts)
 
