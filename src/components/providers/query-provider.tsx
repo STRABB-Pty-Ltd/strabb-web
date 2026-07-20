@@ -3,6 +3,7 @@
 import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { CacheResetOnIdentityChange } from "./cache-reset-on-identity-change";
 import { ApiError } from "@/lib/api-client";
 import { useAppStore } from "@/stores/app-store";
 
@@ -82,5 +83,10 @@ export function createQueryClient(): QueryClient {
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(createQueryClient);
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CacheResetOnIdentityChange />
+      {children}
+    </QueryClientProvider>
+  );
 }
