@@ -18,6 +18,8 @@ build/
 
 # Testing
 coverage/
+playwright-report/
+test-results/
 
 # IDE
 .vscode/*

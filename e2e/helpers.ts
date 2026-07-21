@@ -1,7 +1,10 @@
 import { type Page, expect } from "@playwright/test";
 
-export const DEMO_EMAIL = "demo@strabb.io";
-export const DEMO_PASSWORD = "demo1234";
+// The generic demo@strabb.io account was retired by feat/seed-per-person-
+// tenants (PR #100) - each team member now gets their own mirrored tenant
+// (identical listings/bookings/tasks/conversations) instead.
+export const DEMO_EMAIL = "chanel@strabb.io";
+export const DEMO_PASSWORD = "chanel1234";
 
 /**
  * Log in as the demo user and wait for the dashboard to load.

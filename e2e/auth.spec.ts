@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-const DEMO_EMAIL = "demo@strabb.io";
-const DEMO_PASSWORD = "demo1234";
+// The generic demo@strabb.io account was retired by feat/seed-per-person-
+// tenants (PR #100) - each team member now gets their own mirrored tenant.
+const DEMO_EMAIL = "chanel@strabb.io";
+const DEMO_PASSWORD = "chanel1234";
 
 test.describe("Authentication flow", () => {
   test("redirects unauthenticated users to login", async ({ page }) => {
