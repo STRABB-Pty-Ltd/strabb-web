@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { Send } from "lucide-react";
+import { ChevronLeft, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Chip, chipVariants } from "@/components/ui/chip";
@@ -35,6 +35,9 @@ interface MessageThreadProps {
   onConvertTicket: () => void;
   replyError?: string | null;
   onDismissReplyError?: () => void;
+  /** Mobile single-pane mode: returns to the message list. Omitted on
+   *  desktop, where the list and thread panes are both visible at once. */
+  onBack?: () => void;
 }
 
 export function MessageThread({
@@ -45,6 +48,7 @@ export function MessageThread({
   onConvertTicket,
   replyError,
   onDismissReplyError,
+  onBack,
 }: MessageThreadProps) {
   const [compose, setCompose] = useState("");
 
@@ -59,13 +63,27 @@ export function MessageThread({
       {/* Booking context header */}
       <div className="px-sm py-sm shrink-0 border-b" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-body text-highlight-10 font-semibold">{message.guestName}</h3>
-            <p className="text-body text-highlight-10">{message.listingName}</p>
-            <p className="text-body text-highlight-10">
-              {format(new Date(message.checkIn), "d MMM")} &ndash;{" "}
-              {format(new Date(message.checkOut), "d MMM yyyy")}
-            </p>
+          <div className="gap-xs flex items-center">
+            {onBack && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon-touch"
+                onClick={onBack}
+                aria-label="Back to messages"
+                className="shrink-0"
+              >
+                <ChevronLeft size={18} aria-hidden="true" />
+              </Button>
+            )}
+            <div>
+              <h3 className="text-body text-highlight-10 font-semibold">{message.guestName}</h3>
+              <p className="text-body text-highlight-10">{message.listingName}</p>
+              <p className="text-body text-highlight-10">
+                {format(new Date(message.checkIn), "d MMM")} &ndash;{" "}
+                {format(new Date(message.checkOut), "d MMM yyyy")}
+              </p>
+            </div>
           </div>
           <Chip
             tone="solid"

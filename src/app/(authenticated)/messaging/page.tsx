@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ThreadOverlay } from "@/components/overlays/thread-overlay";
 import { TicketDrawer } from "@/components/overlays/ticket-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "@/hooks/use-responsive-view";
 import { MessagingKanbanView } from "./_components/messaging-kanban-view";
 import { MessagingListView } from "./_components/messaging-list-view";
 import { useMessages, useMessageActions, useMessageThread } from "@/hooks/use-messaging";
@@ -12,6 +13,15 @@ import { usePropertyIdForListing } from "@/hooks/use-listings";
 import { useAppStore } from "@/stores/app-store";
 
 export default function MessagingPage() {
+  // Kanban's 3-column board has nowhere to put 3 columns on a phone even
+  // after KanbanBoard's own stack-below-lg fix (M.4 audit) - it just makes
+  // 3 tall stacked lists the user scrolls through one at a time. The flat
+  // list view (G.2) does the same job in one column instead of three, so
+  // kanban downgrades to it below lg rather than getting its own mobile
+  // layout. ThreadOverlay (opened only from a kanban card click) is
+  // therefore unreachable on mobile too - the list view's own inline
+  // MessageThread pane replaces it there.
+  const isMobile = useIsMobile(1024);
   const view = useAppStore((s) => s.messaging.view);
   const submenu = useAppStore((s) => s.messaging.submenu);
   const channels = useAppStore((s) => s.messaging.channels);
@@ -21,11 +31,16 @@ export default function MessagingPage() {
   const closeThreadOverlay = useAppStore((s) => s.closeThreadOverlay);
   const [ticketDrawerOpen, setTicketDrawerOpen] = useState(false);
 
-  // List view: viewing = right-pane selection. Kanban: viewing = thread
-  // overlay open state. Closing the overlay or switching messages ends the
-  // viewing session.
+  // List view (including kanban downgraded to list on mobile): viewing =
+  // pane selection. Desktop kanban only: viewing = thread overlay open
+  // state. Closing the overlay or switching messages ends the viewing
+  // session.
   const viewingMessageId =
-    view === "kanban" ? (threadOverlay?.open ? threadOverlay.messageId : null) : selectedMessage;
+    view === "kanban" && !isMobile
+      ? threadOverlay?.open
+        ? threadOverlay.messageId
+        : null
+      : selectedMessage;
 
   const { data: messages, isLoading } = useMessages(channels, submenu, selectedListings);
   const { markAsRead, sendReply, toggleFlag, archive, replyErrors, clearReplyError } =
@@ -91,7 +106,12 @@ export default function MessagingPage() {
 
   return (
     <div>
-      {view === "kanban" && <MessagingKanbanView messages={messages ?? []} />}
+      {view === "kanban" &&
+        (isMobile ? (
+          <MessagingListView messages={messages ?? []} />
+        ) : (
+          <MessagingKanbanView messages={messages ?? []} />
+        ))}
       {view === "list" && <MessagingListView messages={messages ?? []} />}
 
       {threadMsg && (
