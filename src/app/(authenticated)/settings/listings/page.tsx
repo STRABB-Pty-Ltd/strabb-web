@@ -442,7 +442,7 @@ function PricingSection({ nightlyRateInput, onNightlyRateChange }: PricingSectio
   return (
     <section className="space-y-xs">
       <h3 className="text-body text-highlight-10 font-semibold">Pricing</h3>
-      <div className="gap-sm grid grid-cols-2">
+      <div className="gap-sm grid grid-cols-1 md:grid-cols-2">
         <div>
           <label
             htmlFor="base-nightly-rate"
