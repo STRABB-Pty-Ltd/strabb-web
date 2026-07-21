@@ -104,3 +104,29 @@ being true. One bullet per trap, specific enough to act on.
   heading/display) is registered now; if you add a new ladder step or a
   custom `font-*`/`shadow-*`-shaped utility, extend the config in the
   same commit and verify with a computed-style measurement, not eyes.
+
+## e2e / Playwright (added 21-07-2026, Phase G.6a)
+
+- `npm run e2e` needs a REAL backend, not just `docker compose up db`:
+  every spec logs in via NextAuth's credentials provider, which calls
+  strabb-api. Without `.venv/Scripts/python.exe -m uvicorn app.main:app
+  --reload --port 8000` also running (per strabb-api's own README/
+  launch.json - `docker compose up db` alone only starts Postgres),
+  login fails with `CredentialsSignin`/`ECONNREFUSED` and every test
+  looks broken for reasons that have nothing to do with the page under
+  test. `curl localhost:8000/health` before assuming the frontend is at
+  fault.
+- Even with the backend up, login is intermittently flaky under
+  concurrency - a `CredentialsSignin` on maybe 1 in 4 attempts,
+  reproducible even serially (`--workers=1`), so it's not a
+  viewport-regression-harness-specific race, it's the backend/auth
+  path itself. `npm run e2e:viewport` already bakes in `--workers=1
+  --retries=2`, which reliably absorbs it (2 retries against a ~25%
+  single-attempt failure rate ≈ 98%+ pass). Root cause not
+  investigated - flag to strabb-api if it starts blocking CI.
+- `next dev`'s on-demand per-route compilation means the FIRST hit to
+  any route in a run is much slower than every hit after - cold enough
+  to make an unrelated test time out if it happens to run at that
+  moment. `e2e/global-setup.ts` pre-warms every core route once before
+  any project's assertions start; add new core routes there too, not
+  just to `e2e/core-pages.ts`'s CORE_PAGES list.

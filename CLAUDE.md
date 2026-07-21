@@ -153,6 +153,12 @@ justification.
 - `npm run build` - production build
 - `npm run lint` / `npm run format` - ESLint / Prettier check
 - `npm run test` / `npm run test:coverage` - unit tests; `npm run e2e` - Playwright
+- `npm run e2e:viewport` - the 375/768/1280 viewport regression matrix
+  (scrollWidth + desktop pixel baselines, G.6a). Needs a live backend -
+  `docker compose up db` alone isn't enough, see gotchas.md. Not wired
+  into CI (ubuntu runner + full backend stack was judged not worth the
+  fragility for this phase) - run it locally before merging a G.x PR
+  that touches a page in `e2e/core-pages.ts`.
 - `npx tsc --noEmit` - type-check (CI gate)
 
 ## Environment
