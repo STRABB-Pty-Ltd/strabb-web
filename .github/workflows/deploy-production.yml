@@ -4,15 +4,19 @@ name: Deploy to Production
 # Optionally pass a specific SHA to deploy; defaults to the latest commit on
 # the branch the workflow was dispatched from (typically `main`).
 #
-# Two gates guard a production deploy (F.8):
-#   1. The `guard` job refuses to proceed unless CI (ci.yml) concluded
-#      success for the exact SHA being deployed. A SHA that never passed CI
-#      cannot be shipped, even by a manual dispatch.
-#   2. The `deploy` job runs in the GitHub `production` environment. Configure
-#      that environment in repo Settings -> Environments with a required
-#      reviewer (Chris); GitHub then pauses the job for manual approval before
-#      any Azure change. Without that config the environment gate is a no-op,
-#      so the reviewer MUST be set there - it cannot be enforced from this file.
+# Gates guarding a production deploy (F.8):
+#   1. Manual only: this workflow runs solely on workflow_dispatch, so a human
+#      must click "Run workflow" to ship. There is no auto-deploy on push.
+#   2. The `guard` job refuses to proceed unless CI (ci.yml) concluded success
+#      for the exact SHA being deployed. A SHA that never passed CI cannot be
+#      shipped, even by a manual dispatch. `main` branch protection reinforces
+#      this by enforcing the CI status checks, with enforce_admins on.
+#   3. The `deploy` job runs in the GitHub `production` environment. A required
+#      reviewer approval pause would add a second-person gate here, but that
+#      protection rule is Enterprise-only for private repos and this org is on
+#      GitHub Team, so it cannot be enabled (checked 2026-07-21). Gates 1 and 2
+#      stand in for it. If the org moves to Enterprise, set a required reviewer
+#      on the `production` environment (Settings -> Environments) to enable it.
 # Build-arg matrix (the values baked below) is documented in
 # docs/deploy/build-args.md.
 on:
@@ -47,8 +51,9 @@ jobs:
   deploy:
     name: Deploy web to production
     needs: [guard]
-    # Gated environment: repo Settings -> Environments -> production must have
-    # a required reviewer for the approval pause to take effect.
+    # Runs in the GitHub `production` environment. A required-reviewer approval
+    # pause here needs Enterprise for private repos; on the current Team plan it
+    # is unavailable, so the gate relies on manual dispatch + the guard job.
     environment: production
     runs-on: ubuntu-latest
     steps:
