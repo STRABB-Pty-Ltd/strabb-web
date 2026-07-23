@@ -287,7 +287,7 @@ export function PhoneSection() {
       {usage && (
         <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
           <h3 className="mb-sm text-body text-highlight-10 font-semibold">SMS usage today</h3>
-          <div className="gap-sm grid grid-cols-2">
+          <div className="gap-sm grid grid-cols-1 md:grid-cols-2">
             <div>
               <p className="text-body text-highlight-10">You</p>
               <p className="font-data text-subheading text-highlight-10 font-semibold">

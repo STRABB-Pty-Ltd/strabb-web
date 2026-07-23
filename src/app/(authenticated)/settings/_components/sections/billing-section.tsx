@@ -144,7 +144,7 @@ export function BillingSection() {
           )}
         </div>
 
-        <div className="mb-sm gap-sm grid grid-cols-2">
+        <div className="mb-sm gap-sm grid grid-cols-1 md:grid-cols-2">
           <div>
             <p className="text-body text-highlight-10">Billable listings</p>
             <p className="font-data text-subheading text-highlight-10 font-semibold">

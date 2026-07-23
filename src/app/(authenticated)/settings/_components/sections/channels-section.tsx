@@ -254,7 +254,7 @@ export function ChannelsSection() {
                       : `${ch.listingCount} listing${ch.listingCount === 1 ? "" : "s"} mapped`}
                   </p>
                 </div>
-                <div className="gap-sm grid grid-cols-2">
+                <div className="gap-sm grid grid-cols-1 md:grid-cols-2">
                   <div>
                     <label
                       htmlFor={`channel-${ch.id}-sync`}

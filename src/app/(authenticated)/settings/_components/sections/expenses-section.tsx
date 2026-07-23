@@ -182,7 +182,7 @@ export function ExpensesSection() {
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             />
           </label>
-          <div className="gap-sm grid grid-cols-2">
+          <div className="gap-sm grid grid-cols-1 md:grid-cols-2">
             <label className="space-y-xs block">
               <span className="text-body text-highlight-10 font-medium">Category</span>
               <Select
