@@ -1,17 +1,22 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { messagesMock, threadMock, actionsMock, storeMock } = vi.hoisted(() => ({
+const { messagesMock, threadMock, actionsMock, storeMock, isMobileMock } = vi.hoisted(() => ({
   messagesMock: vi.fn(),
   threadMock: vi.fn(),
   actionsMock: vi.fn(),
   storeMock: vi.fn(),
+  isMobileMock: vi.fn(),
 }));
 
 vi.mock("@/hooks/use-messaging", () => ({
   useMessages: (...args: unknown[]) => messagesMock(...args),
   useMessageThread: (...args: unknown[]) => threadMock(...args),
   useMessageActions: () => actionsMock(),
+}));
+
+vi.mock("@/hooks/use-responsive-view", () => ({
+  useIsMobile: (...args: unknown[]) => isMobileMock(...args),
 }));
 
 vi.mock("@/stores/app-store", () => ({
@@ -62,6 +67,8 @@ describe("MessagingPage", () => {
     threadMock.mockReset();
     actionsMock.mockReset();
     storeMock.mockReset();
+    isMobileMock.mockReset();
+    isMobileMock.mockReturnValue(false);
     actionsMock.mockReturnValue({
       markAsRead: vi.fn(),
       markAsUnread: vi.fn(),
@@ -94,6 +101,15 @@ describe("MessagingPage", () => {
     messagesMock.mockReturnValue({ data: [], isLoading: false });
     render(<MessagingPage />);
     expect(screen.getByTestId("kanban-view")).toBeInTheDocument();
+  });
+
+  it("downgrades kanban to the list view on mobile (G.2)", () => {
+    isMobileMock.mockReturnValue(true);
+    storeMock.mockReturnValue(storeFor("kanban"));
+    messagesMock.mockReturnValue({ data: [], isLoading: false });
+    render(<MessagingPage />);
+    expect(screen.getByTestId("list-view")).toBeInTheDocument();
+    expect(screen.queryByTestId("kanban-view")).not.toBeInTheDocument();
   });
 
   it("renders the thread overlay (open) when kanban + threadOverlay is open", () => {
@@ -141,6 +157,8 @@ describe("MessagingPage mark-read-on-leave", () => {
     threadMock.mockReset();
     actionsMock.mockReset();
     storeMock.mockReset();
+    isMobileMock.mockReset();
+    isMobileMock.mockReturnValue(false);
     markAsRead.mockReset();
     actionsMock.mockReturnValue({ markAsRead, replyErrors: {}, clearReplyError: vi.fn() });
     threadMock.mockReturnValue({ data: undefined });
