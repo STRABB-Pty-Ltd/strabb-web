@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { usePortalTasks } from "@/lib/api-hooks/portal-api";
+import { formatPortalWhen } from "@/lib/portal-time";
 import type { PortalTask } from "@/lib/schemas/portal";
 
 import { PortalStatusChip } from "../_components/portal-status-chip";
@@ -16,15 +17,7 @@ const TASK_TYPE_LABELS: Record<string, string> = {
 };
 
 function formatWhen(task: PortalTask): string {
-  if (!task.scheduledDate) return "Unscheduled";
-  // scheduledDate is a plain date (no timezone); parse as local midnight so the
-  // day never shifts. scheduledTime, when present, is a plain "HH:MM".
-  const day = new Date(`${task.scheduledDate}T00:00:00`);
-  const dayLabel = Number.isNaN(day.getTime())
-    ? task.scheduledDate
-    : day.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" });
-  const time = task.scheduledTime ? task.scheduledTime.slice(0, 5) : null;
-  return time ? `${dayLabel} at ${time}` : dayLabel;
+  return formatPortalWhen(task.scheduledDate, task.timezone);
 }
 
 function TaskRow({ task }: { task: PortalTask }) {

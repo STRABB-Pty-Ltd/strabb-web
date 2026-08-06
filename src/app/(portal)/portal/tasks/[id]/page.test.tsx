@@ -35,8 +35,10 @@ function task(overrides: Partial<PortalTask> = {}): PortalTask {
     taskType: "turnover",
     priority: "medium",
     status: "confirmed",
-    scheduledDate: "2026-07-03",
-    scheduledTime: "10:00",
+    timezone: "Australia/Brisbane",
+    // A full UTC datetime, as the api's PortalTaskResponse.scheduled_date sends.
+    scheduledDate: "2026-08-07T02:55:19Z",
+    scheduledTime: null,
     estimatedHours: 2,
     actualHours: null,
     checklistTotal: 5,
@@ -63,6 +65,25 @@ describe("PortalTaskDetailPage", () => {
     const button = screen.getByRole("button", { name: /accept clean/i });
     await userEvent.click(button);
     expect(mutateMock).toHaveBeenCalledWith({ action: "accept" }, expect.any(Object));
+  });
+
+  it("renders the scheduled datetime property-local, not raw ISO", () => {
+    usePortalTaskMock.mockReturnValue({ data: task({ status: "confirmed" }), isLoading: false });
+    render(<PortalTaskDetailPage />);
+    // 02:55 UTC -> 12:55 pm in Australia/Brisbane (UTC+10) on 7 Aug.
+    expect(screen.getByText(/7 Aug, 12:55\s*pm/i)).toBeInTheDocument();
+    expect(screen.queryByText(/2026-08-07T02:55:19Z/)).not.toBeInTheDocument();
+  });
+
+  it("uses the task timezone, not a hardcoded zone", () => {
+    // Australia/Perth (UTC+8) on the same instant reads 10:55 am.
+    usePortalTaskMock.mockReturnValue({
+      data: task({ status: "confirmed", timezone: "Australia/Perth" }),
+      isLoading: false,
+    });
+    render(<PortalTaskDetailPage />);
+    expect(screen.getByText(/7 Aug, 10:55\s*am/i)).toBeInTheDocument();
+    expect(screen.queryByText(/12:55\s*pm/i)).not.toBeInTheDocument();
   });
 
   it("offers Start for an accepted task", () => {

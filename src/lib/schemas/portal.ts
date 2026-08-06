@@ -60,6 +60,10 @@ export interface PortalTask {
   taskType: string;
   priority: string;
   status: PortalTaskStatus;
+  // IANA timezone of the property this clean is at (e.g. "Australia/Brisbane");
+  // used to render scheduled_date property-local. May be absent until the api
+  // change that adds it lands.
+  timezone: string | null;
   scheduledDate: string | null;
   scheduledTime: string | null;
   estimatedHours: number;

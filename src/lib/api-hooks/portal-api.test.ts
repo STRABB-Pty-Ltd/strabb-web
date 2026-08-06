@@ -38,6 +38,7 @@ function makeTask(overrides: Partial<PortalTask> = {}): PortalTask {
     taskType: "turnover",
     priority: "medium",
     status: "confirmed",
+    timezone: "Australia/Brisbane",
     scheduledDate: "2026-07-03",
     scheduledTime: "10:00",
     estimatedHours: 2,
@@ -186,14 +187,18 @@ describe("portal-api availability mutations", () => {
     expect(result.current.data).toEqual({ weekly: [], timeOff: [] });
   });
 
-  it("useUpdateWeeklyAvailability PUTs the full replace-set under { weekly }", async () => {
+  it("useUpdateWeeklyAvailability PUTs the full replace-set as a bare array", async () => {
     const { result } = renderHook(() => useUpdateWeeklyAvailability(), {
       wrapper: providerFor(newClient()),
     });
     const weekly = [{ weekday: 0, startTime: "09:00", endTime: "17:00" }];
     result.current.mutate(weekly);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(putMock).toHaveBeenCalledWith("/portal/availability/weekly", { weekly });
+    // The api binds `slots: list[WeeklyAvailabilitySlot]` directly, so the body
+    // must be the bare array, not wrapped under a { weekly } key (that 422s).
+    expect(putMock).toHaveBeenCalledWith("/portal/availability/weekly", weekly);
+    const [, body] = putMock.mock.calls[0];
+    expect(Array.isArray(body)).toBe(true);
   });
 
   it("useUpdateWeeklyAvailability clears the set with an empty array", async () => {
@@ -202,7 +207,7 @@ describe("portal-api availability mutations", () => {
     });
     result.current.mutate([]);
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(putMock).toHaveBeenCalledWith("/portal/availability/weekly", { weekly: [] });
+    expect(putMock).toHaveBeenCalledWith("/portal/availability/weekly", []);
   });
 
   it("useAddTimeOff POSTs the block to /portal/availability/time-off", async () => {
