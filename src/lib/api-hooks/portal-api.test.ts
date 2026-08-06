@@ -38,6 +38,7 @@ function makeTask(overrides: Partial<PortalTask> = {}): PortalTask {
     taskType: "turnover",
     priority: "medium",
     status: "confirmed",
+    timezone: "Australia/Brisbane",
     scheduledDate: "2026-07-03",
     scheduledTime: "10:00",
     estimatedHours: 2,

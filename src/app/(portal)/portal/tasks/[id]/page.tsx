@@ -134,7 +134,10 @@ export default function PortalTaskDetailPage() {
             style={{ backgroundColor: "var(--neutral-30)" }}
           >
             <DetailRow label="Type" value={task.taskType.replace(/_/g, " ")} />
-            <DetailRow label="Scheduled" value={formatPortalWhen(task.scheduledDate)} />
+            <DetailRow
+              label="Scheduled"
+              value={formatPortalWhen(task.scheduledDate, task.timezone)}
+            />
             <DetailRow label="Estimated hours" value={String(task.estimatedHours)} />
             {task.actualHours !== null && (
               <DetailRow label="Actual hours" value={String(task.actualHours)} />

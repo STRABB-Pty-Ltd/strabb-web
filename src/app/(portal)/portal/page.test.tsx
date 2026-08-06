@@ -22,6 +22,7 @@ function task(overrides: Partial<PortalTask> = {}): PortalTask {
     taskType: "turnover",
     priority: "medium",
     status: "confirmed",
+    timezone: "Australia/Brisbane",
     // A full UTC datetime, as the api's PortalTaskResponse.scheduled_date sends.
     scheduledDate: "2026-08-07T02:55:19Z",
     scheduledTime: null,
@@ -71,13 +72,22 @@ describe("PortalTasksPage", () => {
     expect(screen.queryByTestId("portal-tasks-empty")).not.toBeInTheDocument();
   });
 
-  it("renders the scheduled datetime as a readable local time, not raw ISO", () => {
+  it("renders the scheduled datetime property-local, not raw ISO", () => {
     mockWindows({ today: [task()], upcoming: [], past: [] });
     render(<PortalTasksPage />);
-    // 02:55 UTC -> 12:55 pm in Australia/Sydney (AEST, UTC+10) on 7 Aug.
+    // 02:55 UTC -> 12:55 pm in Australia/Brisbane (UTC+10) on 7 Aug.
     expect(screen.getByText(/7 Aug, 12:55\s*pm/i)).toBeInTheDocument();
     // The raw ISO string must never leak through as a false pass.
     expect(screen.queryByText(/2026-08-07T02:55:19Z/)).not.toBeInTheDocument();
+  });
+
+  it("uses the task timezone, not a hardcoded zone", () => {
+    // Same UTC instant, different property zone: Australia/Perth (UTC+8) reads
+    // 10:55 am, proving the render follows task.timezone rather than a fixed one.
+    mockWindows({ today: [task({ timezone: "Australia/Perth" })], upcoming: [], past: [] });
+    render(<PortalTasksPage />);
+    expect(screen.getByText(/7 Aug, 10:55\s*am/i)).toBeInTheDocument();
+    expect(screen.queryByText(/12:55\s*pm/i)).not.toBeInTheDocument();
   });
 
   it("links each task to its detail page", () => {

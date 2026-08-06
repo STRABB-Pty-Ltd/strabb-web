@@ -17,7 +17,7 @@ const TASK_TYPE_LABELS: Record<string, string> = {
 };
 
 function formatWhen(task: PortalTask): string {
-  return formatPortalWhen(task.scheduledDate);
+  return formatPortalWhen(task.scheduledDate, task.timezone);
 }
 
 function TaskRow({ task }: { task: PortalTask }) {
