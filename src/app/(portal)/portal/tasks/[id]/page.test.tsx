@@ -35,8 +35,9 @@ function task(overrides: Partial<PortalTask> = {}): PortalTask {
     taskType: "turnover",
     priority: "medium",
     status: "confirmed",
-    scheduledDate: "2026-07-03",
-    scheduledTime: "10:00",
+    // A full UTC datetime, as the api's PortalTaskResponse.scheduled_date sends.
+    scheduledDate: "2026-08-07T02:55:19Z",
+    scheduledTime: null,
     estimatedHours: 2,
     actualHours: null,
     checklistTotal: 5,
@@ -63,6 +64,14 @@ describe("PortalTaskDetailPage", () => {
     const button = screen.getByRole("button", { name: /accept clean/i });
     await userEvent.click(button);
     expect(mutateMock).toHaveBeenCalledWith({ action: "accept" }, expect.any(Object));
+  });
+
+  it("renders the scheduled datetime as a readable local time, not raw ISO", () => {
+    usePortalTaskMock.mockReturnValue({ data: task({ status: "confirmed" }), isLoading: false });
+    render(<PortalTaskDetailPage />);
+    // 02:55 UTC -> 12:55 pm in Australia/Sydney (AEST, UTC+10) on 7 Aug.
+    expect(screen.getByText(/7 Aug, 12:55\s*pm/i)).toBeInTheDocument();
+    expect(screen.queryByText(/2026-08-07T02:55:19Z/)).not.toBeInTheDocument();
   });
 
   it("offers Start for an accepted task", () => {

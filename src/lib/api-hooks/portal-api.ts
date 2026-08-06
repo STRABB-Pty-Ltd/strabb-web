@@ -127,9 +127,13 @@ export function useUpdateWeeklyAvailability() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // Replace-set: the full weekly list is sent; an empty array clears it.
+    // Replace-set: the full weekly list is sent as a BARE array (the api's
+    // PUT /portal/availability/weekly binds `slots: list[WeeklyAvailabilitySlot]`
+    // directly, not under a wrapper key); an empty array clears it. The api
+    // client snake-cases each item's keys, so { weekday, startTime, endTime }
+    // becomes { weekday, start_time, end_time } on the wire.
     mutationFn: (weekly: WeeklyAvailability[]) =>
-      apiClient.put("/portal/availability/weekly", { weekly }),
+      apiClient.put("/portal/availability/weekly", weekly),
     meta: { suppressGlobalError: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PORTAL_AVAILABILITY_KEY });

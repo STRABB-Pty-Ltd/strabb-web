@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { usePortalTask, useTransitionTask } from "@/lib/api-hooks/portal-api";
 import { ApiError } from "@/lib/api-client";
+import { formatPortalWhen } from "@/lib/portal-time";
 import { nextActionForStatus, type TransitionAction } from "@/lib/schemas/portal";
 import { useAppStore } from "@/stores/app-store";
 
@@ -133,14 +134,7 @@ export default function PortalTaskDetailPage() {
             style={{ backgroundColor: "var(--neutral-30)" }}
           >
             <DetailRow label="Type" value={task.taskType.replace(/_/g, " ")} />
-            <DetailRow
-              label="Scheduled"
-              value={
-                task.scheduledDate
-                  ? `${task.scheduledDate}${task.scheduledTime ? ` ${task.scheduledTime.slice(0, 5)}` : ""}`
-                  : "Unscheduled"
-              }
-            />
+            <DetailRow label="Scheduled" value={formatPortalWhen(task.scheduledDate)} />
             <DetailRow label="Estimated hours" value={String(task.estimatedHours)} />
             {task.actualHours !== null && (
               <DetailRow label="Actual hours" value={String(task.actualHours)} />
