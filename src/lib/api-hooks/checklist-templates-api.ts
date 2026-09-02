@@ -110,11 +110,29 @@ export function useDeleteItem() {
   });
 }
 
+interface TemplatesCache {
+  data: ChecklistTemplate[];
+  meta?: unknown;
+}
+
+// Reorder a template's items to match itemIds, reassigning position by index.
+function applyOrder(items: ChecklistItem[], itemIds: string[]): ChecklistItem[] {
+  const byId = new Map(items.map((item) => [item.id, item]));
+  const ordered: ChecklistItem[] = [];
+  itemIds.forEach((id, index) => {
+    const item = byId.get(id);
+    if (item) ordered.push({ ...item, position: index });
+  });
+  return ordered;
+}
+
 // The client keysToSnake-converts itemIds -> item_ids, which is what the api's
 // ChecklistReorderRequest expects (the full item set in the desired order).
+// Optimistic: the cache is reordered on drop so the row does not snap back
+// before the server responds; rolled back on error, reconciled on settle.
 export function useReorderItems() {
   const apiClient = useApiClient();
-  const invalidate = useInvalidateTemplates();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ templateId, itemIds }: { templateId: string; itemIds: string[] }) =>
@@ -122,6 +140,26 @@ export function useReorderItems() {
         itemIds,
       }),
     meta: { suppressGlobalError: true },
-    onSuccess: invalidate,
+    onMutate: async ({ templateId, itemIds }) => {
+      await queryClient.cancelQueries({ queryKey: CHECKLIST_TEMPLATES_KEY });
+      const previous = queryClient.getQueryData<TemplatesCache>(CHECKLIST_TEMPLATES_KEY);
+      if (previous) {
+        queryClient.setQueryData<TemplatesCache>(CHECKLIST_TEMPLATES_KEY, {
+          ...previous,
+          data: previous.data.map((template) =>
+            template.id === templateId
+              ? { ...template, items: applyOrder(template.items, itemIds) }
+              : template,
+          ),
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(CHECKLIST_TEMPLATES_KEY, context.previous);
+      }
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: CHECKLIST_TEMPLATES_KEY }),
   });
 }

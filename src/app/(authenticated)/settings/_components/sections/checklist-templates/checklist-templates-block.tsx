@@ -1,7 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, X } from "lucide-react";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +29,7 @@ import {
   useDeleteItem,
   useDeleteTemplate,
   useRenameTemplate,
+  useReorderItems,
   useUpdateItem,
 } from "@/lib/api-hooks/checklist-templates-api";
 import { ApiError } from "@/lib/api-client";
@@ -97,8 +115,38 @@ function ItemRow({
   onDelete: (itemId: string) => void;
   disabled: boolean;
 }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
-    <div className="gap-sm flex items-center">
+    <div ref={setNodeRef} style={style} className="gap-sm flex items-center">
+      {/* dnd-kit drag activator: a raw button so the sortable listeners and
+          activator ref attach directly (no ui/Button primitive fits here). */}
+      {/* eslint-disable-next-line no-restricted-syntax */}
+      <button
+        type="button"
+        ref={setActivatorNodeRef}
+        className="text-highlight-10 hover:bg-neutral-30 size-lg flex cursor-grab items-center justify-center rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-[var(--ring)] active:cursor-grabbing disabled:opacity-50"
+        aria-label={`Reorder ${item.label}`}
+        disabled={disabled}
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical size={16} aria-hidden="true" />
+      </button>
       <div className="flex-1">
         <EditableText
           value={item.label}
@@ -175,6 +223,7 @@ function TemplateCard({
   onAddItem,
   onRenameItem,
   onDeleteItem,
+  onReorder,
   busy,
 }: {
   template: ChecklistTemplate;
@@ -183,8 +232,28 @@ function TemplateCard({
   onAddItem: (templateId: string, label: string, reset: () => void) => void;
   onRenameItem: (templateId: string, itemId: string, label: string) => void;
   onDeleteItem: (templateId: string, itemId: string) => void;
+  onReorder: (templateId: string, itemIds: string[]) => void;
   busy: boolean;
 }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const items = template.items;
+    const oldIndex = items.findIndex((item) => item.id === active.id);
+    const newIndex = items.findIndex((item) => item.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = arrayMove(items, oldIndex, newIndex);
+    onReorder(
+      template.id,
+      reordered.map((item) => item.id),
+    );
+  };
+
   return (
     <div className="p-sm space-y-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
       <div className="gap-sm flex items-center justify-between">
@@ -217,15 +286,28 @@ function TemplateCard({
         {template.items.length === 0 ? (
           <p className="text-body text-highlight-10">No items yet. Add the first one below.</p>
         ) : (
-          template.items.map((item) => (
-            <ItemRow
-              key={item.id}
-              item={item}
-              disabled={busy}
-              onRename={(itemId, label) => onRenameItem(template.id, itemId, label)}
-              onDelete={(itemId) => onDeleteItem(template.id, itemId)}
-            />
-          ))
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={template.items.map((item) => item.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-sm">
+                {template.items.map((item) => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    disabled={busy}
+                    onRename={(itemId, label) => onRenameItem(template.id, itemId, label)}
+                    onDelete={(itemId) => onDeleteItem(template.id, itemId)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
         <AddItemForm
           pending={busy}
@@ -248,6 +330,7 @@ export function ChecklistTemplatesBlock() {
   const addItem = useAddItem();
   const updateItem = useUpdateItem();
   const deleteItem = useDeleteItem();
+  const reorderItems = useReorderItems();
 
   // A single set of mutation hooks serves the whole block, so any in-flight
   // write disables the editing controls (mirrors the Team section).
@@ -333,6 +416,18 @@ export function ChecklistTemplatesBlock() {
     );
   };
 
+  const handleReorder = (templateId: string, itemIds: string[]) => {
+    // The optimistic cache update in the mutation already reflects the new
+    // order; only surface an error (which also rolls the order back).
+    reorderItems.mutate(
+      { templateId, itemIds },
+      {
+        onError: (err) =>
+          addToast({ type: "error", message: errorMessage(err, "Failed to reorder items") }),
+      },
+    );
+  };
+
   return (
     <div className="space-y-sm">
       <div className="flex items-center justify-between">
@@ -413,6 +508,7 @@ export function ChecklistTemplatesBlock() {
               onAddItem={handleAddItem}
               onRenameItem={handleRenameItem}
               onDeleteItem={handleDeleteItem}
+              onReorder={handleReorder}
             />
           ))}
         </div>
