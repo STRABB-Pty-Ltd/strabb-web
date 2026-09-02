@@ -5,6 +5,8 @@ import { Select } from "@/components/ui/select";
 import { useTeamMembers } from "@/hooks/use-team";
 import { useSettingsForm } from "@/lib/api-hooks/settings-api";
 
+import { ChecklistTemplatesBlock } from "./checklist-templates/checklist-templates-block";
+
 export function CleaningSection() {
   const { values, patch, save, isSaving, dirty } = useSettingsForm("cleaning", {
     autoAssign: false,
@@ -99,23 +101,7 @@ export function CleaningSection() {
         </div>
       </div>
 
-      <div className="p-sm rounded-lg border" style={{ borderColor: "var(--border)" }}>
-        <h3 className="mb-sm text-body text-highlight-10 font-semibold">Checklist Templates</h3>
-        <div className="space-y-base text-body text-highlight-10">
-          <div className="px-sm py-base hover:bg-neutral-30 flex items-center justify-between rounded-sm">
-            <span>Standard Checkout Clean</span>
-            <span className="text-body text-highlight-10">12 items</span>
-          </div>
-          <div className="px-sm py-base hover:bg-neutral-30 flex items-center justify-between rounded-sm">
-            <span>Deep Clean</span>
-            <span className="text-body text-highlight-10">18 items</span>
-          </div>
-          <div className="px-sm py-base hover:bg-neutral-30 flex items-center justify-between rounded-sm">
-            <span>Quick Inspection</span>
-            <span className="text-body text-highlight-10">5 items</span>
-          </div>
-        </div>
-      </div>
+      <ChecklistTemplatesBlock />
 
       <Button type="button" onClick={save} disabled={!dirty || isSaving}>
         {isSaving ? "Saving…" : "Save Changes"}
