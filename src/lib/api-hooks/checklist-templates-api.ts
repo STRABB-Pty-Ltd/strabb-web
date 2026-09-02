@@ -116,7 +116,8 @@ interface TemplatesCache {
 }
 
 // Reorder a template's items to match itemIds, reassigning position by index.
-function applyOrder(items: ChecklistItem[], itemIds: string[]): ChecklistItem[] {
+// Exported for unit testing the optimistic reorder computation.
+export function applyOrder(items: ChecklistItem[], itemIds: string[]): ChecklistItem[] {
   const byId = new Map(items.map((item) => [item.id, item]));
   const ordered: ChecklistItem[] = [];
   itemIds.forEach((id, index) => {
