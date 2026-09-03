@@ -19,6 +19,13 @@ vi.mock("@/lib/api-hooks/settings-api", () => ({
   useSettingsForm: () => settingsFormMock(),
 }));
 
+// The checklist templates editor is its own resource with its own hooks and is
+// covered by checklist-templates/checklist-templates-block.test.tsx. Stub it
+// here so this test stays focused on the default-cleaner dropdown + save.
+vi.mock("./checklist-templates/checklist-templates-block", () => ({
+  ChecklistTemplatesBlock: () => null,
+}));
+
 import { CleaningSection } from "./cleaning-section";
 
 function cleaner(overrides: Partial<TeamMember> = {}): TeamMember {
