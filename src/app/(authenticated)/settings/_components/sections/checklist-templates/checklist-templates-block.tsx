@@ -56,12 +56,14 @@ function EditableText({
   ariaLabel,
   disabled,
   validate,
+  placeholder,
 }: {
   value: string;
   onCommit: (next: string) => void;
   ariaLabel: string;
   disabled?: boolean;
   validate: (candidate: string) => boolean;
+  placeholder?: string;
 }) {
   const [draft, setDraft] = useState(value);
   const [error, setError] = useState(false);
@@ -87,6 +89,7 @@ function EditableText({
       aria-invalid={error}
       value={draft}
       disabled={disabled}
+      placeholder={placeholder}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
       onKeyDown={(e) => {
@@ -107,11 +110,13 @@ function EditableText({
 function ItemRow({
   item,
   onRename,
+  onDescribe,
   onDelete,
   disabled,
 }: {
   item: ChecklistItem;
   onRename: (itemId: string, label: string) => void;
+  onDescribe: (itemId: string, description: string | null) => void;
   onDelete: (itemId: string) => void;
   disabled: boolean;
 }) {
@@ -132,7 +137,7 @@ function ItemRow({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="gap-sm flex items-center">
+    <div ref={setNodeRef} style={style} className="gap-sm flex items-start">
       {/* dnd-kit drag activator: a raw button so the sortable listeners and
           activator ref attach directly (no ui/Button primitive fits here). */}
       {/* eslint-disable-next-line no-restricted-syntax */}
@@ -147,13 +152,22 @@ function ItemRow({
       >
         <GripVertical size={16} aria-hidden="true" />
       </button>
-      <div className="flex-1">
+      <div className="space-y-xs flex-1">
         <EditableText
           value={item.label}
           ariaLabel={`Checklist item ${item.label}`}
           disabled={disabled}
           validate={(candidate) => checklistItemLabelSchema.safeParse({ label: candidate }).success}
           onCommit={(label) => onRename(item.id, label)}
+        />
+        <EditableText
+          value={item.description ?? ""}
+          ariaLabel={`Description for ${item.label}`}
+          placeholder="Add a description (optional)"
+          disabled={disabled}
+          // Any text is valid; an empty description clears it (sent as null).
+          validate={() => true}
+          onCommit={(description) => onDescribe(item.id, description === "" ? null : description)}
         />
       </div>
       <Button
@@ -222,6 +236,7 @@ function TemplateCard({
   onDelete,
   onAddItem,
   onRenameItem,
+  onDescribeItem,
   onDeleteItem,
   onReorder,
   busy,
@@ -231,6 +246,7 @@ function TemplateCard({
   onDelete: (id: string, name: string) => void;
   onAddItem: (templateId: string, label: string, reset: () => void) => void;
   onRenameItem: (templateId: string, itemId: string, label: string) => void;
+  onDescribeItem: (templateId: string, itemId: string, description: string | null) => void;
   onDeleteItem: (templateId: string, itemId: string) => void;
   onReorder: (templateId: string, itemIds: string[]) => void;
   busy: boolean;
@@ -302,6 +318,9 @@ function TemplateCard({
                     item={item}
                     disabled={busy}
                     onRename={(itemId, label) => onRenameItem(template.id, itemId, label)}
+                    onDescribe={(itemId, description) =>
+                      onDescribeItem(template.id, itemId, description)
+                    }
                     onDelete={(itemId) => onDeleteItem(template.id, itemId)}
                   />
                 ))}
@@ -402,6 +421,16 @@ export function ChecklistTemplatesBlock() {
       {
         onError: (err) =>
           addToast({ type: "error", message: errorMessage(err, "Failed to update item") }),
+      },
+    );
+  };
+
+  const handleDescribeItem = (templateId: string, itemId: string, description: string | null) => {
+    updateItem.mutate(
+      { templateId, itemId, description },
+      {
+        onError: (err) =>
+          addToast({ type: "error", message: errorMessage(err, "Failed to update description") }),
       },
     );
   };
@@ -507,6 +536,7 @@ export function ChecklistTemplatesBlock() {
               onDelete={handleDelete}
               onAddItem={handleAddItem}
               onRenameItem={handleRenameItem}
+              onDescribeItem={handleDescribeItem}
               onDeleteItem={handleDeleteItem}
               onReorder={handleReorder}
             />

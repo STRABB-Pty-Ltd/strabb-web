@@ -58,6 +58,7 @@ function item(overrides: Partial<ChecklistItem> = {}): ChecklistItem {
   return {
     id: "i-1",
     label: "Beds",
+    description: null,
     position: 0,
     createdAt: "2026-08-01T00:00:00Z",
     updatedAt: "2026-08-01T00:00:00Z",
@@ -191,6 +192,38 @@ describe("ChecklistTemplatesBlock", () => {
       templateId: "t-1",
       itemId: "i-1",
       label: "Make beds",
+    });
+  });
+
+  it("adds a description to an item on blur", async () => {
+    setup([template({ items: [item({ id: "i-1", label: "Beds", description: null })] })]);
+    render(<ChecklistTemplatesBlock />);
+
+    const descInput = screen.getByLabelText("Description for Beds");
+    await userEvent.type(descInput, "Hospital corners");
+    await userEvent.tab();
+
+    expect(updateItemMock).toHaveBeenCalledTimes(1);
+    expect(updateItemMock.mock.calls[0][0]).toEqual({
+      templateId: "t-1",
+      itemId: "i-1",
+      description: "Hospital corners",
+    });
+  });
+
+  it("clears a description (sends null) when emptied", async () => {
+    setup([template({ items: [item({ id: "i-1", label: "Beds", description: "old note" })] })]);
+    render(<ChecklistTemplatesBlock />);
+
+    const descInput = screen.getByLabelText("Description for Beds");
+    await userEvent.clear(descInput);
+    await userEvent.tab();
+
+    expect(updateItemMock).toHaveBeenCalledTimes(1);
+    expect(updateItemMock.mock.calls[0][0]).toEqual({
+      templateId: "t-1",
+      itemId: "i-1",
+      description: null,
     });
   });
 

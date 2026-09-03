@@ -20,6 +20,8 @@ import { z } from "zod";
 export interface ChecklistItem {
   id: string;
   label: string;
+  // Optional free-text guidance for the item; null when unset.
+  description: string | null;
   position: number;
   createdAt: string;
   updatedAt: string;

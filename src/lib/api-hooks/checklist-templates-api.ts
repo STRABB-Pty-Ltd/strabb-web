@@ -66,9 +66,18 @@ export function useAddItem() {
   const invalidate = useInvalidateTemplates();
 
   return useMutation({
-    mutationFn: ({ templateId, label }: { templateId: string; label: string }) =>
+    mutationFn: ({
+      templateId,
+      label,
+      description,
+    }: {
+      templateId: string;
+      label: string;
+      description?: string | null;
+    }) =>
       apiClient.post<DataEnvelope<ChecklistItem>>(`/checklist-templates/${templateId}/items`, {
         label,
+        description,
       }),
     meta: { suppressGlobalError: true },
     onSuccess: invalidate,
@@ -79,19 +88,23 @@ export function useUpdateItem() {
   const apiClient = useApiClient();
   const invalidate = useInvalidateTemplates();
 
+  // label and description are each optional: omit to leave a field unchanged,
+  // send description: null to clear it. undefined fields drop out of the JSON.
   return useMutation({
     mutationFn: ({
       templateId,
       itemId,
       label,
+      description,
     }: {
       templateId: string;
       itemId: string;
-      label: string;
+      label?: string;
+      description?: string | null;
     }) =>
       apiClient.put<DataEnvelope<ChecklistItem>>(
         `/checklist-templates/${templateId}/items/${itemId}`,
-        { label },
+        { label, description },
       ),
     meta: { suppressGlobalError: true },
     onSuccess: invalidate,
