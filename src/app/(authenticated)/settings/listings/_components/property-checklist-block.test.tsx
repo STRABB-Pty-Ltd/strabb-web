@@ -15,6 +15,8 @@ const {
   reorderMock,
   applyTemplateMock,
   addToastMock,
+  setSectionMock,
+  routerPushMock,
 } = vi.hoisted(() => ({
   checklistMock: vi.fn(),
   templatesMock: vi.fn(),
@@ -24,6 +26,12 @@ const {
   reorderMock: vi.fn(),
   applyTemplateMock: vi.fn(),
   addToastMock: vi.fn(),
+  setSectionMock: vi.fn(),
+  routerPushMock: vi.fn(),
+}));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: routerPushMock }),
 }));
 
 vi.mock("@/hooks/use-default-checklist", () => ({
@@ -48,8 +56,9 @@ vi.mock("@/lib/api-hooks/property-checklist-api", async (importOriginal) => {
 });
 
 vi.mock("@/stores/app-store", () => ({
-  useAppStore: (selector: (s: { addToast: typeof addToastMock }) => unknown) =>
-    selector({ addToast: addToastMock }),
+  useAppStore: (
+    selector: (s: { addToast: typeof addToastMock; setSection: typeof setSectionMock }) => unknown,
+  ) => selector({ addToast: addToastMock, setSection: setSectionMock }),
 }));
 
 import { PropertyChecklistBlock } from "./property-checklist-block";
@@ -87,6 +96,8 @@ describe("PropertyChecklistBlock", () => {
     reorderMock.mockReset();
     applyTemplateMock.mockReset();
     addToastMock.mockReset();
+    setSectionMock.mockReset();
+    routerPushMock.mockReset();
   });
 
   it("renders the property's checklist items from the hook", () => {
@@ -190,10 +201,27 @@ describe("PropertyChecklistBlock", () => {
     });
   });
 
-  it("hides the template picker when there are no templates", () => {
+  it("hides the template picker when there are no templates, offering a create link", () => {
     setup([item()], []);
     render(<PropertyChecklistBlock propertyId={PROPERTY_ID} />);
     expect(screen.queryByLabelText("Set from a template")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /create a template/i })).toBeInTheDocument();
+  });
+
+  it("routes to the Cleaning settings section from the create-template link", async () => {
+    setup([item()], []);
+    render(<PropertyChecklistBlock propertyId={PROPERTY_ID} />);
+    await userEvent.click(screen.getByRole("button", { name: /create a template/i }));
+    expect(setSectionMock).toHaveBeenCalledWith("cleaning");
+    expect(routerPushMock).toHaveBeenCalledWith("/settings");
+  });
+
+  it("offers a manage-templates link when templates exist", async () => {
+    setup([item()], [{ id: "t-1", name: "Deep Clean", items: [] }]);
+    render(<PropertyChecklistBlock propertyId={PROPERTY_ID} />);
+    await userEvent.click(screen.getByRole("button", { name: /manage templates/i }));
+    expect(setSectionMock).toHaveBeenCalledWith("cleaning");
+    expect(routerPushMock).toHaveBeenCalledWith("/settings");
   });
 
   it("surfaces an API error as a toast when adding fails", async () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { ChecklistItemsEditor } from "@/components/checklists/checklist-items-editor";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,15 @@ function errorMessage(err: unknown, fallback: string): string {
 // template's items (non-destructive), after which they are edited independently.
 export function PropertyChecklistBlock({ propertyId }: { propertyId: string }) {
   const addToast = useAppStore((s) => s.addToast);
+  const setSection = useAppStore((s) => s.setSection);
+  const router = useRouter();
+
+  // Templates are created in Settings > Cleaning; jump there (that section is
+  // app-store driven, and Listings is a sub-route, so set it then route back).
+  const goToTemplates = () => {
+    setSection("cleaning");
+    router.push("/settings");
+  };
 
   const checklistQuery = useDefaultChecklist(propertyId);
   const items = checklistQuery.data?.data ?? [];
@@ -127,15 +137,20 @@ export function PropertyChecklistBlock({ propertyId }: { propertyId: string }) {
         </p>
       </div>
 
-      {templates.length > 0 && (
+      {templates.length > 0 ? (
         <div className="gap-sm flex items-end">
           <div className="flex-1">
-            <label
-              htmlFor={`apply-template-${propertyId}`}
-              className="mb-xs text-body text-highlight-10 block font-medium"
-            >
-              Set from a template
-            </label>
+            <div className="mb-xs gap-sm flex items-center justify-between">
+              <label
+                htmlFor={`apply-template-${propertyId}`}
+                className="text-body text-highlight-10 font-medium"
+              >
+                Set from a template
+              </label>
+              <Button type="button" variant="link" size="xs" onClick={goToTemplates}>
+                Manage templates
+              </Button>
+            </div>
             <Select
               id={`apply-template-${propertyId}`}
               value={selectedTemplateId}
@@ -153,6 +168,15 @@ export function PropertyChecklistBlock({ propertyId }: { propertyId: string }) {
             disabled={!selectedTemplateId || applyTemplate.isPending}
           >
             {applyTemplate.isPending ? "Adding..." : "Add to checklist"}
+          </Button>
+        </div>
+      ) : (
+        <div className="gap-xs flex items-center">
+          <p className="text-body" style={{ color: "var(--text-secondary)" }}>
+            No checklist templates yet.
+          </p>
+          <Button type="button" variant="link" size="xs" onClick={goToTemplates}>
+            Create a template
           </Button>
         </div>
       )}
