@@ -18,6 +18,8 @@ import type { ListingResponse } from "@/lib/schemas/listing";
 import { useAppStore } from "@/stores/app-store";
 import { useProperties, useUpdateProperty } from "@/hooks/use-properties";
 
+import { PropertyChecklistBlock } from "./_components/property-checklist-block";
+
 const CHANNEX_MAX_LENGTH = 255;
 
 interface ChannexInputState {
@@ -298,6 +300,7 @@ export default function SettingsListingsPage() {
               generalTabContent={
                 <GeneralTab
                   listingId={listing.id}
+                  propertyId={listing.propertyId}
                   nightlyRateInput={nightlyRateInputs[listing.id] ?? ""}
                   onNightlyRateChange={(v) => handleNightlyRateChange(listing.id, v)}
                   saving={savingMetadataId === listing.id}
@@ -358,6 +361,7 @@ export default function SettingsListingsPage() {
 
 interface GeneralTabProps {
   listingId: string;
+  propertyId: string;
   nightlyRateInput: string;
   onNightlyRateChange: (value: string) => void;
   saving: boolean;
@@ -372,6 +376,7 @@ interface GeneralTabProps {
 
 function GeneralTab({
   listingId,
+  propertyId,
   nightlyRateInput,
   onNightlyRateChange,
   saving,
@@ -397,6 +402,8 @@ function GeneralTab({
         onChange={onCleaningDurationChange}
         onSave={onSaveCleaningDuration}
       />
+
+      <PropertyChecklistBlock propertyId={propertyId} />
 
       <section
         className="pt-sm border-t"

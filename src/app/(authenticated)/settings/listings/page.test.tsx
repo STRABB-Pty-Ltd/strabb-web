@@ -52,6 +52,13 @@ vi.mock("@/components/overlays/booking-form-drawer", () => ({
     open ? <div data-testid="booking-form-drawer" /> : null,
 }));
 
+// The per-property checklist editor is its own resource with its own data hooks
+// and useRouter; it is covered by property-checklist-block.test.tsx. Stub it so
+// this page test stays focused on pricing, cleaning duration and booking.
+vi.mock("./_components/property-checklist-block", () => ({
+  PropertyChecklistBlock: () => null,
+}));
+
 import SettingsListingsPage from "./page";
 
 function listing(overrides: Partial<ListingResponse> = {}): ListingResponse {

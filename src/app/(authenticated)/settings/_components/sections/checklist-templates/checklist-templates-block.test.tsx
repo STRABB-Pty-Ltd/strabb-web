@@ -199,6 +199,8 @@ describe("ChecklistTemplatesBlock", () => {
     setup([template({ items: [item({ id: "i-1", label: "Beds", description: null })] })]);
     render(<ChecklistTemplatesBlock />);
 
+    // The description field is revealed once the row is focused (compact rows).
+    await userEvent.click(screen.getByLabelText("Checklist item Beds"));
     const descInput = screen.getByLabelText("Description for Beds");
     await userEvent.type(descInput, "Hospital corners");
     await userEvent.tab();
