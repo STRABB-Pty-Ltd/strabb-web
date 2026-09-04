@@ -154,6 +154,22 @@ describe("PropertyChecklistBlock", () => {
     expect(deleteItemMock.mock.calls[0][0]).toEqual({ propertyId: PROPERTY_ID, itemId: "i-1" });
   });
 
+  it("reveals the description field only once the row is focused", async () => {
+    setup([item({ id: "i-1", label: "Beds", description: null })]);
+    render(<PropertyChecklistBlock propertyId={PROPERTY_ID} />);
+    // Hidden by default for an item with no description...
+    expect(screen.queryByLabelText("Description for Beds")).not.toBeInTheDocument();
+    // ...and revealed after focusing the label (title).
+    await userEvent.click(screen.getByLabelText("Checklist item Beds"));
+    expect(screen.getByLabelText("Description for Beds")).toBeInTheDocument();
+  });
+
+  it("keeps a non-empty description visible without focusing", () => {
+    setup([item({ id: "i-1", label: "Beds", description: "Hospital corners" })]);
+    render(<PropertyChecklistBlock propertyId={PROPERTY_ID} />);
+    expect(screen.getByLabelText("Description for Beds")).toBeInTheDocument();
+  });
+
   it("applies a template and toasts the number of items added", async () => {
     applyTemplateMock.mockImplementation((_vars, opts: { onSuccess?: () => void }) =>
       opts?.onSuccess?.(),

@@ -64,8 +64,23 @@ function ItemRow({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  // Keep rows compact: reveal the description field only while the row is being
+  // edited (focus within it), but always show a description that already has
+  // content so it stays visible and editable.
+  const [rowFocused, setRowFocused] = useState(false);
+  const hasDescription = (item.description ?? "").trim().length > 0;
+  const showDescription = rowFocused || hasDescription;
+
   return (
-    <div ref={setNodeRef} style={style} className="gap-sm flex items-start">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="gap-sm flex items-start"
+      onFocus={() => setRowFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setRowFocused(false);
+      }}
+    >
       {/* dnd-kit drag activator: a raw button so the sortable listeners and
           activator ref attach directly (no ui/Button primitive fits here). */}
       {/* eslint-disable-next-line no-restricted-syntax */}
@@ -88,15 +103,17 @@ function ItemRow({
           validate={(candidate) => checklistItemLabelSchema.safeParse({ label: candidate }).success}
           onCommit={(label) => onRename(item.id, label)}
         />
-        <EditableText
-          value={item.description ?? ""}
-          ariaLabel={`Description for ${item.label}`}
-          placeholder="Add a description (optional)"
-          disabled={disabled}
-          // Any text is valid; an empty description clears it (sent as null).
-          validate={() => true}
-          onCommit={(description) => onDescribe(item.id, description === "" ? null : description)}
-        />
+        {showDescription && (
+          <EditableText
+            value={item.description ?? ""}
+            ariaLabel={`Description for ${item.label}`}
+            placeholder="Add a description (optional)"
+            disabled={disabled}
+            // Any text is valid; an empty description clears it (sent as null).
+            validate={() => true}
+            onCommit={(description) => onDescribe(item.id, description === "" ? null : description)}
+          />
+        )}
       </div>
       <Button
         type="button"
