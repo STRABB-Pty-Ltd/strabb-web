@@ -1,5 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
+import { STORAGE_STATE } from "./e2e/helpers";
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -12,9 +14,17 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
+    // Log in once and share the session: the api rate-limits /auth/login to
+    // 5 per minute per IP, so a login per test trips 429s mid-run.
+    {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+      use: { browserName: "chromium" },
+    },
     {
       name: "chromium",
-      use: { browserName: "chromium" },
+      use: { browserName: "chromium", storageState: STORAGE_STATE },
+      dependencies: ["setup"],
     },
   ],
   webServer: {
